@@ -1,7 +1,7 @@
 # DATA INTEGRITY
 ### What is data integrity?
 - Integrity = trust in the unaltered state of information
-- Goal: prevent undetected or unauthorized changes
+- Goal: prevent undetected or unauthorised changes
 - Part of the CIA triad
   - Confidentiality
   - Integrity
@@ -18,7 +18,7 @@ Data integrity guarantees that the source of the information is authentic. *we d
 ### Why integrity matters
 <span style="color:orange">Medical example</span>
 - Patient record
-10 mg $ \Rightarrow$ altered to $ \Rightarrow$ 100 mg
+10 mg $\Rightarrow$ altered to $\Rightarrow$ 100 mg
 - Consequences: severe or fatal errors
 
 <span style="color:orange">Finance & Contracts</span>
