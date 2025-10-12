@@ -83,12 +83,12 @@ Remark: **Authenticity** is orthogonal to **secrecy**, yet systems often require
 
 Requirement – $V_{k}(m,A_{k}(m))$ = “accept”
 - The authentication algorithm is called MAC (Message Authentication Code)
-- Ak(m) is frequently denoted MACk(m)
-- Verification is by executing authentication on m and comparing with MACk(m)
+- $A_{k}(m)$ is frequently denoted $MAC_{k}(m)$
+- Verification is by executing authentication on m and comparing with $MAC_{k}(m)$
 
 we want an algorithm that is sure that if the integrity is violated, it displays always to the user that something went wrong. May happen that when the algorithm says "accept", sometimes it isn't. 
 
-A (alice) sends a pair (M,t), where M is the message and t the authentication tag, after a while, B (bob) receives (M',t'). in the best case M=M' and t=t'. Bob but for  security reasons, always use the verification algorithm.
+A (alice) sends a pair $(M,t)$, where $M$ is the message and $t$ the authentication tag, after a while, $B$ (bob) receives $(M',t')$. in the best case $M=M'$ and $t=t'$. Bob but for  security reasons, always use the verification algorithm.
 
 ### About 1:1
 - More than a mere design choice, a MAC cannot assign a unique tag to each message (i.e., be one-to-one) because this would require the set of possible messages and the set of MAC values (tags) to have the same cardinality, regardless of the tag length
@@ -98,7 +98,7 @@ A (alice) sends a pair (M,t), where M is the message and t the authentication ta
 - there are additional reasons to prefer short, fixed-length tags, including efficiency, ease of implementation and constant-time verification
 
 ### Adversary's goal
-To produce a message–tag pair (m, MACk(m)) such that the verification function returns “accept”, i.e., $V_{k} (m, MAC_{k}(m))$ = "accept"
+To produce a message–tag pair $(m, MAC_{k}(m))$ such that the verification function returns “accept”, i.e., $V_{k} (m, MAC_{k}(m))$ = "accept"
 - An adversary capable of controlling the communication channel (e.g., a man-in-the-middle) can easily compromise data integrity—i.e., alter the message during transmission—but cannot ensure origin integrity (authenticity) without knowledge of the secret key
 
 - In the standard threat model, the adversary is assumed to know everything except the secret key k
@@ -108,14 +108,22 @@ To produce a message–tag pair (m, MACk(m)) such that the verification function
 - Given a message consisting of n blocks M1,M2,…,Mn, apply CBC (using the secret key k)
 ![[Pasted image 20251009154828.png]]
 
+
 ###  **CBC-MAC is insecure for variable-length messages**
-- CBC-MAC is secure (but slow) for fixed-length messages, but insecure for variable-length messages
-    
-- if attacker knows correct message-tag pairs (m, t) and (m', t') can generate a third (longer) message m'' whose CBC-MAC will also be t'. This solution is not great (said prof): without Confidentiality we cannot hide $m$ and $m'$
-    
-- XOR first block of m' with t and then concatenate m with this modified m'
-    
-- hence, $m'' = m || (m1' XOR t) || m2' || … || mx'$
+- CBC-MAC is secure only for fixed-length messages; it is insecure when message lengths can vary.
+
+- An attacker who knows valid message–tag pairs $(m, t)$ and $(m', t')$ can construct a new (longer) message $m''$ such that $CBC-MAC_k(m'') = t'$. This is not a mere replay: $m''$ is a new message that the verifier will accept as if it came from the legitimate sender.
+
+- Construction: XOR the first block of $m'$ with $t$ and concatenate:
+  - $m'' = m || (m1' XOR t) || m2' || … || mℓ'$
+  - After processing $m$ the CBC state equals $t$; processing $(m1' XOR t)$ produces the same block-cipher input as $m1'$, so the remainder of the MAC computation reproduces the tag $t'$.
+
+- Why this is dangerous: even if $m''$ is built from previously seen blocks, the concatenated sequence can have a different application-level meaning (e.g., multiple bank transfers, chained IoT commands, or a combined firmware image) and therefore cause real damage.
+
+- Short mitigations:
+  - Do not use CBC‑MAC on variable-length messages.
+  - Prefer CMAC or HMAC for variable-length data.
+  - Alternatively, include an unambiguous length prefix or use domain separation / context binding when authenticating messages.
 
 ###  **final remarks on CBC-MAC**
 - secure only for messages of fixed, known length
@@ -157,9 +165,9 @@ There are three types of forgery, with different power
 - $U \Rightarrow S \Rightarrow E$
 ### use the contrapositive 
 According to the basic rules of propositional logic
-(U \Rightarrow S \Rightarrow E) \iff (\neg E \Rightarrow \neg S \Rightarrow \neg U)
+$(U \Rightarrow S \Rightarrow E) \iff (\neg E \Rightarrow \neg S \Rightarrow \neg U)$
 
-***This means that if we can prevent E, then we are also able to prevent S and U ***
+***This means that if we can prevent E, then we are also able to prevent S and U***
 
 ### About the existential forgery
 An existential forgery is considered a success even if the forged message is meaningless
