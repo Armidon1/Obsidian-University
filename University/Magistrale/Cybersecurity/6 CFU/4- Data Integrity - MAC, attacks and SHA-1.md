@@ -1,4 +1,4 @@
-# DATA INTEGRITY
+	# DATA INTEGRITY
 ### What is data integrity?
 - Integrity = trust in the unaltered state of information
 - Goal: prevent undetected or unauthorised changes
