@@ -170,56 +170,32 @@ long fastModExp(unsigned int base, unsigned int exp, long mod) {
 }
 ```
 
-## #### Discrete Log in ℤ
-
-∗
-
-#### 𝒑 : a
-
-#### candidate as OWF
-
-- Let𝑦 = 𝑔𝑥 mod 𝑝 inℤ∗𝑝
-    - e.g.,ℤ∗ 10 = 1,3,7,9  (𝑝is not necessarily prime)
-- 𝑔𝑥 mod 𝑝can be computed in O(log 𝑥) multiplications, each
-    multiplication taking O(log^2 𝑝) steps (remind𝑔 < 𝑝)
-       - also, it turns out𝑥must be< 𝑝 ⟹overall # of steps is
-          O(log^3 𝑝)
+##  Discrete Log in ℤ𝒑 : a candidate as OWF
+- Let $y=g^x$ mod 𝑝 in $ℤ^∗_p$
+    - e.g.,$ℤ^*_{10}$ = {1,3,7,9}  ($p$ is not necessarily prime)
+- $g^x$ mod 𝑝 can be computed in $O(log(x))$ multiplications, each multiplication taking $O(log^2(p))$ steps (remind $g<p$)
+	- also, it turns out $x$ must be < $p$ ⟹ overall # of steps is $O(log^3(p))$
 - Standard discrete log is believed to be computationally hard
-- 𝑥  𝑔𝑥 mod 𝑝  is believed to be an OWF
-    - 𝑥𝑔𝑥 mod 𝑝 is easy (efficiently computable)
-    - 𝑔𝑥 mod 𝑝  𝑥believed hard (computationally infeasible)
-- This is acomputation-basednotion
+- 𝑥 $\rightarrow g^x$ mod 𝑝  is believed to be an OWF
+    - 𝑥 $\rightarrow g^x$ mod 𝑝 is easy (efficiently computable)
+    - $g^x$ mod 𝑝 $\rightarrow x$ believed hard (computationally infeasible)
+- This is a **computation-based** notion
 
-
-#### Do OWFs exist?
-
+## Do OWFs exist?
 - open problem
     - they are conjectured to exist
-- **Theorem**. If a one-way function
-    exists, then P ≠ NP (theoretical proof)
-    - one-way functions are conjectured
-       to exist, as P is conjectured to be
-       strictly included in NP
+- **Theorem**. If a one-way function exists, then P ≠ NP (theoretical proof)
+    - one-way functions are conjectured to exist, as P is conjectured to be strictly included in NP
+
+## Utility of OWFs
+
+- Cryptographic hashing (and its uses), secure key exchanges, public key cryptography, random numbers...
+- More generally, assuming OWFs exist, we obtain strong mathematical properties that are computationally **hard to break**, forming the foundation of many cryptographic guarantees
 
 
-#### Utility of OWFs
+# Diffie-Hellman key exchange
 
-- Cryptographic hashing (and its uses),
-    secure key exchanges, public key
-    cryptography, random numbers...
-- More generally, assuming OWFs exist, we
-    obtain strong mathematical properties that
-    are computationally **hard to break** ,
-    forming the foundation of many
-    cryptographic guarantees
-
-
-##### Diffie-Hellman
-
-##### key exchange
-
-
-#### Public exchange of keys
+## Public exchange of keys
 
 - Goal: two parties (Alice and Bob) who do not share
     any secret information, perform a protocol and derive
@@ -460,9 +436,7 @@ passive adversary. Man-in-the-middle attack is lethal
     refreshed, automatically distributed, etc.
 
 
-##### RSA – the
-
-##### algorithm
+## RSA – the algorithm
 
 
 35
