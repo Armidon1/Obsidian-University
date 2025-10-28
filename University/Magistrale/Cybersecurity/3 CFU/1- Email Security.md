@@ -176,6 +176,8 @@ Each field = _Name_ + _Value_, separated by a colon (`:`).
     
 - `Received:` Added by each server along the route
 
+See the [[EMAIL - Difference between receivedFrom and ReturnPath||difference between Received and Return to Path]]
+
 ## Example of header
 
 From: Michela Cellamare <michela.cellamare@uniroma1.it> Date: ...
@@ -424,6 +426,23 @@ RFC 822, 2045, 2046, 2047, 2048, 2049
 ```
 example.net TXT "v=spf1 mx a:pluto.example.net include:aspmx.googlemail.com -all"
 ```
+![[Pasted image 20251028162915.png]]
+here `pluto.example.net` will be authorised to send email on behalf of `example.net`
+
+- When an email is sent from the domain, the receiving mail server queries the DNS for the domain's SPF record to verify if the IP address of the sending server is listed in the SPF record.
+	- **Pass**: If the sending server’s IP matches one of the authorized IPs in the Specify record, the email passes the SPF check.
+	- **Fail**: If the sending IP is not listed, the email fails the SPF check. The receiving server can then choose to reject, ag, or accept the message based on local policy.
+
+```
+<XXXX.YYYY@gmail.com>: host gmail-smtp-in.l.google.com[173.194.78.26]
+said: 550-5.7.1 [aa.bb.cc.dd] The IP you're using to send mail is not
+authorized to 550-5.7.1 send email directly to our servers. Please use the SMTP relay at your 550-5.7.1 service provider instead. Learn more at 550 5.7.1 http://support.google.com/mail/bin/answer.py?answer=10336 fl4si3665795wib.12 - gsmtp (in reply to end of DATA command)
+```
+
+## Example to check
+![[Pasted image 20251028163320.png]]![[Pasted image 20251028163346.png]]
+
+See more on [[EMAIL - SPF]]
 
 ### Limitations
 
@@ -435,10 +454,15 @@ example.net TXT "v=spf1 mx a:pluto.example.net include:aspmx.googlemail.com -all
     
 - No body protection
     
+SPF ignores the body, he just checks if the server which sends an email is authorised to send email to me. In this case we can easily block those people who creates his own server.
+
+See also [[EMAIL - SPF#Perché le mailing list rompono SPF (concetto chiave)|Why the mailing list broke SPF]]
 
 ---
-
+# continuare la registrazione a partire dal minuto 33  
 ## DKIM – DomainKeys Identified Mail
+
+One of the limitation of SPF is protect the body. The sending server makes a cryptography string with a private key. 
 
 ### Guarantees
 
@@ -447,24 +471,73 @@ example.net TXT "v=spf1 mx a:pluto.example.net include:aspmx.googlemail.com -all
 - **Authentication** (valid signer)
     
 - **Non-repudiation**
-    
+
+### Possible DKIM Deployiment 
+![[Pasted image 20251028184726.png]]
 
 ### Process
 
-1. **Signing:** Sender adds DKIM-Signature using private key
+1. **Signing:** Sender adds DKIM-Signature using [[7 - Asymmetric encryption||private key]] 
     
 2. **DNS:** Publishes public key via TXT record
     
-3. **Verification:** Receiver checks signature with public key
+3. **Verification:** Receiver checks signature with [[7 - Asymmetric encryption||public key]] 
     
 
-### Example
-
+## How does DKIM Work 
+### 1) generating the Signature (Signing Process)
 ```text
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=example.com; s=mail;
-h=From:To:Subject:Date; bh=MTIzNDU2Nzg5MDEyMzQ1Njc4OQ==;
-b=abcdefghijklmnopqrstuvwxyz1234567890...
+DKIM-Signature: 
+	v=1;
+	a=rsa-sha256;
+	c=relaxed/relaxed;
+	d=diag.uniroma1.it;
+	s=google;
+	t=1728828422;
+	x=1729433222;
+	dara=google.com;
+	h=to:subject:message-id:date:from:mime-version:from:to:cc:subject:date:message-
+	id:reply-to;
+	bh=t6DYHnvgeJvZ02sgmWVU/4X9LTVieRyKbl+FRWPu3Co=;
+b=gx0VlcD55ZtEOTnE2FJJSSgt8Padr87pkhbkWw7FbuIyWY2O0QvKy52DD6DsuiT2oj
+q5/jSGM4y1b0XKHM7CU1Fhk+ScKi16hj8HdezlpnFOZbbiKS43uysV8lLfbv5SOaDEFv
+REmsa4Az8duRs1fYEsQ9ixRu5RPOLRgCBcxb0=
 ```
+
+### 2 - Public Key Published in DNS:
+
+- The domain that sends the email publishes the corresponding public key in the Domain Name System (DNS) as a TXT record. The public key is used to verify the authenticity of the signature.
+- The DNS record also speci es the selector (a pre x to di erentiate between multiple keys) and the policy the sender wants to use for DKIM. 
+
+```Bash
+> dig +noall +answer google._domainkey.uniroma1.it txt
+
+google._domainkey.uniroma1.it. 21600 IN
+TXT "v=DKIM1; k=rsa;
+p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzMa8wGDtu7DVjVP1JwVzMym/
+KktdVSBhvtMbgpolQTWqKxRHejICsUvvFv6WGP7kKQnVA5" "2JtFU9LVGvTfkNF5J/x/
+9wUlBSQMCwGc4IXNdgA5fcn/49fV+YY1RFY44PhoTSWTQnKp7axDRFO3Uo05uFXSl0OnNo0Gd/
+tnDRG538tnM8VzZIF+jjS76GkV/iZT2tcDSBMsWjZTR" "tk7eG/GDVS8pbD14CX/
+bf7RTflt3sTiwcp3YUn5T66ioCmc7PIu5CCKfTcW7i7E246Ef4hz+6CySyNRxipnrK6BrXGoraod5U66K6boXVW
+ojDKHRflvdoeQ49hW8N5PHFqJKebwIDAQAB"
+```
+
+#### SELECTORS
+To support multiple concurrent public keys per signing domain, key
+namespace is subdivided using selectors
+- for example selectors might indicate the names of o ce locations, the signing
+date, or even the individual user
+Selectors are useful to implement some important use cases
+- domains that want to delegate signing capability for a speci c address for a given duration to a partner, such as an advertising provider or other outsourced function
+- domains that want to allow frequent travelers to send messages locally without the need to connect with a particular MSA.
+- "affinity" domains (e.g., college alumni associations) that provide forwarding of incoming mail, but that do not operate a MSA for outgoing mail
+
+### 3 - Verification Process:
+
+- When an email is received, the recipient’s mail server looks at the DKIM signature header to see which domain signed the message and which selector to use. It retrieves the corresponding public key from the domain’s DNS.
+- The server then veri es the digital signature by comparing it with the hash of the received message's content. If the signature matches, it con rms that the email:
+	- Hasn’t been altered in transit (message integrity).
+	- Is indeed authorized by the sender’s domain (authenticity).
 
 ---
 

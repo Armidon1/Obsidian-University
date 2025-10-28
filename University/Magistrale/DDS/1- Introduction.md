@@ -336,13 +336,13 @@ Correct Service → FAILURE → Incorrect Service → RESTORATION
 
 ## Dependability Attributes
 
-|Attribute|Meaning|
-|---|---|
-|**Availability**|Readiness for correct service|
-|**Reliability**|Continuity of correct service|
-|**Safety**|No catastrophic consequences|
-|**Integrity**|No improper alterations|
-|**Maintainability**|Ease of repair and modification|
+| Attribute           | Meaning                         |
+| ------------------- | ------------------------------- |
+| **Availability**    | Readiness for correct service   |
+| **Reliability**     | Continuity of correct service   |
+| **Safety**          | No catastrophic consequences    |
+| **Integrity**       | No improper alterations         |
+| **Maintainability** | Ease of repair and modification |
 
 ### Secondary Attribute
 
