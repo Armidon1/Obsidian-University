@@ -149,16 +149,16 @@ Local attacker escalates privileges to root/admin using:
 
 ### Network Connections
 
-- **Multiple connections:** e.g., DoS attacks
+- **Multiple connections:** e.g., [[DoS]] attacks
     
-- **Single connection:** e.g., system compromises
+- **Single connection:** e.g., system [[Compromises]]
     
 
 ### Source
 
 - **Single source:** Typical for scans
     
-- **Multiple sources:** DDoS attacks
+- **Multiple sources:** [[DDoS]] attacks
     
 
 ### Environment
@@ -478,14 +478,14 @@ We can try train a model for a specific system, but in this period of training (
 
 **Approaches:**
 
-- **Programmed:** Fixed behavioral models
-	- Programmed systems: the system is con gured with xed behavioral models.
-	- Default deny: the system expected behavior is accurately modeled. Only modeled states are allowed.
-	- Descriptive statistics: the normal behavior of the system is described by a statistical model build on a number of variables
+- **Programmed:** Fixed behavioural models
+	- Programmed systems: the system is configured with fixed behavioural models.
+	- Default deny: the system expected behaviour is accurately modelled. Only modelled states are allowed.
+	- Descriptive statistics: the normal behaviour of the system is described by a statistical model build on a number of variables
 		- Simple statistics, rules, thresholds
     
 - **Self-learning:** Builds models automatically
-	- Self-learning systems: build automatically a model representing the system normal behavior
+	- Self-learning systems: build automatically a model representing the system normal behaviour
 		- Non-time series: use stochastic modeling that do not consider [[Timeliness]]
 			- Rule-based modeling
 			- Statistical modeling
@@ -494,21 +494,43 @@ We can try train a model for a specific system, but in this period of training (
 			- Hidden Markov Models
         
 - **Rule-based:** Define allowed behaviors
+	- Rule based methods
+		- Characterize normal behavior of users, networks and/or computer systems by a set of rules
+		-  When rules are broken, an attack is suspected
+		- Rules allow a “high-level” description
+		- Rules can be derived automatically through “expert systems”
     
 - **Statistical:** Detect deviations or outliers
+	- Statistical methods
+		- Monitor the user or system behavior by measuring certain variables over time
+		- Keep averages of these variables (moving event/time windows) and detect whether thresholds are
+		- exceeded based on the standard deviation of the variable
+		- More advanced techniques can be used (e.g. probabilistic Bayesian inference)
+		- Outliers detection: data points that are very different from the rest of the data
+		- Data points are modelled using a stochastic distribution, and points are determined to be outliers
+		- depending on their relationship with this model
     
 - **Distance-based:** Use clustering and density measures
+	- Distance based methods
+		- Estimating the multidimensional distributions of the data points is di cult and inaccurate
+		- Detect outliers by computing distances among points
+		- These techniques are based on computing the full dimensional distances of points from one another using all the available features, and on computing the densities of local neighbourhoods (clusters)
     
 - **Profiling:** Learn “normal” protocol patterns
+	- A pro le characterising the normal execution of protocols and services is generated.
+	- Any deviation from the pro le is considered as suspicious
+	- Immune system inspired approaches
+		- Small patterns of system calls happening in legal interactions are collected
+		- If an interaction presents a pattern that has not been signalled before an alarm is fired
     
 - **Immune System-Inspired:** Detect unknown behavior sequences
     
 
 #### Compound Detection
 
-- Combines misuse + anomaly detection
-    
-- Classifies events based on distance to both normal and abnormal models
+- Bases its functioning on the maintenance of models for both normal and abnormal behaviors
+- Events observed at runtime are compared to the models
+- The relative distance of an event from the two models is used to decide if it can be classi ed as an attack
 
 ### Detection Methodology RECAP
 ![[Pasted image 20251029153606.png]]

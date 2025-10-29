@@ -6,7 +6,7 @@ Attacker gains local access from outside the network:
 - Exploiting software bugs (e.g., buffer overflows in outdated software)  
 - Phishing to steal credentials  
 
-**Detection via Signatures:**
+**Detection via [[Signatures (Cybersecurity)]]:**
 
 - ✅ **Brute-force signature patterns**: Repeated login attempts with different passwords → detectable by logging and rate-limiting rules.  
   - Example: A login attempt every 2 seconds from a single IP → detected as suspicious in SIEM (Security Information and Event Management).  
