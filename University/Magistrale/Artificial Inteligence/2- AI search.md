@@ -1,6 +1,6 @@
 # Searching
 
-we are not going to analyse it completely, but this will be a nice introduction and will be necessary to complete by our own with the book.
+we are not going to analyse it completely, but this will be a nice introduction and will be necessary to complete by our own with the book. ^781675
 
 We are NOW considering an environment which is:
 - **deterministic**: given an input we know exactly which output will be.
