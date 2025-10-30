@@ -6,13 +6,13 @@
 
 1. Mittente e destinatario condividono una chiave segreta.
     
-2. Il mittente calcola un valore HMAC = _Hash(chiave ⊕ opad ‖ Hash(chiave ⊕ ipad ‖ messaggio))_.
+2. Il mittente calcola un valore $HMAC = Hash(chiave \oplus opad ‖ Hash(chiave \oplus ipad ‖ messaggio))$. vedi che sono [[opad e ipad]] 
     
-3. Il destinatario ricalcola l’HMAC e lo confronta con quello ricevuto.
+3. Il destinatario ricalcola l’[[HMAC]] e lo confronta con quello ricevuto.
     
 4. Se coincidono → il messaggio **non è stato alterato** e **proviene da una fonte autentica**.
     
-
+ 
 **Garantisce:**
 
 - ✅ **Integrità** (il messaggio non è stato modificato)

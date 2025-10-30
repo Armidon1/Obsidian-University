@@ -1534,27 +1534,3 @@ groups)
 
 
 ---
-**HW03 - deadline 31-10-2025, 23:59 (tight)**
-- Create a binary file of several megabytes and perform a series of repeated experiments, measuring how execution time increases across runs
-    
-- Apply the Encrypt-then-MAC approach using OpenSSL and/or age
-    
-- Compare the following configurations:
-    
-    - AES-128-CTR + HMAC
-        
-    - ChaCha20 + HMAC
-        
-    - AES-128-GCM (API only)
-        
-    - ChaCha20 + Poly1305
-        
-- **Instructions**
-    
-    - Derive all working keys from a single random master key
-        
-    - Repeat each experiment at least five times to ensure statistical relevance
-        
-    - Present the results through clear, labeled graphs, highlighting performance differences among the algorithms
-        
-    - Specify in your report which tool (OpenSSL or age) was used in each case and how

@@ -17,9 +17,9 @@
 
 - **[[ECB]] (Electronic Codebook):** insicura, non protegge contro pattern ripetuti.
     
-- **[[CBC]] (Cipher Block Chaining):** aggiunge casualità ma non autenticazione.
+- **[[CBC]] (Cipher Block Chaining):** aggiunge casualità ma non [[Authenticity]].
     
-- **GCM (Galois/Counter Mode):** fornisce **confidenzialità + integrità** (autenticazione integrata).
+- **[[GCM]] (Galois/Counter Mode):** fornisce **[[Confidentiality]] + [[Integrity]]** ([[Authenticity]] integrata).
     
 
 **Garantisce:**

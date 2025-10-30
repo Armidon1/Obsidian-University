@@ -1,7 +1,7 @@
 # **CBC-MAC (Cipher Block Chaining – Message Authentication Code)**
 
 > È un **meccanismo di autenticazione dei messaggi ([[MAC]])** basato sulla **modalità [[CBC]]** di un algoritmo di cifratura a blocchi (come [[AES]] o [[3DES]]).  
-> Serve a garantire **l’[[Integrity]]** e **l’[[Authenticity]]** dei dati, ma **non la confidenzialità**.
+> Serve a garantire **l’[[Integrity]]** e **l’[[Authenticity]]** dei dati, ma **non la [[Confidentiality]]**.
 
 ---
 

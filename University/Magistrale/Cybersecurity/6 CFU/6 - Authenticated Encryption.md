@@ -51,13 +51,16 @@
 
 
 ## EtM
+[[EtM]]
 ![[Pasted image 20251022133248.png]]
 sometimes from a unique master key two subkeys are derived. those subkeys has to be shared somehow.
 
 ## E&M
+[[EaM]]
 ![[Pasted image 20251022133408.png]]
 in this case, the [[4 - Data Integrity - MAC, attacks and SHA-1#^04821e|Authentication Tag]] is created with the plaintext itself
 ## MtE
+[[MtE]]
 ![[Pasted image 20251022133430.png]]
 Remember a data-gram in routing? it has a payload and a header. when you are transmitting an information and you want confidentiality, you want to protect the payload, while the header is in clear. why we don't encrypt the header? because we want to make it simpler for the router.
 Since the router is handling a huge number of packages, encrypting and decrypting every time is a huge time and energy consumption.
@@ -89,14 +92,14 @@ Since the router is handling a huge number of packages, encrypting and decryptin
 ```
 
 # AEAD: GCM
-AES is used with CBC and also with this GCM approach. this because, CBC does not support authentication. And here is why exists GCM.
+[[AES]] is used with [[CBC]] and also with this [[GCM]] approach. this because, [[CBC]] does not support authentication. And here is why exists [[GCM]].
 
 ## What is GCM?
 
 - It's block mode of operation
-    - It contains a MAC
+    - It contains a [[MAC]]
 - Galois/Counter Mode
-- AEAD mode based on:
+- [[AEAD]] mode based on:
     - CTR mode for encryption
     - GHASH (the MAC, using polynomial hashing over GF($2^{128}$ ))
     - Structure: EtM
@@ -367,3 +370,19 @@ After all blocks are processed: p(r) = acc
 
 # Extra
 ![[Pasted image 20251023114114.png]]
+
+---
+**HW03 - deadline 31-10-2025, 23:59 (tight)**
+- Create a binary file of several megabytes and perform a series of repeated experiments, measuring how execution time increases across runs
+- Apply the Encrypt-then-MAC approach using OpenSSL and/or age
+- Compare the following configurations:
+    - AES-128-CTR + HMAC
+    - ChaCha20 + HMAC
+    - AES-128-GCM (API only)
+    - ChaCha20 + Poly1305
+        
+- **Instructions**
+    - Derive all working keys from a single random master key
+    - Repeat each experiment at least five times to ensure statistical relevance
+    - Present the results through clear, labeled graphs, highlighting performance differences among the algorithms
+    - Specify in your report which tool (OpenSSL or age) was used in each case and how

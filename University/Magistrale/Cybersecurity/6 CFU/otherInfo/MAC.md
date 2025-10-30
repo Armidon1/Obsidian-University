@@ -12,10 +12,13 @@
     
 
 **Esempio:**  
-[[HMAC]](Hash-based MAC) → usa una funzione di hash (come SHA-256) combinata con una chiave segreta.
+[[HMAC]](Hash-based MAC) → usa una funzione di hash (come [[SHA]]-256) combinata con una chiave segreta.
 
-👉 **Garantisce:** _Integrity_ e _Authenticity_  
+👉 **Garantisce:** _[[Integrity]]_ e _[[Authenticity]]_  
 ❌ **Non garantisce:** _[[Confidentiality]]_ (non cifra i dati)
+
+
+come visto in [[4 - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]] :
 ## An integrity mechanism: MAC
 this is not the MAC of the wifi card. 
 ### Recall final goal
@@ -34,7 +37,7 @@ Remark: **Authenticity** is orthogonal to **secrecy**, yet systems often require
 - $A_{k}(m)$ is called the authentication tag of m ^04821e
 
 Requirement – $V_{k}(m,A_{k}(m))$ = “accept”
-- The authentication algorithm is called MAC (Message Authentication Code)
+- The authentication algorithm is called [[MAC]] (Message Authentication Code)
 - $A_{k}(m)$ is frequently denoted $MAC_{k}(m)$
 - Verification is by executing authentication on m and comparing with $MAC_{k}(m)$
 
@@ -55,4 +58,4 @@ To produce a message–tag pair $(m, MAC_{k}(m))$ such that the verification fun
 
 - In the standard threat model, the adversary is assumed to know everything except the secret key k
 
-See also [[CMC-MAC]]
+See also [[CBC-MAC]]
