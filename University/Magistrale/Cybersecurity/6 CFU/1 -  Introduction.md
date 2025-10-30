@@ -9,9 +9,6 @@
 Standard in ISO 27000
 
 ---
-
-# Slide 5
-
 ## Cryptography vs. security 
 ![[Pasted image 20251022145145.png]]
 
@@ -30,9 +27,6 @@ a strip of parchment was wrapped around a wooden rod, and the message was writte
 to decrypt, recipient needed a rod of same diameter
 
 ---
-
-# Slide 8
-
 ## The Egyptian pharaoh approach
 **The sender**
 1) Shaving a slave's hexadecimal
@@ -46,62 +40,42 @@ to decrypt, recipient needed a rod of same diameter
 Timescales not comparable to today's
 
 
-
-
-
 ---
-
-# Slide 9
-
 ## Caesar cipher
-
-9
-
-9
-
 Shift the alphabet by a predetermined number of positions (e.g. 3)
 
+![[Pasted image 20251030200843.png]]
 key = 3
 
 attack: it is sufficient to test all possible keys (26)
 
 ---
 
-# Slide 10
-
 ## Alphabetic substitution
 
-10
-
+![[Pasted image 20251030200916.png]]
 random permutation (26! = 403 291 461 126 605 635 584 000 000)
 
 attack: use a computer for a frequency attack
 
 ---
-
-# Slide 11
-
 ## Polyalphabetic
-
-11
-
-0
-
-1
-
-2
-
-3
-
+More permutations (𝑙=3)
+Replace symbol of text by using permutation 𝑖+1, where 𝑖 starts by 0 and increases mod 𝑙 
+![[Pasted image 20251030201004.png]]
 if long enough frequency analysis still effective
 
 ---
-
-# Slide 12
-
 ## Enigma
+- one of the most advanced ciphers among the ancients (WWII)
+    
+- it encrypted each letter by passing it through a series of rotating electrical rotors, producing a different substitution with every keystroke
+    
+- broken by allied at Bletchley Park
 
-12
+easily broken by a computer because of the limited keyspace ≈1023 to 1026
+see https://cryptii.com/pipes/enigma-machine 
+
 
 one of the most advanced ciphers among the ancients (WWII)
 it encrypted each letter by passing it through a series of rotating electrical rotors, producing a different substitution with every keystroke
@@ -109,48 +83,24 @@ broken by allied at Bletchley Park
 
 ---
 
-# Slide 13
-
 ## Conclusion
-
-13
-
 Many other examples are possible
 In all examples sender and recipient must share some information
 We call this shared information the Key (still today)
 
 ---
 
-# Slide 14
-
 ## Frequency analysis
 
-14
-
 uses computers
-
 cryptoanalysis by frequency analysis
-
----
-
-# Slide 15
 
 ## Frequency of letters	
 
-15
-
-Each language has its own distribution of frequencies of the letters used
-they change from language to language but are public and well-known (Wikipedia)
-
-English
-
+![[Pasted image 20251030201339.png]]
 ---
 
-# Slide 16
-
 ## Languages
-
-16
 
 They are typically public and available on the web
 Several online resources exist
@@ -161,35 +111,18 @@ How to do it yourself
   - Perform a simple block-based count
 
 
-How to obtain frequencies
+How to obtain frequencies:
 
----
+- Clean encrypted text
 
-# Slide 17
+- Normalize casing (all lowercase or uppercase)
 
-## Frequency analysis(simplified)
+- Compute basic frequencies
 
-17
+- Count the frequency of each individual character
 
-Clean encrypted text
-
-Normalize casing (all lowercase or uppercase)
-
-Compute basic frequencies
-
-Count the frequency of each individual character
-
----
-
-# Slide 18
-
-## Frequency analysis(simplified) (2)
-
-18
-
-Use known frequency profiles from major languages
-
-Try aligning the most frequent letters of the encrypted text to each of these and see which language yields the most plausible results
+- Use known frequency profiles from major languages ![[Pasted image 20251030201454.png]]
+- Try aligning the most frequent letters of the encrypted text to each of these and see which language yields the most plausible results
 
 ---
 
@@ -211,231 +144,120 @@ modern encryption
 
 ---
 
-# Slide 20
-
 ## Model of encryption
-
-20
 
 used and accepted in all environments
 
----
-
-# Slide 21
-
 ## Model
 
-21
-
-Alice
-
-Bob
-
-encryptor
-
-decryptor
-
-plaintext
-
-plaintext
-
-ciphertext
-
-for confidentiality symmetric encryption is preferred
-
-12 aprile 2023
-
-IASD
+![[Pasted image 20251030201541.png]]
 
 ---
-
-# Slide 22
-
 ## What is a key?
 
-22
-
-  - (Long) string of (random) bits
-  - All strings should have same probability
-
-  - 010100011101011101010101101010…
-
+![[Pasted image 20251030201600.png]]
 symmetric keys must remain confidential
 
 ---
-
-# Slide 23
-
 ## Communication model
-
-23
-
-Alice
-
-Bob
-
-
-
-  - Two parties – Alice and Bob
-  - Reliable communication line
-  - Shared encryption scheme: E, D, K1, K2
-  - Goal: send a message M confidentially
+![[Pasted image 20251030201616.png]]
 
 ---
-
-# Slide 24
-
 ## Threat (attack) model
 
-24
-
-Cybersecurity d'Amore 01
-
-24
-
-Alice
-
-Bob
-
-
-
-
-
-Trudy 
-(or Eve)
-
-adversary
-
-attack to confidentiality: get partial/total information on M
+![[Pasted image 20251030201630.png]]
 
 
 ---
-
-# Slide 25
 
 ## Adversary
-
-25
+![[Pasted image 20251030201649.png]]
 
 ---
-
-# Slide 26
 
 ## Terminology
+|                  |                                                                                                                           |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| - **term**       | - **meaning**                                                                                                             |
+| - **plaintext**  | - _information_ _that_ _will_ _be_ _encrypted_                                                                            |
+| - **ciphertext** | - _information_ _that_ _has_ _been_ _encrypted__, i.e._ _transformed_ _into_ _incomprehensible_ _text_                    |
+| - **key**        | - _sequence_ _of_ _fixed_ _length_ _of bits_ _that_ _appear_ _random; in the_ _symmetric_ _case_ _K__1_ _= K__2_          |
+| - **cipher**     | - _pair_ _of_ _algorithms_ _for_ _encryption_ _and_ _decryption__,_ _often_ _denoted_ _as_ _(E, D)_                       |
+| - **encryptor**  | - _entity_ _that_ _applies_ _a_ _cipher_ _(__algorithm_ _E),_ _producing_ _a_ _ciphertext_                                |
+| - **decryptor**  | - _entity_ _that_ _applies_ _a_ _cipher_ _(__algorithm_ _D),_ _producing_ _a_ _plaintext_                                 |
+| - **encryption** | - _the_ _operation_ _performed_ _by an_ _encryptor_                                                                       |
+| - **decryption** | - _the_ _operation_ _performed_ _by a_ _decryptor_                                                                        |
+| **adversary**    | _entity_ _that_ _attempts_ _to compromise_ _confidentiality__,_ _integrity__, or_ _availability_ _of information systems_ |
 
-26
 
 ---
-
-# Slide 27
 
 ## Security goals
-
-27
-
-27
-
-Kerckhoff's principle: a cryptosystem should be designed to be secure, even if all its details, except for the key, are publicly known
-
-Shannon’s maxim: the enemy knows the system
+![[Pasted image 20251030201758.png]]
 
 ---
-
-# Slide 28
-
 ## Adversarial model
 
-28
-
-28
+![[Pasted image 20251030201814.png]]
 
 ---
-
-# Slide 29
-
-## Attack categories
-
-29
+# Attack categories
 
 against confidentiality and other requirements of information security
 
 ---
-
-# Slide 30
-
 ## What is in attack?
 
-30
-
-Any intentional attempt to compromise the security of a computer system, network, or data by violating one or more core principles of information security, such as confidentiality, integrity, or availability 
-Some attacks do not directly target information security principles but serve indirect purposes, such as enabling future compromise or gathering intelligence 
-Remember, cryptography plays a fundamental role among the measures designed to uphold information security 
+- Any intentional attempt to compromise the security of a computer system, network, or data by violating one or more core principles of information security, such as confidentiality, integrity, or availability 
+- Some attacks do not directly target information security principles but serve indirect purposes, such as enabling future compromise or gathering intelligence 
+- Remember, cryptography plays a fundamental role among the measures designed to uphold information security 
 
 ---
-
-# Slide 31
-
 ## First attacks
-
-31
+|                                      |               |                                                                                                |
+| ------------------------------------ | ------------- | ---------------------------------------------------------------------------------------------- |
+| - **type**                           | - **acronym** | - **description**                                                                              |
+| - [[Eavesdropping]]                  | - —           | - secretly listening to private conversation of others without their consent                   |
+| - [[Ciphertext-only attack (COA)]]   | - COA         | - attacker has only access to ciphertexts and tries to deduce the plaintext or key             |
+| - [[Known-Plaintext Attack (KPA)]]   | - KPA         | - attacker knows pairs of plaintext and ciphertext and uses them to infer the key              |
+| - [[Chosen-Plaintext Attack (CPA)]]  | - CPA         | - attacker can encrypt arbitrary plaintexts to gather information about the cipher             |
+| - [[Chosen-Ciphertext Attack (CCA)]] | - CCA         | - attacker can decrypt arbitrary ciphertexts of their choice, except for the target ciphertext |
 
 ---
-
-# Slide 32
 
 ## Attacks may use an oracle
 
-32
-
-An oracle is a theoretical black-box function that an attacker can query to obtain outputs (e.g., ciphertexts or plaintexts), often under controlled conditions 
+**An oracle** is a theoretical black-box function that an attacker can query to obtain outputs (e.g., ciphertexts or plaintexts), often under controlled conditions 
 
 It is an abstract entity or mechanism that provides access to a cryptographic function without revealing its internal workings
 
 ---
-
-# Slide 33
-
 ## Selection of attacks
 
-33
+**Known plaintext**: attacker has samples of both plaintext and its encrypted version (ciphertext) and is at liberty to make use of them to reveal further secret information such as secret keys
 
-Known plaintext: attacker has samples of both plaintext and its encrypted version (ciphertext) and is at liberty to make use of them to reveal further secret information such as secret keys
+**Chosen plaintext (uses an oracle)**: attacker has the capability to choose arbitrary plaintexts to be encrypted and obtain the corresponding ciphertexts. The goal of the attack is to gain some further information which reduces the security of the encryption scheme. In the worst case, a chosen-plaintext attack could reveal the scheme's secret key
 
-Chosen plaintext: attacker has the capability to choose arbitrary plaintexts to be encrypted and obtain the corresponding ciphertexts. The goal of the attack is to gain some further information which reduces the security of the encryption scheme. In the worst case, a chosen-plaintext attack could reveal the scheme's secret key
+**Chosen ciphertext (uses an oracle)**: the cryptanalyst gathers information, at least in part, by choosing a ciphertext and obtaining its decryption under an unknown key
 
-uses an oracle
-
----
-
-# Slide 34
-
-## Selection (continued)
-
-34
-
-Chosen ciphertext: the cryptanalyst gathers information, at least in part, by choosing a ciphertext and obtaining its decryption under an unknown key
-
-Adaptive chosen plaintext: the cryptanalyst makes a series of interactive queries, choosing subsequent plaintexts based on the information from the previous encryptions
-
-both use an oracle
+**Adaptive chosen plaintext (uses an oracle):** the cryptanalyst makes a series of interactive queries, choosing subsequent plaintexts based on the information from the previous encryptions
 
 ---
-
-# Slide 35
 
 ## Other attacks
 
-35
-
+|                                |                                                                                  |
+| ------------------------------ | -------------------------------------------------------------------------------- |
+| - **type**                     | - **description**                                                                |
+| - Cryptoanalysis               | - Any mathematical technique used to break or weaken cryptographic algorithms    |
+| - [[Brute-force attack]]       | - Attacker tries all possible keys until the correct one is found                |
+| - [[Side‑channel attack]]      | - Exploits physical data (timing, power consumption, EM radiation) from a device |
+| - [[Replay attack]]            | - Reuses previously captured valid messages to trick a system                    |
+| - [[Man-in-the-Middle (MITM)]] | - Attacker intercepts and potentially alters communications between two parties  |
 more attacks discussed next
 
 ---
-
-# Slide 36
-
 ## About brute-force
-
-36
 
 Modern computers can quickly try exploring all possible keys (~ 106 to 1015 keys/second)
   - depending on hardware
@@ -445,39 +267,23 @@ Keys often have a fixed size: the longer the key, the stronger the security — 
 If a key is n bits long, there are 2ⁿ possible keys. The practical limit for current computers is often set around n = 80, but this threshold continues to rise. With 128-bit keys, even at a rate of 1 trillion keys per second, it would take over 10¹⁹ years on average to brute-force the key
 
 ---
-
-# Slide 37
-
-## Keys and password
-
-37
+# Keys and password
 
 similar but different
 
 ---
-
-# Slide 38
-
 ## Why to make a distinction?
-
-38
-
-Keys and passwords
-They have similarities but are different
-Both are secret
-Cryptography uses both (for now)
-They have different characteristics
-They are used in different contexts
-They are protected differently
-They have a different impact on security
+- Keys and passwords
+- They have similarities but are different
+- Both are secret
+- Cryptography uses both (for now)
+- They have different characteristics
+- They are used in different contexts
+- They are protected differently
+- They have a different impact on security
 
 ---
-
-# Slide 39
-
 ## Password basics
-
-39
 
 A password is a human-chosen secret used to authenticate a user
 It must be
@@ -486,12 +292,7 @@ It must be
   - Representable with keyboard characters
 
 ---
-
-# Slide 40
-
 ## Limitations of passwords
-
-40
 
 Typable = predictable: constrained to the keyboard → lower entropy
 Password space = Tⁿ, not Nⁿ (T: keyboard-typable symbols, N>T: all possible symbols)
@@ -499,15 +300,9 @@ Vulnerable to
   - Brute force
   - Reuse across platforms
   - Other attacks
-  - 
 
 ---
-
-# Slide 41
-
 ## Phishing attacks
-
-41
 
 Phishing is a type of social engineering attack in which an adversary tricks users into revealing sensitive information, such as passwords, credit card numbers, or access credentials 
 Characteristics
@@ -519,54 +314,42 @@ Email, SMS, voice calls, fake login pages etc.
 other vulnerabilty of passwords 
 
 ---
-
-# Slide 42
-
 ## What is a cryptographic key?
-
-42
 
 A cryptographic key is a random bit string used in encryption, decryption, and other cryptographic operations
 If the string is n bits long, then there are 2ⁿ possible keys
 
-0101011000011101…10101011
-
+for example:
+	0101011000011101…10101011
 561D…AB (often represented in hexadecimal)
 
 ---
-
-# Slide 43
-
 ## Key properties
 
-43
-
-Machine-generated
-Not typable
-Fixed-length (e.g., 128, 256 bits)
-Stored as binary, not text
+- Machine-generated
+- Not typable
+- Fixed-length (e.g., 128, 256 bits)
+- Stored as binary, not text
 
 
-Visual Comparison
+Visual Comparison:
 Password: S3cr3t!
 Key: 9F4b713f8e2a... (256 bits)
 
 
 ---
-
-# Slide 44
-
 ## Password vs Key – Comparison Table
-
-44
+|   |   |   |
+|---|---|---|
+|- **feature**|- **password**|- **cryptographic** **key**|
+|- chosen by|- human|- machine|
+|- typable|- yes – must fit a keyboard|- no – binary data|
+|- length|- short (8–20 chars typically)|- long (128–256 bits or more)|
+|- purpose|- authentication|- encryption / signing|
+|- stored as|- hashed (ideally)|- raw / protected|
 
 ---
-
-# Slide 45
-
 ## Analogy	
-
-45
 
 password = PIN typed into a keypad
 
@@ -574,38 +357,20 @@ key = the actual metal key unlocking a vault
 
 
 ---
-
-# Slide 46
-
 ## Combined use
-
-46
-
 Many systems use passwords to unlock secret keys
 Example
   - PGP, Signal, WhatsApp: your password decrypts a stored secret key
 
 ---
-
-# Slide 47
-
 ## Key Derivation
-
-47
-
 Passwords are often converted into keys using "ad hoc" algorithms
   - Argon2, PBKDF2
 
 Still constrained by password entropy
 
 ---
-
-# Slide 48
-
 ## Why keys are more secure
-
-48
-
 Higher entropy
 
 Machine-random
@@ -613,12 +378,7 @@ Machine-random
 Not guessable or typable
 
 ---
-
-# Slide 49
-
 ## Why passwords are still used
-
-49
 
 Usable by humans
 
@@ -627,12 +387,7 @@ Don’t require special storage
 Usability vs security tradeoff
 
 ---
-
-# Slide 50
-
 ## Summary
-
-50
 
 Passwords: chosen by humans, typable, used for identity
 Keys: generated by machines, not typable, used for encryption
