@@ -308,3 +308,10 @@ Questa proprietà è fondamentale in ambienti dove il **tempo di risposta** dete
 In applicazioni come servizi finanziari, sistemi di telemedicina o piattaforme di IoT, una bassa performance può causare frustrazione degli utenti, errori operativi o persino ritardi che compromettono la sicurezza (es. un sistema che non risponde in tempo per elaborare transazioni).
 
 > 🔍 **Nota**: Il termine "performance" non è sempre incluso tra le proprietà classiche della *dependability* come availability, reliability e safety, ma diventa fondamentale in contesti operativi reali, specialmente nei sistemi distribuiti dove il carico varia dinamicamente.
+
+### **Adaptability (Adattabilità)**
+[[Adaptability]]
+> Capacità del sistema di **modificare il proprio comportamento** in risposta a cambiamenti dell’ambiente, del carico o delle minacce.  
+> **Esempio:** un firewall che aggiorna dinamicamente le regole quando rileva nuovi tipi di attacco.  
+> **Benefici:** resilienza, riduzione dei downtime, migliore gestione del rischio.  
+> **Minacce mitigate:** cambiamenti imprevisti, attacchi zero-day.

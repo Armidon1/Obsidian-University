@@ -1,13 +1,13 @@
 # DATA INTEGRITY
 ### What is data integrity?
-- Integrity = trust in the unaltered state of information
+- [[Integrity]] = trust in the unaltered state of information
 - Goal: prevent undetected or unauthorised changes
 - Part of the CIA triad
-  - Confidentiality
-  - Integrity
-  - Availability
+  - [[Confidentiality]]
+  - [[Integrity]]
+  - [[Availability]]
 
-Data integrity guarantees that the source of the information is authentic. *we do data integrity without confidentiality for now*, this because confidentiality is not always needed because the information itself is not sensitive.
+Data integrity guarantees that the source of the information is authentic ([[Authenticity]]). *we do data integrity without confidentiality for now*, this because confidentiality is not always needed because the information itself is not sensitive.
 
 ### Simple Analogy
 **Sealed envelope**
@@ -40,10 +40,10 @@ Data integrity guarantees that the source of the information is authentic. *we d
 Transmission errors are no longer a big problem. That's because, thanks to the last technological improvement, this happens very rarely.
 
 ### Two facets of integrity
-1) **Data Integrity**
+1) **Data [[Integrity]]**
 Ensures the content stays unchanged. Data Integrity can also be threatened in the case where the source is duplicated.
 
-2) **Origin Integrity (authenticity)**
+2) **Origin Integrity ([[Authenticity]])**
 Ensures the sender is legitimate
 
 fun fact: servers will always be violated somehow. servers are managed by a group of people, when attackers are thousands. 
@@ -64,13 +64,13 @@ we can design using an approach called security by design. in this case, we are 
 - Before any algorithm, the need for integrity is universal
 - Integrity is perhaps the unique information security requirement that is always desired
 
-## An integrity mechanism: MAC
+## An integrity mechanism: [[MAC]]
 this is not the MAC of the wifi card. 
 ### Recall final goal
 Ensure **integrity** of messages, even in presence of
 an **active** adversary who sends own messages
 ![[Pasted image 20251009215922.png]]
-Remark: **Authenticity** is orthogonal to **secrecy**, yet systems often required to provide both
+Remark: **[[Authenticity]]** is orthogonal to **[[Secrecy]]**, yet systems often required to provide both
 
 "forging" is the type of attack that violates the integrity. 
 ### Definitions
@@ -103,14 +103,15 @@ To produce a message–tag pair $(m, MAC_{k}(m))$ such that the verification fun
 
 - In the standard threat model, the adversary is assumed to know everything except the secret key k
 ### CBC Mode MACs
+see also [[CBC-MAC]]
 - Start with the all zero seed
 
-- Given a message consisting of n blocks M1,M2,…,Mn, apply CBC (using the secret key k)
+- Given a message consisting of n blocks M1,M2,…,Mn, apply [[CBC]] (using the secret key k)
 ![[Pasted image 20251009154828.png]]
 
 
 ###  **CBC-MAC is insecure for variable-length messages**
-- CBC-MAC is secure only for fixed-length messages; it is insecure when message lengths can vary.
+- [[CBC-MAC]] is secure only for fixed-length messages; it is insecure when message lengths can vary.
 
 - An attacker who knows valid message–tag pairs $(m, t)$ and $(m', t')$ can construct a new (longer) message $m''$ such that $CBC-MAC_k(m'') = t'$. This is not a mere replay: $m''$ is a new message that the verifier will accept as if it came from the legitimate sender.
 
@@ -121,8 +122,8 @@ To produce a message–tag pair $(m, MAC_{k}(m))$ such that the verification fun
 - Why this is dangerous: even if $m''$ is built from previously seen blocks, the concatenated sequence can have a different application-level meaning (e.g., multiple bank transfers, chained IoT commands, or a combined firmware image) and therefore cause real damage.
 
 - Short mitigations:
-  - Do not use CBC‑MAC on variable-length messages.
-  - Prefer CMAC or HMAC for variable-length data.
+  - Do not use [[CBC-MAC]] on variable-length messages.
+  - Prefer [[CMAC]] or [[HMAC]] for variable-length data.
   - Alternatively, include an unambiguous length prefix or use domain separation / context binding when authenticating messages.
 
 ###  **final remarks on CBC-MAC**
