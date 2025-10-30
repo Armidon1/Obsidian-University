@@ -250,7 +250,7 @@ Effects
 - A shares a key 𝑔𝑎𝑡mod 𝑝 with T (believing to share it with
     B)
 
-
+[[Availability]]
 #### Perfect forward secrecy
 
 The cryptosystem

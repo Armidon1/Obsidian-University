@@ -126,8 +126,6 @@ How to obtain frequencies:
 
 ---
 
-# Slide 19
-
 ## Frequency analysis(simplified) (3)
 
 19
