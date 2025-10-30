@@ -438,9 +438,6 @@ passive adversary. Man-in-the-middle attack is lethal
 
 ## RSA – the algorithm
 
-
-35
-
 #### The multiplicative group ℤ
 
 ```
@@ -574,15 +571,12 @@ Hellman to solve the key distribution problem
           - key exchange
 
 
-##### RSA – an
-
-##### example
-
+## RSA – an example
 
 #### Historical note
 
 - The original paper presented an example by
-    exchanging𝑑 and𝑒
+    exchanging 𝑑 and 𝑒
 - This is not relevant because the two keys have the
     same behaviour
 - You can use any of the two keys for encrypting and
@@ -597,40 +591,36 @@ Hellman to solve the key distribution problem
 #### Multiplicative inverses
 
 - The Extended Euclidean algorithm is used
-- Based on **Bézout's identity** : given two non-zero integers 𝑥
-    and 𝑦 there exist signed integers 𝑎and 𝑏 such that 𝑎𝑥 + 𝑏𝑦 =
-    gcd (𝑥,𝑦)
-- If 𝑥 and 𝑦 are **coprime** then 𝒂𝒙 + 𝒃𝒚 = 𝟏
+- Based on **[[Bézout's identity]]** : given two non-zero integers 𝑥
+    and 𝑦 there exist signed integers 𝑎and 𝑏 such that $$𝑎𝑥 + 𝑏𝑦 =
+    gcd (𝑥,𝑦)$$ where $gcd$ is the Greatest common Divisor
+- If 𝑥 and 𝑦 are **[[Coprime]]** then 𝒂𝒙 + 𝒃𝒚 = 𝟏
     - Key for computing multiplicative inverses
     - 𝑎𝑥 = 1−𝑏𝑦
-    - Apply to both sides mod 𝑦
+    - Apply to both sides mod 𝑦 (remember the [[mod operator]])
     - 𝑎𝑥 ≡ 1 (mod 𝑦) (since 𝑏𝑦 ≡ 0 (mod 𝑦))
     - 𝑎 ≡ 𝑥−1 (mod 𝑦) and (similarly) 𝑏 ≡ 𝑦−1 (mod 𝑥)
 - Remember: multiplicative inverses are equivalence classes
 
+*Note*: in the exam the professor wants also the interpretation of the meaning of the [[Bézout's identity]] given a specific number. he doesn't want us to write the algorithm but he want us to understand what the [[Bézout's identity]] is.
 
-#### Overview on the Extended
-
-#### Euclidean Algorithm EEA
+#### Overview on the Extended Euclidean Algorithm EEA
 
 - Classical Euclid's algorithm can be extended to
-    maintain the equality 𝑢𝑖𝑥 + 𝑣𝑖𝑦 = 𝑟𝑖
-- At the end, 𝑟𝑘 = 1 (for some 𝑘)
+    maintain the equality $𝑢_𝑖𝑥 + 𝑣_𝑖𝑦 = 𝑟_𝑖$
+- At the end, $𝑟_𝑘 = 1$ (for some 𝑘)
     - equality converges to Bézout's identity
 - Construction is based on correct initialization
 - Maintenance of equality can be obtained by suitable
     update of non-constant values and proved by
     induction
 
-
-46
-
 #### The EEA algorithm
 
 ```
-function extendedEuclid(a, b)
-// Assumes gcd(a, b) = 1
-x0 ← 1, y0 ← 0
+function extendedEuclid(a, b) //in the last slide a=x and b=y
+// Assumes gcd(a, b) = 1     //so they are Coprime
+x0 ← 1, y0 ← 0    //those are the starting values
 x1 ← 0, y1 ← 1
 ```
 ```
@@ -644,12 +634,11 @@ q ← a div b
 return (x0, y0) // such that a*x0 + b*y0 = 1
 ```
 
-47
 
 #### A small example
 
 - Let p = 47, q = 59, N = pq = 2773
-    - φ(N)= 46×58 = 2668
+    - φ(N)= 46×58 = 2668 (that's the [[Euler's totient function]])
 - Pick e = 157 (gcd(2668, 157) = gcd(157, 156) = gcd(156, 1) =
     gcd(1, 0) = 1), then 157×17 – 2668 = 1, so d = 17 is the inverse of
     157 mod 2668
@@ -657,43 +646,16 @@ return (x0, y0) // such that a*x0 + b*y0 = 1
     number per letter:
 - blank = 00, A = 01, B = 02, ..., Z = 26
 - Message: ITS ALL GREEK TO ME is encoded
-    0 1 2 3 4 5 6 7 8 9
-
-I T S A L L G R E E K T O M E
-
-0
-2
-1
-0
-0
-1
-1
-0
-0
-1
-0
-0
-1
-0
-2
-1
-0
-1
-0
-0
-
-
+![[Pasted image 20251030153054.png]]
 #### A small example
 
-- N = 2773, e = 17
+- N = 2773, d = 17
 - ITS ALL GREEK TO ME is encoded as
     0920 1900 0112 1200 0718 0505 1100 2015 0013 0500
-- First block M = 0920 encrypts to
-    - Me= M^17 = (((M^2 )^2 )^2 )^2 ×M = 948 (mod 2773)
+- First block M = 0920 encrypts to$$M^d= M^{17} = (((M^2 )^2 )^2 )^2 ×M = 948 (\bmod 2773)$$
 - The whole message (10 blocks) is encrypted as
-    0948 2342 1084 1444 2663 2390 0778 0774 0219 1655
-- Indeed 0948d = 0948^157 = 9481+4+8+16+128 = 920 (mod 2773), etc.
-
+    `0948 2342 1084 1444 2663 2390 0778 0774 0219 1655`
+- Indeed $0948^d = 0948^{157} = 9481+4+8+16+128 = 920 (\bmod 2773)$, etc.
 
 #### Choice of exponents
 
@@ -703,13 +665,7 @@ I T S A L L G R E E K T O M E
 - First exponent is often chosen small (e.g., 65537)
     - good for the public exponent
 
-
-##### RSA –
-
-##### purposes of
-
-##### encryption
-
+## RSA – purposes of  encryption
 
 #### RSA: two ways for
 
@@ -735,10 +691,10 @@ I T S A L L G R E E K T O M E
 - Encryption by a private key
     - only the owner can encrypt
     - everybody can decrypt
-    - no confidentiality
-    - non-repudiation?
+    - no [[Confidentiality]]
+    - [[Non-Repudiation]]?
 
-
+*note*: imagine if the attacker sends to alice another public key which is different from the bob's public key. Alice encrypt with the fake bob's public key, and only the adversary can decrypt. bob cannot even understand the ciphertext.
 #### Non-repudiation
 
 - The sender of a message cannot deny
@@ -754,14 +710,14 @@ I T S A L L G R E E K T O M E
 
 #### Purposes
 
-- Enc with pub key
-    - confidentiality
+- Encryption with pub key
+    - [[Confidentiality]]
     - mainly used for key-exchange
     - not used for messages longer than
        one block (or ≥ N)
-- End with pvt key
-    - integrity, authenticity
-    - non-repudiation
+- Encryption with pvt key
+    - [[Integrity]], [[Authenticity]]
+    - [[Non-Repudiation]]
 
 
 #### Discussion (confidentiality)
@@ -776,131 +732,88 @@ I T S A L L G R E E K T O M E
        - Security. RSA is deterministic unless
           padded
        - Battery draining
-- Hybrid encryption. Key exchange + AES
+- [[Hybrid Encryption]]. Key exchange + AES
     - Only few bits are encrypted
 
 
-#### Discussion (non-
+#### Discussion ([[Non-Repudiation]])
 
-#### repudiation)
-
-- Disregarding the performance issues,
-
-```
-RSA enc with pvt key is a path to non-
-repudiation
-```
-- Because public can repeatedly decrypt a
-
-```
-message and see that it was originated
-by who encrypted
-```
-- the process is a verification, like
-    MAC verification
+- Disregarding the performance issues, RSA encryption with private key is a path to [[Non-Repudiation]]
+- Because public can repeatedly decrypt a message and see that it was originated by who encrypted
+	- the process is a verification, like [[MAC]] verification
 
 
 #### Not yet non-repudiation
 
-Existential forgery example
+**Existential forgery example:**
+- Let 𝑈 and 𝑉 respectively be public and private key of Alice
+- Imagine that we expect non-repudiation if Alice sends pair (𝑀,𝑆) where $𝑆 = 𝐸_𝑉(𝑀)$
+- Everybody can verify that $𝐸_𝑈(𝑆)$ = 𝑀 and understand that Alice sent the pair
+    - **recall that in RSA encryption & decryption are same op**
 
-- Let 𝑈 and 𝑉 respectively be public and
-    private key of Alice
-- Imagine that we expect non-repudiation if
-    Alice sends pair (𝑀,𝑆) where 𝑆 = 𝐸𝑉(𝑀)
-- Everybody can verify that 𝐸𝑈(𝑆) = 𝑀 and
-    understand that Alice sent the pair
-       - recall that in RSA enc & dec are same
-          op
-
-
-#### Forgery
-
+ **Forgery:**
 - Fran (attacker) creates a random binary file 𝑅
     - many implementation details missing
-- Fran computes 𝐷 = 𝐸𝑈(𝑅)
-- Fran (pretending to be Alice) sends to Bob pair
-    (𝐷,𝑅)
-- Bob verifies and checks that 𝐷 = 𝐸𝑈(𝑅)
-- Even if 𝐷 is meaningless the existential forgery
-    is successful
+- Fran computes $𝐷 = 𝐸_𝑈(𝑅)$
+- Fran (pretending to be Alice) sends to Bob pair (𝐷,𝑅)
+- Bob verifies and checks that $𝐷 = 𝐸_𝑈(𝑅)$
+- Even if 𝐷 is meaningless the existential forgery is successful
        - Bob got direction to accept
-       - Whatever file can be interpreted as a
-          sequence of integers
+       - Whatever file can be interpreted as a sequence of integers
 
 
 #### RSA signature
 
-- Alice sends pair (𝑀,𝐸𝑉(𝐻(𝑀)), where 𝐻 is
-
-```
-cryptographic hashing function
-```
-- Previous attack doesn't work because 𝐻 is OWF
+- Alice sends pair $(𝑀,𝐸_𝑉(𝐻(𝑀))$, where 𝐻 is cryptographic hashing function
+- Previous attack doesn't work because 𝐻 is [[OWF]] (One Way Function)
     - Fran cannot get a message to send
-- Encrypting a hashing is not demanding because of its
-    small size
-- Still **theoretical** (just mathematical), some further
-    details to be discussed later
+- Encrypting a hashing is not demanding because of its small size
+- Still **theoretical** (just mathematical), some further details to be discussed later
 
-
+the digital encryption is not just an encryption of the message with the key but is the encryption of the digest of the message
 #### Bob's verification
 
-- Bob receives a pair (𝑀,𝑆) from somebody pretending to be
-    Alice
-- Bob computes 𝐻(𝑀) = ℎ 1
-- Bob computes ℎ 2 = 𝐸𝑈(𝑆)
-- If ℎ 1 = ℎ 2 **accept** , else **reject**
-- **Non-repudiation only when verification accepts**
-    - 𝑯 **guarantees data integrity**
-    - **Enc by** 𝑽 **guarantees authenticity**
+- Bob receives a pair (𝑀,𝑆) from somebody pretending to be Alice
+- Bob computes $𝐻(𝑀) = ℎ_1$
+- Bob computes $ℎ_2 = 𝐸_𝑈(𝑆)$
+- If $ℎ_1 = ℎ_2$ **accept** , else **reject**
+- **[[Non-Repudiation]] only when verification accepts**
+    - 𝑯 **guarantees data [[Integrity]]**
+    - **Encrypted by** 𝑽 **guarantees [[Authenticity]]**
 
+notice that the fact we are working with digests, it is possible to suffer the birthday bound. of course we can defend our self by using a big enough digest (SHA-256 for example, is great).
 
-##### "textbook"
-
-##### RSA
-
-##### weaknesses
-
-
-#### "textbook" RSA is not
-
-#### always robust
-
-- There are several vulnerabilities in the original
-    definition of RSA
+## "textbook" RSA weaknesses
+#### "textbook" RSA is not always robust
+- There are several vulnerabilities in the original definition of RSA
 - Let's examine the main
-
-
 #### Attacks on RSA
 
-1. Factor N = pq. This is believed hard unless p, q have
+1. **Factor $N = pq$**. This is believed hard unless p, q have
     some “bad” properties. To avoid such primes, it is
     recommended to
-       - Take p, q large enough (at least ~1024 bits each)
-       - Make sure p, q are not too close together
-       - Make sure both (p-1), (q-1) have large prime factors
+       - Take **p, q large enough** (at least ~1024 bits each)
+       - Make sure **p, q are not too close together**
+       - Make sure both **(p-1), (q-1) have large prime factors**
           (to foil Pollard’s rho algorithm)
              - special-purpose integer factorization algorithm
                 (John Pollard, 1975); particularly effective at
                 splitting composite numbers with small factors.
-2. Some messages might be easy to decrypt
-
-
+2. **Some messages might be easy to decrypt**
 #### RSA and factoring
 
-- Fact 1: given N, e, pand q it is easy to compute d
-- Fact 2: given N, e
-    - if you factor N then you can compute φ(N) and d
+- Fact 1: given **N, e, p** and **q** it is easy to compute **d**
+- Fact 2: given **N, e
+    - if you factor **N**  ([[Factorize a Number]]) then you can compute φ(N) and d
 - Conclusion
     - If you can factor N, then you break RSA
     - If you invert RSA, then you can factor N?
-       OPEN PROBLEM
+       **OPEN PROBLEM**: there is no a solution yet to this problem
 
 
 #### Factoring RSA challenges
 
-- RSA challenges: factor N = pq
+- RSA (the company) challenges: factor N = pq
 - RSA Security has published factoring challenges
     - RSA 426 bits, 129 digits: factorized in 1994 (8
        months, 1600 computers on the Internet (10000
@@ -914,7 +827,7 @@ cryptographic hashing function
 #### A case study
 
 - June 2008: Kaspersky Labs analyzed a variant of the Gpcode
-    ransomware that used RSA encryption with a 1024-bit key to
+    [[Ransomware]] that used RSA encryption with a 1024-bit key to
     lock victims’ files
 - Kaspersky proposed a global distributed computing effort to
     break the key. Estimate (from their website):
@@ -932,73 +845,57 @@ cryptographic hashing function
 #### RSA - Attacks
 
 - There are messages m easy to decrypt:
-    if m = 0, 1, N-1 then RSA(m) = m
-       - notice e must be odd ≥ 3, hence (N-1)e mod N
-          ≡ N-1, because (N-1)^2 mod N ≡ 1
-       - SOLUT: rare, use salt
+    if $m = 0, 1, N-1$ then RSA(m) = m
+       - notice e must be odd ≥ 3, hence $(N-1)^e \bmod N ≡ N-1$, because $(N-1)^2 \bmod N ≡ 1$
+       - SOLUTION: rare, use salt
 - If both m and e are small (e.g., e = 3) then we
-    might have me < N; hence me mod N = me
+    might have $m^e < N$; hence $m^e \bmod N = m^e$
        - compute e-th root in arithmetic is easy:
           adversary compute it and finds m
-       - SOLUT. Add nonzero bytes to avoid small
-          messages
+       - **SOLUTION: Add nonzero bytes to avoid small messages**
 
 
 #### RSA - Attacks
 
 Small e (e.g., e = 3)
-❑ Suppose adversary has two encryptions of similar
-messages such as
-c 1 = m^3 mod n and c 2 = (m+1)^3 mod n
-Therefore
-m = (c 2 + 2 c 1 - 1) / (c 2 - c 1 +2)
-❑ The case m and (am + b) is similar
+- Suppose adversary has two encryptions of similar messages such as
+	- $c_1 = m^3 \bmod n$, and $c_2 = (m+1)^3 \bmod n$
+	Therefore
+	- $m = (c_2 + 2 c_1 - 1) / (c_2 - c_1 +2)$
+- The case m and (am + b) is similar
 
-SOLUT. Choose large e
+**SOLUTION: Choose large e**
 
-
-_1996 Eurocrypt_
+![[Pasted image 20251030172117.png]]
 
 
 #### Some attacks use CRT
 
 **Chinese Remainder Theorem (CRT)**
 
-- Suppose n 1 , n 2 , ..., nk are positive integers which
-    are pairwise coprime. Then, for any given
-    integers a 1 , a 2 , ..., ak, there exists an integer x
-    solving the system of simultaneous congruencies
-- Furthermore, all solutions x to this system are
-    congruent modulo the product N = n 1 n 2 ...nk
+- Suppose $n_1 , n_2 , ..., n_k$ are positive integers which are pairwise [[Coprime]]. Then, for any given integers $a_1 , a_2 , ..., a_k$, there exists an integer x solving the system of simultaneous congruencies.
+- Furthermore, all solutions x to this system are congruent modulo the product $N = n_1n_2...n_k$
 
 
 #### RSA - Attacks
 
-- Assume e = 3 and then send the same message three
-    times to three different users, with public keys
-       (3, n 1 ) (3, n 2 ) (3, n 3 )
-- **Attack** : adv. knows public keys and
-    m^3 mod n 1 , m^3 mod n 2 , m^3 mod n 3
+- Assume e = 3 and then send the same message three times to three different users, with public keys
+       $(3, n_1 ) (3, n_2 ) (3, n_3 )$
+- **Attack** : adversary knows public keys and
+	    $m^3 \bmod n_1$ , $m^3 \bmod n_2$ , $m^3 \bmod n_3$
 - He can compute (using CRT)
-    m^3 mod (n 1 ∙n 2 ∙n 3 )
-- Moreover m < n 1 , n 2 , n 3 ; hence m^3 < n 1 ∙n 2 ∙n 3 and
-    m^3 mod n 1 ∙n 2 ∙n 3 = m^3
-- Adv. computes cubic root and gets result
-- SOLUT. Add random bytes to avoid equal messages
-
+    $m^3 \bmod (n_1 ∙n_2 ∙n_3 )$
+- Moreover $m < n_1 , n_2 , n_3$ ; hence $m^3 < n_1 ∙n_2 ∙n_3$ and
+    $m^3 \bmod n_1 ∙n_2 ∙n_3 = m^3$
+- Adversary computes cubic root and gets result
+- **SOLUTION: Add random bytes to avoid equal messages**
 
 #### RSA - Attacks
 
-- If message space is small, then adv. can test all
-    possible messages
-       - ex.: adv. knows encoding of m and knows that m
-          is either m 1 =10101010 or m 2 =01010101
-       - adv. encrypts m 1 and m 2 using public key and
-          verifies
-- SOLUT. Add random string in the message
-
-
-73
+- If message space is small, then adversary can test all possible messages
+- example: adv. knows encoding of m and knows that m is either $m_1 =10101010$ or $m_2 =01010101$
+	- adversary encrypts $m_1$ and $m_2$ using public key and verifies
+- **SOLUTION: Add random string in the message**
 
 #### RSA - Attacks
 

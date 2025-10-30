@@ -1,5 +1,3 @@
-
-
 ## Information security
 
 ![[Pasted image 20251022145115.png]]
