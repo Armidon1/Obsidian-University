@@ -1,6 +1,6 @@
 # **AES-CTR (Advanced Encryption Standard – Counter Mode)**
 
-> È una **modalità di cifratura a blocchi** ([[Block Cipher]]) che trasforma **[[AES]]** in un **cifrario a flusso** ([[Stream Cipher]]), garantendo **[[Confidentiality]]** dei dati.
+> È una **modalità di cifratura a blocchi** ([[Block Cipher]]) che trasforma **[[AES]]** in un **cifrario a flusso** ([[Stream Cipher]]), garantendo **[[Confidentiality]]** dei dati, grazie alla tecnica di [[CTR]].
 
 ---
 

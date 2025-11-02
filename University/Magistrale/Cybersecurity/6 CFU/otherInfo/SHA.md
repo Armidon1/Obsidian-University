@@ -63,4 +63,4 @@
 > fondamentale per **integrità dei dati, autenticazione e firme digitali**,  
 > ma **non protegge la confidenzialità** da sola.
 
-Vedi anche [[4 - Data Integrity - MAC, attacks and SHA-1#SHA-1 basics]]
+Vedi anche [[4 CS - Data Integrity - MAC, attacks and SHA-1#SHA-1 basics]]

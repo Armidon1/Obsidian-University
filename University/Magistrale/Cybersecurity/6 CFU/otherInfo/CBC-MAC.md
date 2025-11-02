@@ -60,4 +60,4 @@
 > e deve essere usato con attenzione — preferibilmente sostituito da **CMAC** o **[[HMAC]]** nelle implementazioni moderne.
 > 
 
-Vedi anche [[4 - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]]
+Vedi anche [[4 CS - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]]

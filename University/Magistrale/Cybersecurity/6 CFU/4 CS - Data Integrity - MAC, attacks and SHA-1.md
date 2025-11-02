@@ -1,3 +1,4 @@
+last lesson [[3 CS - Block Ciphers]]
 # DATA INTEGRITY
 ### What is data integrity?
 - [[Integrity]] = trust in the unaltered state of information
@@ -497,3 +498,4 @@ Cryptographic hashing function has two properties:
 we can use whatever programming language, is suggested C/C++. 
 Considering that report considers 3 files and for each file we have to do an encryption and decryption, for each 3 algorithm. 
 
+next lesson [[5 CS - Cryptographic Hash Functions - Design, Security, and Applications]]

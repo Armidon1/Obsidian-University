@@ -59,3 +59,5 @@
 
 > **ChaCha20** = cifratura **simmetrica a flusso** moderna, veloce e sicura.  
 > Garantisce **confidenzialità** e viene spesso combinata con **[[Poly1305]]** per autenticazione e integrità.
+
+Vedi anche [[2 CS - Stream Ciphers#ChaCha20]]

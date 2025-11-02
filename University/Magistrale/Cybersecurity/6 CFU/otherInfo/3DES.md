@@ -1,6 +1,6 @@
 # **3DES (Triple Data Encryption Standard)**
 
-> È un **algoritmo di cifratura simmetrica a blocchi** che applica **tre volte l’algoritmo [[DES]]** per aumentare la sicurezza del vecchio standard originale.  
+> È un **algoritmo di cifratura simmetrica a blocchi** ([[Symmetric Encryption]] [[Block Cipher]]) che applica **tre volte l’algoritmo [[DES]]** per aumentare la sicurezza del vecchio standard originale.  
 > È stato ampiamente usato prima dell’adozione di **[[AES]]**, ma oggi è considerato **obsoleto**.
 
 ---

@@ -1,3 +1,4 @@
+last lesson [[2 CS - Stream Ciphers]]
 # Slide 1
 
 ## Block ciphers: an introduction
@@ -956,3 +957,4 @@ CTR
 
 ---
 
+next lesson [[4 CS - Data Integrity - MAC, attacks and SHA-1]]

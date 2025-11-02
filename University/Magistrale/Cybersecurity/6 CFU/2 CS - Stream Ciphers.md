@@ -1,18 +1,8 @@
-# Slide 1
-
-## Stream ciphers
-
-1
-
+last lesson [[1 CS -  Introduction]]
+# Stream ciphers ([[Stream Cipher]])
 old, but now back in the spotlight 
 
----
-
-# Slide 2
-
 ## Secret key cryptography
-
-2
 
 Alice and Bob share
 A crypto protocol E
@@ -21,20 +11,14 @@ They communicate using E with key K
 Adversary knows E, knows some exchanged messages but ignores K
 
 Two approaches: 
-Stream Ciphers
-Block ciphers
+- Stream Ciphers
+- Block ciphers
 
 ---
-
-# Slide 3
-
 ## Stream ciphers
-
-3
-
 define a secret key (seed)
 
-using the seed generate a byte stream (keystream): i-th byte is function of
+using the seed generate a byte stream (keystream): i-th byte is function of
   - only key (synchronous stream cipher), or 
   - both key and first i-1 bytes of ciphertext asynchronous stream cipher)
 
@@ -42,77 +26,25 @@ obtain ciphertext by bitwise XORing plaintext and keystream
 
 ---
 
-# Slide 4
-
 ## Synchronous stream cipher
 
-4
+![[Pasted image 20251102124555.png]]
 
-=
-
-
-
-key
-
-ciphertext
-
-keystream
-
-plaintext
-
-
-
-encryption
-
----
-
-# Slide 5
-
-## Synchronous stream cipher
-
-5
-
-=
-
-
-
-key
-
-plaintext
-
-keystream
-
-ciphertext
-
-
-
-decryption
-
----
-
-# Slide 6
+![[Pasted image 20251102124608.png]]
 
 ## Synchronous stream ciphers in practice
+- Many ciphers before 1940
 
-6
+- Enigma - II world war (Germany)
 
-Many ciphers before 1940
+- A5 – GSM (encryption cell phone-base station) 
 
-Enigma - II world war (Germany)
+- WEP - used in Ethernet 802.11 (wireless)
 
-A5 – GSM (encryption cell phone-base station) 
-
-WEP - used in Ethernet 802.11 (wireless)
-
-RC-4  (Ron’s Code, used by WEP)
+- RC-4  (Ron’s Code, used by WEP)
 
 ---
-
-# Slide 7
-
 ## A5/1 stream cipher
-
-7
 
 Developed in 1987, used to ensure over-the-air communication privacy in the GSM cellular telephone standard
 A major dispute arose in the mid-1980s between NATO signal intelligence agencies about whether GSM encryption should be strong or intentionally weakened
@@ -121,12 +53,7 @@ The design was initially kept secret, but leaked in 1994 and fully reverse-engin
 Multiple serious vulnerabilities in the cipher were subsequently identified
 
 ---
-
-# Slide 8
-
 ## RC-4
-
-8
 
 RC: Ron’s Code 
   - (Ron = Ronald Rivest, MIT, born in 1947 in NY state)
@@ -138,15 +65,7 @@ Very popular: Lotus Notes, SSL, Wep etc.
 RC4's weak key schedule can give rise to a variety of serious problems
 
 Rivest
-
----
-
-# Slide 9
-
 ## RC-4 weaknesses
-
-9
-
 Biased output in early keystream bytes
 
 Vulnerable if keys are reused
@@ -158,11 +77,7 @@ Today deprecated
 
 ---
 
-# Slide 10
-
 ## RC-4 properties
-
-10
 
 variable key length (byte) 
 synchronous
@@ -174,11 +89,7 @@ very fast: 1 byte of output requires 8-16 instructions
 
 ---
 
-# Slide 11
-
 ## RC-4 initialization
-
-11
 
 Goal: generate a (pseudo)random permutation of the first 256 natural numbers
 
@@ -192,8 +103,6 @@ for i=0 to 255 do
 In this way we obtain a permutation of  0, 1, …,255, the resulting permutation is a function of the key
 
 ---
-
-# Slide 12
 
 ## RC-4 keystream generation
 
@@ -211,44 +120,25 @@ while (true)
 at every iteration compute the XOR between k and next byte of plaintext (or ciphertext)
 
 ---
-
-# Slide 13
-
-## Perfect ciphers and One-Time Pad
-
-13
-
----
-
-# Slide 14
-
+# Perfect ciphers and One-Time Pad
 ## Perfect ciphers
 
-14
-
----
-
-# Slide 15
+![[Pasted image 20251102124818.png]]
 
 ## Conditional probabilities
 
-15
-
+![[Pasted image 20251102124840.png]]
 ---
-
-# Slide 16
 
 ## One-time pad (OTP)
 
-16
+**![[Pasted image 20251102124850.png]]**
 
 ---
 
-# Slide 17
-
 ## Features of OTP
 
-17
+**![[Pasted image 20251102124901.png]]**
 
 ---
 
@@ -256,7 +146,7 @@ at every iteration compute the XOR between k and next byte of plaintext (or ciph
 
 ## Proof of Shannon's theorem
 
-18
+**![[Pasted image 20251102124915.png]]**
 
 ---
 
@@ -278,12 +168,7 @@ if seed (key) is reused we get same keystream K for two different encryptions. H
   - 
 
 ---
-
-# Slide 20
-
 ## Conclusion
-
-20
 
 OTP is not obsolete
 it needs a truly random long keystream
@@ -294,34 +179,17 @@ Otherwise... OTP is theoretically unbreakable (the only with proved perfect secu
 
 
 ---
+# ChaCha20
 
-# Slide 21
-
-## ChaCha20
-
-21
-
----
-
-# Slide 22
-
-## ChaCha20, a synchronous stream cipher
-
-22
+## [[ChaCha20]], a synchronous stream cipher
 
 Objectives
 Understand the design and purpose of ChaCha20
 Compare it to older stream cipher models
 Learn how ChaCha20 builds on the one-time pad concept
-
-
----
-
-# Slide 23
-
+ 
+ --- 
 ## Background & history
-
-23
 
 Designed in 2008 by Daniel J. Bernstein as an improvement of Salsa20
 Standardized in RFC 8439 by the IETF
@@ -329,12 +197,7 @@ Focus: high speed, simplicity, and resistance to timing attacks
 Adopted in security-critical applications like TLS 1.3, OpenSSH, WireGuard, Signal, etc.
 
 ---
-
-# Slide 24
-
 ## Stream ciphers recap
-
-24
 
 Stream ciphers generate a keystream and encrypt data by XORing it with plaintext
 Fast, low-latency encryption ideal for real-time applications
@@ -342,11 +205,7 @@ Example: the One-Time Pad — perfectly secure but impractical
 
 ---
 
-# Slide 25
-
 ## From OTP to ChaCha20
-
-25
 
 ChaCha20 mimics the One-Time Pad by generating a pseudo-random keystream
 Key idea: instead of a long random keystream, we use a small key + counter + nonce (random number to be used once) to generate keystream blocks
@@ -354,11 +213,7 @@ XOR remains the central operation, just like OTP
 
 ---
 
-# Slide 26
-
 ## Inputs to ChaCha20
-
-26
 
 256-bit key: shared secret
 96-bit nonce: unique per message/session
@@ -368,11 +223,7 @@ These inputs determine the internal state that drives the keystream
 
 ---
 
-# Slide 27
-
 ## Block structure
-
-27
 
 512-bit state divided into 16 32-bit words
   - 384 bits are variable and 128 are coming from constants
@@ -385,11 +236,7 @@ This state is transformed to produce 64-byte keystream blocks
 
 ---
 
-# Slide 28
-
 ## Quarter-round function
-
-28
 
 Core operation: processes 4 words (from state) with Add, Rotate, XOR (ARX)
 Lightweight and fast on all CPUs
@@ -397,9 +244,6 @@ Provides diffusion and non-linearity
 Designed for simplicity and timing safety
 
 ---
-
-# Slide 29
-
 ## 10 Double-rounds and output 
 
 29
@@ -414,24 +258,14 @@ After all 10 double-rounds: add the final state to the original state (mod 2^32)
 
 ---
 
-# Slide 30
-
 ## Encryption with XOR
-
-30
 
 ciphertext = plaintext ⊕ keystream
 Same operation used for decryption: plaintext = ciphertext ⊕ keystream
 Stateless per block: no chaining between blocks required
 
 ---
-
-# Slide 31
-
 ## Security goals of ChaCha20
-
-31
-
 Designed to resist
   - Key recovery
   - Keystream prediction
@@ -440,12 +274,7 @@ No known practical attacks on full 10 double-round version
 High performance across platforms, even without hardware support
 
 ---
-
-# Slide 32
-
 ## Real-world usage
-
-32
 
 TLS 1.3: used as an option (in addition to others) for secure web traffic
 Signal, WhatsApp: encrypt messages using ChaCha20 (or other, depending on context)
@@ -455,3 +284,4 @@ OpenSSH: option for encrypted shell sessions, now less used
 
 ---
 
+next lesson [[3 CS - Block Ciphers]]

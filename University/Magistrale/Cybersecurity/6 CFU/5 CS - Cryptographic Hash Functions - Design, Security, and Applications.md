@@ -1,3 +1,4 @@
+last lesson [[4 CS - Data Integrity - MAC, attacks and SHA-1]]
 
 ---
 
@@ -27,7 +28,7 @@ A hash function _h: $D \Rightarrow R$_ is called _**weakly collision resistant**
 
  - **Hard** → computationally ***infeasible***, which means that it would take too long (years or more)
 - Birthday bound shows that short fingerprints (≤160 bits) are feasible today
-	- SHA-1 (we saw it in [[4 - Data Integrity - MAC, attacks and SHA-1#SHA-1 basics]]) was a cryptographic function until 2014
+	- SHA-1 (we saw it in [[4 CS - Data Integrity - MAC, attacks and SHA-1#SHA-1 basics]]) was a cryptographic function until 2014
 
 **Note:** in SHA we consider not only the original message m, but also the padding. different padding creates different hashes. so we care, not only the message's bits but also how we pad. For instance, OpenSSL use a padding with a standard called PKCS#7 (the standard number 7), which says that the padding, for example, we want to add 6 padding bytes, each byte contains the number 6.   
 
@@ -331,7 +332,7 @@ it provides Authenticity, better then the Unkeyed One
     
 		- this function is insecure, as we'll see
 ### Keyed Hashing
-- A keyed hashing function allows to fully obtain a $MAC_k$ (remember the CBC-MAC [[4 - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]], which used the key to encrypt. in this case we are not encrypting, but **hashing**), used for data integrity and origin authentication (authenticity)
+- A keyed hashing function allows to fully obtain a $MAC_k$ (remember the CBC-MAC [[4 CS - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]], which used the key to encrypt. in this case we are not encrypting, but **hashing**), used for data integrity and origin authentication (authenticity)
     
 - This doesn't happen with unkeyed hashing
     
@@ -376,7 +377,7 @@ it provides Authenticity, better then the Unkeyed One
 
 - Applies to Merkle–Damgård functions: - construction and in particular the **key prefix method**
     
-- Attacker can forge valid tags for extended messages if `|k|` known (Remember, the forger wants to pass the validation test [[4 - Data Integrity - MAC, attacks and SHA-1#FORGERY]])
+- Attacker can forge valid tags for extended messages if `|k|` known (Remember, the forger wants to pass the validation test [[4 CS - Data Integrity - MAC, attacks and SHA-1#FORGERY]])
 	- An attacker by simply knowing the authentication tag of M (remember, M is not only the message m but also the padding p) can append data to M and forge a valid tag–without knowledge of the key
 
 	- Given a pair (M, t) known to the attacker, where t = h(k‖M), he can forge a valid tag for a longer message **by guessing |k|**, which determines the **padding p** applied to k‖M
@@ -727,3 +728,5 @@ Regola pratica: se la finalità è sicurezza/integrità/autenticità usa una cry
 - *Encryption*: operazione reversibile tramite chiave (decryption possibile). Fornisce confidenzialità; non è progettata per essere una funzione “one‑way” né per garantire collision resistance.
 	
 we can encrypt the disk for Confidentiality and can get a hash of the disk for optimisation
+
+next lesson [[6 CS - Authenticated Encryption]]

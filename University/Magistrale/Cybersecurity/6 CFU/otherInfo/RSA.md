@@ -66,4 +66,4 @@
 > garantisce **[[Confidentiality]], [[Authenticity]] e [[Non-Repudiation]]**,  
 > ed è spesso combinato con cifratura simmetrica ([[Symmetric Encryption]]) per efficienza in sistemi reali.
 
-vedi anche [[7 - Asymmetric encryption#RSA – the algorithm]]. 
+vedi anche [[7 CS - Asymmetric encryption#RSA – the algorithm]]. 

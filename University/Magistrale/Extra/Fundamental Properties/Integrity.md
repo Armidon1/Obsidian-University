@@ -11,4 +11,4 @@ Ensures the content stays unchanged. Data Integrity can also be threatened in th
 2) **Origin Integrity ([[Authenticity]])**
 Ensures the sender is legitimate
 
-see [[4 - Data Integrity - MAC, attacks and SHA-1]]
+see [[4 CS - Data Integrity - MAC, attacks and SHA-1]]

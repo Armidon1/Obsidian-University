@@ -393,3 +393,4 @@ They’re not interchangeable — both must be protected appropriately
 
 ---
 
+next lesson [[2 CS - Stream Ciphers]]

@@ -53,4 +53,4 @@
 > **GCM** = modalità [[AES]] che combina **cifratura in CTR** e **autenticazione Galois**,  
 > fornendo **[[AEAD]]**: [[Confidentiality]] + [[Integrity]] + [[Authenticity]] in un unico schema sicuro.
 
-vedi anche [[6 - Authenticated Encryption#What is GCM?]]
+vedi anche [[6 CS - Authenticated Encryption#What is GCM?]]

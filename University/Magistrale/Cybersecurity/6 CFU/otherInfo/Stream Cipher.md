@@ -66,3 +66,5 @@
 
 > **Stream cipher** = cifratura **bit/byte per bit/byte**, molto veloce e leggera,  
 > garantisce **confidenzialità**, ma per sicurezza completa va combinata con **[[MAC]] o AEAD**.
+
+vedi anche [[stream cipher vs block cipher]]

@@ -477,11 +477,11 @@ One of the limitation of SPF is protect the body. The sending server makes a cry
 
 ### Process
 
-1. **Signing:** Sender adds DKIM-Signature using [[7 - Asymmetric encryption||private key]] 
+1. **Signing:** Sender adds DKIM-Signature using [[7 CS - Asymmetric encryption||private key]] 
     
 2. **DNS:** Publishes public key via TXT record
     
-3. **Verification:** Receiver checks signature with [[7 - Asymmetric encryption||public key]] 
+3. **Verification:** Receiver checks signature with [[7 CS - Asymmetric encryption||public key]] 
     
 
 ## How does DKIM Work 

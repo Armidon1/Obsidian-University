@@ -1,3 +1,4 @@
+last lesson [[6 CS - Authenticated Encryption]]
 # Asymmetric encryption: the Diffie-Hellman intuition
 now we talked always about symmetric keys. Now we think in a different way: a asymmetric encryption: the tipical usage is different because it is harder to guarantee Confidentiality.
 
