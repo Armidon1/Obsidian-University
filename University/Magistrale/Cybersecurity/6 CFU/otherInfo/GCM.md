@@ -5,7 +5,7 @@
 ---
 
 **Come funziona (in sintesi):**
-
+![[Pasted image 20251103095538.png]]
 1. **Cifratura:**
     
     - Usa un algoritmo a blocchi (es. AES) in **modalità counter (CTR)** per cifrare il messaggio, generando confidenzialità.

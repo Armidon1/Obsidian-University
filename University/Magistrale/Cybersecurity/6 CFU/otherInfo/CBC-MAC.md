@@ -6,6 +6,7 @@
 ---
 
 **Come funziona (in sintesi):**
+![[Pasted image 20251103112510.png]]
 
 1. Il messaggio è diviso in blocchi ( $P_1, P_2, …, P_n$ ).
     
@@ -59,5 +60,51 @@
 > Garantisce **integrità e autenticità**, ma **non confidenzialità**,  
 > e deve essere usato con attenzione — preferibilmente sostituito da **CMAC** o **[[HMAC]]** nelle implementazioni moderne.
 > 
+
+## spiegazione dettagliata
+Certamente. La tua immagine mostra un diagramma del **CBC-MAC** (Cipher Block Chaining Message Authentication Code) con un'indicazione sul blocco finale, che viene etichettato come "CBC residue".
+
+Nel contesto di un'implementazione standard di CBC-MAC, la funzione hash finale per generare il _Message Authentication Code_ (MAC) non è una semplice concatenazione del "residue" con l'intero messaggio cifrato. Al contrario, **il MAC è il blocco finale intero e non modificato (il "residue") o una sua versione troncata**.
+
+Ecco il dettaglio di come viene generato il MAC a partire dal "CBC residue":
+
+---
+
+### 🔑 Generazione del MAC in CBC-MAC
+
+Il diagramma che hai fornito mostra il processo di applicazione dell'algoritmo di cifratura a blocchi (E) in modalità CBC a una sequenza di blocchi di messaggio ($m_1, m_2, ..., m_n$).
+
+1. Iterazione CBC: Il processo CBC (XOR con il blocco cifrato precedente, seguito dalla cifratura $E$) continua fino all'ultimo blocco di messaggio $m_n$ (nel tuo diagramma, $m_6$).
+    
+    $$c_i = E_K(m_i \oplus c_{i-1})$$
+    
+    (Dove $c_0$ è l'IV, solitamente $0$ in CBC-MAC).
+    
+2. **Il "CBC Residue":** Il risultato della cifratura dell'ultimo blocco di messaggio, $c_n$ (o $c_6$ nel tuo esempio), è il **blocco finale** generato da tutta la catena. Questo blocco è il "CBC residue".
+    
+3. **Il MAC:** Il Tag di Autenticazione (MAC) finale, che viene inviato con il messaggio per garantirne l'integrità, viene creato a partire da questo blocco $c_n$ in uno di due modi:
+    
+    - **MAC Intero:** Il Tag è il blocco $c_n$ stesso. Ad esempio, se si usa AES, il MAC è l'intero blocco di **128 bit**.
+        
+    - **MAC Troncato (più comune):** Per ragioni di sicurezza o di dimensione ridotta del tag, il MAC è costituito dai soli **primi $t$ bit** di $c_n$ (dove $t < 128$). Questa è la pratica più comune per aumentare la sicurezza contro gli attacchi a forza bruta del tag.
+        
+
+> **❗ Non è una concatenazione:** È cruciale capire che il MAC è **il blocco finale $c_n$**, o parte di esso. Non viene concatenato _con_ il ciphertext $c_1, c_2, ..., c_{n-1}$, ma è un **output separato** che autentica l'intero messaggio originale ($m_1, ..., m_n$).
+
+### 💡 Come Avviene la Trasmissione
+
+Quando il mittente invia il messaggio:
+
+$$\text{Messaggio Inviato} = \text{Messaggio in Chiaro } (m_1, ..., m_n) \ || \ \text{MAC}$$
+
+Il MAC è, nel caso del diagramma, il blocco $c_6$ o una sua porzione troncata.
+
+### ⚠️ CBC-MAC e Sicurezza
+
+È importante notare che la modalità standard di **CBC-MAC** è sicura solo per **messaggi di lunghezza fissa**.
+
+- Per autenticare messaggi di **lunghezza variabile**, sono state sviluppate varianti come **CMAC (Cipher-based MAC)**, che introduce un passaggio finale con una chiave derivata aggiuntiva per garantire la sicurezza del padding e dell'autenticazione.
+
+Domanda: quindi si possono usare AES-CBC per la [[Confidentiality]] e [[CBC-MAC]] per l'[[Integrity]] e [[Authenticity]], **con la stessa chiave** (esempio di [[EtM]] ma con la stessa chiave)? Assolutamente no! mai usare la stessa chiave! vedi in [[non usare la stessa chiave per autenticazione e cifratura]]. 
 
 Vedi anche [[4 CS - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]]

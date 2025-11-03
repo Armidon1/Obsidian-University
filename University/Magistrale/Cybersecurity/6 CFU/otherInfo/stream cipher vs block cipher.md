@@ -86,3 +86,46 @@ Sebbene i block cipher (come AES) possano beneficiare dell'**accelerazione hardw
 In sintesi, la velocità dello stream cipher deriva principalmente dalla sua capacità di elaborare i dati in modo **sequenziale** e **continuo** (bit-by-bit) utilizzando l'operazione **XOR**, che è la più efficiente dal punto di vista computazionale.
 
 Per una spiegazione più approfondita sulla differenza tra le due tipologie di cifrari, puoi guardare Stream Cipher vs. Block Cipher.
+
+## Perché sono tornati di moda i [[Stream Cipher]]?
+
+Gli **Stream Cipher** sono tornati "di moda" grazie all'emergere di **algoritmi moderni e ben progettati** come **ChaCha20** (e la sua variante autenticata **ChaCha20-Poly1305**), che hanno superato i limiti di sicurezza e performance dei vecchi cifrari a flusso come RC4.
+
+La loro rinnovata popolarità è guidata principalmente da tre fattori: **Efficienza Software, Parallelismo e Applicazioni su Hardware Limitato.**
+
+### 1. ⚡ Efficienza e Velocità in Software (Assenza di Hardware AES-NI)
+
+La ragione principale è legata alle prestazioni e all'architettura dei processori:
+
+- **Ottimizzazione Software:** I moderni stream cipher come **ChaCha20** sono progettati per funzionare in modo estremamente efficiente e veloce nelle CPU con istruzioni generiche, sfruttando operazioni semplici e presenti in abbondanza in tutti i processori, come l'**addizione, la rotazione e l'XOR (ARX)**.
+    
+- **Contrasto con AES-NI:** Il principale concorrente, AES (un Block Cipher), è spesso velocizzato dall'hardware specializzato chiamato **AES-NI** presente nelle CPU moderne. Tuttavia:
+    
+    - **Piattaforme Mobile e IoT:** Molti dispositivi (smartphone di fascia media, router, dispositivi IoT) utilizzano architetture **ARM** o non hanno l'accelerazione hardware AES-NI. Su queste piattaforme, gli stream cipher come ChaCha20 possono essere **significativamente più veloci e consumare meno batteria** rispetto a un'implementazione software di AES.
+        
+    - **Patch di Sicurezza:** Quando gli aggiornamenti di sicurezza devono essere applicati rapidamente, l'implementazione software di ChaCha20 è spesso più facile e veloce da distribuire.
+        
+
+### 2. 🔀 Parallelismo e Latenza
+
+I moderni Stream Cipher, inclusa la modalità CTR che emula il loro comportamento, offrono vantaggi operativi che i Block Cipher non riescono a eguagliare in tutte le loro modalità:
+
+- **Parallelismo Naturale:** Poiché ogni blocco della _keystream_ è generato indipendentemente dagli altri (dipende solo dal Nonce e dal Contatore), l'intera operazione di cifratura può essere facilmente **parallelizzata** su più core della CPU o in thread separati. Questo massimizza l'efficienza sui moderni processori multi-core.
+    
+- **Bassa Latenza:** Possono iniziare la cifratura **immediatamente** (bit-by-bit o byte-by-byte) senza dover aspettare di riempire un intero blocco (come invece accade con molte modalità di Block Cipher). Questo è cruciale per la comunicazione in tempo reale.
+    
+- **Nessun Padding:** Non è necessario alcun _padding_ (riempimento) per l'ultimo blocco, semplificando la gestione dei messaggi di lunghezza arbitraria e non aggiungendo _overhead_ (costo aggiuntivo in termini di dati).
+    
+
+### 3. 🌐 Adozione Diffusa nei Protocolli di Rete
+
+La performance e la sicurezza di algoritmi come **ChaCha20-Poly1305** hanno portato a una rapida adozione nei protocolli di comunicazione chiave:
+
+- **TLS 1.3:** Nelle versioni moderne del protocollo di sicurezza per il web (TLS 1.3), ChaCha20-Poly1305 è uno dei due unici cifrari autenticati raccomandati (l'altro è AES-GCM).
+    
+- **WireGuard:** Il protocollo VPN di nuova generazione, noto per la sua semplicità e velocità, utilizza esclusivamente ChaCha20-Poly1305.
+    
+- **Applicazioni di Messaggistica:** Molte app di messaggistica sicura utilizzano o raccomandano ChaCha20-Poly1305 per l'efficienza sui dispositivi mobili.
+    
+
+In conclusione, la rinascita degli Stream Cipher non è dovuta a un ripensamento sulla teoria dei Block Cipher, ma alla creazione di algoritmi (come ChaCha20) che offrono un **equilibrio superiore tra sicurezza e prestazioni in ambienti software e con risorse limitate**, rispondendo in modo più efficace alle esigenze del mondo moderno mobile e dell'IoT.

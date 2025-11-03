@@ -26,3 +26,5 @@
     
 
 **Esempi d’uso:** [[TLS]], IPsec, JWT (JSON Web Token), autenticazione API.
+
+vedi anche la [[differenza tra GHASH e HMAC]]

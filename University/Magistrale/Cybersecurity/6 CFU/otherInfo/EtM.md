@@ -2,6 +2,8 @@
 
 > **Encrypt-then-MAC** è uno **schema di composizione sicuro** usato in crittografia simmetrica per garantire **[[Confidentiality]] + [[Integrity]] + [[Authenticity]]** dei messaggi.
 
+Sebbene sia la pratica più sicura considerando i restanti due ([[MtE]] e [[EaM]]), le migliori strategie sono gli algoritmi [[AEAD]] (come [[AES-GCM]], se si ha il supporto hardware per [[AES]]) oppure [[ChaCha20-Poly1305]] (ancora meglio se non si ha il supporto hardware per [[AES]]).
+
 ---
 
 ### 🔐 **Come funziona (passaggi):**

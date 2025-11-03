@@ -46,7 +46,7 @@
 
 - Il keystream **non deve mai essere riutilizzato** con la stessa chiave → altrimenti il cifrario è compromesso.
     
-- Necessita di sistemi AEAD (es. ChaCha20-Poly1305) per autenticazione e integrità.
+- Necessita di sistemi [[AEAD]] (es. [[ChaCha20-Poly1305]]) per autenticazione e integrità.
     
 
 ---

@@ -1,6 +1,6 @@
 # **Galois Authentication (Autenticazione Galois)**
 
-> È il meccanismo di **autenticazione dei dati** utilizzato in **modalità [[AEAD]]** come **[[AES-GCM]]**, basato su operazioni matematiche nel **campo di Galois GF(2¹²⁸)**.  
+> È il meccanismo di **autenticazione dei dati** utilizzato in **modalità [[AEAD]]** come **[[AES-GCM]]**, basato su operazioni matematiche nel **campo di [[Galois Field]] GF(2¹²⁸)**.  
 > Serve a garantire **[[Integrity]] e [[Authenticity]]** dei messaggi cifrati e dei dati associati.
 
 ---
