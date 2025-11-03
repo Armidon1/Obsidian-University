@@ -148,7 +148,7 @@ In theory, if we consider an algorithm, given an input, it produces a determinis
 
 ---
 
-## Sponge Construction (used in SHA-3 / Keccak)
+## Sponge Construction (used in [[SHA-3]] / [[Keccak]])
 
 Work like a real sponge:
 - **Absorbs input, squeezes output**

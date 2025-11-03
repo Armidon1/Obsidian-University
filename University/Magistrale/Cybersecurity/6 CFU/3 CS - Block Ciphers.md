@@ -1,959 +1,228 @@
 last lesson [[2 CS - Stream Ciphers]]
-# Slide 1
 
-## Block ciphers: an introduction
+### 1. Introduction to Block Ciphers
 
-1
+#### What is a Block Cipher?
 
----
-
-# Slide 2
-
-## Definition of block cipher
-
-2
-
-Given
-block P of plaintext of h bits (h fixed)
-a key k of fixed # of bits
-
-a cryptographic protocol Ek produces 
-a block C of h bits, function of P and k
-(for a fixed E)
-
-Note: lengths of both block and key (# of bits) are fixed (not necessarily equal)
-
----
-
-# Slide 3
-
-## Features
-
-3
-
-Encrypts fixed-size blocks of plaintext into ciphertext (e.g., 128 bits)
-Uses a secret key to control a deterministic transformation
-Always produces the same ciphertext for the same input and key
-Decryption is the reverse transformation using the same key
-Acts as a reversible function and is a foundational building block in cryptography
-
----
-
-# Slide 4
-
-## Visual Analogy
-
-4
-
-Imagine plaintext as a piece of clay
-The key is a custom mold
-Cipher shapes the clay into ciphertext
-Same mold = same result
-Emphasizes determinism and non-random transformation
-
----
-
-# Slide 5
-
-## Block vs. stream ciphers
-
-5
-
-Block cipher: encrypts blocks (e.g., 128 bits) at a time
-Stream cipher: encrypts one bit or byte at a time using a keystream
-Analogy:
-  - Stream = faucet
-  - Block = stamping machine
-Block ciphers: better for structured data
-Stream ciphers: better for real-time communication
-
----
-
-# Slide 6
-
-## More detailed comparison
-
-6
-
-Block ciphers work on fixed-size blocks (e.g., 128 bits). This makes them ideal for
-  - Files: data is usually stored in known formats (PDF, DOCX, etc.)
-  - Database records: entries have regular sizes and are accessed in blocks
-  - Disk sectors: operating systems read and write data in 512-byte or 4096-byte blocks
-These are structured environments, where data is chunked in a way that fits naturally with the block cipher’s operation
-
-
----
-
-# Slide 7
-
-## Desired properties
-
-7
-
-Invertibility: must be able to recover original plaintext
-Avalanche effect: small changes = big output changes
-Non-linearity: avoids predictability and simple math reversal
-Key sensitivity: small key differences yield vastly different outputs
-These features strengthen resistance to cryptanalytic attacks
-
----
-
-# Slide 8
-
-## Applications
-
-8
-
-File encryption
-Disk encryption (full disk, partitions)
-Encrypted RAM/memory
-Encrypted communication packets
-Database field/row encryption
-Deployed in virtually all modern security systems
-
----
-
-# Slide 9
-
-## Block cipher designs from the late 20th century 
-
-9
-
----
-
-# Slide 10
-
-## Late-millennium block ciphers 1  
-
-10
-
-DES, 3-DES - (1976; 64-bit block, 56 bit key)
-RC-2 (1987)
-  - designed for exporting cryptography within IBM Lotus Notes
-  - 64-bit block, variable key size, vulnerable to an attack using 234 chosen plaintexts
-IDEA (1991)
-  - 64-bit block, 128 bit key
-  - Strong, only weakened variants have been broken, outdated
-Blowfish (1993)
-  - 64-bit block size and a variable key length from 32 up to 448 bits
-  - Still strong but deprecated
-
-
----
-
-# Slide 11
-
-## Late-millennium block ciphers 2  
-
-11
-
-RC5 (1994)
-  - variable block size - 32, 64 or 128 bits - key size (0 to 2040 bits) and number of rounds (0 to 255). The original suggested choice of parameters were a block size of 64 bits, a 128-bit key and 12 rounds
-  - Distributed.net has brute-forced RC5 messages encrypted with 56-bit and 64-bit keys and is working on cracking a 72-bit key; as of January 2025, 12% of the keyspace has been searched. At the current rate, it will take approximately 35-60 years to test every possible remaining key
-  - distributed.net (or Distributed Computing Technologies, Inc. or DCTI) is a worldwide distributed computing effort that is attempting to solve large scale problems using otherwise idle CPU or GPU time. It is a non-profit organization
-AES (Rijndael, 2001) 
-  - 128-bit block, 128-256 bit key
-  - Very strong
-
----
-
-# Slide 12
-
-## Historic note
-
-12
-
-DES (data encryption standard) is a symmetric block cipher using 64-bit blocks and a 56-bit key
-Developed at IBM, approved by the US government (1976) as a standard.  Size of key (56 bits) was apparently small enough to allow the NSA (US national security agency) to break it exhaustively even back in 70’s.
-In the 90’s it became clear that DES is too weak for contemporary hardware & algorithmics (Matsui “linear attack”, requires only 243 known plaintext/ciphertext pairs; in 1999 Deep Crack and distributed.net broke a DES key in 22 hours and 15 minutes)
-
----
-
-# Slide 13
-
-## More history
-
-13
-
-The US government NIST (National Inst. of standards and technology) announced a call for an advanced encryption standard in 1997
-This was an international open competition. Overall, 15 proposals were made and evaluated, and 6 were finalists. Out of those, a proposal named Rijndael, by Daemen and Rijmen (two Belgians), was chosen in February 2001 
-
----
-
-# Slide 14
-
-## Final ranking in NIST competition
-
-14
-
-not official
-
----
-
-# Slide 15
-
-## Iterating DES
-
-15
-
-Due to the weakness of DES the approach of iterating DES has been explored
-3DES(M, k1, k2, k3) = encrypt plaintext, then encrypt ciphertext, then encrypt new ciphertext
-  - 3DES(M, k1, k2, k3) = DES(DES(DES(M, k1), k2), k3), that gives the illusion of a security against brute-force of 56×3 bits = 168 bits
-  - For the three levels 3DES often uses an encryptor, a decryptor, an encryptor (called in this case 3DES-EDE)
-  - But attack Meet-in-the-Middle (next slide) reduces such length to 112 bits
-Iterating can be used (theoretically) with other ciphers
-
----
-
-# Slide 16
-
-## More on iterating
-
-16
-
-Plaintext undergoes encryption repeatedly by underlying cipher
-Ideally, each stage uses a different key
-In practice triple cipher is usually 
-  - C = Ek1(Ek2(Ek1(P))) [EEE mode] or
-  - C = Ek1(Dk2(Ek1(P))) [EDE mode]
-EDE is more common in practice
-
----
-
-# Slide 17
-
-## Ways of iterating DES
-
-17
-
-Sometimes only two keys are used in 3DES
-Identical key must be at the beginning and the end
-Legal advantage (export license) due to smaller overall key size
-Why not using 2DES?
-
-
----
-
-# Slide 18
-
-## MITM – Meet-in-the-Middle
-
-18
-
-Not to be confused with Man-in-the-Middle
-Requirements (assume EE)
-  - Known plaintext/ciphertext pairs
-  - 2n encryptions + 2n decryptions (2 keys of n bit), instead of 22n brute-force
-  - 2n memory space
-Idea: try all possible 2n encryptions of the plaintext and all possible 2n decryptions of the ciphertext. Encryptions stored into a lookup table
-Check for a pair of keys that transform the plaintext in the ciphertext. Test pair on other pairs plaintext/ciphertext
-Note: the method can be applied to all block ciphers  
-
----
-
-# Slide 19
-
-## MITM – Meet-in-the-Middle
-
-19
-
-MITM can be (theoretically) applied on s iterations
-If key-length is sn, brute-forcing the iteration doesn't require 2sn attempts, but only (about) 2sn/2
-MITM needs huge memory 
-For 3 or more iterations, memory becomes impractical
-Triple encryption is the realistic upper bound
-
-
----
-
-# Slide 20
-
-## Advanced Encryption Standard
-
-20
-
----
-
-# Slide 21
-
-## AES
-
-21
-
-
-Symmetric block cipher (block size: 128 bits = 16 bytes)
-
-Key lengths: 128, 192, or 256 bits
-
-Approved US standard (2001)
-
-Finite fields algebra
-
----
-
-# Slide 22
-
-## Noteworthy math results
-
-22
-
-Euler theorem
-If a ed n are coprime  positive integers (i.e. GCD(a, n) = 1) and 𝜑(n) is the is [[Euler's totient function]](how many positive integers not greater than n are coprime with n)
-a𝜑(n) ≡ 1 (mod n)
-
-
-Bézout's identity
-Let a and b be nonzero integers with greatest common divisor d. Then there exist signed integers x and y such that ax + by = d
-x and y can be computed by the extended Euclidean algorithm
-
----
-
-# Slide 23
-
-## Challenge
-
-23
-
-
-compute 
-2200 mod 127 
-
-using only pen, paper and Euler theorem…
-
----
-
-# Slide 24
-
-## Notation
-
-24
-
-Zn = {[0], [1], [2], …, [n-1]}
-  - here [i] is the equivalence class of integers congruent to i (mod n)
-  - for brevity people often write Zn = {0, 1, 2, …, n-1}
-  - quotient set commonly called ring of integers modulo n
-Zm* = multiplicative group modulo m
-  - natural numbers mod m that are relatively prime (co-prime) to m
-  - Zm* ⊆ Zm
-
----
-
-# Slide 25
-
-## Totient function
-
-25
-
-previous definitions
-
-𝜑(m) = Euler’s totient function = |Zm*| = size of the multiplicative group of Zm
-
-
----
-
-## Galois field GF(pk)
-
-26
-
-Évariste Galois (1811-1832)
-
-
-
-
-Theorem: for every prime power pk (k ∈ ℕ+) there is a unique finite field containing pk elements. These fields are denoted by GF(pk)
-
-There are no finite fields with other cardinalities
-
-
-
-26
-
----
-
-# Slide 27
-
-## Implementing  GF(pk) arithmetic
-
-27
-
-Theorem: Let f(x) be an irreducible polynomial of degree k over Zp. 
-The finite field GF(pk) can be realized as the set of degree k-1 polynomials over Zp, with addition and multiplication done modulo f(x)
-
-
-27
-
----
-
-# Slide 28
-
-## Implementing  GF(25)
-
-28
-
-28
-
-Addition: bit-wise XOR (since 1+1=0)
-
-          x3+x+1         (0,1,0,1,1)
-          +  
-   x4+ x3+x             (1,1,0,1,0)
--------------------------------
-   x4                 +1         (1,0,0,0,1)
-
----
-
-# Slide 29
-
-## Implementing  GF(25)
-
-29
-
-29
-
-Multiplication: polynomial multiplication, and then remainder modulo the defining polynomial f(x)
-
-For small size finite field, a lookup table is the most efficient
-method for implementing multiplication.
-
-    (1,1,0,1,1)*(0,1,0,1,1)
-
-   =   (1,1,0,0,1)
-
-
-
-Maple
-
----
-
-# Slide 30
-
-## AES - Advanced Encryption Standard
-
-30
-
- Symmetric block cipher
- Key lengths: 128, 192, or 256 bits
-  - original Rijndael supports more lengths
-
-Rationale
-Resistance to all known attacks
-Speed and code compactness 
-  - good for devices with limited computing power, e.g. smart cards
-Simplicity
-
----
-
-# Slide 31
-
-## AES Specifications
-
-31
-
-Input & output block length: 128 bits
-State: 128 bits, arranged in a 4-by-4 matrix of bytes
-
-each byte is viewed as an element in GF(28)
-
-Input/Output: A0,0, A1,0, A2,0, A3,0, A0,1,…
-
----
-
-# Slide 32
-
-## AES Specifications
+A **block cipher** is a fundamental tool in symmetric cryptography. It is an algorithm that operates on fixed-size groups of bits, called "blocks," using a secret key 1.
 
-32
+- **Input:** A plaintext block (P) of a fixed size, _h_ bits (e.g., 128 bits)2222.
+    
+- **Key:** A secret key (k) of a fixed size (e.g., 56, 128, or 256 bits)3.
+    
+- **Output:** A ciphertext block (C) of _h_ bits4.
+    
 
-  Key length: 128, 196, 256 bits
+A key feature is that a block cipher is a **deterministic transformation**5. This means that for a given plaintext (P) and a given key (k), the cipher will _always_ produce the exact same ciphertext (C)6. Think of the key as a custom mold and the plaintext as clay; the mold (key) always shapes the clay (plaintext) into the same final form 7.
 
-Cipher Key Layout: n = 128, 196, 256 bits, arranged in a 
-4-by-n/32 matrix of bytes
+#### Block Ciphers vs. Stream Ciphers
 
-Initial layout: K0,0, K1,0, K2,0, K3,0, K0,1,…
+Cryptography offers two main types of ciphers:
 
----
-
-# Slide 33
-
-## AES Specifications
-
-33
-
-High level code
-
-AES(State, Key)
-  - KeyExpansion(Key, ExpandKey)
-  - AddRoundKey(State, ExpandKey[0])
-  - for (i = 1; i < R; i++) do 		Round(State, ExpandKey[i]);
-  - FinalRound(State, ExpandKey[R]);
-
----
-
-# Slide 34
-
-## Encryption: Carried out in rounds
-
-34
-
----
-
-# Slide 35
-
-## Rounds in AES
-
-35
-
-128 bits AES uses 10 rounds, no shortcuts known for 6 rounds
-  - The secret key is expanded from 128 bits to 10 round keys, 128 bits each
-  - Each round changes the state, then XORs the round key (for longer keys, add one round for every extra 32 bits)
-
-Each rounds complicates things a little 
-Overall, it seems infeasible to invert without the secret key  (but easy given the key)
-
-
----
-
-# Slide 36
-
-## AES Specifications: One Round
-
-36
-
-Transform the state by applying:
-
-Substitution
-Shift rows
-Mix columns
-XOR round key
-
----
-
-# Slide 37
-
-## Substitution (S-Box)
-
-37
-
-Substitution operates on every byte separately: Ai,j <-- Ai,j-1 (multiplicative inverse in GF(28) which is highly nonlinear)
-
-If Ai,j = 0, don’t change Ai,j
-
-Clearly, the substitution is invertible 
-
-
----
-
-# Slide 38
-
-## Cyclic shift of rows
-
-38
-
-no shift
-  shift 1 position
-     shift 2 positions
-         shift 3 positions 
-
-Clearly, the shift is invertible
-
----
-
-# Slide 39
-
-## Mixing Columns 
-
-39
-
-Every state column is considered as a polynomial over GF(28)
-Multiply with an invertible polynomial
-03 x3 + 01x2 + 01x + 02 (mod x4 + 1)
-Inv = 0B x3 + 0D x2 +09 x + 0E
-
-Round: SubBytes(State)
-             ShiftRows(State)
-             MixColumns(State)
-             AddRoundKey(State,ExpandedKey[i])
-
-
----
-
-# Slide 40
-
-## Key Expansion
-
-40
-
-Generate a “different key” per round
-
-Need a 4 x 4 matrix of values (over GF(28)) per round
-
-Based upon a non-linear transformation of the original key
-
-Details available: The Design of Rijndael, Joan Daemen and Vincent Rijmen, Springer
-
----
-
-# Slide 41
-
-## Animation
-
-41
-
-time 4' 25''
-
----
-
-# Slide 42
-
-## Introduction to block cipher modes of operation
-
-42
-
----
-
-# Slide 43
-
-## Block cipher modes of operation
-
-43
-
-block ciphers operate on blocks of fixed length, often 64 or 128 bits
-because messages may be of any length, and because encrypting the same plaintext under the same key always produces the same output,
-
-	several modes of operation have been invented which allow block ciphers to provide confidentiality for messages of arbitrary length
-
----
-
-# Slide 44
-
-## ECB Mode Encryption(Electronic Code Book)
-
-44
-
-encrypt each plaintext block separately
-
----
-
-# Slide 45
-
-## Properties of ECB
-
-45
-
-Simple and efficient
-Parallel implementation possible
-Does not conceal plaintext patterns
-Active attacks are possible (plaintext can be 
-   easily manipulated by removing, repeating, 
-   or interchanging blocks)
-
-Only teaching purposes
-
----
-
-# Slide 46
-
-## ECB: plaintext repetitions 
-
-46
-
-       plaintext		   ciphertext ECB        good ciphertext 
-
----
-
-# Slide 47
-
-## CBC (Cipher Block Chaining) mode
-
-47
-
-Previous ciphertext is XORed with current plaintext before encrypting current block
-Seed (called initialization vector, or IV) is used to start the process; it can be sent without encryption
-Seed = 0 safe in most but NOT all cases (e.g., assume the file with salaries is sent once a month, with the same seed we can detect changes in the salaries) therefore a random seed is better
-
----
-
-# Slide 48
-
-## CBC (Cipher Block Chaining): decryption
-
-48
-
-IF a transmission error changes one bit of C(i-1) 
-THEN block mi changes in a predictable way (this can be exploited by adversary)
-BUT there are unpredictable changes in m(i-1);
-Solution: always use error detecting codes (for example CRC) to check quality of transmission
-
----
-
-# Slide 49
-
-## Properties of CBC
-
-49
-
-Asynchronous stream cipher
-Errors in one ciphertext block don’t propagate much
-  - a one-bit change to the ciphertext causes complete corruption of the corresponding block of plaintext, and inverts the corresponding bit in the following block of plaintext
-Conceals plaintext patterns
-No parallel encryption
-Yes parallel decryption
-Plaintext cannot be easily manipulated
-Standard in many systems: SSL, IPSec etc.
-
----
-
-# Slide 50
-
-## More on CBC
-
-50
-
-message must be padded to a multiple of the cipher block size
-  - one way to handle this issue is ciphertext stealing (next slide)
-a plaintext can be recovered from just two adjacent blocks of ciphertext
-  - therefore, decryption can be parallelized
-  - usually a message is encrypted once, but decrypted many times
-
----
-
-# Slide 51
-
-## Ciphertext stealing
-
-51
-
-general method that allows for processing of messages that are not evenly divisible into blocks
-  - without resulting in any expansion of the ciphertext
-  - at the cost of slightly increased complexity
-consists of altering processing of the last two blocks of plaintext, resulting in a reordered transmission of the last two blocks of ciphertext (and no ciphertext expansion)
-suitable for ECB and CBC
-from NIST website http://csrc.nist.gov/groups/ST/toolkit/BCM/documents/ciphertext%20stealing%20proposal.pdf 
-
----
-
-# Slide 52
-
-## Stealing procedures
-
-52
-
-Encryption procedure
-Apply standard CBC encryption to all complete blocks
-If the last block is partial, process the previous full block normally
-Use the ciphertext of the previous block to fill the partial block (ciphertext stealing)
-Swap the last two ciphertext blocks
-Transmit the ciphertext as-is (possibly non-multiple of block size)
-
-Decryption procedure
-Requires knowledge of original plaintext length
-Swap the last two ciphertext blocks back to original order
-Decrypt with CBC as usual
-Discard the extra bytes to recover the correct final block
-
----
-
-# Slide 53
-
-## Stealing diagram
-
-53
-
----
-
-# Slide 54
-
-## OFB and CTR
-
-54
-
----
-
-# Slide 55
-
-## OFB Mode (Output FeedBack)
-
-55
-
-Makes a block cipher into a synchronous stream cipher: it generates keystream blocks, which are then XORed with the plaintext blocks to get the ciphertext 
-Flipping a bit in the ciphertext produces a flipped bit in the plaintext at the same location. This property allows many error correcting codes to function normally even when applied before encryption
-
-
-
-
----
-
-# Slide 56
-
-## OFB scheme:encryption
-
-56
-
-An initialization vector IV is used as a "seed" for a sequence of data blocks 
-
----
-
-# Slide 57
-
-## OFB scheme: decryption
-
-57
+- **Block Ciphers:** Encrypt data one fixed-size block at a time (e.g., 128 bits)8. This is like a large stamping machine that processes data in chunks.
+    
+- **Stream Ciphers:** Encrypt data one bit or one byte at a time9. This is like a faucet adding a "keystream" to the data as it flows by.
+    
 
-Still encryptors because same keystream must be produced
+Block ciphers are ideal for structured data that is already chunked, such as files, database records, or disk sectors 10101010. Stream ciphers are often preferred for real-time communication11.
 
----
-
-# Slide 58
-
-## OFB math
-
-58
-
-Because of the symmetry of the XOR operation, encryption and decryption are exactly the same
-
-Ci = Pi  Oi
-Pi = Ci  Oi
-Oi = Ek(Oi-1)
-O0 = IV
-
----
-
-# Slide 59
-
-## OFB  mode
-
-59
-
-Discussion
-If Ek is public (known to the adversary) then initial seed must be encrypted
-If E is a cryptographic function that depends on a secret key, then initial seed can be sent in clear
-Initial seed must be modified for EVERY new encryption
-Extension: it can be modified in such a way that only k bits of each keystream block are used to compute the ciphertext (k-OFB)
-
----
-
-# Slide 60
-
-## Properties of OFB
-
-60
-
-Synchronous stream cipher
-Errors in ciphertext do not propagate
-Pre-processing is possible
-Conceals plaintext patterns
-No parallel implementation known
-Active attacks by manipulating plaintext are possible
-
----
-
-# Slide 61
-
-## CTR (Counter Mode)
-
-61
-
-Aka Integer Counter Mode (ICM) and Segmented Integer Counter (SIC) mode
-turns a block cipher into a stream cipher: it generates the next keystream block by encrypting successive values of a "counter"
-  - counter can be any function which produces a sequence which is guaranteed not to repeat for a long time, although an actual counter is the simplest and most popular
-the usage of a simple deterministic input function raised controversial discussions
-has similar characteristics to OFB, but also allows a random-access property during decryption
-well suited to operation on a multi-processor machine where blocks can be encrypted in parallel
-
----
-
-# Slide 62
+#### Desired Properties of a Block Cipher
 
-## CTR (Counter Mode)
+To be secure, a block cipher must have several key properties12:
 
-62
+1. **Invertibility:** It must be reversible. We must be able to decrypt the ciphertext back to the original plaintext using the key13131313.
+    
+2. **Key Sensitivity:** A small change in the _key_ should produce a completely different ciphertext14.
+    
+3. **Avalanche Effect (Diffusion):** A small change in the _plaintext_ (even one bit) should cause a drastic and unpredictable change in the output ciphertext15.
+    
+4. **Non-linearity (Confusion):** The relationship between the key, plaintext, and ciphertext should be complex and non-linear, making it difficult to reverse-engineer the process using simple mathematics16.
+    
 
-Similar to  OFB
-There are problems in repeated use of same seed (like OFB)
-CTR vs OFB: using CTR you can decrypt the message starting from block i for any i
-
----
-
-# Slide 63
-
-## On the IV
-
-63
-
-Most modes (except ECB) require an initialization vector, or IV
-  - sort of "dummy block" to kick off the process for the first real block, and to provide some randomization for the process
-  - no need for the IV to be secret, in most cases, but it is important that it is never reused with the same key 
-For CBC reusing an IV leaks some information about the first block of plaintext, and about any common prefix shared by the two messages
-In CBC mode, the IV must, in addition, be unpredictable at encryption time
-  - there is a TLS CBC IV attack
-For OFB and CTR, reusing an IV destroys security
-
----
-
-# Slide 64
-
-## Analysis and comparison of block modes of operations
-
-64
-
----
-
-# Slide 65
-
-## Recap on block modes of operations
-
-65
-
-There are many block operation modes
-  - more than 4
-Used to overcome the limitation that the same algorithm with the same key always encrypts the same plaintext block to the same ciphertext 
-Since they are many, how to make a choice?
-
----
-
-# Slide 66
-
-## Methodology of analysis
-
-66
-
-Some questions are relevant for most modes
-Can it encrypt in parallel?
-Can it decrypt in parallel?
-Is preprocessing useful?
-Does it support ciphertext direct addressing?
-What consequences for a ciphertext bit flipping?
-Does it turn block encryption to stream encryption?
-
 ---
 
-# Slide 67
+### 2. A History of Block Ciphers
 
-## Recap schemes 1
+#### DES (Data Encryption Standard)
 
-67
+- **Developed:** By IBM and approved by the US government in 197617.
+    
+- **Specs:** 64-bit block size, 56-bit key18181818.
+    
+- **Downfall:** The 56-bit key was criticized as being too small, allegedly to allow the NSA to brute-force it19. By the 1990s, DES was proven to be practically breakable. In 1999, the "Deep Crack" machine and distributed.net broke a DES key in under 23 hours20.
+    
 
-ECB
+#### 3DES (Triple DES)
 
-CBC
+- **Purpose:** A temporary fix for the weakness of DES by iterating the algorithm21.
+    
+- Mechanism: The most common form is EDE (Encrypt-Decrypt-Encrypt):
+    
+    `C = Ek1( Dk2( Ek1(P) ) )`22222222.
+    
+- **Security:** This gives the illusion of a 168-bit key (56 * 3)23. However, it is vulnerable to a **Meet-in-the-Middle (MITM) attack**, which reduces its effective security to 112 bits24.
+    
 
----
+#### Why Not 2DES (Double DES)?
 
-# Slide 68
+Using DES twice (2DES) is **not secure**25. It is vulnerable to the **Meet-in-the-Middle (MITM) attack**, which is _not_ the same as a Man-in-the-Middle attack26.
 
-## Recap schemes 2
+- **The MITM Attack (on 2DES):**
+    
+    1. An attacker needs one known plaintext/ciphertext pair (P, C), where `C = Ek2(Ek1(P))`27.
+        
+    2. **Step 1:** The attacker encrypts P with all $2^{56}$ possible keys for _k1_. They store these intermediate results in a massive lookup table (requiring $2^{56}$ memory)28282828.
+        
+    3. **Step 2:** The attacker decrypts C with all $2^{56}$ possible keys for _k2_.
+        
+    4. **Step 3:** The attacker looks for a **match** (a "meet-in-the-middle") between the results from Step 1 and Step 229.
+        
+- **Result:** The attacker only needs $2^{56} + 2^{56}$ (or $2^{57}$) operations, not the $2^{112}$ required for a full brute-force, to break 2DES30. This is why 3DES (with 112-bit effective security) became the standard31.
+    
 
-68
+#### Other Historical Ciphers
 
-CTR
+- **RC-2 (1987):** 64-bit block, variable key. Vulnerable 32.
+    
+- **IDEA (1991):** 64-bit block, 128-bit key. Strong, but now outdated 33.
+    
+- **Blowfish (1993):** 64-bit block, variable key. Still strong, but deprecated in favor of its successor, Twofish 34.
+    
+- **RC5 (1994):** Variable block, key, and round counts 35. The distributed.net project is still attempting to brute-force a 72-bit RC5 key; as of January 2025, it is only 12% complete after decades of work 36.
+    
 
 ---
-
-# Slide 69
-
-## Comparison
-
-69
+
+### 3. AES (Advanced Encryption Standard)
+
+In 1997, the US government (NIST) held an open, international competition to find a successor to DES 37. The winning algorithm, chosen in 2001, was **Rijndael**, created by two Belgian cryptographers, Daemen and Rijmen38.
+
+Rijndael won not because it was the most secure (Serpent was rated higher for security), but because it offered the best _overall balance_ of security, speed on both hardware and software, and simplicity 39.
+
+#### AES Overview
+
+- **Specs:** Symmetric block cipher, 128-bit block size40404040.
+    
+- **Key Lengths:** 128, 192, or 256 bits41.
+    
+- **Rationale:** Resistant to all known attacks, fast, and simple, making it suitable even for low-power devices like smart cards 42.
+    
+
+#### The Mathematics of AES: Galois Fields
+
+AES is built on advanced mathematics, specifically arithmetic in the **Galois Field GF(2⁸)**43434343.
+
+- A **Galois Field (GF)**, or finite field, is a set with a finite number of elements. A field $GF(p^k)$ has $p^k$ elements44.
+    
+- AES treats each byte of data as an element in $GF(2^8)$, which has 256 elements.
+    
+- This is implemented using polynomials. The two main operations are:
+    
+    1. **Addition:** This is simply a bitwise **XOR** operation (because 1+1=0)45.
+        
+    2. **Multiplication:** This is a more complex polynomial multiplication, followed by taking a remainder modulo an irreducible polynomial46.
+        
+
+#### AES Structure: State and Rounds
+
+AES encryption is carried out in a series of **rounds** (e.g., 10 rounds for a 128-bit key)47.
+
+1. **Input:** The 128-bit (16-byte) input block is loaded into a 4x4 matrix of bytes called the **State**48.
+    
+2. **KeyExpansion:** The original secret key (e.g., 128 bits) is "expanded" to create a unique 128-bit **Round Key** for each of the 10 rounds494949.
+    
+3. **Initial Step:** `AddRoundKey` (the first Round Key is XORed with the State)50.
+    
+4. **Rounds (9 rounds):** Each round consists of four transformations:
+    
+    - **SubBytes (Substitution):** A non-linear step. Each byte in the State is replaced with another byte according to a fixed lookup table called the **S-Box**. This S-Box is derived from the multiplicative inverse in $GF(2^8)$ and provides non-linearity (confusion)51.
+        
+    - **ShiftRows (Permutation):** A transposition step. The bytes in each row of the State are cyclically shifted by a different offset (row 2 shifts 1, row 3 shifts 2, etc.)525252. This provides diffusion, mixing data across columns.
+        
+    - **MixColumns (Mixing):** Each column of the State is treated as a polynomial and multiplied by a fixed polynomial in $GF(2^8)$535353. This provides significant diffusion.
+        
+    - **AddRoundKey:** The Round Key for the current round is XORed with the State54.
+        
+5. **Final Round (Round 10):** This round is the same but **omits the MixColumns** step.
+    
+
+**Decryption** is the reverse of this process, using the inverse of each step (Inv-SubBytes, Inv-ShiftRows, Inv-MixColumns).
+
+---
+
+### 4. Block Cipher Modes of Operation
+
+A block cipher by itself can only encrypt a single, fixed-size block. A **mode of operation** is a technique that allows a block cipher to securely encrypt messages of arbitrary length5555.
+
+#### ECB (Electronic Code Book) Mode
+
+- **How it works:** This is the "naive" mode. Each plaintext block is encrypted separately and independently56.
+    
+- **Properties:** **DO NOT USE.** It is simple and can be done in parallel57.
+    
+- **Fatal Flaw:** It is **not secure** because it does not conceal plaintext patterns. If the same plaintext block appears twice in a message, it will produce the same ciphertext block5858. This allows an attacker to see patterns (as shown by the encrypted, but still visible, penguin image)59.
+    
+
+#### CBC (Cipher Block Chaining) Mode
+
+- **How it works:** This is the classic, secure mode. Before encrypting a plaintext block, it is **XORed with the _previous_ ciphertext block**60.
+    
+- **Initialization Vector (IV):** To start the process, the first plaintext block is XORed with a random, public "dummy block" called the **Initialization Vector (IV)**61.
+    
+- **Properties:**
+    
+    - Conceals plaintext patterns6262.
+        
+    - Encryption _cannot_ be parallelized (each block depends on the last)6363.
+        
+    - Decryption _can_ be parallelized64646464.
+        
+    - A transmission error in one ciphertext block will corrupt its corresponding plaintext block and cause a predictable bit-flip in the _next_ block65.
+        
+
+#### OFB (Output FeedBack) Mode
+
+- **How it works:** This mode turns a block cipher into a **synchronous stream cipher**6666.
+    
+- It generates a "keystream" by repeatedly encrypting the IV, and then re-encrypting _its own output_: `Keystream_Block_i = E(Keystream_Block_i-1)`.
+    
+- The final ciphertext is: `Ci = Pi ⊕ Keystream_Block_i`67.
+    
+- **Properties:**
+    
+    - Decryption is the exact same operation (XORing with the keystream)68.
+        
+    - Errors do _not_ propagate. A flipped bit in the ciphertext flips only one bit in the plaintext69696969.
+        
+    - Cannot be parallelized70.
+        
+
+#### CTR (Counter) Mode
+
+- **How it works:** This is the modern, preferred mode. It also turns a block cipher into a stream cipher7171.
+    
+- It generates a keystream by encrypting successive values of a counter: `Keystream_Block_i = E(IV + i)`. The "counter" is usually just the IV (or nonce) incremented for each block727272.
+    
+- The ciphertext is: `Ci = Pi ⊕ Keystream_Block_i`.
+    
+- **Properties:**
+    
+    - **Fully Parallelizable:** Encryption and decryption can be done in parallel, making it very fast on multi-core processors73.
+        
+    - **Random Access:** You can decrypt any block (e.g., block 100) instantly, without needing to process the 99 blocks before it74.
+        
+    - Errors do not propagate.
+        
+
+#### The Importance of the IV (Initialization Vector)
+
+- For all modes except ECB, an IV is required to introduce randomization757575.
+    
+- The IV does _not_ need to be secret, but it **MUST NEVER BE REUSED** with the same key767676.
+    
+- Reusing an IV in CBC leaks information about the first block77.
+    
+- Reusing an IV in OFB or CTR **completely destroys all security**, as it produces the exact same keystream78787878.
 
 ---
 
