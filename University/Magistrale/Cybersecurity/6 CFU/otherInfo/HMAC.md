@@ -1,6 +1,6 @@
 # **HMAC (Hash-based Message Authentication Code)**
 
-> È una forma specifica di **[[MAC]] (Message Authentication Code)** che usa una **funzione di hash crittografica** (come SHA-256 o SHA-3) combinata con una **chiave segreta** per garantire **[[Integrity]]** e **[[Authenticity]]** dei messaggi.
+> È una forma specifica di **[[MAC]] (Message Authentication Code)** che usa una **funzione di hash crittografica** (come [[SHA]]-256 o [[SHA]]-3) combinata con una **chiave segreta** per garantire **[[Integrity]]** e **[[Authenticity]]** dei messaggi.
 
 **Come funziona:**
 

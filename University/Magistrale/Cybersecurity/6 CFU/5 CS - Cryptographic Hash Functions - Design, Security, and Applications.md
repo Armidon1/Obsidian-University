@@ -414,7 +414,7 @@ I Keyed Hahing function is still a a Cryptographoc Hashing Function, so, even if
 
 ---
 
-# HMAC (Hash-Based Message Authentication Code)
+# HMAC (Hash-Based Message Authentication Code) [[HMAC]]
 ![[Pasted image 20251016155831.png]]
 opad=outer pad, ipad=inner pad
 

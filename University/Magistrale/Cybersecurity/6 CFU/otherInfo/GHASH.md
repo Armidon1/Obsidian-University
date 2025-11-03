@@ -1,6 +1,6 @@
 ## 🔐 Funzione GHASH: Componente di Autenticazione (GCM)
 
-La funzione **GHASH** è il meccanismo chiave utilizzato dal Galois/Counter Mode (GCM) per calcolare il **Message Authentication Code ([[MAC]])**, o **Authentication Tag**, che garantisce l'[[Integrity]] e l'[[Authenticity]] dei dati.
+La funzione **GHASH** è il meccanismo chiave utilizzato dal Galois/Counter Mode ([[GCM]]) per calcolare il **Message Authentication Code ([[MAC]])**, o **Authentication Tag**, che garantisce l'[[Integrity]] e l'[[Authenticity]] dei dati.
 ![[Pasted image 20251103095617.png]]
 
 ### 1. Fondamenti Matematici: Campo di Galois $\mathbf{GF(2^{128})}$
