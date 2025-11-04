@@ -1,5 +1,6 @@
 Previous lesson: [[1- Email Security]]
 
+See the italian and enriched version: [[NETWORK SECURITY]]
 # Network Security
 
 Cyber Intelligence and Information Security (CIS Sapienza)

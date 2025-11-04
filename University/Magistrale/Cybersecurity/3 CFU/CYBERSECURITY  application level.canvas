@@ -1,24 +1,25 @@
 {
 	"nodes":[
-		{"id":"a6cb3fbb05fb2237","x":-149,"y":-223,"width":509,"height":123,"color":"1","type":"text","text":"Cybersecurity - Application Level "},
-		{"id":"c15e97f5d4f48015","x":-149,"y":20,"width":509,"height":240,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/EMAIL SECURITY.md"},
-		{"id":"60a245b7366d2659","x":-149,"y":360,"width":509,"height":540,"color":"5","type":"text","text":"Le [[Componenti Chiave del Sistema Email]] sono:\n![[Pasted image 20251028131532.png]]\n- [[MSH]] che comprende\n\t- [[MSA]]\n\t- [[MTA]]\n\t- [[MDA]]\n- [[MUA]]\n- [[MS]]"},
-		{"id":"e3979a34a33383c5","x":-660,"y":360,"width":400,"height":300,"color":"5","type":"text","text":"Si usano in combinazione due protocolli in base a:\n- invio\n\t- [[SMTP]]\n\t- [[ESMTP]] che estende [[SMTP]]\n- ricezione\n\t- [[POP]] se [[MS]] è offline\n\t- [[IMAP]] se [[MS]] è online"},
-		{"id":"690499691d37f513","x":-660,"y":760,"width":400,"height":140,"color":"5","type":"text","text":"Poiché è un sistema molto vecchio, limitato a 7 bit, si usano strumenti come [[MIME]] per estenderne la capacità. Esso dà la possibilità di inviare Documenti, Emoji, HTML ed altro ancora"},
-		{"id":"a86970a0b1e05bcd","x":-140,"y":1012,"width":500,"height":348,"color":"5","type":"text","text":"Questo sistema è minacciato da:\n\n- [[Spam]]\n    \n- [[Phishing]]\n    \n- [[Malware-Based Attacks]] / [[Ransomware]]\n    \n- [[Spoofing]]\n    \n- [[Lack of traceability]]\n    \n- [[Data leakage]]\n    \n- [[Man-in-the-Middle (MITM)]]\n    \n- [[Business Email Compromise (BEC)]]\n    \n- [[Email bombing]]\n"},
-		{"id":"405103b862232e2b","x":497,"y":709,"width":563,"height":151,"color":"5","type":"text","text":"Questi meccanismi proteggono il _transito_ dei messaggi e l'autenticazione del server (server-to-server):\n[[SPF]], [[DKIM]], [[ARC]], [[DMARC]]"},
-		{"id":"c77fa1b19a8e6c69","x":574,"y":320,"width":526,"height":229,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/SPF.md"},
-		{"id":"f67e072d6fbc9198","x":1260,"y":380,"width":444,"height":276,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/DKIM.md"},
-		{"id":"9f94793b48659575","x":489,"y":1540,"width":571,"height":115,"color":"5","type":"text","text":"- Questi meccanismi proteggono il _contenuto_ del messaggio per garantire la privacy e l'autenticazione dell'utente (user-to-user). **(Sicurezza end-to-end):** [[PGP]], [[S-MIME|S/MIME]]"},
-		{"id":"36c661408da978ff","x":574,"y":1056,"width":526,"height":260,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/ARC.md"},
-		{"id":"7f211ad5da5b6729","x":1260,"y":900,"width":463,"height":326,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/DMARC.md"},
-		{"id":"67bd6780344608ff","x":1220,"y":1455,"width":580,"height":585,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/PGP.md"},
-		{"id":"b772cf193500e0fe","x":511,"y":1800,"width":527,"height":376,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/S-MIME.md"},
-		{"id":"09a4ae1a814fbb5c","x":-1460,"y":189,"width":623,"height":471,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/SMTP.md"},
-		{"id":"9021a517fec5826a","x":-2200,"y":222,"width":563,"height":438,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/ESMTP.md"},
-		{"id":"60e11adbb86f4d67","x":-1460,"y":700,"width":623,"height":380,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/POP.md"},
-		{"id":"5d0d995976a3a34b","x":-1460,"y":1186,"width":623,"height":414,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/IMAP.md"},
-		{"id":"6561d7864e58157c","x":-654,"y":995,"width":454,"height":398,"color":"5","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/MIME.md"}
+		{"id":"a6cb3fbb05fb2237","type":"text","text":"Cybersecurity - Application Level ","x":-149,"y":-223,"width":509,"height":123,"color":"1"},
+		{"id":"c15e97f5d4f48015","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/EMAIL SECURITY.md","x":-149,"y":20,"width":509,"height":240,"color":"5"},
+		{"id":"60a245b7366d2659","type":"text","text":"Le [[Componenti Chiave del Sistema Email]] sono:\n![[Pasted image 20251028131532.png]]\n- [[MSH]] che comprende\n\t- [[MSA]]\n\t- [[MTA]]\n\t- [[MDA]]\n- [[MUA]]\n- [[MS]]","x":-149,"y":360,"width":509,"height":540,"color":"5"},
+		{"id":"e3979a34a33383c5","type":"text","text":"Si usano in combinazione due protocolli in base a:\n- invio\n\t- [[SMTP]]\n\t- [[ESMTP]] che estende [[SMTP]]\n- ricezione\n\t- [[POP]] se [[MS]] è offline\n\t- [[IMAP]] se [[MS]] è online","x":-660,"y":360,"width":400,"height":300,"color":"5"},
+		{"id":"690499691d37f513","type":"text","text":"Poiché è un sistema molto vecchio, limitato a 7 bit, si usano strumenti come [[MIME]] per estenderne la capacità. Esso dà la possibilità di inviare Documenti, Emoji, HTML ed altro ancora","x":-660,"y":760,"width":400,"height":140,"color":"5"},
+		{"id":"a86970a0b1e05bcd","type":"text","text":"Questo sistema è minacciato da:\n\n- [[Spam]]\n    \n- [[Phishing]]\n    \n- [[Malware-Based Attacks]] / [[Ransomware]]\n    \n- [[Spoofing]]\n    \n- [[Lack of traceability]]\n    \n- [[Data leakage]]\n    \n- [[Man-in-the-Middle (MITM)]]\n    \n- [[Business Email Compromise (BEC)]]\n    \n- [[Email bombing]]\n","x":-140,"y":1012,"width":500,"height":348,"color":"5"},
+		{"id":"405103b862232e2b","type":"text","text":"Questi meccanismi proteggono il _transito_ dei messaggi e l'autenticazione del server (server-to-server):\n[[SPF]], [[DKIM]], [[ARC]], [[DMARC]]","x":497,"y":709,"width":563,"height":151,"color":"5"},
+		{"id":"c77fa1b19a8e6c69","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/SPF.md","x":574,"y":320,"width":526,"height":229,"color":"5"},
+		{"id":"f67e072d6fbc9198","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/DKIM.md","x":1260,"y":380,"width":444,"height":276,"color":"5"},
+		{"id":"9f94793b48659575","type":"text","text":"- Questi meccanismi proteggono il _contenuto_ del messaggio per garantire la privacy e l'autenticazione dell'utente (user-to-user). **(Sicurezza end-to-end):** [[PGP]], [[S-MIME|S/MIME]]","x":489,"y":1540,"width":571,"height":115,"color":"5"},
+		{"id":"36c661408da978ff","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/ARC.md","x":574,"y":1056,"width":526,"height":260,"color":"5"},
+		{"id":"7f211ad5da5b6729","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/DMARC.md","x":1260,"y":900,"width":463,"height":326,"color":"5"},
+		{"id":"67bd6780344608ff","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/PGP.md","x":1220,"y":1455,"width":580,"height":585,"color":"5"},
+		{"id":"b772cf193500e0fe","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/S-MIME.md","x":511,"y":1800,"width":527,"height":376,"color":"5"},
+		{"id":"09a4ae1a814fbb5c","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/SMTP.md","x":-1460,"y":189,"width":623,"height":471,"color":"5"},
+		{"id":"9021a517fec5826a","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/ESMTP.md","x":-2200,"y":222,"width":563,"height":438,"color":"5"},
+		{"id":"60e11adbb86f4d67","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/POP.md","x":-1460,"y":700,"width":623,"height":380,"color":"5"},
+		{"id":"5d0d995976a3a34b","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/IMAP.md","x":-1460,"y":1186,"width":623,"height":414,"color":"5"},
+		{"id":"6561d7864e58157c","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/EMAIL/MIME.md","x":-654,"y":995,"width":454,"height":398,"color":"5"},
+		{"id":"eebf0641e19e1de6","x":-149,"y":-560,"width":509,"height":240,"color":"6","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/Extra/Network Security/NETWORK SECURITY.md"}
 	],
 	"edges":[
 		{"id":"6a0bf31187369f5e","fromNode":"a6cb3fbb05fb2237","fromSide":"bottom","toNode":"c15e97f5d4f48015","toSide":"top"},
@@ -38,6 +39,7 @@
 		{"id":"b8940a98c982f534","fromNode":"09a4ae1a814fbb5c","fromSide":"left","toNode":"9021a517fec5826a","toSide":"right"},
 		{"id":"a58765ce6c527db0","fromNode":"e3979a34a33383c5","fromSide":"left","toNode":"60e11adbb86f4d67","toSide":"right"},
 		{"id":"e73cf43888f812b2","fromNode":"e3979a34a33383c5","fromSide":"left","toNode":"5d0d995976a3a34b","toSide":"right"},
-		{"id":"f160dfe78abc2c9a","fromNode":"690499691d37f513","fromSide":"bottom","toNode":"6561d7864e58157c","toSide":"top"}
+		{"id":"f160dfe78abc2c9a","fromNode":"690499691d37f513","fromSide":"bottom","toNode":"6561d7864e58157c","toSide":"top"},
+		{"id":"dbd57c24d4cb9a43","fromNode":"a6cb3fbb05fb2237","fromSide":"top","toNode":"eebf0641e19e1de6","toSide":"bottom"}
 	]
 }
