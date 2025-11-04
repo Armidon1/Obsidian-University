@@ -1,29 +1,35 @@
+Previous lesson: [[1- Email Security]]
+
 # Network Security
 
-**Cyber Intelligence and Information Security (CIS Sapienza)**  
-**Lecturer:** Leonardo Querzoni  
-📧 [querzoni@diag.uniroma1.it](mailto:querzoni@diag.uniroma1.it)
+Cyber Intelligence and Information Security (CIS Sapienza)
+
+Lecturer: Leonardo Querzoni
+
+📧 querzoni@diag.uniroma1.it
 
 ---
+
 ## Introduction
 
-- No shielding (firewalls, VPNs, etc.) is 100% intrusion proof.
+- No preventative shielding (like firewalls, VPNs, or access control lists) is 100% intrusion-proof. Prevention systems will always have gaps.
     
-	- New attack techniques emerge continuously.
+- **New attack techniques** emerge continuously, creating **zero-day exploits** that existing defenses cannot recognize.
     
-	- Unexploited or _silent_ vulnerabilities exist.
+- **Unexploited or _silent_ vulnerabilities** (bugs) may exist in software for years before being discovered.
     
-	- Misconfigurations and malicious insiders are persistent risks.
+- **Misconfigurations** (e.g., default passwords, open ports, improper permissions) and **malicious insiders** (trusted users with bad intent) are persistent risks that bypass traditional perimeter defenses.
     
-- Therefore, **continuous monitoring** and **attack detection** are essential.
+- Because prevention _will_ eventually fail, **continuous monitoring** and **attack detection** are essential components of a robust security posture (Defense in Depth).
     
 
 ---
 
 ## Intrusion Detection
 
-> “The process of monitoring the events occurring in a computer system or network and analyzing them for signs of intrusions — attempts to compromise confidentiality, integrity, availability, or to bypass security mechanisms.”  
-> — _NIST Definition_
+> “The process of monitoring the events occurring in a computer system or network and analyzing them for signs of intrusions — attempts to compromise confidentiality, integrity, availability, or to bypass security mechanisms.”
+> 
+> — NIST Definition
 
 ---
 
@@ -31,25 +37,24 @@
 
 ### Terminology
 
-- **Attack:** Intrusion attempt (may be blocked)
+- **Attack:** An _attempt_ to intrude. It may be blocked by a firewall or other preventative measure and have no impact.
     
-- **Intrusion:** Successful attack  
-    → Represents a malicious, externally induced operational fault
-
+- **Intrusion:** A _successful_ attack. This means the attacker has bypassed defenses and caused a malicious, externally induced operational fault.
+    
 
 ### Classification Criteria
 
 Attacks can be categorized based on:
 
-- **Type**
+- **Type:** The goal of the attack (e.g., DoS, compromise).
     
-- **Involved network connections**
+- **Involved network connections:** Single vs. multiple connections.
     
-- **Source**
+- **Source:** A single IP vs. multiple distributed sources.
     
-- **Environment**
+- **Environment:** The target (e.g., host, network, wireless).
     
-- **Automation level**
+- **Automation level:** Manual (human-driven) vs. automated (script/worm).
     
 
 ---
@@ -57,294 +62,362 @@ Attacks can be categorized based on:
 ## Attack Types
 
 ### Denial of Service (DoS)
+
 [[DoS]]
 
-**Goal:** Disrupt service availability by shutting down systems or processes.
+**Goal:** To disrupt or shut down a network, computer, or process, denying the use of resources to authorized users. This is an attack on **Availability**.
 
 **Strategies:**
 
-- Resource consumption (bandwidth, CPU, disk, etc.)
+- **Consumption of scarce resources:**
     
-- Network connectivity flooding
+    - **Bandwidth Consumption:** Saturating the network connection with junk traffic (e.g., UDP floods, ICMP floods).
+        
+    - **Network Connectivity Flooding:** Exhausting the system's ability to manage connections (e.g., a **SYN Flood** fills the connection state table).
+        
+    - **Other Resources:** Consuming all available CPU, memory, or disk I/O.
+        
+- **Destruction or alteration of configuration:** Changing routing tables or DNS records.
     
-- Destruction or alteration of configuration or physical components
+- **Physical destruction or alteration:** Physically damaging components.
     
 
 ---
 
 ### Probing / Scanning
+
 [[Probing-Scanning]]
-**Goal:** Discover active IPs and services to identify vulnerabilities.
+
+**Goal:** The _reconnaissance_ phase. An attacker attempts to identify valid IP addresses in a domain and collect information about them (e.g., open ports, running services, OS versions) to find potential vulnerabilities.
 
 **Tools:** `IPsweep`, `Portsweep`, `nmap`
 
-- Effective detection for _fast or noisy_ scans.
+- **Noisy Scans:** Fast, aggressive scans are easy to detect (e.g., "this IP scanned 1000 ports in 3 seconds").
     
-- _Stealthy scans_ are harder to detect.
+- **Stealthy Scans:** These are more challenging to detect as they are designed to fly under the radar (e.g., very slow scans, or scans using non-standard flags like a FIN scan).
     
 
 ---
 
 ### Compromises
+
 [[Compromises]]
-**Goal:** Gain unauthorized or privileged access.
+
+**Goal:** Breaking into a system to gain unauthorized or privileged access (e.g., a user shell or root/admin access). This is an attack on **Confidentiality** and **Integrity**.
 
 #### Remote-to-Local (R2L)
-[[R2L]]
-Attacker gains local access via:
 
-- Password guessing
-    
-- Exploiting software bugs (e.g., buffer overflows)
+[[R2L]]
+
+An attacker with no account on a machine gains local access _from the network_.
+
+- **Examples:** Password guessing (brute-force SSH), or exploiting a known vulnerability in a network-facing service (e.g., a buffer overflow in Sendmail, an RCE flaw in a web application).
     
 
 #### User-to-Root (U2R)
-[[U2R]]
-Local attacker escalates privileges to root/admin using:
 
-- System or program vulnerabilities
+[[U2R]]
+
+An attacker who already has a low-privilege local account _escalates_ their privileges.
+
+- **Examples:** Exploiting a bug in the operating system kernel or a program that runs with `setuid` root privileges.
     
 
 ---
 
 ### Malware-Based Attacks
+
 [[Malware-Based Attacks]]
+
 #### Viruses
+
 [[Virus]]
-- Attach to other programs
+
+- Malicious code that attaches itself to other legitimate programs.
     
-- Require human interaction to spread
+- Requires **human interaction** (e.g., running the infected program) to spread.
     
 
 #### Worms
+
 [[Worms]]
-- Self-replicating, spread via:
+
+- **Self-replicating** programs that aggressively spread through a network by exploiting vulnerabilities.
     
-    - Direct network connections
+- **No human interaction** is needed to propagate.
+    
+- Spreads via:
+    
+    - Direct network connections (e.g., the Slammer worm).
         
-    - Email or file sharing
+    - Email or file sharing.
         
-    - Hybrid mechanisms
+    - Hybrid mechanisms.
         
 
 #### Trojan Horses
+
 [[Trojan]]
-- Malicious software disguised as legitimate
+
+- Malicious, security-breaking software that is **disguised as something benign** (e.g., a game, a utility).
     
-- Users install them voluntarily
+- Relies on social engineering; users are tricked into installing and running them voluntarily.
+    
+- A common payload is a **RAT (Remote Access Trojan)**.
     
 
 #### Rootkits
+
 [[Rootkits]]
-- Take full control of a machine by obtaining admin privileges
+
+- Software designed to take full (administrator-level) control of a machine while **actively hiding its own presence**.
     
-- Hide themselves from security tools
+- They hook into the operating system (or kernel) to hide their files, processes, and network connections from security tools.
     
-- Often open backdoors for remote control
+- They often open up a **backdoor** to allow a hacker to take full control of the system.
     
 
 ---
 
-## Attack Characteristics
+## Attack Characteristics (Classification Recap)
 
-### Network Connections
+### By Network Connections
 
-- **Multiple connections:** e.g., [[DoS]] attacks
+- **Multiple connections:** Typical for [[DoS]] attacks or large-scale scans.
     
-- **Single connection:** e.g., system [[Compromises]]
-    
-
-### Source
-
-- **Single source:** Typical for scans
-    
-- **Multiple sources:** [[DDoS]] attacks
+- **Single connection:** Often used for a specific exploit or [[Compromises]].
     
 
-### Environment
+### By Source
 
-- **Host intrusion**
+- **Single source:** A typical port scan from one attacker's IP.
     
-- **Network intrusion**
-    
-- **P2P environments**
-    
-- **Wireless networks**
+- **Multiple sources:** A **Distributed Denial of Service ([[DDoS]])** attack, which uses a _botnet_ of many compromised machines to attack a single target.
     
 
-### Automation Level
+### By Environment
 
-- **Automated:** Use large-scale scanning tools
+- **Host intrusion:** Targeting a single server or workstation.
     
-- **Semi-automated:** Combine scanning scripts with manual coordination
+- **Network intrusion:** Targeting infrastructure like routers or switches.
     
-- **Manual:** Expert-driven, stealthy and dangerous
+- **P2P environments:** Targeting peer-to-peer protocols.
+    
+- **Wireless networks:** Targeting Wi-Fi, Bluetooth, etc.
+    
+
+### By Automation Level
+
+- **Automated:** Use automated tools (like worms or scanners) that probe the internet with no human intervention.
+    
+- **Semi-automated:** An attacker uses automated scripts for scanning but then manually analyzes the results and launches the final exploit.
+    
+- **Manual:** Involve manual scanning and exploitation. These are not frequent but are usually more dangerous and harder to detect, as a human attacker can adapt to defenses in real-time.
     
 
 ---
 
 ## Monitoring for Attacks
-A simple attack may impact several subsystems
+
+A simple attack may impact several subsystems, leaving a trail of evidence across routers, firewalls, proxies, and workstations.
+
 ![[Pasted image 20251029134610.png]]
-Monitoring data is generated by all IT systems:
+
+Monitoring data is generated by virtually all IT systems across the entire network infrastructure.
+
 ![[Pasted image 20251029134622.png]]
 
-### Data Sources
+### Data Sources for Monitoring
 
-- **Network flows**
+There are three primary sources of data for intrusion detection:
+
+1. **Network flows**
     
-- **System and event logs**
+2. **System and event logs**
     
-- **Full packet capture (FPC)**
+3. **Full packet capture (FPC)**
     
 
----
+### 1. Network Flows
 
-### Network Flows
+Network flows are **metadata** records of network communication sessions. Think of them as a "phone bill" for your network: they show _who_ talked to _whom_, for _how long_, and _how much_ data was sent, but **NOT the actual content (payload)** of the conversation.
 
-Metadata representing communication sessions (no payload).
+**5-Tuple Identification (The Key Fields):**
 
-**5-Tuple Identification:**
-
-1. Source IP
+1. Source IP Address
     
-2. Destination IP
+2. Destination IP Address
     
 3. Source Port
     
 4. Destination Port
     
-5. Protocol
+5. Protocol (e.g., TCP, UDP, ICMP)
     
 
-**Additional Data:**
+**Additional Data Also Captured:**
 
-- Start/End time
+- Start and End Time (duration)
     
-- Bytes/Packets transferred.
+- Number of Bytes / Packets transferred
     
-- TCP flags (SYN, ACK, FIN, etc.)
+- TCP Flags (providing session state like SYN, ACK, FIN, RST)
     
-- Autonomous System (AS) number
+- Autonomous System (AS) Number (for tracing external connections)
     
 
 ---
 
-### Event / System Logs
+### 2. Event / System Logs
 
-Generated by:
+These are text-based records of activities generated by all IT assets, providing the "ground truth" of what happened on a specific device.
 
-- Network devices
+- **Generated by:**
     
-- Servers
+    - Network appliances (firewalls, routers, switches)
+        
+    - Servers (e.g., Windows Event Logs, Linux `/var/log/syslog`)
+        
+    - Hosts (desktops, laptops)
+        
+    - Applications (e.g., web server access logs, database error logs)
+        
+- They contain crucial information, such as failed authentication attempts, system errors, or application-level commands.
     
-- Hosts
-    
-- Applications
-    
-
-Contain records of system activity (e.g., failed login attempts).
 
 ---
 
-### Full Packet Capture (FPC)
+### 3. Full Packet Capture (FPC)
 
-Captures entire payloads for forensic analysis.
+FPC means capturing and storing the **entire packet**, including the actual data **payload**.
 
 **Advantages:**
 
-- Enables deep malware and encryption analysis
+- This is the ultimate tool for **digital forensics**.
     
-- Useful for digital forensics
+- It allows analysts to literally **reconstruct the attack** step-by-step, analyze malware payloads, or extract encryption keys.
     
 
-**Limitations:**
+**Limitations (Why it's not used everywhere):**
 
-- Massive storage requirements
+- **Massive Storage Requirements:** Storing all payloads for an enterprise is extremely expensive.
     
-- High performance overhead
+- **Performance Overhead:** Requires high-speed, specialized hardware to capture traffic at line rate without dropping packets.
     
-- Typically deployed selectively
+- FPC is typically deployed **selectively** (e.g., only capturing packets that trigger an alert) or on very high-value, low-volume network segments.
     
 
 ---
 
 ## Intrusion Detection Systems (IDS)
 
+An IDS is a system that automates the monitoring and analysis process.
+
 ### General Framework
+
 ![[Pasted image 20251029135049.png]]
 
-**Components:**
+**Core Components & Flow:**
 
-- Monitored system
+1. **Monitored System:** The network or host being protected.
     
-- Sensor: needed to produce events, which contains stuff with a timestamp
+2. **Sensor:** Collects data (flows, logs, packets) from the monitored system and generates **Events** (a record of an observation with a timestamp).
     
-- Analysis engine
+3. **Analysis Engine:** The "brain" of the IDS. It processes events, compares them against the **Knowledge Base**, and generates **Alarms** if a threat is found.
     
-- Knowledge base
+4. **Knowledge Base:** A database of rules, signatures, or behavioral models that define what is "normal" or "malicious."
     
-- Dashboard: there is a security operator (human) which is monitoring the alarms
+5. **Dashboard:** A user interface where a human security operator monitors alarms.
     
-- Response component: it's a module of the introdusion detection system which contains some rules, which needs to be configured and produce actions depending by if a rule if matched 
-    
-- Configuration management
+6. **Response Component:** An optional module that can take **Actions** (e.g., send an email, block an IP) based on a pre-defined **Configuration** when an alarm is triggered.
     
 
-if we have an IDS, may happen that now the security operators are only whatching the output of the IDS. Of course IDS are not perfect, and may produce a false alarm and they will go more in dept with the logs. They have to be more reliable to prevent a FALS-NEGATIVE, which are even more important. 
+Security operators rely on the IDS output, but IDSs are not perfect. Operators must investigate alarms (which could be **False Positives**) by looking at the raw logs. However, the most dangerous failure is a **False Negative** (a real attack that the IDS missed), which is why IDS reliability is paramount.
 
 ---
 
-### IDS Characteristics
-Desired characteristics for an IDS:
-- Detection KPIs
-- Timeliness 
-- [[Fault Tolerance]]
+### Desired IDS Characteristics
 
-**Detection KPIs**
+A good IDS must balance three main characteristics:
 
-- **Detection Rate (TPR):** True positives / Total attacks
-    
-- **False Alarm Rate (FPR):** False positives / Normal connections , (we want it to be 0)
-    
-- **Accuracy:** Correct detections / Total events
-    
-- **Precision:** True positives / (True positives + False positives)
-    
-- **ROC Curve:** Trade-off between detection rate and false alarm rate
-    
-*Note that*: you don't know in reality the total attacks. the "total attacks" are the ones that you successfully detected.
-we can produce a lot of the same IDS and can be used for different purposes. of course has to be fine-tuned in that particular usage  (hospital, lawyer, ecc)
+#### 1. Detection KPIs (Key Performance Indicators)
 
-The ROC curve represents the trade-o between detection rate and false alarm rate.
+IDS accuracy is a statistical trade-off:
+
+- **True Positive (TP):** A real attack occurs, and the IDS correctly fires an alarm. (Good)
+    
+- **False Positive (FP):** No attack occurs, but the IDS incorrectly fires an alarm. (Bad - causes alert fatigue).
+    
+- **True Negative (TN):** No attack occurs, and the IDS correctly stays silent. (Good)
+    
+- **False Negative (FN):** A real attack occurs, and the IDS _misses it_. (Very Bad - a complete failure of detection).
+    
+
+**Key Metrics:**
+
+- **Detection Rate (True Positive Rate, TPR):** `TP / (TP + FN)`
+    
+    - _Question:_ Of all the real attacks, what percentage did we catch?
+        
+- **False Alarm Rate (False Positive Rate, FPR):** `FP / (FP + TN)`
+    
+    - _Question:_ Of all normal events, what percentage did we incorrectly flag as an attack? (We want this to be 0).
+        
+- **Accuracy:** `(TP + TN) / Total Events`
+    
+    - _Question:_ Overall, what percentage of the IDS's decisions were correct?
+        
+- **Precision:** `TP / (TP + FP)`
+    
+    - _Question:_ Of all the alarms that fired, what percentage were real attacks? (High precision means less time wasted on false positives).
+        
+
+_Real-World Note:_ These metrics are hard to measure. In a real network, you never know the true number of "Total Attacks" (especially the ones you missed, FN). Therefore, an IDS must be fine-tuned for its specific environment (e.g., a hospital's needs are different from a bank's).
+
+ROC Curve:
+
+The Receiver Operating Characteristics (ROC) curve visualizes the trade-off between the Detection Rate (TPR) and the False Alarm Rate (FPR).
+
 ![[Pasted image 20251029140336.png]]
-The perfect IDS is just a point on top left. In general, the more we want to increase the detection rate, and more is possible to produce a false alarm. This curve is produce by the vendor in theory. 
 
+- A **Perfect IDS** is a single point in the top-left corner (100% detection, 0% false alarms).
+    
+- **Random Prediction** (guessing) is the 45-degree diagonal line.
+    
+- A good IDS has a curve that bends as close to the top-left corner as possible. In general, to increase the detection rate (move up), you must often accept a higher false alarm rate (move right).
+    
 
-**[[Timeliness]]**
-- Processing + Propagation + Response time
-	we want it to be as lower as possible.    
+#### 2. [[Timeliness]]
 
-**[[Fault Tolerance]]**
-- IDS itself must be robust against attacks and able to recover quickly.
-	    the adversary knows that we have an IDS, so he wants to be it as inefficient as possible. So our IDS has to be prepared for it.
-	    Example of attack: DoS
+- This is the total delay from the start of an intrusion to the alert being generated.
+    
+- It includes all processing time, network propagation time, and the analysis/response time. We want this to be as low as possible.
+    
+
+#### 3. [[Fault Tolerance]]
+
+- The IDS itself is a target. An adversary knows it exists and will try to make it inefficient or crash it.
+    
+- The IDS must be robust against attacks and able to recover quickly.
+    
+- **Example Attack:** A DoS attack on the IDS, where an attacker floods it with obvious, low-level alerts to hide a real, stealthy attack in the "noise."
+    
 
 ---
 
 ## IDS Classification
 
-IDSs can be categorized based on:
+IDSs can be categorized based on several key properties:
 
-1. **Monitored system**
+1. **Monitored system** (Where it looks: Host vs. Network)
     
-2. **Detection methodology**
+2. **Detection methodology** (How it thinks: Misuse vs. Anomaly)
     
-3. **Time aspects**
+3. **Time aspects** (When it works: Online vs. Offline)
     
-4. **Architecture**
+4. **Architecture** (Where it runs: Centralized vs. Distributed)
     
-5. **Reaction type**
+5. **Reaction type** (What it does: Passive IDS vs. Active IPS)
     
 
 ---
@@ -353,389 +426,481 @@ IDSs can be categorized based on:
 
 #### Host-Based IDS (HIDS)
 
-- Monitors host-specific events:
-    - Logs
-    - Processes
-    - File access
+A HIDS is a software agent installed directly on a single host (a server, workstation) that monitors _internal_ events.
+
+- **Monitors:**
+    
+    - System logs (e.g., auth.log)
+        
+    - Running processes
+        
+    - File access and filesystem integrity (e.g., FIM - File Integrity Monitoring)
+        
     - Configuration changes
         
-- Techniques:
-    - Code analysis, 
-    - sandboxing, 
-    - filesystem integrity checks, 
-    - log analysis
+    - System calls
         
-- Pros: Granular insight
+- **Techniques:** Code analysis, sandbox-based execution, log analysis.
     
-- Cons: High overhead, context limitations
+- **Pros:**
+    
+    - **Can see inside encrypted traffic** (it runs on the host _after_ decryption).
+        
+    - Highly granular insight into what happened on that specific host.
+        
+- **Cons:**
+    
+    - Can have a negative performance impact (overhead) on the host.
+        
+    - Lacks a wider network context (it only sees what's happening on its own host).
+        
 
-EDR systems are the active evolution of HIDS
-- track all activities withing an hosts
-- other stuff to ask to chatgpt
-    
-	
+**Modern Evolution (EDR):** The active evolution of HIDS is **EDR (Endpoint Detection and Response)**. EDR systems don't just detect threats; they also provide tools to _respond_ (e.g., remotely isolate the host from the network, kill a malicious process, or delete a file).
+
 #### Network-Based IDS (NIDS)
 
-- Monitors network traffic at various layers:
+A NIDS is a device (physical or virtual) that monitors network traffic on a specific network segment.
+
+- **Monitors:** Network packets at various layers:
     
     - Application (HTTP, SMTP, DNS)
         
-    - Transport (TCP/UDP)
+    - Transport/Network (TCP, UDP, IP)
         
-    - Network (IP)
+    - Lower layers (MAC, ARP)
         
 - **Deployment:**
     
-    - Inline (can block → acts as IPS)
+    - **Passive:** The NIDS monitors a _copy_ of the traffic (from a network TAP or switch's SPAN port). It is "read-only" and can only **Detect**.
         
-    - Passive (read-only monitoring)
+    - **Inline:** The NIDS sits directly in the path of traffic. It can actively block malicious packets, making it an **Intrusion Prevention System (IPS)**.
         
-- **Limitations:** Cannot inspect encrypted traffic unless using TLS proxy
+- **Fundamental Limitation:** A NIDS **cannot inspect encrypted traffic** (e.g., SSL/TLS, SSH). The payload is unreadable. The only workaround is a **TLS Proxy** (or TLS Interception), which performs a "man-in-the-middle" decryption, inspection, and re-encryption.
     
 
 #### Log-Based IDS
 
-- Monitors logs of specific applications (DBMS, CMS, accounting)
+- A specialized IDS that only monitors the logs of specific applications (e.g., a Database Management System (DBMS), Content Management System (CMS), or accounting software).
     
-- High granularity but requires careful tuning
+- It has high granularity for that application but requires complex tuning.
     
 
-#### Wireless IDS
+#### Wireless IDS (WIDS)
 
-- Monitors wireless traffic
+- Monitors the wireless medium (802.11) for attacks.
     
-- Challenges:
+- **Challenges:**
     
-    - Broadcast medium = less secure
+    - The broadcast medium is inherently less secure.
         
-    - Harder to identify attackers
+    - It's hard to physically locate attackers.
         
-    - Expensive multi-radio hardware needed
+    - Continuously scanning multiple channels requires expensive, multi-radio hardware.
         
 
 #### Multi-Level IDS (Correlated IDS)
 
-- Aggregates alerts from multiple IDS layers
+- A hierarchical system that aggregates alerts from many other IDS layers (HIDS, NIDS).
     
-- Hierarchical structures improve detection and management
+- An analysis engine (like a SIEM) correlates these low-level alerts to find complex, large-scale attack patterns.
     
 
 ---
 
 ### 2. Detection Methodology
 
-#### Misuse Detection
-- Based on known attack patterns (signatures)
-	- Strategy based on the knowledge about previously happened attacks.
-	- Abnormal behaviours are modelled
-	- Everything that departs from the model is normal behaviour
-	- 
-- Ignores normal behaviour
+#### Misuse Detection (Signature-Based)
+
+This methodology is based on knowledge about **previously known attacks**.
+
+- A model of _abnormal_ behavior (a "signature") is defined.
+    
+- The IDS compares events to this model. If there is a match, an alarm is raised.
+    
+- All other behavior (anything not matching a "bad" signature) is considered normal and ignored.
     
 
 **Techniques:**
 
-- **Signature-based IDS:** e.g., _Snort_, _Suricata_ (see also [[Signatures (Cybersecurity)]])
-	- look in a database containing “fingerprints” of known attackswork
-	- work like AntiVirus software
-	- unable to detect new attack types
-	- di cult detection of old attack variations
-	- signatures DB must be kept up-to-date
-	- Example: SNORT or Suricata
+- **Signature-based IDS:**
     
-- **Rule-based systems:** IF-THEN logic (example Firewalls)
-	- Use “if...then” conditions to capture possible attackswork
-	- Can leverage high-performance rule engines
+    - Works like an antivirus, using a database of "fingerprints" of known attacks (e.g., a specific string, a binary pattern).
+        
+    - **Tools:** _Snort_ or _Suricata_ (see also [[Signatures (Cybersecurity)]]).
+        
+    - **Cons:** Unable to detect new (zero-day) attacks or significant variations of old attacks. The signature DB must be constantly updated.
+        
+- **Rule-based systems:**
     
-- **State transition analysis:** Finite state machine models
-	- Requires the construction of a nite state machine
-	- states correspond to di erent IDS states
-	- transitions characterize certain events that cause IDS states to change
-	- IDS states correspond to di erent states of the network protocol stacks or to the integrity and validity of current running processes, etc.
-	- When the automaton reaches a state that is agged as a security threat, the intrusion is reported as a sign of malicious attacker activity.
+    - Use explicit "if...then" conditions to capture attacks (e.g., "IF packet is from X AND port is Y THEN block").
+        
+    - Can leverage high-performance rule engines.
+        
+- **State transition analysis:**
     
-- **Machine Learning-based:** Supervised learning (SVMs, neural nets, decision trees)
-	- Machine-learning based techniques
-	- Each instance in a data set is labelled as normal or intrusive and a learning algorithm is trained over the labelled data.
-	- High degree of accuracy in detecting known attacks and their variations (with respect to signature-based intrusion detection systems).
-	- Different classification algorithms: decision trees, modi ed nearest neighbour algorithms, fuzzy association rules, neural networks, Bayes classifiers, genetic algorithms, genetic programming, support vector machines, adaptive regression splines, etc.
-	- Those models are extremely effective for those non-deterministic attacks.
-	- **Problems**: 
-		- one big problem is that this is an aerea where only a few people knows and the marketing knows really well. Many software are proposed as "AI" but in the end are not good enough 
-		- many times is hard to understand why the AI model decided that particular decision so you may think that it is a false positive. 
-		- When you are buying something classified as "AI", then you don't really know in particular what it does, because AI is a really big class of study. Behind the word "AI" there is another world. 
+    - Models an attack as a finite state machine.
+        
+    - States correspond to different states of a system or protocol.
+        
+    - Transitions are triggered by events.
+        
+    - If the machine reaches a state that is flagged as a security threat, an alarm is raised.
+        
+- **Machine-Learning based (Supervised):**
     
+    - A model is trained on a massive, _labeled_ dataset (containing examples of "normal" and "intrusive" events).
+        
+    - Can be very accurate at detecting known attacks and their variations.
+        
+    - **Algorithms:** Decision trees, neural networks, Support Vector Machines (SVMs).
+        
+    - **Problems:**
+        
+        - **Marketing vs. Reality:** Many products are sold as "AI-powered" but may be simple heuristics.
+            
+        - **Explainability:** It's often hard to know _why_ a complex model (like a neural net) flagged an event, making it difficult to triage false positives.
+            
+        - **Ambiguity:** The term "AI" is broad and can mean anything from simple classifiers to complex deep learning.
+            
 
 #### Anomaly Detection
 
-- Detects deviations from **normal** system behavior
-	- Strategy based on knowledge about the system.
-	- The normal system behavior is modeled
-	- Everything that departs from the model is a potential attack
+This methodology is based on knowledge about the **normal system behavior**.
 
-They are very hard to develop because it is asked to model an extremely detailed thing that in the end may also produce a false positive.
-We can try train a model for a specific system, but in this period of training (where we are not of course using it) the system may be evolved, so the model itself may result in being deprecated already. 
+- A baseline model of "normal" is built.
+    
+- Everything that _departs_ (deviates) from this model is flagged as a potential attack.
+    
+- **Pros:** Can detect novel (zero-day) attacks.
+    
+- **Cons:** Prone to high false-positive rates (legitimate but unusual activity can trigger an alarm).
+    
+
+**Challenges:** Anomaly detection is very hard to develop. It requires modeling an extremely detailed system. Furthermore, "normal" behavior changes over time (**model drift**). By the time a model is trained, the system may have already evolved, making the model obsolete.
 
 **Approaches:**
 
-- **Programmed:** Fixed behavioural models
-	- Programmed systems: the system is configured with fixed behavioural models.
-	- Default deny: the system expected behaviour is accurately modelled. Only modelled states are allowed.
-	- Descriptive statistics: the normal behaviour of the system is described by a statistical model build on a number of variables
-		- Simple statistics, rules, thresholds
+- **Programmed:** The system is configured with _fixed_ behavioral models.
     
-- **Self-learning:** Builds models automatically
-	- Self-learning systems: build automatically a model representing the system normal behaviour
-		- Non-time series: use stochastic modeling that do not consider [[Timeliness]]
-			- Rule-based modeling
-			- Statistical modeling
-		- Time series: the model take into account time correlation between events
-			- Neural Networks
-			- Hidden Markov Models
+    - **Default Deny:** A very accurate model of "expected" behavior. Only modeled states are allowed.
         
-- **Rule-based:** Define allowed behaviors
-	- Rule based methods
-		- Characterize normal behavior of users, networks and/or computer systems by a set of rules
-		-  When rules are broken, an attack is suspected
-		- Rules allow a “high-level” description
-		- Rules can be derived automatically through “expert systems”
+    - **Descriptive Statistics:** Uses simple statistics, rules, and thresholds (e.g., "CPU usage should not exceed 90% for 5 minutes").
+        
+- **Self-learning:** The IDS automatically builds a model representing "normal" behavior by observing the system.
     
-- **Statistical:** Detect deviations or outliers
-	- Statistical methods
-		- Monitor the user or system behavior by measuring certain variables over time
-		- Keep averages of these variables (moving event/time windows) and detect whether thresholds are
-		- exceeded based on the standard deviation of the variable
-		- More advanced techniques can be used (e.g. probabilistic Bayesian inference)
-		- Outliers detection: data points that are very different from the rest of the data
-		- Data points are modelled using a stochastic distribution, and points are determined to be outliers
-		- depending on their relationship with this model
+    - **Non-time series:** Stochastic modeling that does not consider time (e.g., rule-based or statistical models).
+        
+    - **Time series:** The model _does_ consider the correlation between events over time (e.g., Hidden Markov Models (HMM), Neural Networks).
+        
+- **Rule-based (for anomaly):**
     
-- **Distance-based:** Use clustering and density measures
-	- Distance based methods
-		- Estimating the multidimensional distributions of the data points is di cult and inaccurate
-		- Detect outliers by computing distances among points
-		- These techniques are based on computing the full dimensional distances of points from one another using all the available features, and on computing the densities of local neighbourhoods (clusters)
+    - Defines the _normal_ behavior with a set of rules (e.g., "This user should only log in from 9-5").
+        
+    - When a rule is broken, an attack is suspected.
+        
+- **Statistical:**
     
-- **Profiling:** Learn “normal” protocol patterns
-	- A pro le characterising the normal execution of protocols and services is generated.
-	- Any deviation from the pro le is considered as suspicious
-	- Immune system inspired approaches
-		- Small patterns of system calls happening in legal interactions are collected
-		- If an interaction presents a pattern that has not been signalled before an alarm is fired
+    - Monitors behavior by measuring variables over time (e.g., in moving time windows).
+        
+    - Detects when thresholds are exceeded (e.g., 3 standard deviations from the average).
+        
+    - **Outlier Detection:** A key technique. Data points are modeled using a distribution, and points that fall far outside this distribution are flagged as outliers.
+        
+- **Distance-based:**
     
-- **Immune System-Inspired:** Detect unknown behavior sequences
+    - An alternative to statistical modeling.
+        
+    - Detects outliers by computing distances between data points in a multidimensional space.
+        
+    - Can be based on **clustering** (points far from any cluster) or **density** (points in a low-density neighborhood).
+        
+- **Profiling:**
     
+    - A profile characterizing the _normal execution_ of protocols and services is generated.
+        
+    - Any deviation from this profile (e.g., an HTTP request that doesn't look like a normal web request) is considered suspicious.
+        
+- **Immune System-Inspired:**
+    
+    - A specific profiling method. Small patterns of normal behavior (e.g., sequences of system calls) are collected.
+        
+    - If a new interaction presents a pattern that has never been seen before, an alarm is fired.
+        
 
 #### Compound Detection
 
-- Bases its functioning on the maintenance of models for both normal and abnormal behaviors
-- Events observed at runtime are compared to the models
-- The relative distance of an event from the two models is used to decide if it can be classi ed as an attack
+A hybrid approach that bases its functioning on models for _both_ normal and abnormal behavior.
 
-### Detection Methodology RECAP
+- Events are compared to both models.
+    
+- The relative distance of an event from the two models is used to classify it as an attack or normal.
+    
+
+### Detection Methodology Recap
+
 ![[Pasted image 20251029153606.png]]
 
 ---
 
 ### 3. Time Aspects
-On-line tools
-- Can check streams of incoming data
-- Useful to timely detect attacks and promptly react.
-- Require strong processing capabilities
-	- Stream processors
-	- High-performance rule engines 
-- Cannot work on events that are produced out of sync (e.g. statistical reports)
 
-Offline tools
-- Post-analysis of audit data
-	- best for reporting or forensics.
-- Performance is rarely an issue
-	-  Can perform more complex analysis
-- Work on more comprehensive datasets
+- **On-line (Real-time) tools:**
+    
+    - Can check streams of incoming data as they arrive.
+        
+    - Useful to timely detect attacks and react promptly (required for an IPS).
+        
+    - Requires strong processing capabilities (e.g., stream processors, high-performance rule engines).
+        
+    - Cannot easily work on events that are out of sync (like batched statistical reports).
+        
+- **Off-line tools:**
+    
+    - Perform post-analysis of audit data (logs, FPC files).
+        
+    - Best for reporting or deep digital forensics.
+        
+    - Performance is rarely an issue, so more complex and comprehensive analysis can be performed.
+        
 
-| Type            | Description                                 |
-| --------------- | ------------------------------------------- |
-| **Online IDS**  | Real-time detection using stream processing |
-| **Offline IDS** | Post-analysis of logs for complex insights  |
+|**Type**|**Description**|
+|---|---|
+|**Online IDS**|Real-time detection using stream processing.|
+|**Offline IDS**|Post-analysis of logs for complex insights.|
 
 ---
 
 ### 4. Architecture
 
-Centralized
-- The analysis of the data is performed in a fixed number of locations, independent of how many hosts are being monitored
-- We are interested only in the analysis aspects, not on data gathering
-- Simplifies configuration and management
-- Less fault tolerant and less scalable with respect to load
+- **Centralized:**
+    
+    - The analysis of data is performed in a fixed number of locations (e.g., one central server), independent of how many hosts are monitored.
+        
+    - **Pros:** Simplifies configuration and management.
+        
+    - **Cons:** Less fault tolerant (it's a single point of failure) and less scalable.
+        
+- **Distributed:**
+    
+    - The analysis is performed in many locations, often proportional to the number of hosts (e.g., agent-based IDSs).
+        
+    - **Pros:** Graceful degradation in case of failures; easier to customize for ad-hoc duties.
+        
+    - **Cons:** Complex configuration and management.
+        
 
-Distributed
-- The analysis of the data is performed in a number of locations that is proportional to the number of hosts being monitored
-- Complex configuration and management
-- Graceful degradation in case of failures
-- Easier to customize (single instances can be adapted to ad-hoc duties)
-- Distributed agent-based IDSs are an active research area
-
-|Type|Description|
+|**Type**|**Description**|
 |---|---|
-|**Centralized**|Easier to manage, less scalable|
-|**Distributed**|Uses multiple analysis nodes, fault-tolerant, customizable|
+|**Centralized**|Easier to manage, less scalable, single point of failure.|
+|**Distributed**|Uses multiple analysis nodes, fault-tolerant, customizable.|
 
 ---
 
 ### 5. Reaction Type
-![[Pasted image 20251029154241.png]]![[Pasted image 20251029154301.png]]
 
-|Action|Description|Use Case|
+This defines the difference between a passive **IDS (Detection)** and an active **IPS (Prevention)**.
+
+- **Passive Reaction (IDS):** Typically, IDSs only report alarms to human administrators or a SIEM. The most common "reaction" is to increase the sensor sensitivity to gather more data.
+    
+- **Active Reaction (IPS):** The system can take automatic, non-destructive actions.
+    
+
+![[Pasted image 20251029154241.png]]
+
+![[Pasted image 20251029154301.png]]
+
+|**Action**|**Description**|**Use Case**|
 |---|---|---|
-|Dropping Packets|Blocks malicious packets|SQL injection, DDoS|
-|Blocking Connections|Ends malicious sessions|Port scans, brute force|
-|Blocking IPs|Blacklisting offending IPs|Botnets|
-|Rate Limiting|Throttles certain traffic types|DDoS, brute-force|
-|Traffic Rerouting|Redirects to honeypots|Attack intelligence|
-|Payload Modification|Sanitizes or neutralizes attacks|Prevent buffer overflow|
+|**Dropping Malicious Packets**|Blocks specific malicious packets from reaching their destination.|Blocking malware, SQL injection, DDoS.|
+|**Blocking/Terminating Connections**|Terminates suspicious connections (e.g., by sending reset packets).|Stopping brute-force attacks, port scanning.|
+|**Blocking IP Addresses (Blacklisting)**|Blocks all future traffic from a specific IP address.|Preventing repeated attacks from known malicious IPs/botnets.|
+|**Rate Limiting (Throttling)**|Limits the rate of certain types of traffic (e.g., new connections).|Mitigating DDoS attacks, brute-force login attempts.|
+|**Traffic Rerouting (Honeypots)**|Redirects malicious traffic to a **honeypot** (a decoy system).|Gathering attack intelligence while protecting critical systems.|
+|**Modifying Attack Payloads**|Alters or neutralizes parts of malicious payloads (e.g., stripping a command).|Preventing buffer overflow attacks.|
 
 ---
 
-## Network Segmentation
+## Network Segmentation and Zero Trust
 
-### Traditional Model
+### The Traditional Model: "Castle and Moat"
 
-- Divides “external” vs. “internal” (trusted) zones
+- The typical network design is based on the concept of **"internal trust"**.
     
-- Weakness: Once inside, attackers move freely
+- The world is divided into two zones: "external" (untrusted) and "internal" (trusted).
+    
+- The transfer of data is only possible through controlled checkpoints (the **firewall**, or "moat").
+    
+- **Weakness:** This model has a hard shell but a soft, chewy center. If an attacker breaches the barrier (e.g., via a phishing email), **nothing stops them from moving freely inside the network** (this is called **lateral movement**).
     
 
 ---
 
 ## Zero Trust Architecture
 
-**Principle:** _Never trust, always verify._
+**Principle:** A modern security model that operates on the principle of **"Never trust, always verify."**
+
+It assumes no user or device should be trusted by default, even if it is "inside" the network perimeter.
 
 ### Core Principles
 
-- **Verify Explicitly:** Check every access attempt
+- **Verify Explicitly:** Continuously validate access for every request using all available data points (identity, location, device health, service).
     
-- **Least Privilege Access:** Restrict user permissions
+- **Use Least Privilege Access:** Restrict user permissions to the _minimum_ necessary for their job, reducing the potential blast radius if credentials are compromised.
     
-- **Assume Breach:** Contain and minimize impact
+- **Assume Breach:** Design the network to _contain_ potential breaches and minimize their impact. Don't just try to keep attackers out; assume they are already in.
     
 
-### Components
+### Key Components of a Zero Trust Architecture
 
-- Identity and Access Management (IAM)
+- **Identity and Access Management (IAM):** Manages user identities and enforces strong authentication and authorization.
     
-- Device Security
+- **Device Security:** Monitors device health (e.g., "is this device patched and running antivirus?").
     
-- Network Segmentation
+- **Network Segmentation:** (See below) Breaks the network into small zones to limit lateral movement.
     
-- Data Protection
+- **Data Protection:** Secures data itself (e.g., via encryption) and enforces data privacy.
     
-- Continuous Monitoring
+- **Continuous Monitoring and Analytics:** Tracks user and device behavior for anomalies.
     
 
 ### Benefits
 
-- Enhanced security
+- **Enhanced Security:** Limits access and minimizes the impact of a breach.
     
-- Reduced attack surface
+- **Reduced Attack Surface:** There is no single "trusted" internal network to attack.
     
-- Cloud & remote-friendly
+- **Supports Remote Work and Cloud:** Designed for modern, distributed environments.
     
-- Compliance support
+- **Compliance and Data Privacy:** Helps meet regulatory requirements with granular controls.
     
 
 ---
 
-## Network Segmentation Strategies
+## Network Segmentation Strategies (Implementing Zero Trust)
 
-### What It Is
+### What Is Network Segmentation?
 
-Dividing a network into isolated domains with controlled boundaries.
+A security strategy that divides a network into smaller, isolated protection domains (segments). It requires implementing controls (like firewalls) on the borders that link these segments.
 
 **Advantages:**
 
-- Reduces attacker movement
+- **Hampers lateral movement** for an attacker.
     
-- Smaller attack surface
+- **Reduces the attack surface** and limits potential damage.
     
-- Easier compliance
+- **Allows more granular monitoring** and management of traffic.
+    
+- **Helps meet regulatory requirements** by isolating sensitive data (e.g., a PCI segment for credit cards).
     
 
 ---
 
 ### Physical Segmentation
 
-- Separate hardware networks connected via firewalls
+- Works at the hardware level, cutting the network into physically separate chunks (e.g., different switches, different rooms).
     
-- **Pros:** Maximum isolation
+- The ultimate example is an **"air-gapped" network** with no physical connection to other networks.
     
-- **Cons:** Costly, inflexible
+- **Pros:** Maximum security and isolation.
+    
+- **Cons:** Extremely inflexible, expensive, and difficult to manage.
     
 
 ### Logical Segmentation
 
-- Implemented in software (e.g., SDN)
+- Works at the software level, creating software-defined boundaries on shared hardware.
     
-- **Pros:** Flexible and centralized control
+- **Pros:** Much more flexible than physical segmentation; allows for dynamic, centralized control (e.g., Software-Defined Networking - SDN).
     
-- **Cons:** Vulnerable to software exploits
+- **Cons:** Can be vulnerable to software bugs that break security guarantees.
     
 
 ### Microsegmentation
 
-- Fine-grained isolation at the workload or application level
+- A very fine-grained approach that applies segmentation at the **individual application or workload level**.
     
-- **Pros:** Ideal for zero trust, hybrid environments
+- **Example:** Instead of a "Web Server" segment, _each web server_ is its own segment and is only allowed to talk to its _specific database_ on its _specific port_, and nothing else.
     
-- **Cons:** Complex management
+- **Pros:** The best option for implementing Zero Trust; maximum flexibility; supports hybrid and cloud environments.
+    
+- **Cons:** Can lead to complex policy management; potential for overhead.
     
 
 #### Microsegmentation Approaches
 
-- Network-based
+- **Network-Based:** Uses IP addresses or subnets.
     
-- Application-based
+- **Application-Based:** Policies are based on application-level identifiers.
     
-- User-based
+- **User-Based:** Controls access at the user level (e.g., "Alice" can access the finance app).
     
-- Process-based
+- **Process-Based:** Policies are based on _specific processes_ within a workload (e.g., `apache.exe` can talk on port 80, but `powershell.exe` cannot).
     
 
 ---
 
 ## VLANs (Virtual LANs)
 
-- Logical segmentation via Layer 2 switches
+VLANs are the most common technology for implementing **logical segmentation**.
+
+- They work at **OSI Layer 2** (Data Link).
     
-- Enables multiple broadcast domains on shared hardware
+- They are implemented by nearly all commercial network switches.
     
-- Supported by almost all commercial switches
+- They allow a single physical network infrastructure to be split into multiple _logical_ broadcast domains.
     
+
+As shown in the diagram, devices on VLAN 10 (HR) and VLAN 20 (Finance) can be plugged into the same physical switch but cannot communicate directly.
+
+![Immagine di VLAN trunks connecting multiple switches](https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcQvb_suXg-D_8ZxZ4ZdAtcztu4hx8Kym_mv73as_Ma3f0fUZw-xSRmP99OX9rvoHAb6ok4FKxummS_QrWGkKqmXZqxW1jIHw92d4drJepyzQULji64)
+
+Shutterstock
+
+To communicate _between_ VLANs (e.g., for the HR Clerk to access the HR DB Server), traffic must pass through a **Layer 3 device (a router)**. This router acts as the checkpoint where Access Control Lists (ACLs) are applied to enforce security rules.
 
 ---
 
 ## SIEM – Security Information and Event Management
 
-### Purpose
+### The Problem: Data Overload
 
-Provides centralized visibility into security across all IT systems.
+A modern network has hundreds of devices (firewalls, IDS, servers, switches), all generating thousands of logs and alerts.
 
-**Functions:**
+![[Pasted image 20251029134622.png]]
 
-- Aggregates and correlates logs/events
+A single attack creates a confusing trail of data across all these systems.
+
+![[Pasted image 20251029134610.png]]
+
+### The Solution: SIEM
+
+A **Security Information and Event Management (SIEM)** system solves this problem.
+
+- It is a layer of management and analysis positioned _above_ all existing security controls.
     
-- Converts low-level data into actionable intelligence
-    
-- Supports incident detection, response, and compliance
+- It **connects and unifies** information from all these pre-existing systems, allowing it to be analyzed and **correlated** from a single interface.
     
 
-### Goals
+### Purpose and Functions
 
-- **Unified Visibility:** Across systems
+The ultimate goal of a SIEM is to "distill" low-level information (logs, flows) into high-level, **actionable intelligence**.
+
+- **Functions:**
     
-- **Incident Detection:** Real-time alerting
+    - **Aggregate:** Collect and combine logs and events from all sources.
+        
+    - **Correlate:** Find hidden relationships between events (e.g., "a failed login on the server, _followed by_ a port scan from the same IP, _followed by_ a successful login on another machine" = a multi-stage attack).
+        
+    - **Support:** Enable incident detection, rapid response, and compliance reporting.
+        
+
+### Key Goals
+
+- **Unified Security Visibility:** A single pane of glass for security across the entire organization.
     
-- **Compliance Reporting:** Log retention and audits
+- **Incident Detection and Response:** Helps detect, prioritize, and respond to threats in real time.
+    
+- **Compliance and Reporting:** Automates log collection and reporting needed for regulations (e.g., PCI, HIPAA, GDPR).
     
 
 ---
@@ -749,8 +914,3 @@ Provides centralized visibility into security across all IT systems.
 - Moore et al., _The Spread of the Sapphire/Slammer Worm_, 2003
     
 - Powell & Stroud, _MAFTIA Project Deliverable D2_, IBM Zurich, 2001
-    
-
----
-
-Would you like me to include **code blocks and diagrams placeholders** (for example: `### Figure: IDS Framework`, `### Diagram: Zero Trust Architecture`) so it’s ready for note-editing or slides?

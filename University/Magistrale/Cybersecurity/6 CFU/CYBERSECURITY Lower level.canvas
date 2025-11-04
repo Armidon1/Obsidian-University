@@ -1,6 +1,6 @@
 {
 	"nodes":[
-		{"id":"eba120cd992715dc","type":"text","text":"CYBERSECURITY","x":-268,"y":-2480,"width":210,"height":50},
+		{"id":"eba120cd992715dc","type":"text","text":"CYBERSECURITY Lower Level","x":-268,"y":-2720,"width":428,"height":290,"color":"1"},
 		{"id":"5ec5362f5fb4d417","type":"file","file":"Obsidian-University/University/Magistrale/Extra/Fundamental Properties/Authenticity.md","x":-3300,"y":-1583,"width":440,"height":320},
 		{"id":"382ce44418d93c31","type":"file","file":"Obsidian-University/University/Magistrale/Extra/Fundamental Properties/Non-Repudiation.md","x":-4160,"y":-1640,"width":560,"height":435},
 		{"id":"b63e4bf51ff1c556","type":"file","file":"Obsidian-University/University/Magistrale/Extra/Fundamental Properties/Confidentiality.md","x":953,"y":-1622,"width":400,"height":300},
@@ -45,12 +45,12 @@
 		{"id":"818fea615f0c20bc","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/GCM.md","x":-3500,"y":192,"width":400,"height":400},
 		{"id":"7c140643ac6e3695","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/ChaCha20-Poly1305.md","x":-4288,"y":766,"width":400,"height":400},
 		{"id":"5847a376f2b014a8","type":"text","text":"**ChaCha20-Poly1305** non è un “EtM” manuale, ma **equivale concettualmente a un Encrypt-then-MAC**, implementato **in modo sicuro e atomico** come **AEAD**.  \nQuindi sì — **segue la logica EtM**, ma in una forma **più moderna, sicura e automatizzata**.","x":-3840,"y":842,"width":305,"height":248},
-		{"id":"cc905256f5ccfd38","x":520,"y":-1180,"width":660,"height":380,"type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/Symmetric Encryption.md"},
-		{"id":"99e18185dc952216","x":1780,"y":-1180,"width":620,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/Asymmetric Encryption.md"},
-		{"id":"378f668b40cf8559","x":1780,"y":-628,"width":620,"height":428,"type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/RSA.md"},
-		{"id":"1288c3ff1a061d1f","x":-1960,"y":129,"width":140,"height":111,"type":"text","text":"[[SHA-1]], basato su [[Merkle–Damgård]]"},
-		{"id":"d34ad685c678798c","x":-1780,"y":129,"width":140,"height":111,"type":"text","text":"[[SHA-2]], basato su [[Merkle–Damgård]]"},
-		{"id":"462751342c1e141a","x":-1589,"y":129,"width":122,"height":111,"type":"text","text":"[[SHA-3]], basato su [[Keccak]]"}
+		{"id":"cc905256f5ccfd38","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/Symmetric Encryption.md","x":520,"y":-1180,"width":660,"height":380},
+		{"id":"99e18185dc952216","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/Asymmetric Encryption.md","x":1780,"y":-1180,"width":620,"height":400},
+		{"id":"378f668b40cf8559","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/RSA.md","x":1780,"y":-628,"width":620,"height":428},
+		{"id":"1288c3ff1a061d1f","type":"text","text":"[[SHA-1]], basato su [[Merkle–Damgård]]","x":-1960,"y":129,"width":140,"height":111},
+		{"id":"d34ad685c678798c","type":"text","text":"[[SHA-2]], basato su [[Merkle–Damgård]]","x":-1780,"y":129,"width":140,"height":111},
+		{"id":"462751342c1e141a","type":"text","text":"[[SHA-3]], basato su [[Keccak]]","x":-1589,"y":129,"width":122,"height":111}
 	],
 	"edges":[
 		{"id":"9402e0cfbca83f48","fromNode":"be97a52b492288cc","fromSide":"bottom","toNode":"8e2b250efc6a067c","toSide":"top"},

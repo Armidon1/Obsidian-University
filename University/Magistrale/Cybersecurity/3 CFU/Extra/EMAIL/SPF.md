@@ -1,7 +1,89 @@
-Perfetto 👌 vediamo passo per passo **come un server ricevente esegue il controllo SPF** quando riceve una mail.
+# SPF – Sender Policy Framework
+
+SPF è un meccanismo di autenticazione e-mail che consente al proprietario di un dominio di specificare quali server di posta (identificati dai loro indirizzi IP) sono autorizzati a inviare e-mail per conto di quel dominio.
+
+- Definisce i server di posta autorizzati tramite **record TXT nel DNS**.
+    
+- Il suo scopo è validare l'**indirizzo IP del server mittente**.
+    
+- Risponde alla domanda: "Questo server IP è autorizzato a inviare e-mail per conto di questo dominio?"
+    
+
+### Esempio di Record
+
+```
+example.net TXT "v=spf1 mx a:pluto.example.net include:aspmx.googlemail.com -all"
+```
+
+![[Pasted image 20251028162915.png]]
+
+Analizziamo questo record:
+
+- `v=spf1`: Indica che si tratta di un record SPF versione 1.
+    
+- `mx`: Autorizza tutti i server elencati nei record MX (Mail Exchange) del dominio `example.net`.
+    
+- `a:pluto.example.net`: Autorizza l'indirizzo IP che risulta dalla risoluzione DNS (record A) di `pluto.example.net`.
+    
+- `include:aspmx.googlemail.com`: Include (e autorizza) tutti gli IP definiti nel record SPF di Google. Questo è il meccanismo usato per delegare l'invio a provider terzi (es. Google Workspace, SendGrid, Mailchimp).
+    
+- `-all`: Questo è il qualificatore. Il trattino (`-`) significa **Hard Fail**. Dice al server ricevente: "Se l'IP mittente non corrisponde a nessuna delle regole precedenti, _rifiuta_ il messaggio".
+    
+    - Alternative comuni sono `~all` (Soft Fail: "accetta ma marca come sospetto") o `?all` (Neutral: "non ho un'opinione").
+        
+
+### Come funziona
+
+Quando un server di posta riceve un'e-mail, esegue i seguenti passaggi:
+
+1. **Identifica il dominio mittente:** Legge il dominio dall'indirizzo **`MAIL FROM:`** (il mittente della _busta_ SMTP), non dall'intestazione `From:` (quella visibile all'utente).
+    
+2. **Query DNS:** Il server ricevente interroga il DNS per ottenere il record TXT (SPF) di quel dominio.
+    
+3. **Verifica IP:** Confronta l'indirizzo IP del server che ha inviato il messaggio con l'elenco di IP e regole presenti nel record SPF.
+    
+
+**Risultati:**
+
+- **Pass (Superato):** Se l'IP del server mittente è presente nell'elenco, l'e-mail supera il controllo SPF.
+    
+- **Fail (Fallito):** Se l'IP non è presente, il controllo SPF fallisce. Il server ricevente può quindi decidere di rifiutare il messaggio (come nell'esempio seguente), contrassegnarlo come spam o accettarlo (in base alla policy locale e al qualificatore `-all` o `~all`).
+    
+
+### Esempio di Errore (Bounce SMTP)
+
+```
+<XXXX.YYYY@gmail.com>: host gmail-smtp-in.l.google.com[173.194.78.26]
+said: 550-5.7.1 [aa.bb.cc.dd] The IP you're using to send mail is not
+authorized to 550-5.7.1 send email directly to our servers. Please use the SMTP relay at your 550-5.7.1 service provider instead. Learn more at 550 5.7.1 http://support.google.com/mail/bin/answer.py?answer=10336 fl4si3665795wib.12 - gsmtp (in reply to end of DATA command)
+```
+
+Questo è un classico messaggio di rifiuto (codice 550). Il server di Google sta dicendo al server all'IP `aa.bb.cc.dd` che il suo IP non è autorizzato dal record SPF del dominio per cui sta cercando di inviare e-mail.
+
+### Esempi di controllo (dig/nslookup)
+
+Queste immagini mostrano come appaiono i record SPF quando vengono interrogati tramite strumenti a riga di comando.
+
+![[Pasted image 20251028163320.png]]
+
+![[Pasted image 20251028163346.png]]
 
 ---
 
+### Limitazioni di SPF
+
+- **Si rompe con l'inoltro (forwarding) e le mailing list:** Questa è la limitazione più grande. Se un utente inoltra un'email, o se l'email passa attraverso una mailing list, l'IP che il destinatario finale vedrà è quello del server di inoltro (o della mailing list), non quello del mittente originale. Questo IP quasi certamente non sarà nel record SPF del mittente originale, causando un fallimento (Fail) di SPF.
+    
+- **Nessuna protezione del `From:` visibile:** SPF controlla solo il mittente della _busta_ (`MAIL FROM:`). Un utente malintenzionato può inviare un'email con `MAIL FROM:<attacker@evil.com>` (che supera il controllo SPF di `evil.com`) ma con l'intestazione visibile `From: "CEO" <ceo@azienda-vittima.com>`. L'e-mail supera SPF ma è comunque un tentativo di spoofing.
+    
+- **Nessuna integrità del contenuto / Protezione del corpo:** SPF non si occupa minimamente del contenuto del messaggio. Non firma l'e-mail e non garantisce che il corpo o l'oggetto non siano stati modificati durante il transito.
+    
+- **Rischi di errata configurazione:** Un record SPF complesso, specialmente con molti `include`, può essere difficile da gestire. Dimenticare di autorizzare un servizio legittimo (es. una piattaforma di newsletter) può causare il blocco di e-mail valide.
+    
+
+---
+# Example
+vediamo passo per passo **come un server ricevente esegue il controllo SPF** quando riceve una mail.
 ## 🧠 Scenario di partenza
 
 Immagina che arriva una mail così:
@@ -438,7 +520,7 @@ Al destinatario:
 
 ## Raccomandazioni rapide (checklist)
 
-- Se gestisci una lista: abilita **DKIM** per la lista, implementa **ARC** e considera **SRS** per i forward.
+- Se gestisci una lista: abilita **[[DKIM]]** per la lista, implementa **[[ARC]]** e considera **SRS** per i forward.
     
 - Se sei mittente che usa liste: **fai DKIM-sign** dei messaggi e avvisa gli admin della lista se devi preservare autenticazione.
     
@@ -446,5 +528,3 @@ Al destinatario:
     
 
 ---
-
-Se vuoi, ti faccio subito un esempio concreto con intestazioni (mock) che mostra **esattamente** dove fallisce SPF e come ARC/SRS/DKIM possono risolvere — oppure ti mostro come configurare SRS o ARC su una mailing list (Mailman, Sympa, Mailgun, ecc.). Quale preferisci?
