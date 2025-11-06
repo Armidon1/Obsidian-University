@@ -1,139 +1,218 @@
 last lesson [[6 CS - Authenticated Encryption]]
 # Asymmetric encryption: the Diffie-Hellman intuition
-now we talked always about symmetric keys. Now we think in a different way: a asymmetric encryption: the tipical usage is different because it is harder to guarantee Confidentiality.
 
+So far, we have discussed symmetric encryption, where the same key is used for both encryption and decryption. Now, we shift to **asymmetric encryption**, where we use a pair of different keys.
+
+The typical usage is different from symmetric encryption. While [[Symmetric Encryption]] is the workhorse for ensuring **[[Confidentiality]]** of large amounts of data (it's fast), [[Asymmetric Encryption]] is computationally "heavier" (slower). Its primary strengths lie in solving other critical problems, such as **key exchange** and **[[Authentication]]**.
 
 ## Reminder about the model
+
 ![[Pasted image 20251022151244.png]]
-if keys𝐾1 = 𝐾2 symmetric encryption
-else asymmetric
 
-remember: encryption doesn't provide only Confidentiality but also other properties.
+- If the encryption key $K_1$ is the same as the decryption key $K_2$ ($K_1 = K_2$), we have **symmetric encryption**.
+    
+- If $K_1 \neq K_2$, we have **asymmetric encryption**.
+    
 
-## Another definition
+Remember: Encryption as a mechanism doesn't _only_ provide confidentiality. As we will see, it can also provide other critical security properties.
 
-- **Key exchange** is the process of establishing a shared symmetric key between two parties over an insecure communication channel
-	- classic challenge in enabling private communication between remote parties
-	- the part of key exchange is extremely important and there are many protocols used in those situations.
-- **Asymmetric** cryptography provides a solution to this problem by enabling secure key exchange mechanisms
+## Another Definition: Key Exchange
 
-## Public-key encryption
+- **Key exchange** (or key establishment) is the process of establishing a shared symmetric key between two parties over an **insecure communication channel**.
+    
+    - This is the classic challenge in enabling private communication. If Alice and Bob want to talk securely using a fast symmetric cipher, they must first agree on a secret key. But how can they agree on that key if their only channel (e.g., the internet) is being watched by an adversary (Eve)?
+        
+- **Asymmetric cryptography** provides an elegant solution to this problem by enabling secure key exchange mechanisms.
+    
 
-A relevant example of asymmetric encryption
-- when K 1 ≠K 2
-is the **public-key encryption**. Note that:
-- public key encryption $\Rightarrow$ Asymmetric encryption
-- Asymmetric encryption $\nRightarrow$ public key encryption
+## Public-Key Encryption
 
-purposes
-- integrity and non-repudiation
-- key exchange
-    - main example that requires confidentiality
+A primary application of asymmetric encryption ($K_1 \neq K_2$) is **[[Public-key encryption]]**. It's crucial to understand the relationship:
 
+- [[Public-key encryption]] $\Rightarrow$ [[Asymmetric Encryption]]
+    
+- [[Asymmetric Encryption]] $\nRightarrow$ [[Public-key encryption]] (Asymmetric just means the keys are different; public-key is a specific system where one key is published).
+    
 
-## Diffie and Hellman [1976]  “New Directions in Cryptography”
+**Main Purposes:**
 
-Split the Bob’s secret key K into two parts
+1. **[[Integrity]] and [[Non-Repudiation]]:** Achieved through _digital signature_.
+    
+2. **Key Exchange:** Securely establishing a shared symmetric key. This is the main use case that enables **[[Confidentiality]]** for bulk data.
+    
 
-- $K_E$ to be used for encrypting messages to Bob
-- $K_D$ to be used for decrypting messages by Bob
-- $K_E$ can (must) be made public
-    - essence of public key cryptography a type of
-       asymmetric cryptography
+## Diffie and Hellman [1976] – “New Directions in Cryptography”
 
-I can also encrypt also with the other key and viceversa with the other one. 
+The revolutionary idea was to split the secret key `K` into two parts:
 
-Other people will use your public key, and you can decrypt easily.
-If i encrypt with my private key, who can encrypt? EVERYONE. that's why there is not confidentiality.
-but because you are the only one who can encrypt a message, so i'm the owner, everyone that can decrypt can be sure that the message is made by me (**NO REPUDIATION**, even stronger than **Autenticity**).
+- A **Public Key ($K_{pub}$)**: Used for encryption. This key can (and must) be made public and shared with everyone.
+    
+- A **Private Key ($K_{priv}$):** Used for decryption. This key is kept completely secret by the owner (Bob).
+    
 
-I can use the asymmetric key to share the symmetric key: i use the public key to encrypt the symmetric key and then i can create a secret communication channel.
+This is the essence of public-key cryptography.
 
-## Number of keys
-Imagine each node is a Spy. if we consider a complete graph, how many arches do we have? consider n spies, each spy has n-1 arcs, then we have n(n-1)/2, where the /2 is because when i consider another spy, i compute an exact same arch of another spy
-- if arc(spy1,spy2) == arch(spy2, spy1)
+### Two Key Scenarios
+
+**Scenario 1: Sending a Confidential Message (Enabling [[Confidentiality]])**
+
+1. Alice wants to send a secret message to Bob.
+    
+2. Alice gets **Bob's public key ($K_{pub-Bob}$)** (which is available to everyone).
+    
+3. She encrypts the message using $K_{pub-Bob}$.
+    
+4. She sends the ciphertext to Bob.
+    
+5. Only Bob, who possesses the corresponding **Bob's private key ($K_{priv-Bob}$)**, can decrypt and read the message.
+    
+
+**Scenario 2: Signing a Message (Enabling [[Non-Repudiation]])**
+
+1. Alice wants to send a message to everyone and _prove_ it came from her.
+    
+2. Alice "encrypts" (or more accurately, _signs_) the message using **her own private key ($K_{priv-Alice}$)**.
+    
+3. She sends the "signed" message out.
+    
+4. _Anyone_ can decrypt this message using **Alice's public key ($K_{pub-Alice}$)**.
+    
+5. **This provides no [[Confidentiality]]** (everyone can read it).
+    
+6. However, it proves that the message _must_ have come from Alice, because only she has the private key that could create a message decryptable with her public key. This provides **[[Authentication]]** and, even stronger, **[[Non-Repudiation]]** (Alice cannot later deny having sent it).
+    
+
+Combining the two:
+
+We can use Scenario 1 to securely share a new symmetric key. Alice encrypts a new symmetric key $K_s$ using Bob's public key. Only Bob can decrypt it. Now, Alice and Bob share $K_s$ and can use it for fast, confidential symmetric encryption.
+
+## Number of Keys: Symmetric vs. Asymmetric
+
+Imagine a network of `n` spies who all need to communicate securely with each other.
+
 ![[Pasted image 20251022152451.png]]
-Today we say that a pair of keys (private, public) is associated with each actor
-- linear number of asymmetric keys
-- quadratic number of symmetric keys
+
+- **Symmetric Encryption:**
+    
+    - Each _pair_ of spies needs one shared secret key.
+        
+    - Spy 1 needs `n-1` keys (one for Spy 2, Spy 3, ... Spy n).
+        
+    - Spy 2 needs `n-2` _new_ keys (he already has one for Spy 1).
+        
+    - ...
+        
+    - The total number of keys is $(n-1) + (n-2) + ... + 1 = \frac{n(n-1)}{2}$.
+        
+    - This is a **quadratic** number of keys (grows with $O(n^2)$). Managing 1000 spies would require ~500,000 keys.
+        
+- **Asymmetric Encryption:**
+    
+    - Each spy generates _one_ pair of keys (public/private).
+        
+    - They publish their public key in a directory.
+        
+    - The total number of key pairs is `n`.
+        
+    - This is a **linear** number of keys (grows with $O(n)$). Managing 1000 spies requires 1000 key pairs.
+        
+
+## “New Directions in Cryptography”
+
+- The Diffie-Hellman paper [IEEE Transactions on Information Theory, vol. IT-22, Nov. 1976] generated enormous interest in crypto research.
+    
+    ```
+    http://www-ee.stanford.edu/%7Ehellman/publications/24.pdf
+    ```
+    
+- Diffie & Hellman produced the revolutionary _idea_ of public-key cryptography, but they did not have a practical implementation for it. (This came later with Merkle-Hellman and, most famously, **[[RSA]] - Rivest-Shamir-Adelman**).
+    
+- **However, in their '76 paper, Diffie & Hellman _did_ invent a practical method for KEY EXCHANGE over an insecure channel, a method that is still in use today.**
+    
+
+## Excerpt from the RSA Paper (1978)
+
+This historical paper shows the immediate impact of Diffie & Hellman's idea.
+
+> "A Method for Obtaining Digital Signatures and Public-Key Cryptosystems"
+> 
+> R.L. Rivest, A. Shamir, and L. Adleman, Communications of the ACM 21, 1978
+> 
+> https://people.csail.mit.edu/rivest/Rsapaper.pdf
+
+> **_The era of electronic mail may soon be upon us_**; _we must ensure that two important properties of the current paper mail system are preserved: (a) messages are private, and (b) messages can be signed. We demonstrate in this paper how to build these capabilities into an electronic mail system._
+> 
+> _At the heart of our proposal is a new encryption method. This method provides an implementation of a public-key cryptosystem, an elegant concept invented by Diffie and Hellman [1]. Their article motivated our research, since they presented the concept but not any practical implementation of such a system..._
+
+## Meaning of "Encryption" in Asymmetric Crypto
+
+The term "encrypt" can be confusing as it has two distinct uses:
+
+1. **Encryption for Confidentiality:**
+    
+    - Alice encrypts a message using **Bob's public key**.
+        
+    - _Who can encrypt?_ Anyone (the key is public).
+        
+    - _Who can decrypt?_ Only Bob (with his private key).
+        
+    - **Property:** **Confidentiality**.
+        
+2. **Encryption for Signing (Authentication):**
+    
+    - Alice encrypts (signs) a message using **Alice's private key**.
+        
+    - _Who can encrypt?_ Only Alice (the key is private).
+        
+    - _Who can decrypt?_ Everyone (with Alice's public key).
+        
+    - **Property:** No confidentiality, but provides **Authentication** and **Non-Repudiation**.
+        
+
+## Encryption Behaviour
+
+- **Rule 1:** What is encrypted by a public key can be decrypted by the associated private key. (This is true for all public-key systems).
+    
+- **Rule 2:** What is encrypted by a private key can be decrypted by the associated public key.
+    
+    - This "perfect symmetry" is **true for RSA**, which is why it's so flexible.
+        
+    - This is _not_ true for all asymmetric systems.
+        
+- Because of this symmetry in RSA, the term "encryption" is often used loosely to mean both classic encryption (for confidentiality) and signing (for authentication).
 
 
-## “New Directions in Cryptography” • The Diffie-Hellman paper [IEEE Transactions on Information
-
-```
-Theory, vol. IT-22, Nov. 1976] generated lot of interest in
-crypto research, both in academia and private industry
-http://www-ee.stanford.edu/%7Ehellman/publications/24.pdf
-```
-- Diffie & Hellman produced the revolutionary idea of public key cryptography, but did not have a proposed implementation (this came up two years later with Merkle-Hellman and Rivest-Shamir-Adelman)
-- **In their '76 paper, Diffie & Hellman did invent a method for key exchange over insecure communication lines, a method that is still in use today**
-
-## Excerpt from RSA paper
-
-- Historical paper: "A Method for Obtaining Digital
-    Signatures and Public-Key Cryptosystems
-    R.L. Rivest, A. Shamir, and L. Adleman", Communications of the ACM 21,
-    1978 https://people.csail.mit.edu/rivest/Rsapaper.pdf
-- ***The era of electronic mail may soon be upon us*** _; we must ensure that_
-    _two important properties of the current paper mail system are preserved: (a)_
-    _messages areprivate, and (b) messages can besigned. We demonstrate in_
-    _this paper how to build these capabilities into an electronic mail system._
-- _At the heart of our proposal is a new encryption method. This method_
-    _provides an implementation of a public-key cryptosystem, an elegant_
-    _concept invented by Diffie and Hellman [1]. Their article motivated our_
-    _research, since they presented the concept but not any practical_
-    _implementation of such a system. Readers familiar with [1] may wish to skip_
-    _directly to Section V for a description of our method._
-
-
-## Meaning of encryption
-
-Alice **encrypts**
-
-- by Bob's public key
-    - although public it must be known
-    - all can use Bob's public key
-    - **confidentiality**
-- by Alice's private key
-    - only Alice can use it
-    - everybody can decrypt
-    - no confidentiality, but **path to non-repudiation**
-
-
-## Encryption behaviour
-
-- What is encrypted by a public key can be decrypted by the associated private key
-
-- What is encrypted by a private key can be decrypted by the associated public key
-	- This happens for RSA (later)
-- This perfect symmetry causes the frequent use of the term encryption for both (classic) encryption and decryption
-
+---
 
 # Introduction to one-way functions
-
-## One-way function
-
->[!One-Way Function]
->A function 𝑓: 0,1 ∗→ 0,1 ∗is called a one-way function (OWF) if it is
->- **Efficiently computable**
->	- There exists a deterministic polynomial-time algorithm that, given any input𝑥∈ 0,1 ∗, computes𝑓(𝑥)
->- **Hard to invert on average**
-  > 	 - For every probabilistic polynomial-time algorithm𝐴, for every positive polynomial 𝑝(·)and for sufficiently large 𝑛
-    >      $$\Pr_{x \leftarrow \{0,1\}^n}[A(f(x)) \in f^{-1}(f(x))] < \frac{1}{p(n)}$$
->	where the probability is over the uniform random choice of𝑥∈ 0,1 𝑛and the internal randomness of𝐴
-
-**cryptographic hashing functions are OWF**
-## Integer multiplication & factoring as an OWF
-![[Pasted image 20251023113341.png]]
-**Q.: Can a public key system be based? on this observation**
 
 ## 1. Foundational Concepts: One-Way Functions (OWFs)
 
 Modern cryptography is built on the concept of "hard problems." These are formalized as **One-Way Functions (OWFs)**.
 
-- **Definition:** A function that is **easy to compute** in one direction (e.g., $f(x) = y$) but **computationally infeasible** to invert (e.g., given $y$, find $x$).
+- **Simple Definition:** A function that is **easy to compute** in one direction (e.g., $f(x) = y$) but **computationally infeasible** (or "hard") to invert (e.g., given $y$, find an $x$ such that $f(x)=y$).
     
-- **Do OWFs Exist?** This is an **open problem** in computer science.
+- **Cryptographic hash functions** (like [[SHA-2]]56) are a prime example of functions that behave like OWFs.
+    
+
+> [!One-Way Function]
+> 
+> A function $f: \{0,1\}^* \rightarrow \{0,1\}^*$ is called a one-way function ([[OWF]]) if it satisfies two properties:
+> 
+> 1. **Efficiently computable:**
+>     
+>     - There exists a deterministic polynomial-time algorithm (it's "easy" or "fast") that, given any input $x$, computes $f(x)$.
+>         
+> 2. **Hard to invert on average:**
+>     
+>     - For every probabilistic polynomial-time algorithm $A$ (an "attacker"), for every positive polynomial $p(\cdot)$, and for sufficiently large $n$:
+>         
+>         $$\Pr_{x \leftarrow \{0,1\}^n}[A(f(x)) \in f^{-1}(f(x))] < \frac{1}{p(n)}$$
+>         
+>     - In plain English: Any efficient (polynomial-time) attacker $A$, given an output $y = f(x)$ (where $x$ was chosen randomly), has only a negligible probability of finding _any_ valid input $x'$ that produces $y$.
+>         
+
+- **Do OWFs Exist?** This is a major **open problem** in computer science.
     
     - They are widely **conjectured to exist**.
         
@@ -152,68 +231,78 @@ Modern cryptography is built on the concept of "hard problems." These are formal
     - Random number generation
         
 
-### Candidate 1: Integer Factorization
+## 2. Candidate One-Way Functions
 
-This problem is the basis for the RSA algorithm.
+### Candidate 1: Integer Multiplication & Factoring
 
-- **Easy Problem:** Given two large prime numbers, $x$ and $y$ (e.g., _n_ bits each), computing their product $z = xy$ is easy (polynomial time). The result $z$ will have about _2n_ bits.
+This problem is the basis for the **[[RSA]] algorithm**.
+
+- **Easy Problem:** Given two large prime numbers, $p$ and $q$ (e.g., _n_ bits each), computing their product $N = pq$ is very easy (polynomial time). The result $N$ will have about _2n_ bits.
     
-- **Hard Problem:** Given a large composite number $z$, finding its prime factors $x$ and $y$ is computationally infeasible (no known polynomial-time algorithm for classical computers).
+- **Hard Problem:** Given a large composite number $N$ (that is the product of two large primes), finding its prime factors ([[Factorize a Number]]) $p$ and $q$ is computationally infeasible. There is no known polynomial-time algorithm to do this on a classical computer.
     
-    - _Note:_ Shor's algorithm can factor in polynomial time, but only on a (currently hypothetical, large-scale) quantum computer.
+    - _Note:_ Shor's algorithm _can_ factor in polynomial time, but it requires a large-scale, fault-tolerant **quantum computer** (which does not yet exist).
         
+- **Question:** Can a public key system be based on this observation?
+    
+- **Answer:** Yes, absolutely. This is the core idea behind RSA.
+    
+
+![[Pasted image 20251023113341.png]]
 
 ### Candidate 2: The Discrete Logarithm (DL) Problem
 
-This problem is the basis for Diffie-Hellman and ElGamal.
+This problem is the basis for the **Diffie-Hellman key exchange** and the **ElGamal** encryption system.
 
 - **Definition:** Let $G$ be a finite cyclic group with _n_ elements and $g$ be a generator of $G$.
     
-- **Easy Problem:** Given $g$ and an integer $x$, it is easy to compute $y = g^x$.
+- **Easy Problem:** Given $g$ and an integer $x$, it is easy (efficient) to compute $y = g^x$. This is **modular exponentiation**.
     
-- **Hard Problem:** Given $y$ and $g$, it is computationally infeasible to find the minimal non-negative integer $x$ that satisfies the equation $y = g^x$.
+- **Hard Problem:** Given $y$ and $g$, it is computationally infeasible to find the integer $x$ that satisfies the equation $y = g^x$.
     
 - **Terminology:** This $x$ is called the **discrete logarithm of $y$ to the base $g$**.
     
-- **Example:** A common group used is the multiplicative group of integers modulo $p$, $\mathbb{Z}^*_p$. The problem is: find $x$ given $y$, $g$, and $p$ in $y = g^x \pmod p$.
+- **Example (a common group):** The multiplicative group of integers modulo a prime $p$, $\mathbb{Z}^*_p$. The problem is:
     
+    - Find $x$ given $y$, $g$, and $p$ in the equation: $y \equiv g^x \pmod p$
+        
 - **DL in $\mathbb{Z}^*_p$ as an OWF:**
     
     - The function $x \rightarrow g^x \pmod p$ is **easy** to compute.
         
     - The inverse function $y \rightarrow x$ is **believed to be hard**.
         
-    - This is a **computation-based** notion of security.
+    - This provides a **computation-based** notion of security.
         
 
 ---
 
-## 2. Essential Mathematical Tools
+## 3. Essential Mathematical Tools
 
 To implement these cryptographic systems, we need efficient algorithms for modular arithmetic.
 
-### Modular Exponentiation
+### Modular Exponentiation (The "Easy" Problem)
 
-This is the "easy" operation in the Discrete Logarithm problem.
+This is the "easy" operation in the Discrete Logarithm problem (computing $y = g^x \pmod p$).
 
-- **Property:** `c mod p = (a ⋅ b) mod p = ((a mod p) ⋅ (b mod p)) mod p`
+- Key Property: We can avoid gigantic intermediate numbers by applying the modulus at every step.
     
-    - This means we can apply the `mod p` operation at each partial step to keep the numbers small.
-        
-    - See: [https://en.wikipedia.org/wiki/Modular_arithmetic#Properties](https://en.wikipedia.org/wiki/Modular_arithmetic#Properties)
-        
-- **Optimization (Euler's Theorem):** If $p$ is prime and $b$ and $p$ are co-prime:
+    (a ⋅ b) mod p = ((a mod p) ⋅ (b mod p)) mod p
     
-    - $b^e \pmod p = (b \pmod p)^{e \pmod{\varphi(p)}} \pmod p$
-        
-    - (where $\varphi(p) = p-1$ since $p$ is prime)
-        
-    - See: [https://en.wikipedia.org/wiki/Euler%27s_theorem](https://en.wikipedia.org/wiki/Euler%27s_theorem)
-        
+    (See: https://en.wikipedia.org/wiki/Modular_arithmetic#Properties)
+    
+- Optimization (Euler's Theorem): If $p$ is prime and $b$ and $p$ are [[Coprime]]:
+    
+    $b^e \pmod p = (b \pmod p)^{e \pmod{\varphi(p)}} \pmod p$
+    
+    (where $\varphi(p) = p-1$ since $p$ is prime. This is also known as Fermat's Little Theorem)
+    
+    (See: https://en.wikipedia.org/wiki/Euler%27s_theorem)
+    
 
 #### Fast Modular Exponentiation (Algorithm)
 
-Instead of calculating $g^x$ and _then_ taking the modulus (which would result in a gigantic intermediate number), we use the "exponentiation by squaring" method, applying the modulus at every step.
+We don't compute $g^x$ and _then_ take the modulus. We use **exponentiation by squaring** (or the binary method), applying the modulus at every partial step.
 
 ```C
 /*
@@ -238,14 +327,16 @@ long fastModExp(unsigned int base, unsigned int exp, long mod) {
 }
 ```
 
-- **Efficiency:** This algorithm computes the result in $O(\log(x))$ multiplications, with each multiplication taking $O(\log^2(p))$ steps. Since $x < p$, the overall complexity is $O(\log^3(p))$.
+- **Efficiency:** This algorithm runs in $O(\log(x))$ multiplications. Since $x < p$, the overall complexity is $O(\log^3(p))$.
     
+
+---
 
 ### The Extended Euclidean Algorithm (EEA)
 
-This tool is essential for RSA key generation, specifically for finding the private exponent $d$ from the public exponent $e$.
+This tool is essential for **RSA key generation**. Specifically, it's used to find the private exponent $d$ from the public exponent $e$ and the [[Euler's totient function]] $\varphi(N)$.
 
-- **Purpose:** To find the **multiplicative inverse** of a number in a modulus.
+- **Purpose:** To find the **multiplicative inverse** of a number in a modulus (e.g., find $x^{-1} \pmod y$).
     
 - **Basis:** [[Bézout's identity]].
     
@@ -263,22 +354,20 @@ This tool is essential for RSA key generation, specifically for finding the priv
         
         - $ax \equiv 1 - by \pmod y$
             
-        - Since $by \equiv 0 \pmod y$, this simplifies to:
-            
+    - Since $by \equiv 0 \pmod y$, this simplifies to:
+        
         - $ax \equiv 1 \pmod y$
             
-    - This means $a$ is the multiplicative inverse of $x$ modulo $y$ (i.e., $a \equiv x^{-1} \pmod y$).
+    - This means $a$ is the **multiplicative inverse of $x$ modulo $y$** (i.e., $a \equiv x^{-1} \pmod y$).
         
     - Similarly, $b \equiv y^{-1} \pmod x$.
         
 
 _Note_: For the exam, the professor wants the interpretation of [[Bézout's identity]] given a specific number, not just the algorithm itself. You must understand _what_ it is and _why_ it's used.
 
-#### The EEA Algorithm
+#### The EEA Algorithm (Pseudocode)
 
 This algorithm finds the coefficients $a$ and $b$ (here called `x0` and `y0`) from Bézout's identity.
-
-C
 
 ```C
 /*
@@ -299,27 +388,27 @@ function extendedEuclid(a, b) // In the identity, a=x and b=y
     return (x0, y0) 
 }
 ```
+---
+## 3. Protocol 1: Diffie-Hellman (DH) Key Exchange
+
+The Diffie-Hellman (DH) protocol is a practical application of the **Discrete Logarithm problem** designed to achieve a secure key exchange.
+
+- **Goal:** To allow two parties (Alice and Bob), who initially share no secret information, to perform a protocol over a public (insecure) channel and jointly derive the **same shared secret key**.
+    
+- **Security:** An eavesdropper (Eve) who listens to the entire exchange cannot obtain this shared key in polynomial time.
+    
 
 ---
 
-## 3. Protocol 1: Diffie-Hellman (DH) Key Exchange
-
-DH is a protocol that uses the **Discrete Logarithm problem** to achieve a secure key exchange.
-
-- **Goal:** Two parties (Alice and Bob) who share no secret information can perform a protocol over a public (insecure) channel and derive the **same shared secret key**.
-    
-- **Security:** An eavesdropper (Eve) who is listening cannot obtain this shared key (in polynomial time).
-    
-
 ### DH Procedure
 
-1. **Public Parameters:** Alice and Bob first agree (publicly) on two numbers:
+1. **Public Parameters:** Alice and Bob first publicly agree on two large numbers:
     
     - A large prime $p$.
         
-    - An element $g$ (which is a generator of the multiplicative group $\mathbb{Z}^*_p$).
+    - An element $g$, which is a generator of the multiplicative group $\mathbb{Z}^*_p$ (meaning $g^x \pmod p$ can generate all elements in the group).
         
-    - _Note:_ For best security, $p$ should be a "safe prime," where $p = 2q + 1$ and $q$ is also prime (making $q$ a Sophie Germain prime).
+    - _Note:_ For best security, $p$ should be a "safe prime," where $p = 2q + 1$ and $q$ is also prime. This $q$ is known as a Sophie Germain prime.
         
 2. **Alice's Steps:**
     
@@ -327,439 +416,446 @@ DH is a protocol that uses the **Discrete Logarithm problem** to achieve a secur
         
     - Computes her **public key** $A = g^a \pmod p$.
         
-    - Sends $A$ to Bob.
+    - Sends her public key $A$ to Bob over the insecure channel.
         
 3. **Bob's Steps:**
     
-    - Chooses a **private key** $b$ (a random secret number, $1 \le b \le p-1$).
+    - Chooses his **private key** $b$ (a random secret number, $1 \le b \le p-1$).
         
     - Computes his **public key** $B = g^b \pmod p$.
         
-    - Sends $B$ to Alice.
+    - Sends his public key $B$ to Alice over the insecure channel.
         
 4. **Shared Secret Calculation:**
     
-    - Alice receives $B$ and computes: $K = B^a \pmod p = (g^b)^a \pmod p = g^{ab} \pmod p$.
+    - Alice receives $B$ and computes the secret:
         
-    - Bob receives $A$ and computes: $K = A^b \pmod p = (g^a)^b \pmod p = g^{ab} \pmod p$.
+        $K = B^a \pmod p = (g^b)^a \pmod p = g^{ab} \pmod p$.
+        
+    - Bob receives $A$ and computes the secret:
+        
+        $K = A^b \pmod p = (g^a)^b \pmod p = g^{ab} \pmod p$.
         
 
-Both parties now possess the same **shared secret key $K = g^{ab} \pmod p$**. Eve, who only sees $g, p, A, B$, cannot compute $K$ because she would need to solve the Discrete Log problem to find $a$ or $b$.
+Both parties now possess the same **shared secret key $K = g^{ab} \pmod p$**.
+
+An eavesdropper, Eve, only sees the public values: $g, p, A, B$.
+
+- To find $K$, Eve would need to compute $g^{ab}$ from $g^a$ and $g^b$. This is the **Computational Diffie-Hellman (CDH) problem**, which is believed to be computationally hard.
+    
+- An even harder-sounding (but related) way would be to first solve the **Discrete Log problem** to find $a$ (from $A$) or $b$ (from $B$), which is also infeasible.
+    
+
+---
 
 ### DH Properties and Variants
 
 #### Perfect Forward Secrecy (PFS)
 
-- **Definition:** A cryptosystem has PFS if it generates **random, temporary public keys for each session**.
+- **Definition:** A cryptosystem has Perfect Forward Secrecy (PFS) if it generates **random, temporary public keys for each new session**.
     
-- **Implication:** The compromise of a single key (e.g., a long-term private key) **does not compromise any past or future session keys**. If an attacker records all traffic and _later_ steals the server's main key, they _still_ cannot decrypt the old sessions.
+- **Implication:** The compromise of a single key (e.g., a server's long-term private key) **does not compromise any _past_ or _future_ session keys**. If an attacker records all of today's encrypted traffic and _tomorrow_ steals the server's main key, they _still_ cannot decrypt today's traffic.
     
 
 #### Types of DH
 
 |**Feature**|**Static Diffie-Hellman**|**Ephemeral Diffie-Hellman (DHE/ECDHE)**|
 |---|---|---|
-|**Key Lifespan**|Uses a long-term key pair that remains the same across sessions (typically on the server side).|Generates a **new, temporary** key pair for **each** communication session.|
+|**Key Lifespan**|Uses a long-term, fixed key pair that remains the same across sessions (typically on the server side).|Generates a **new, temporary** key pair for **each** communication session.|
 |**Mathematical Basis**|Modular exponentiation or elliptic curves.|Modular exponentiation or elliptic curves.|
-|**Primary Security Property**|**Lacks Forward Secrecy.**|**Provides Forward Secrecy.**|
-|**Primary Use Case**|Specific scenarios where long-term key management is required.|The **standard** for modern secure communication (e.g., TLS).|
+|**Primary Security Property**|**LACKS Forward Secrecy.**|**PROVIDES Perfect Forward Secrecy.**|
+|**Primary Use Case**|Specific scenarios where long-term key management is required.|The **standard** for modern secure communication (e.g., TLS 1.3).|
+
+---
 
 ### DH Vulnerabilities
 
-The "textbook" DH protocol is effective _only against a passive adversary (eavesdropper)_.
+The "textbook" DH protocol described above is effective **only against a passive adversary (eavesdropper)**. It is critically vulnerable to an _active_ adversary.
 
 |**Vulnerability**|**Description**|**Impact**|**Mitigation**|
 |---|---|---|---|
-|**Man-in-the-Middle (MitM)**|**No authentication** in basic DH. Alice doesn't know she's talking to Bob.|Attacker (Trent) intercepts and alters the key exchange.|Use **Authenticated DH** (e.g., signing keys with X.509 certs).|
-|**Logjam Attack**|Exploits the use of small (e.g., 512-bit) or common/shared prime numbers ($p$).|Attacker breaks DH with massive precomputation against a common prime.|Use $\ge$ 2048-bit unique, safe primes.|
-|**Static DH Keys**|Reuse of long-term DH private keys.|**No Forward Secrecy.**|Use **Ephemeral DH (DHE)**.|
+|**Man-in-the-Middle (MitM)**|**No authentication** in basic DH. Alice has no proof she is talking to Bob, and vice-versa.|Attacker (Trent) intercepts and alters the key exchange, establishing separate secret keys with both Alice and Bob.|Use **Authenticated DH** (e.g., signing the public keys $A$ and $B$ with long-term X.509 certificates).|
+|**Logjam Attack**|Exploits the use of small (e.g., 512-bit) or common/shared prime numbers ($p$).|Attacker breaks DH with massive precomputation against a single common prime.|Use $\ge$ 2048-bit unique, safe primes.|
+|**Static DH Keys**|Reuse of long-term DH private keys.|**No Perfect Forward Secrecy.** A compromise of the static key reveals all past sessions.|Use **Ephemeral DH (DHE/ECDHE)**.|
 
-#### The Man-in-the-Middle (MitM) Attack (Detailed)
+#### The [[Man-in-the-Middle (MITM)]] Attack (Detailed)
 
-An active attacker (Trent) sits between Alice and Bob:
+An active attacker (Trent) sits in the middle of the communication channel:
 
-1. A $\rightarrow$ T(B): Alice sends $A = g^a \pmod p$ (intending to send to Bob).
+1. **Alice $\rightarrow$ Trent:** Alice (thinking she's talking to Bob) sends her public key $A = g^a \pmod p$. Trent intercepts this.
     
-2. T(B) $\rightarrow$ A: Trent intercepts $A$, generates his _own_ secret $t$, computes $T = g^t \pmod p$, and sends $T$ to Alice (pretending it's from Bob).
+2. **Trent $\rightarrow$ Bob:** Trent (pretending to be Alice) generates his _own_ secret key $t$ and sends his public key $T = g^t \pmod p$ to Bob.
     
-3. T(A) $\rightarrow$ B: Trent sends $T = g^t \pmod p$ to Bob (pretending it's from Alice).
+3. **Bob $\rightarrow$ Trent:** Bob (thinking he's talking to Alice) sends his public key $B = g^b \pmod p$. Trent intercepts this.
     
-4. B $\rightarrow$ T(A): Bob receives $T$, generates his secret $b$, computes $B = g^b \pmod p$, and sends $B$ to Trent (thinking he's sending to Alice).
+4. **Trent $\rightarrow$ Alice:** Trent (pretending to be Bob) sends his public key $T = g^t \pmod p$ back to Alice.
     
 
-**Effects:**
+**Attack Effects:**
 
-- Alice computes a shared key with Trent: $K_A = T^a \pmod p = g^{ta} \pmod p$.
+- Alice computes a shared key with Trent:
     
-- Bob computes a shared key with Trent: $K_B = T^b \pmod p = g^{tb} \pmod p$.
+    $K_{AT} = T^a \pmod p = (g^t)^a \pmod p = g^{ta} \pmod p$
     
-- Alice and Bob believe they have a secure channel, but Trent can intercept, decrypt, read, modify, and re-encrypt all messages between them. This violates [[Availability]] and all other security properties.
+- Bob computes a shared key with Trent:
     
+    $K_{BT} = T^b \pmod p = (g^t)^b \pmod p = g^{tb} \pmod p$
+    
+- **Trent computes _both_ keys**:
+    
+    - To talk to Alice: $K_{TA} = A^t \pmod p = (g^a)^t \pmod p = g^{at} \pmod p$
+        
+    - To talk to Bob: $K_{TB} = B^t \pmod p = (g^b)^t \pmod p = g^{bt} \pmod p$
+        
+
+Alice and Bob believe they have a secure, private channel, but Trent is in the middle, intercepting every message, decrypting it with one key, reading/modifying it, and re-encrypting it with the other key. This violates confidentiality, integrity, [[Availability]], and all other security properties.
+
+---
 
 ### Other DH Systems
 
-- The DH idea can be used with any group, _except_ those where the discrete log is easy (e.g., the additive group of $\mathbb{Z}_p$).
+The Diffie-Hellman concept can be used with any mathematical group, _except_ for those where the discrete logarithm problem is easy.
+
+- For example, it **cannot** be used with the additive group of $\mathbb{Z}_p$ ($y \equiv g+x \pmod p$), because the "logarithm" (finding $x$) is just simple subtraction.
     
-- **ECDH (Elliptic-Curve Diffie–Hellman):** A modern variant that uses elliptic curve groups. It provides the same level of security with much smaller keys, making it more efficient. [https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman](https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman)
+
+**ECDH (Elliptic-Curve Diffie–Hellman):**
+
+- A modern, highly efficient variant of Diffie-Hellman that uses the group of points on an **elliptic curve**.
+    
+- The math is different, but the protocol flow is identical.
+    
+- It provides the same level of security as traditional DH but with **much smaller keys** (e.g., a 256-bit ECDH key is roughly equivalent in strength to a 3072-bit DH key), making it much faster and more suitable for mobile devices.
+    
+- [https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman](https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman)
+---
+Here is a comprehensive, enriched transcription of the provided lecture slides on RSA.
+
+---
+
+# RSA: Purposes of Encryption
+
+RSA is a public-key cryptosystem that provides several key security services, which are achieved by using its two different keys (public and private) in different ways.
+
+The core security services are:
+
+- **Confidentiality:** Keeping data secret.
+    
+- **Authentication:** Proving who you are.
+    
+- **Integrity:** Ensuring data hasn't been altered.
+    
+- **Key Exchange:** Securely sharing a secret key.
+    
+- **Non-Repudiation:** Creating undeniable proof that someone sent a message.
     
 
 ---
 
-## 4. Protocol 2: The RSA Cryptosystem
+## RSA: Two Ways of Encrypting
 
-RSA is an algorithm built on the **Integer Factorization problem**. It can be used for both encryption and digital signatures.
+Recall that in an asymmetric system, there are two keys: one **public** (which everyone knows) and one **private** (which only the owner knows).
 
-### Part 1: The RSA Algorithm
+RSA encryption behaves differently depending on _which key_ Alice uses to encrypt a block of data, M:
 
-#### Mathematical Basis: The Group $\mathbb{Z}^*_{pq}$
-
-1. Let $p$ and $q$ be two large primes. Let $N = pq$.
+1. **Encrypting with Bob's Public Key:** Anyone can do this, as the key is public.
     
-2. The multiplicative group $\mathbb{Z}^*_N$ contains all integers in $[1, N-1]$ that are relatively prime to $N$.
-    
-3. The size of this group is given by Euler's Totient Function:
-    
-    $\varphi(N) = \varphi(pq) = (p-1)(q-1)$.
-    
-4. By Euler's Theorem, for any element $x \in \mathbb{Z}^*_N$, we have:
-    
-    $x^{\varphi(N)} \equiv 1 \pmod N$
-    
-    $x^{(p-1)(q-1)} \equiv 1 \pmod N$
-    
-
-#### Exponentiation in $\mathbb{Z}^*_{pq}$
-
-- **Question:** When is the operation $x \rightarrow x^e$ a **one-to-one** operation (a _permutation_) in this group?
-    
-- **Claim:** If $e$ is relatively prime to $\varphi(N)$ (i.e., $\gcd(e, (p-1)(q-1)) = 1$), then $x \rightarrow x^e$ is a one-to-one operation.
-    
-- **Constructive Proof (Why decryption works):**
-    
-    1. Since $\gcd(e, \varphi(N)) = 1$, $e$ has a multiplicative inverse $d$ modulo $\varphi(N)$. (We find $d$ using the **Extended Euclidean Algorithm**).
-        
-    2. This means $ed \equiv 1 \pmod{\varphi(N)}$, or $ed = 1 + k\varphi(N)$ for some integer $k$.
-        
-    3. Let $y = x^e \pmod N$ (Encryption).
-        
-    4. Now compute $y^d \pmod N$ (Decryption):
-        
-        $y^d = (x^e)^d = x^{ed} = x^{1 + k\varphi(N)}$
-        
-        $y^d = x^1 \cdot (x^{\varphi(N)})^k$
-        
-    5. From Euler's Theorem, we know $x^{\varphi(N)} \equiv 1 \pmod N$.
-        
-    6. Therefore: $y^d \equiv x \cdot (1)^k \pmod N \equiv x \pmod N$.
-        
-    7. This proves that $y \rightarrow y^d$ is the inverse of $x \rightarrow x^e$. **QED**.
-        
-
-#### RSA Key Generation and Operation
-
-1. **Key Generation:**
-    
-    - Choose two large, distinct primes $p$ and $q$.
-        
-    - Compute the modulus: $N = pq$.
-        
-    - Compute the totient: $\varphi(N) = (p-1)(q-1)$.
-        
-    - Choose a public exponent $e$ (where $1 < e < \varphi(N)$ and $\gcd(e, \varphi(N)) = 1$). A common choice is $e = 65537$.
-        
-    - Compute the private exponent $d$ such that $de \equiv 1 \pmod{\varphi(N)}$ (using the EEA).
-        
-    - **Public Key:** $(e, N)$
-        
-    - **Private Key:** $(d, N)$ (or sometimes $(d, p, q)$)
-        
-2. **Encryption (Alice sends to Bob):**
-    
-    - Alice gets Bob's public key $(e_B, N_B)$.
-        
-    - She converts her message $M$ into a number (or numbers) $M < N_B$.
-        
-    - She computes the ciphertext: $C = M^{e_B} \pmod{N_B}$.
-        
-    - She sends $C$ to Bob.
-        
-3. **Decryption (Bob receives from Alice):**
-    
-    - Bob uses his private key $(d_B, N_B)$.
-        
-    - He computes the plaintext: $M = C^{d_B} \pmod{N_B}$.
-        
-
-#### Why Decryption Works (Formal Proof for all $M \in \mathbb{Z}_N$)
-
-The proof above only worked for $x \in \mathbb{Z}^*_N$. What if $M$ is not coprime to $N$ (i.e., $M$ is a multiple of $p$ or $q$)?
-
-- We need to prove $M^{ed} \equiv M \pmod N$.
-    
-- By the [[Chinese Remainder Theorem]], this is true if and only if:
-    
-    1. $M^{ed} \equiv M \pmod p$
-        
-    2. $M^{ed} \equiv M \pmod q$
-        
-- **Case 1 (for mod p):**
-    
-    - If $\gcd(M, p) = 1$ (i.e., $M$ is not a multiple of $p$), then by Fermat's Little Theorem, $M^{p-1} \equiv 1 \pmod p$.
-        
-    - Since $ed = 1 + k(p-1)(q-1)$, we can write $M^{ed} = M \cdot (M^{p-1})^{k(q-1)}$.
-        
-    - $M^{ed} \equiv M \cdot (1)^{k(q-1)} \equiv M \pmod p$. (Holds)
-        
-- **Case 2 (for mod p):**
-    
-    - If $\gcd(M, p) = p$ (i.e., $M$ is a multiple of $p$), then $M \equiv 0 \pmod p$.
-        
-    - $M^{ed} \equiv 0^{ed} \equiv 0 \pmod p$.
-        
-    - Therefore, $M^{ed} \equiv 0 \equiv M \pmod p$. (Holds)
-        
-- The same logic applies for $\pmod q$. Since the congruence holds for both $p$ and $q$, it holds for their product $N$. **This proves RSA decryption works for all messages $M < N$.**
-    
-
-#### Practical RSA Details
-
-- **Key Length:** Variable, but 2048 to 4096 bits are common today for security.
-    
-- **Block Size:** Plaintext must be $< N$. Ciphertext is always $= N$ (in bit-length).
-    
-- **Speed:** RSA is much **slower** than symmetric ciphers (like AES).
-    
-- **Use Case:** It is **not used** to encrypt long messages. It is used for **key exchange** (encrypting a _symmetric key_, which is then used to encrypt the message) or for **digital signatures**. This is called [[Hybrid Encryption]].
+2. **Encrypting with Alice's Private Key:** Only Alice can do this, as she is the only one who has her private key.
     
 
 ---
 
-### Part 2: A Small RSA Example
+## Effects of RSA Encryption
 
-- Let $p = 47$, $q = 59$.
+These two methods achieve completely different goals:
+
+### 1. Encryption with a Public Key (Confidentiality)
+
+- **Who can encrypt?** _Everybody_ can encrypt a message using Bob's public key.
     
-- Modulus: $N = pq = 2773$.
+- **Who can decrypt?** _Only Bob_, the owner of the corresponding private key, can decrypt the message.
     
-- Totient: $\varphi(N) = (p-1)(q-1) = 46 \times 58 = 2668$.
-    
-- Choose a public exponent $e = 157$.
-    
-    - (We check $\gcd(2668, 157) = 1$).
-        
-- Find the private exponent $d$:
-    
-    - We need $d \equiv 157^{-1} \pmod{2668}$.
-        
-    - Using the EEA, we find $157 \times 17 - 2668 \times 1 = 1$.
-        
-    - Therefore, $d = 17$.
-        
-- **Public Key:** $(e=157, N=2773)$
-    
-- **Private Key:** $(d=17, N=2773)$
+- **Result:** This achieves **confidentiality**. It's used to send secret messages _to_ Bob.
     
 
-_Historical Note:_ The original RSA paper presented an example swapping $d$ and $e$. This is irrelevant; the keys are mathematically symmetric. You can choose either to be private, and the other becomes public.
+### 2. Encryption with a Private Key (Authentication)
 
-**Encoding the Message:**
-
-- Let's use 2 digits per letter (A=01, B=02, ..., blank=00).
+- **Who can encrypt?** _Only the owner_ (Alice) can encrypt a message with her own private key.
     
-- Message: `ITS ALL GREEK TO ME`
+- **Who can decrypt?** _Everybody_ can decrypt the message using Alice's public key.
     
-- Encoded blocks (since $2626 < 2773$, we can use 2 letters per block):
-    
-    IT | S | AL | L | GR | EE | K | TO | M | E
-    
-    0920 1900 0112 1200 0718 0505 1100 2015 0013 0500
-    ![[Pasted image 20251030153054.png]]
-    
-
-**Encryption (Example with _wrong_ key from slide):**
-
-- The slide example incorrectly encrypts $M$ with $d=17$ (the private key). Let's follow the slide:
-    
-- First block $M = 0920$.
-    
-- $C = M^d \pmod N = 0920^{17} \pmod{2773}$
-    
-- Using fast modular exponentiation: $C = 948$.
-    
-- Encrypted Message: `0948 2342 1084 1444 2663 2390 0778 0774 0219 1655`
-    
-
-**Decryption (with $e=157$):**
-
-- First block $C = 948$.
-    
-- $M = C^e \pmod N = 0948^{157} \pmod{2773}$
-    
-- $M = 920$. (It works!)
+- **Result:** This provides **no confidentiality** at all. However, it proves that the message could _only_ have come from Alice. This is the foundation for **non-repudiation**.
     
 
 ---
 
-### Part 3: Purposes of RSA (Dual-Use)
+## Non-Repudiation
 
-RSA has two main functions, depending on _which key you use to encrypt_.
+- **Definition:** Non-repudiation is a strong guarantee that the sender of a message **cannot later deny having sent it**.
+    
+- It provides undeniable **proof of origin** and **proof of integrity**.
+    
+- This is typically achieved using a **digital signature**.
+    
 
-- **Case 1: Encryption for [[Confidentiality]]**
+### Non-Repudiation vs. HMAC
+
+It's important to understand why an HMAC (a symmetric-key MAC) does _not_ provide non-repudiation.
+
+- An HMAC is created using a **shared secret key** known by both Alice and Bob.
     
-    - **Action:** Alice encrypts a message $M$ using **Bob's PUBLIC key** $(e_B)$.
-        
-    - **Effect:** Everybody can encrypt, but **only Bob** (who has the corresponding private key $d_B$) can decrypt.
-        
-    - **Goal Achieved:** [[Confidentiality]].
-        
-    - _Note:_ This is vulnerable to a MitM attack if Alice gets a _fake_ public key for Bob from an attacker.
-        
-- **Case 2: Encryption for Signatures ([[Authenticity]] & [[Non-Repudiation]])**
+- If Bob receives a message with a valid HMAC, he knows it came from _either_ Alice _or himself_.
     
-    - **Action:** Alice "encrypts" a message $M$ using **Alice's OWN PRIVATE key** $(d_A)$.
-        
-    - **Effect:** **Only Alice** can encrypt, but **everybody** (who has her public key $e_A$) can decrypt to "verify" it.
-        
-    - **Goal Achieved:** [[Integrity]], [[Authenticity]], and a path to [[Non-Repudiation]].
-        
-    - This provides **no [[Confidentiality]]**.
-        
-- **Non-Repudiation:**
+- A judge cannot determine which of the two parties created the message, as both had the key. Therefore, Alice can "repudiate" (deny) sending it.
     
-    - The sender of a message cannot deny having sent it.
+- With a private-key signature, only one person (the owner) has the key, making the signature undeniable.
+    
+
+---
+
+## Summary of RSA Purposes
+
+### Encryption with Public Key:
+
+- **Goal:** **Confidentiality**.
+    
+- **Primary Use:** **Key Exchange**.
+    
+- **Why?**
+    
+    - RSA is **too slow** (inefficient) to encrypt long files or messages.
         
-    - This is _not_ provided by **HMAC**, because in an HMAC, two parties share the _same_ key. A judge can't tell which of the two parties created the message.
+    - Symmetric ciphers (like AES) are thousands of times faster.
         
-    - With private-key encryption, only the owner of the private key could have created the message.
+    - RSA has size limitations (the message must be a number smaller than $N$).
+        
+    - "Textbook" RSA is deterministic (encrypting "Attack" always yields the same ciphertext), which is insecure unless padding is used.
+        
+- **Practical Use (Hybrid Encryption):**
+    
+    1. Alice generates a new, random **symmetric key** (e.g., for AES).
+        
+    2. Alice encrypts her long message using AES (which is fast).
+        
+    3. Alice encrypts the _AES key_ using Bob's **RSA public key** (which is fast, as the key is small).
+        
+    4. Alice sends the encrypted message + the RSA-encrypted key to Bob.
+        
+
+### Encryption with Private Key:
+
+- **Goal:** **Integrity**, **Authenticity**, and **Non-Repudiation**.
+    
+- This is not just encryption; it's a **verification** process, similar to checking a MAC. The public can decrypt the message to verify it was originated by the owner of the private key.
+    
+
+---
+
+## The Problem: Non-Repudiation and Forgery
+
+Using private-key encryption directly is **not secure** and does not yet provide true non-repudiation. It is vulnerable to an **existential forgery** attack.
+
+### The Naive (Insecure) Signature
+
+- Let $U$ be Alice's public key and $V$ be Alice's private key.
+    
+- **Naive Signature Process:** Alice sends the pair $(M, S)$, where $S = E_V(M)$ (the message $M$ encrypted with her private key).
+    
+- **Naive Verification Process:** Bob receives $(M, S)$ and checks if $E_U(S) = M$ (decrypting the signature $S$ with her public key should reveal the original $M$).
+    
+
+### The Existential Forgery Attack
+
+An attacker, Fran, can forge a "valid" signed message _from scratch_ without Alice's private key.
+
+1. Fran (the attacker) creates a random binary file, $R$. This $R$ will be his _signature_.
+    
+2. Fran computes $D = E_U(R)$ (i.e., he "decrypts" $R$ using Alice's **public key**).
+    
+3. Fran (pretending to be Alice) sends the pair $(D, R)$ to Bob.
+    
+4. Bob receives the message $D$ and the signature $R$. He performs the verification:
+    
+    - Bob checks: Does $E_U(R)$ equal $D$?
+        
+    - Yes, by definition! Fran _created_ $D$ to be $E_U(R)$.
+        
+5. Bob accepts the pair $(D, R)$ as a valid message and signature from Alice, even though $D$ is probably meaningless. The existential forgery is successful.
+    
+
+---
+
+## The Solution: RSA Digital Signature (Hash-then-Sign)
+
+The vulnerability is fixed by **signing a hash of the message**, not the message itself.
+
+- **Signature Process:** Alice sends the pair $(M, S)$, where $H$ is a cryptographic hash function (like SHA-256) and $S = E_V(H(M))$.
+    
+    - She hashes the message $M$ to get a small, fixed-size digest $h$.
+        
+    - She encrypts (signs) the hash $h$ with her private key $V$.
+        
+- **Verification Process:**
+    
+    1. Bob receives the pair $(M, S)$.
+        
+    2. Bob computes $h_1 = H(M)$ (he hashes the plaintext message himself).
+        
+    3. Bob computes $h_2 = E_U(S)$ (he decrypts the signature $S$ with Alice's public key).
+        
+    4. If $h_1 = h_2$, the signature is **valid**. If not, it is rejected.
+        
+- **Why this works:**
+    
+    - The hash function $H$ is a **One-Way Function (OWF)**, which makes the forgery attack impossible. Fran cannot find a message $D$ that hashes to $R$.
+        
+    - Encrypting a hash is fast and efficient.
+        
+    - $H$ guarantees **data integrity** (if $M$ is changed, $h_1$ changes).
+        
+    - $E_V$ guarantees **authenticity** (only Alice could have created $h_2$).
         
 
 ---
 
-### Part 4: "Textbook" RSA Weaknesses and Attacks
+## "Textbook" RSA: Common Weaknesses & Attacks
 
-The "textbook" RSA algorithm (just $M^e \pmod N$) is **NOT secure** and must never be used in practice. It is vulnerable to many attacks.
+The basic, "textbook" RSA algorithm ($C = M^e \pmod N$) is dangerously insecure. Practical RSA implementations _must_ include mitigations, primarily **padding**.
 
-#### Weakness 1: Existential Forgery
+### 1. Factoring $N$
 
-Using private-key encryption directly for signatures is insecure.
-
-- **Naive Signature:** Alice sends $(M, S)$ where $S = E_{V}(M)$ (Message $M$ encrypted with her private key $V$).
+- **Attack:** If an attacker can factor $N$ into $p$ and $q$, they can compute $\varphi(N)$ and then use $e$ to find the private key $d$. Factoring $N$ breaks RSA.
     
-- **Naive Verification:** Bob checks if $E_{U}(S) = M$ (decrypts $S$ with her public key $U$).
+- **Open Problem:** We know (Factoring $N$) $\implies$ (Break RSA). Is the reverse true? (Break RSA) $\implies$ (Factoring $N$)? This is not known.
     
-- **The Forgery Attack:**
+- **Solution:** Use proper key generation:
     
-    1. Attacker Fran (pretending to be Alice) wants to forge a signature.
-        
-    2. Fran creates a random binary file $R$ (this will be the "signature").
-        
-    3. Fran computes $D = E_{U}(R)$ (i.e., "decrypts" the random file $R$ with Alice's _public_ key).
-        
-    4. Fran sends the pair $(D, R)$ to Bob.
-        
-    5. Bob verifies: He checks if $E_{U}(R) = D$. This is true by definition!
-        
-    6. Bob accepts the pair $(D, R)$ as a valid message $D$ signed by Alice, even though $D$ is probably meaningless. This is a successful **existential forgery**.
-        
-- **The REAL RSA Signature (Solution):**
-    
-    - We sign a **hash** of the message, not the message itself.
-        
-    - **Signature:** Alice sends $(M, E_V(H(M)))$, where $H$ is a cryptographic hash function ([[OWF]]).
-        
-    - **Verification:** Bob receives $(M, S)$.
-        
-        1. Bob computes $h_1 = H(M)$.
-            
-        2. Bob computes $h_2 = E_U(S)$ (decrypts the signature).
-            
-        3. If $h_1 = h_2$, he accepts.
-            
-    - This works because the hash $H$ provides **[[Integrity]]** and is an **[[OWF]]**, preventing the forgery attack. The encryption by $V$ provides **[[Authenticity]]**.
-        
-
-#### Weakness 2: Factoring $N$
-
-- If an attacker can factor $N$ into $p$ and $q$, they can compute $\varphi(N)$ and then compute the private key $d$ from the public key $e$.
-    
-- Factoring is **believed hard**, but requires careful key generation:
-    
-    - $p$ and $q$ must be **large enough** (~2048 bits for $N$).
+    - $p$ and $q$ must be **large enough** (e.g., $N$ should be 2048 or 4096 bits).
         
     - $p$ and $q$ must **not be too close** together.
         
-    - $(p-1)$ and $(q-1)$ must have large prime factors (to foil Pollard's rho algorithm).
+    - $(p-1)$ and $(q-1)$ must have large prime factors (to foil Pollard's p-1 algorithm).
         
-- **Open Problem:** We know (Factoring $N$) $\implies$ (Break RSA). Is the reverse true? (Break RSA) $\implies$ (Factoring $N$)? This is not known.
+- **Historical Context:** Factoring challenges have shown the difficulty. RSA-640 (bits) was factored in 2005. In 2008, the Gpcode ransomware used a 1024-bit key, and Kaspersky Labs estimated it would take 15 million modern computers 1 year to break. The key was never broken, proving the practical strength of 1024-bit keys at the time.
     
 
-#### Weakness 3: Deterministic Encryption
+### 2. Attacks on Easy or Small Messages
 
-- Textbook RSA is deterministic: $RSA(M)$ always produces the same $C$.
+- **Problem 1:** If $m = 0$, $1$, or $N-1$, then $RSA(m) = m$. The ciphertext is the same as the plaintext.
     
-- This leaks information. An attacker can build a dictionary of encrypted messages.
+    - **Solution:** Use a "salt" or padding.
+        
+- **Problem 2:** If both $m$ and $e$ are small (e.g., $e = 3$) and $m$ is small, we might have $m^e < N$.
     
-- **Attack:** If an adversary knows the message is either $m_1$ or $m_2$, they can encrypt both with the public key and see which one matches the ciphertext.
-    
-- **Solution:** **Add random padding** to the message before encrypting.
-    
+    - In this case, $C = m^e \pmod N = m^e$.
+        
+    - The attacker doesn't need to do modular arithmetic; they just compute the simple $e$-th root of $C$ to find $m$.
+        
+    - **Solution:** Add non-zero padding to _all_ messages to ensure $m$ is never small.
+        
 
-#### Weakness 4: Malleability (Multiplicative Property)
+### 3. Low-Exponent Attacks ($e=3$)
 
-- RSA has a multiplicative homomorphism:
+- **Problem 1 (Related Messages):** If an attacker intercepts two messages related by a known transformation, e.g., $c_1 = m^3 \pmod n$ and $c_2 = (m+1)^3 \pmod n$, they can use this algebraic relationship (the Coppersmith attack) to solve for $m$.
     
-    $RSA(m_1) \cdot RSA(m_2) = (m_1^e)(m_2^e) \pmod N = (m_1 \cdot m_2)^e \pmod N = RSA(m_1 \cdot m_2)$
+    - **Solution:** Choose a large $e$ (like 65537) or use padding.
+        
+- **Problem 2 (Chinese Remainder Theorem Attack):** If the _same message_ $m$ is sent to 3 different users (with $e=3$ and different moduli $n_1, n_2, n_3$), an attacker intercepts:
     
-- **Attack:** An attacker can modify a ciphertext $C$ in a predictable way without knowing the plaintext $M$.
+    1. $c_1 = m^3 \pmod{n_1}$
+        
+    2. $c_2 = m^3 \pmod{n_2}$
+        
+    3. $c_3 = m^3 \pmod{n_3}$
+        
     
-- **Chosen Ciphertext Attack (Example):**
-    
-    1. Attacker wants to decrypt $C = M^e \pmod n$.
+    - Using the Chinese Remainder Theorem (CRT), the attacker can combine these to find the value of $m^3 \pmod{n_1n_2n_3}$.
         
-    2. Attacker chooses a random $X$ and computes $C' = C \cdot X^e \pmod n$.
+    - Since $m < n_i$ for all $i$, $m^3$ will be smaller than the product $n_1n_2n_3$. The result is simply $m^3$.
         
-    3. Attacker asks a "decryption oracle" (a server that decrypts messages) to decrypt $C'$.
+    - The attacker computes the simple cube root and finds $m$.
         
-    4. The oracle returns $(C')^d = (C \cdot X^e)^d = C^d \cdot (X^e)^d = M \cdot X \pmod n$.
+    - **Solution:** Add random padding to every message. This ensures the _same_ message is never sent twice.
         
-    5. The attacker divides this result by $X$ to get the original message $M$.
-        
-- **Solution:** **Padding**. The oracle will decrypt $C'$, find that the padding is invalid, and return an error instead of the plaintext.
-    
 
-#### Weakness 5: Attacks on Small Values
+### 4. Deterministic Encryption Attack
 
-- **Easy Messages:** If $M=0, 1,$ or $N-1$, then $RSA(M) = M$.
+- **Problem:** "Textbook" RSA is deterministic. If an attacker knows the message is either $m_1$ ("YES") or $m_2$ ("NO"), they can encrypt both $m_1$ and $m_2$ with the public key. They compare the results to the intercepted ciphertext to learn the message.
     
-- **Small $M$ and Small $e$:** If $e=3$ and the message $M$ is small (e.g., $M=100$), then $M^e = 100^3 = 1,000,000$. If $N$ is large, $M^e < N$, so $C = M^e$. The attacker just computes the $e$-th root of $C$ (integer root, not modular) to find $M$.
-    
-- **Small $e$ and Related Messages:** If an attacker intercepts $c_1 = m^3 \pmod n$ and $c_2 = (m+1)^3 \pmod n$, they can use this relation to solve for $m$ algebraically.
-    
-- **Small $e$ and Same Message (CRT Attack):** If $e=3$ and the _same message $M$_ is sent to 3 different users (with moduli $n_1, n_2, n_3$), an attacker intercepts:
-    
-    - $c_1 = M^3 \pmod{n_1}$
-        
-    - $c_2 = M^3 \pmod{n_2}$
-        
-    - $c_3 = M^3 \pmod{n_3}$
-        
-    - Using the [[Chinese Remainder Theorem]], the attacker can compute $M^3 \pmod{n_1 n_2 n_3}$.
-        
-    - Since $M^3 < n_1 n_2 n_3$, this is just $M^3$. The attacker computes the cube root to find $M$.
-        
-- **Solution to all:** **Add random padding** (e.g., "salt") to every message.
+- **Solution:** Add a random string (padding) to the message.
     
 
-#### Weakness 6: Implementation Attacks
+### 5. Common Modulus Attack
 
-- **Timing Attacks:** Based on the time required to compute $C^d \pmod N$.
+- **Problem:** If two users are set up with the _same modulus $n$_ (but different $e$ and $d$), this is catastrophic.
     
-- **Energy Attacks:** Based on the power consumed by a smart card to compute $C^d \pmod N$.
+- User 1 (with $e_1, d_1, n$) could use their keys to figure out $p$ and $q$ (this is tricky but possible).
     
-- **Solution:** Add random delays or "blinding" steps in the implementation.
+- Once they have $p$ and $q$, they can compute $\varphi(N)$ and use it to find User 2's private key $d_2$ from their public key $e_2$.
     
+- **Solution:** Each person must generate their own unique $N$.
+    
+
+### 6. Malleability & Chosen Ciphertext Attacks (CCA)
+
+- Problem (Multiplicative Property): RSA is malleable. It has a multiplicative homomorphism:
+    
+    $RSA(m_1) \cdot RSA(m_2) = (m_1^e)(m_2^e) = (m_1 \cdot m_2)^e = RSA(m_1 \cdot m_2) \pmod n$
+    
+- This means an attacker can modify a ciphertext $C$ and cause a _predictable_ modification in the _plaintext_ $M$, _without knowing_ $M$.
+    
+- **Chosen Ciphertext Attack:**
+    
+    1. An attacker wants to decrypt $C = M^e \pmod n$.
+        
+    2. They choose a random number, $X$.
+        
+    3. They compute a new ciphertext $C' = C \cdot (X^e) \pmod n$.
+        
+    4. They ask a "decryption oracle" (a server that decrypts valid messages) to decrypt $C'$.
+        
+    5. The oracle computes $(C')^d = (C \cdot X^e)^d = C^d \cdot (X^e)^d = M \cdot X \pmod n$.
+        
+    6. The oracle returns $M \cdot X$.
+        
+    7. The attacker divides this result by $X$ to get the original message $M$.
+        
+- **Solution:** Require that all messages verify a given **structure (padding)**. The oracle will decrypt $C'$, find that the padding is invalid (it's just garbage), and return an error instead of the plaintext.
+    
+
+### 7. Implementation (Side-Channel) Attacks
+
+- **Problem:** Attacks that exploit the physical implementation of the algorithm.
+    
+    - **Timing Attack:** Measuring the precise _time_ required to compute $C^d \pmod N$ can leak bits of the private key $d$.
+        
+    - **Energy Attack:** Measuring the _power consumption_ of a smart card during the same computation can also leak $d$.
+        
+- **Solution:** Implementations must add random delays or "blinding" steps to ensure the computation time and power draw are constant.
+
+Prof example: we have an oracle for creating $HMAC_{H,K}$, the adversary creating a string of causal bits and consults the oracle to see if it's correct. when the oracle finds a bit mismatch (he knows the correct bit string) it produce a failure. So the attacker can measure the time to understand which bit failed and change his value. This gives the power of Universal Forgery to the adversary
 
 ---
 
+## Conclusion: Textbook RSA is NOT Safe
+
+- The "textbook" implementation of RSA is vulnerable to a wide range of attacks.
+    
+- It does **not** meet modern security criteria on its own.
+    
+- **Solution:** A standard version of RSA must be used, which **pre-processes** (pads) the message $M$ to get a new message $M'$ _before_ applying the RSA algorithm.
+    
+
+### PKCS: The Standard for Padding
+
+**PKCS** stands for **Public-Key Cryptography Standards**. These are a set of standards developed by RSA Laboratories to ensure the secure implementation and interoperability of public-key crypto.
+
+| **Standard** | **Title**                     | **Function / Description**                                                                                                                                                       |
+| ------------ | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PKCS #1**  | **RSA Cryptography Standard** | Defines the correct formats for **RSA encryption** and **signatures**, including the crucial **padding schemes** (like OAEP and PSS) needed to stop the attacks described above. |
+| **PKCS #3**  | Diffie-Hellman Key Agreement  | Defines the DH key exchange format. (Now largely obsolete and replaced by IETF standards).                                                                                       |
+| **PKCS #5**  | Password-Based Cryptography   | Defines key derivation functions (PBKDF1, PBKDF2) to turn passwords into cryptographic keys.                                                                                     |
+| **PKCS #6**  | Extended Certificate Syntax   | Defines certificate extensions. (Obsolete, superseded by X.509v3).                                                                                                               |
 ### Part 5: The Solution - PKCS (Public-Key Cryptography Standards)
 
 **Conclusion: Textbook RSA is NOT safe.**
@@ -783,19 +879,21 @@ m = 0x00 || 0x02 || [at least 8 non-zero random bytes] || 0x00 || M
 
 These standards, developed by RSA Laboratories, define formats for secure public-key cryptography.
 
-|**Standard**|**Title**|**Function / Description**|**Status / Adoption**|
-|---|---|---|---|
-|**PKCS #1**|RSA Cryptography Standard|RSA encryption, signatures, and padding (like OAEP, PSS).|Widely used; parts adopted in **RFC 8017**.|
-|**PKCS #3**|Diffie-Hellman Key Agreement|Diffie–Hellman key exchange format.|Obsolete; replaced by IETF standards.|
-|**PKCS #5**|Password-Based Cryptography|Defines PBKDF1, PBKDF2 (key derivation).|Widely used; part of **RFC 8018**.|
-|**PKCS #6**|Extended Certificate Syntax|Defines certificate extensions.|Obsolete; superseded by **X.509v3**.|
-|**PKCS #7**|Cryptographic Message Syntax|Format for signed/enveloped data (S/MIME).|Superseded by CMS (**RFC 5652**).|
-|**PKCS #8**|Private Key Information Syntax|Standard for storing private keys (encrypted or not).|Widely used (OpenSSL, Java).|
-|**PKCS #9**|Selected Attribute Types|Defines attributes for use in other PKCS standards.|Still relevant.|
-|**PKCS #10**|Certificate Request Syntax|Format for Certificate Signing Requests (CSRs).|Ubiquitous in TLS/PKI.|
-|**PKCS #11**|Cryptographic Token Interface (Cryptoki)|API for interacting with cryptographic hardware (HSMs, smartcards).|Actively maintained by OASIS.|
-|**PKCS #12**|Personal Information Exchange Syntax|Container for certs & private keys (.p12, .pfx files).|Still widely used (Windows, browsers).|
-|**PKCS #15**|Cryptographic Token Information Format|Format for storing crypto objects on tokens.|Used in smartcard infrastructure.|
+| **Standard** | **Title**                                | **Function / Description**                                          | **Status / Adoption**                       |
+| ------------ | ---------------------------------------- | ------------------------------------------------------------------- | ------------------------------------------- |
+| **PKCS #1**  | RSA Cryptography Standard                | RSA encryption, signatures, and padding (like OAEP, PSS).           | Widely used; parts adopted in **RFC 8017**. |
+| **PKCS #3**  | Diffie-Hellman Key Agreement             | Diffie–Hellman key exchange format.                                 | Obsolete; replaced by IETF standards.       |
+| **PKCS #5**  | Password-Based Cryptography              | Defines [[PBKDF1]], [[PBKDF2]] (key derivation).                    | Widely used; part of **RFC 8018**.          |
+| **PKCS #6**  | Extended Certificate Syntax              | Defines certificate extensions.                                     | Obsolete; superseded by **X.509v3**.        |
+| **PKCS #7**  | Cryptographic Message Syntax             | Format for signed/enveloped data ([[S-MIME\|S\MIME]]).              | Superseded by CMS (**RFC 5652**).           |
+| **PKCS #8**  | Private Key Information Syntax           | Standard for storing private keys (encrypted or not).               | Widely used (OpenSSL, Java).                |
+| **PKCS #9**  | Selected Attribute Types                 | Defines attributes for use in other PKCS standards.                 | Still relevant.                             |
+| **PKCS #10** | Certificate Request Syntax               | Format for Certificate Signing Requests (CSRs).                     | Ubiquitous in TLS/PKI.                      |
+| **PKCS #11** | Cryptographic Token Interface (Cryptoki) | API for interacting with cryptographic hardware (HSMs, smartcards). | Actively maintained by OASIS.               |
+| **PKCS #12** | Personal Information Exchange Syntax     | Container for certs & private keys (.p12, .pfx files).              | Still widely used (Windows, browsers).      |
+| **PKCS #15** | Cryptographic Token Information Format   | Format for storing crypto objects on tokens.                        | Used in smartcard infrastructure.           |
+there is also PKCS#13 which talks about Elliptic Curve Cryptography, which allows to gain the exact same security of a one 1 million bits of key with simply one thousand bits and this helps a lot with [[Performance]]. 
+
 
 ---
 ## An Overview of PKCS (Part 2)
@@ -831,9 +929,9 @@ Here is an overview of several key standards from the collection.
     
     - It specifies **Password-Based Key Derivation Functions (PBKDFs)**.
         
-    - **PBKDF1** (legacy) and **PBKDF2** (the modern standard) are the most famous.
+    - **[[PBKDF1]]** (legacy) and **[[PBKDF2]]** (the modern standard) are the most famous.
         
-    - PBKDF2 "stretches" a password by mixing it with a **Salt** (a unique random value) and running it through a pseudorandom function (like HMAC-SHA256) thousands of times (the **iteration count**).
+    - [[PBKDF2]] "stretches" a password by mixing it with a **Salt** (a unique random value) and running it through a pseudorandom function (like HMAC-SHA256) thousands of times (the **iteration count**).
         
     - **Function:** `Derived Key = PBKDF2(password, salt, iterations, output_key_length)`
         
@@ -877,7 +975,7 @@ Here is an overview of several key standards from the collection.
 
 ## PKCS #9 — Selected Attribute Types
 
-- **Purpose:** Provides **extensibility** for other PKCS standards. It is not a protocol itself, but a _library of definitions_ for "attributes" that can be attached to objects like certificates or private keys.
+- **Purpose:** Provides **extensibility** for other PKCS standards. It is not a protocol itself, but a _library of definitions_ for "attributes" that can be attached to objects like certificates or private keys. The attributes are like additional informations. 
     
 - **Examples of Attributes:**
     
@@ -941,7 +1039,7 @@ Here is an overview of several key standards from the collection.
     
     - **Backup and Transport:** This is the most common way to **export** a certificate and its private key from one server and **import** it onto another (e.g., when moving a website to a new server).
         
-    - Used by browsers, operating systems, and VPN/Email clients to import user credentials.
+    - Used by browsers, operating systems, and VPN/Email clients to import user credentials and Windows.
         
 
 ---
@@ -965,3 +1063,414 @@ Here is an overview of several key standards from the collection.
     - Healthcare cards.
         
     - Enterprise access cards.
+
+
+---
+
+# RSA: Implementation and Properties
+
+## Properties of RSA (Recap)
+
+- **Uniqueness:** The requirement that $\gcd(e, \phi(N)) = 1$ is critical. It ensures that the encryption function is a one-to-one mapping (a permutation), which guarantees that every ciphertext corresponds to exactly one plaintext, making decryption possible.
+    
+- **The RSA Assumption:**
+    
+    - Finding the private key $d$ is **easy** if you know the prime factors $p$ and $q$.
+        
+    - Finding $d$ when you _only_ know the public key $(N, e)$ is **assumed to be hard**. This is because finding $d$ requires knowing $\phi(N) = (p-1)(q-1)$, which in turn requires being able to factor $N$. Therefore, the security of RSA rests on the assumption that **factoring large numbers is computationally infeasible**.
+        
+- **The Public Exponent (e):**
+    
+    - $e$ can be, and often is, a small number to make encryption fast.
+        
+    - A value of $e=3$ is problematic as it is vulnerable to certain attacks (like cube root attacks) if padding is not used correctly.
+        
+    - A very common and secure choice is $e = 65537$ (which is $2^{16} + 1$).
+        
+- **Performance:**
+    
+    - Both encryption and decryption involve modular exponentiation ($m^e \pmod N$ or $c^d \pmod N$).
+        
+    - Since $e$ is usually small (like 65537) and $d$ is a very large number, **decryption is typically much slower** than encryption.
+        
+
+---
+
+## Constructing an RSA Key Pair
+
+This is the standard algorithm for generating the public and private keys.
+
+1. **Choose Primes:** Alice randomly chooses two large, distinct prime numbers, $p$ and $q$.
+    
+2. **Compute Modulus:** Alice computes the modulus $N = p \cdot q$. This $N$ will be part of the public key.
+    
+3. **Compute Totient:** Alice computes $\phi(N) = (p-1)(q-1)$. This value is kept secret.
+    
+4. **Choose Public Exponent (e):** Alice chooses a public exponent $e$, such that $1 < e < \phi(N)$ and $e$ is coprime to $\phi(N)$ (i.e., $\gcd(e, \phi(N)) = 1$).
+    
+    - _(Alternatively, as is common practice, Alice can pick $e$ first, like $e=65537$, and then ensure that the $p$ and $q$ she generates result in a $\phi(N)$ that is coprime to $e$)._
+        
+5. **Compute Private Exponent (d):** Alice computes $d$ such that $de \equiv 1 \pmod{\phi(N)}$. This is the **multiplicative inverse** of $e$ modulo $\phi(N)$, and it is found using the **Extended Euclidean Algorithm**.
+    
+6. **Publish/Keep Keys:**
+    
+    - **Public Key:** Alice publishes $(N, e)$ for the world to see.
+        
+    - **Private Key:** Alice keeps $(N, d)$ secret. She must also keep $p$, $q$, and $\phi(N)$ secret, as they can be used to derive $d$.
+        
+
+---
+
+## RSA: Implementation Steps
+
+### 1. Find Two Large Primes (p and q)
+
+- **Algorithm:**
+    
+    1. Randomly choose a large odd integer.
+        
+    2. Test if it is prime.
+        
+    3. If not, repeat.
+        
+- **How do we test for primality?** We don't. Proving primality for a 1024-bit number is too slow. Instead, we use a **probabilistic primality test**, like the **Miller-Rabin test**. This test doesn't _prove_ primality, but it can state with extremely high probability (e.g., $1 - (1/4)^{100}$) that the number is prime, which is more than good enough. the algorithm may be produce a false result, but the probability is so low that we can be sure that this won't happen.
+    
+- **Are primes rare?** No. The **[[Prime Number Theorem]]** states that primes are relatively frequent. The average gap between primes near a large number $N$ is roughly $\ln(N)$. This means we only expect to test a few hundred candidates (not millions) before finding a prime.
+    
+
+### 2. Fast Encryption (Modular Exponentiation)
+
+To compute $c = m^e \pmod N$, we _do not_ first compute $m^e$ and then find the remainder. That intermediate number would be astronomically large.
+
+- We use the **exponentiation by squaring** (or binary) method.
+    
+- This algorithm performs a series of modular squarings and multiplications based on the binary representation of the exponent $e$.
+    
+- **Cost:** This is very efficient, requiring only $O(\log N)$ operations.
+    
+- **Example (for $e=65537$):**
+    
+    - $e = 65537 = 2^{16} + 1$.
+        
+    - To compute $m^{65537}$, you first compute $m^2, m^4, m^8, \dots, m^{2^{16}}$ (which takes 16 modular squarings).
+        
+    - The final result is $m^{65537} = m^{65536} \cdot m^1$.
+        
+    - This requires only **16 squarings and 1 additional multiplication**, making it extremely fast. This is why $e=65537$ is such a popular choice.
+        
+
+### 3. Compute 'd' (Extended Euclidean Algorithm)
+
+To find $d$ from $e$ and $\phi(N)$, we need to solve $de \equiv 1 \pmod{\phi(N)}$. We use the Extended Euclidean Algorithm (EEA) to find the inverse.
+
+Here is a C-like implementation that finds the inverse of $e$ modulo $\phi$:
+
+```C
+/*
+ * Finds the modular multiplicative inverse of e modulo phi
+ * using the Extended Euclidean Algorithm.
+ * Returns x0 such that (e * x0) % phi == 1.
+ */
+int mod_inverse(int e, int phi) {
+    int x0 = 1, x1 = 0;
+    int a = e, b = phi;
+
+    while (b) {
+        int q = a / b;
+        int t = b;
+        b = a % b;
+        a = t;
+
+        t = x1;
+        x1 = x0 - q * x1;
+        x0 = t;
+    }
+    
+    // x0 can be negative, so we adjust it to be in the range [1, phi-1]
+    if (x0 < 0) {
+        x0 = x0 + phi;
+    }
+    
+    return x0;
+}
+```
+
+---
+
+## Encoding Text for RSA
+
+RSA operates on **numbers**, not text. We need a standard way to convert a message (a stream of bytes, or "octet-stream") into an integer, and back.
+
+### OS2IP: Octet-Stream to Integer Primitive
+
+This converts a byte string into a single large integer.
+
+- The $k$ bytes are interpreted as a number in **base 256**, with the first byte ([[Big-Endian]]) being the most significant.
+    
+- **Example:**
+    
+    - `octet_string = b'\x01\x02\x03\x04'`
+        
+    - This is interpreted as:
+        
+    - $(1 \times 256^3) = 16,777,216$
+        
+    - $(2 \times 256^2) = 131,072$
+        
+    - $(3 \times 256^1) = 768$
+        
+    - $(4 \times 256^0) = 4$
+        
+    - **Result (Integer):** $16,909,060$
+        
+
+### I2OSP: Integer to Octet-Stream Primitive
+
+This is the reverse: it converts an integer back into a byte string of a _specific length $k$_.
+
+- $k$ is typically the number of bytes in the modulus $N$ (e.g., 256 bytes for a 2048-bit key).
+    
+- **Example:**
+    
+    - `integer = 84,281,096`
+        
+    - `desired length k = 8 bytes`
+        
+    - The integer in hexadecimal is `0x05060708` (which is only 4 bytes long).
+        
+    - To represent this as an 8-byte string, we **pad it with leading zeros** to reach length $k$.
+        
+    - `00 00 00 00 05 06 07 08`
+        
+    - **Result (Byte String):** `b'\x00\x00\x00\x00\x05\x06\x07\x08'`
+        
+
+---
+
+## RSA Padding Schemes
+
+"Textbook" RSA (encrypting the raw message number $m$) is **dangerously insecure**. To be secure, the message $M$ _must_ be pre-processed using a **padding scheme** before being converted to an integer $m$.
+
+### RSAES-PKCS1-v1_5 (Legacy Encryption Padding)
+
+This is an older, widely-used padding scheme that is now considered **INSECURE and VULNERABLE**.
+
+1. Padding: Given a message $M$, a padded message $M'$ is constructed:
+    
+    $M' = 0x00 \mid\mid 0x02 \mid\mid \text{PS} \mid\mid 0x00 \mid\mid M$
+    
+    - `0x00 || 0x02`: A fixed 2-byte header indicating encryption padding.
+        
+    - `PS`: A padding string of random, **non-zero** bytes. Must be at least 8 bytes long.
+        
+    - `0x00`: A single zero-byte that acts as a separator.
+        
+    - `M`: The actual message.
+        
+    - The total length of $M'$ must be exactly $k$, the byte-length of the modulus $N$.
+        
+    - Example (for $|M|=100$ bytes, $|N|=2048$ bits $= 256$ bytes):
+        
+        $M' = 0x00 \mid\mid 0x02 \mid\mid \text{[153 random non-zero bytes]} \mid\mid 0x00 \mid\mid \text{[100-byte message]}$
+        
+2. **Encryption Process:**
+    
+    - Convert $M'$ to an integer: $m = \text{OS2IP}(M')$
+        
+    - Apply the RSA Encryption Primitive: $c = \text{RSAEP}((N, e), m)$ (i.e., $c = m^e \pmod N$)
+        
+    - Convert the resulting integer $c$ to bytes: $C = \text{I2OSP}(c, k)$
+        
+3. **Decryption Process:** This is the reverse. The recipient decrypts $C$, converts it to $M'$, and then _must_ carefully parse the padding to find the $0x00$ separator and extract $M$.
+    
+
+**Summary:** PKCS#1 v1.5 adds random padding to make encryption non-deterministic, but its rigid structure makes it vulnerable to "padding oracle" attacks (like the Bleichenbacher attack) that can decrypt messages.
+
+---
+
+### RSAES-OAEP (Modern Secure Padding)
+
+**OAEP (Optimal Asymmetric Encryption Padding)** is the modern, secure padding scheme that fixes the vulnerabilities of v1.5. It is **strongly recommended** for all new implementations.
+
+- **What is it?** A padding scheme that adds randomness and structure to achieve **semantic security** (IND-CCA).
+    
+- **Key Features:**
+    
+    - Prevents **Chosen-Ciphertext Attacks (CCA)**.
+        
+    - Uses a **Mask Generation Function (MGF)** (based on a hash function like SHA-256) and a random **seed**.
+        
+    - **Probabilistic:** Encrypting the same message twice produces two _different_ ciphertexts.
+        
+- **Standard:** Defined in PKCS#1 v2.2 (RFC 8017).
+    
+
+#### OAEP Scheme (How it Works)
+
+OAEP uses a **Feistel network** (a structure that XORs data back and forth) to create the padded message.
+
+1. **Input:** A message $m$ and a random $k0$-bit string called a **seed** ($r$).
+    
+2. **Step 1:** The seed $r$ is fed into a Mask Generation Function (MGF) $G$ (a hash-based function) to create a mask of length $n-k0$.
+    
+3. **Step 2:** The message $m$ (padded with zeros) is XORed with this mask to create $X$.
+    
+    - $X = (m \mid\mid 00...0) \oplus G(r)$
+        
+4. **Step 3:** $X$ is fed into another hash function $H$ to create a second mask of length $k0$.
+    
+5. **Step 4:** The seed $r$ is XORed with this second mask to create $Y$.
+    
+    - $Y = r \oplus H(X)$
+        
+6. **Output:** The final padded block to be encrypted is the concatenation $X \mid\mid Y$.
+    
+
+"All-or-Nothing" Security:
+
+To recover the message $m$, an attacker must recover the entire block $X$ and $Y$.
+
+- To get $m$ from $X$, you need the mask $G(r)$.
+    
+- To get $r$ (to compute the mask), you need to calculate $r = Y \oplus H(X)$.
+    
+- This means you **need $X$ to get $r$, and you need $r$ to get $m$**.
+    
+- Because $G$ and $H$ are cryptographic hash functions, flipping a _single bit_ in the ciphertext will, after decryption, cause a cascade of unpredictable changes, completely corrupting _both_ $X$ and $Y$. The recipient will be unable to validate the padding and will simply reject the message, leaking no information.
+    
+
+#### RSAES-OAEP (The Full Process)
+
+1. **Encoding:** The message $M$ is encoded using the OAEP scheme to produce $M'$.
+    
+2. **Conversion:** $m = \text{OS2IP}(M')$
+    
+3. **Encryption:** $c = \text{RSAEP}((N, e), m)$
+    
+4. **Conversion:** $C = \text{I2OSP}(c, k)$
+    
+
+---
+
+## RSA Padding Schemes: Overview
+
+### Key Benefits of RSA-OAEP (PKCS#1 v2.2)
+
+- **Randomization (Semantic Security):** OAEP uses a random seed and an MGF. This ensures that encrypting the _same plaintext_ multiple times results in _different ciphertexts_, preventing pattern recognition.
+    
+- **Resistance to Chosen-Ciphertext Attacks (CCA):** OAEP is provably secure against CCA. Tampering with the ciphertext will produce a cryptographically invalid padded block, which the decryption process will reject. This starves the attacker of the information they need (this defends against the Bleichenbacher attack).
+    
+
+### PKCS#1 v1.5 vs. v2.2 (OAEP)
+
+|**Feature**|**PKCS#1 v1.5 (Legacy)**|**PKCS#1 v2.2 (RSA-OAEP) (Modern)**|
+|---|---|---|
+|**Randomization**|Less randomness; structured padding|**Probabilistic** (uses a random seed + MGF)|
+|**Resistance to CCA**|**Vulnerable** (e.g., Bleichenbacher attack)|**Secure against CCA**|
+|**Hash-Based Security**|No use of hash functions in padding|Integrates a hash function (e.g., SHA-256)|
+|**Recommendation**|**DO NOT USE** (for new systems)|**Recommended for all new implementations**|
+
+---
+
+## RSA for Non-Repudiation (Digital Signatures)
+
+**Non-repudiation** is the assurance that someone cannot deny having performed an action (like sending a message). Digital signatures are the primary way to achieve this.
+
+- As discussed, RSA signatures work by **encrypting with the sender's private key**.
+    
+- This provides verifiable proof of authorship.
+    
+- But just like with encryption, "textbook" signing is insecure. We need a secure padding scheme.
+    
+
+### RSA Signature in PKCS#1 v1.5 (Legacy Signature)
+
+This is the _legacy_ signature scheme. It is still widely used but is **not recommended** for new applications.
+
+- It follows the "hash-then-sign" paradigm.
+    
+- It uses a **deterministic** padding format.
+    
+
+#### Signature Generation (RSASSA-PKCS1-v1_5)
+
+1. **Hash:** Compute $H = \text{Hash}(M)$.
+    
+2. **Encode (EMSA):** The hash $H$ is combined with its algorithm identifier (OID) to create a structure called `DigestInfo`, $T$.
+    
+3. Pad: A padded block $EM$ is built. This padding is deterministic (not random).
+    
+    $EM = 0x00 \mid\mid 0x01 \mid\mid \text{PS} \mid\mid 0x00 \mid\mid T$
+    
+    - `0x00 || 0x01`: Fixed header for signatures.
+        
+    - `PS`: A padding string of all `0xFF` bytes.
+        
+    - `0x00`: Separator.
+        
+    - `T`: The `DigestInfo` (e.g., an OID for SHA-256 + the 32-byte SHA-256 hash).
+        
+4. Sign: Apply the RSA Decryption Primitive (i.e., "encrypt" with the private key):
+    
+    $S = EM^d \pmod n$
+    
+
+#### Signature Verification
+
+1. Compute the hash of the original message: $H' = \text{Hash}(M)$.
+    
+2. Re-create the expected encoded block `EM` from $H'$ (using the same OID and `0xFF` padding).
+    
+3. Decrypt the signature $S$ with the public key: $EM' = S^e \pmod n$.
+    
+4. Compare: If $EM = EM'$, the signature is valid.
+    
+
+**Security:** Because this padding is deterministic, it is vulnerable to certain attacks if implemented incorrectly.
+
+---
+
+### RSA-PSS (Modern Secure Signature)
+
+**PSS (Probabilistic Signature Scheme)** is the modern, secure standard for RSA signatures, introduced in PKCS#1 v2.1.
+
+- It is **probabilistic**, not deterministic.
+    
+- It adds a **random salt** to the hashing process.
+    
+- It provides **provable security** under standard assumptions.
+    
+- It is **recommended for all modern applications** (e.g., TLS 1.3, OpenPGP).
+    
+
+#### RSA-PSS Construction (Simplified)
+
+1. Compute the hash of the message: $H = \text{Hash}(M)$.
+    
+2. Generate a **random salt** (e.g., 32 bytes).
+    
+3. Hash again: $H' = \text{Hash}(\text{zeros} \mid\mid H \mid\mid \text{salt})$.
+    
+4. Build a data block: $DB = \text{padding_zeros} \mid\mid 0x01 \mid\mid \text{salt}$.
+    
+5. Use an MGF (based on $H'$) to create a mask and XOR it with the $DB$:
+    
+    $\text{maskedDB} = DB \oplus \text{MGF}(H')$
+    
+6. Create the final encoded message: $EM = \text{maskedDB} \mid\mid H' \mid\mid 0xbc$.
+    
+7. Sign: $S = EM^d \pmod n$.
+    
+
+**Key takeaway:** The inclusion of the **random salt** makes the signature probabilistic. Signing the same message twice will produce two different, valid signatures. This thwarts many advanced attacks.
+
+---
+
+### Final Comparison: Signature Schemes
+
+|**Feature**|**PKCS#1 v1.5 (Legacy)**|**RSA-PSS (Modern)**|
+|---|---|---|
+|**Padding Type**|**Deterministic**|**Probabilistic**|
+|**Security Proof**|None (heuristic)|**Yes** (provably secure)|
+|**Random Salt**|No|**Yes**|
+|**Standard Use**|Legacy systems (TLS 1.2, S/MIME)|**Modern standards** (TLS 1.3, OpenPGP)|

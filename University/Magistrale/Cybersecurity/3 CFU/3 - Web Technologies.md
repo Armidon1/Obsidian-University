@@ -1,3 +1,4 @@
+Lezione precedente [[2 - Network Security]]
 # Web Technologies
 
 Questi appunti offrono una panoramica completa delle **Tecnologie Web**, partendo dalle fondamenta del modello **client-server** e del protocollo **HTTP/HTTPS**. Spiegano l'anatomia di richieste, risposte e **URL**, e come ispezionarli.

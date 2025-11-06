@@ -915,3 +915,5 @@ The ultimate goal of a SIEM is to "distill" low-level information (logs, flows) 
 - Moore et al., _The Spread of the Sapphire/Slammer Worm_, 2003
     
 - Powell & Stroud, _MAFTIA Project Deliverable D2_, IBM Zurich, 2001
+
+Next lesson [[3 - Web Technologies]]

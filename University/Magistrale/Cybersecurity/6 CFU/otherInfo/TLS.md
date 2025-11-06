@@ -19,11 +19,11 @@
 
 **Garantisce:**
 
-- ✅ **Confidentiality:** tramite cifratura dei dati (AES, ChaCha20, ecc.)
+- ✅ **[[Confidentiality]]:** tramite cifratura dei dati ([[AES]], [[ChaCha20]], ecc.)
     
-- ✅ **Integrity:** tramite MAC/HMAC o AEAD (Authenticated Encryption)
+- ✅ **[[Integrity]]:** tramite [[MAC]]/[[HMAC]] o [[AEAD]] (Authenticated Encryption)
     
-- ✅ **Authenticity:** tramite certificati digitali e firme del server (e, opzionalmente, del client)
+- ✅ **[[Authenticity]]:** tramite certificati digitali e firme del server (e, opzionalmente, del client)
     
 
 **Non garantisce:**
@@ -31,7 +31,7 @@
 - ❌ **[[Availability]]** (non previene [[DoS]])
     
 
-**Esempi d’uso:** HTTPS, email sicura (SMTPS, IMAPS), VPN, VoIP.
+**Esempi d’uso:** [[HTTPS]], email sicura (SMTPS, IMAPS), VPN, VoIP.
 
 **In breve:**
 
