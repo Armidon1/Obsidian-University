@@ -1,14 +1,13 @@
 # Web Technologies
 
-Lecturer: Leonardo Querzoni (Sapienza University of Rome)
+Questi appunti offrono una panoramica completa delle **Tecnologie Web**, partendo dalle fondamenta del modello **client-server** e del protocollo **HTTP/HTTPS**. Spiegano l'anatomia di richieste, risposte e **URL**, e come ispezionarli.
 
-License: Creative Commons BY-NC-SA 2.0
+Si passa poi ai **linguaggi** che compongono il web (Frontend e Backend) e all'evoluzione del protocollo (**HTTP/2 e HTTP/3**).
 
-_(Credits: These slides were designed by Emilio Coppa, based on material from Marco Squarcina, Mauro Tempesta, and Fabrizio D'Amore.)_
-
----
+Infine, gli appunti trattano concetti cruciali per le applicazioni moderne, come la gestione dello **stato** (Cookie, Sessioni, Web Storage), la manipolazione del **DOM**, l'autenticazione e l'uso di tool di sicurezza professionali come **Burp Suite**, includendo sfide pratiche per applicare le nozioni apprese.
 
 ## Introduction to HTTP
+[[HTTP]]
 
 ### Anatomy of a Typical Web Application
 ![[Pasted image 20251105115206.png]]
@@ -47,7 +46,7 @@ https://example.com:443/page?name=photo#about
         
 - **Hostname:** `example.com`
     
-    - The domain name (or IP address) of the server to connect to.
+    - The domain name (or IP address) of the server to connect to. for example, if the router doesn't know the IP address of example.com, then it consult the DNS to know his IP address.
         
 - **Port:** `:443`
     
@@ -59,11 +58,11 @@ https://example.com:443/page?name=photo#about
         
 - **Query String:** `?name=photo`
     
-    - An optional set of key-value pairs passed to the resource, often used for dynamic content. Starts with a `?` and pairs are separated by `&`.
+    - An ***optional*** set of key-value pairs passed to the resource, often used for dynamic content. Starts with a `?` and pairs are separated by `&`. These are parameters that the server may consider to find the resource we are asking for.
         
 - **Fragment:** `#about`
     
-    - An optional identifier that points to a specific part _within_ the resource. This is processed **client-side only** and is not sent to the server.
+    - An ***optional*** identifier that points to a specific part _within_ the resource. This is processed **client-side only** and is not sent to the server. So we are specifying that we want a specific sub-resource of the resource we are asking for.
         
 
 URL Encoding
@@ -121,7 +120,7 @@ When a client sends a request, it is formatted as a plain-text message:
 
 HTTP
 
-```
+``` HTTP
 POST /login HTTP/2
 Host: example.com
 User-Agent: Mozilla/5.0 (Macintosh; ...)
@@ -178,13 +177,14 @@ user=ugo&csrf_token=IjljMjlkMDE40DJmZWZIODhf
     
 
 ### HTTP Response
+You can see everything in a Network section in the [[3 - Web Technologies#Inspecting the Web with Developer Tools|Inspection Tool of the Browser]]
 ![[Pasted image 20251105115257.png]]
 
 When the server replies, it also sends a plain-text message:
 
 HTTP
 
-```
+``` HTTP
 HTTP/2 200 OK
 Server: nginx
 Date: Mon, 22 Feb 2021 15:38:46 GMT

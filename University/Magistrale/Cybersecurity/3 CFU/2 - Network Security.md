@@ -727,7 +727,7 @@ This defines the difference between a passive **IDS (Detection)** and an active 
 
 - The typical network design is based on the concept of **"internal trust"**.
     
-- The world is divided into two zones: "external" (untrusted) and "internal" (trusted).
+- The world is divided into two zones: "external" (untrusted) and "internal" (trusted). So the border between the trusted network and the outside needs to be setupped
     
 - The transfer of data is only possible through controlled checkpoints (the **firewall**, or "moat").
     

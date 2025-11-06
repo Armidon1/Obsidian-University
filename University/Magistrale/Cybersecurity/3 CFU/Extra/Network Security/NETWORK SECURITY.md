@@ -46,165 +46,8 @@ Gli attacchi possono essere classificati in base a:
     
 
 ---
-
-## Tipi di Attacco
-
-### Denial of Service (DoS)
-
-[[DoS]]
-
-**Obiettivo:** Interrompere o arrestare una rete, un computer o un processo, negando l'uso delle risorse agli utenti autorizzati. È un attacco alla **Disponibilità**.
-
-**Strategie:**
-
-- **Consumo di risorse scarse:**
-    
-    - **Consumo di banda:** Saturare la connessione di rete con traffico spazzatura (es. UDP flood, ICMP flood).
+vedi di più in [[Network Attacks]]
         
-    - **Saturazione della connettività di rete:** Esaurire la capacità del sistema di gestire connessioni (es. un **SYN Flood** che riempie la tabella delle connessioni).
-        
-    - **Altre risorse:** Consumare tutta la CPU, la memoria o l'I/O del disco disponibili.
-        
-- **Distruzione o alterazione della configurazione:** Modificare le tabelle di routing o i record DNS.
-    
-- **Distruzione o alterazione fisica:** Danneggiare fisicamente i componenti.
-    
-
----
-
-### Probing / Scanning
-
-[[Probing-Scanning]]
-
-**Obiettivo:** La fase di _ricognizione_. Un attaccante tenta di identificare indirizzi IP validi in un dominio e di raccogliere informazioni su di essi (es. porte aperte, servizi in esecuzione, versioni del sistema operativo) per trovare potenziali vulnerabilità.
-
-**Strumenti:** `IPsweep`, `Portsweep`, `nmap`
-
-- **Scansioni Rumorose (Noisy):** Scansioni veloci e aggressive sono facili da rilevare (es. "questo IP ha scansionato 1000 porte in 3 secondi").
-    
-- **Scansioni Furtive (Stealthy):** Sono più difficili da rilevare poiché progettate per passare inosservate (es. scansioni molto lente, o scansioni che usano flag non standard come il FIN scan).
-    
-
----
-
-### Compromissioni (Compromises)
-
-[[Compromises]]
-
-**Obiettivo:** Irrompere in un sistema per ottenere un accesso non autorizzato o privilegiato (es. una shell utente o accesso root/amministratore). È un attacco alla **Riservatezza** e all'**Integrità**.
-
-#### Remote-to-Local (R2L)
-
-[[R2L]]
-
-Un attaccante senza account su una macchina ottiene l'accesso locale dalla rete.
-
-- **Esempi:** Password guessing (brute-force SSH), o sfruttamento di una vulnerabilità nota in un servizio esposto sulla rete (es. buffer overflow in Sendmail, una falla RCE in un'applicazione web).
-    
-
-#### User-to-Root (U2R)
-
-[[U2R]]
-
-Un attaccante che ha già un account locale con bassi privilegi esegue un'escalation dei propri privilegi.
-
-- **Esempi:** Sfruttamento di un bug nel kernel del sistema operativo o in un programma che gira con privilegi `setuid` root.
-    
-
----
-
-### Attacchi Basati su Malware
-
-[[Malware-Based Attacks]]
-
-#### Virus
-
-[[Virus]]
-
-- Codice malevolo che si attacca ad altri programmi legittimi.
-    
-- Richiede **interazione umana** (es. eseguire il programma infetto) per diffondersi.
-    
-
-#### Worm
-
-[[Worms]]
-
-- Programmi **auto-replicanti** che si diffondono aggressivamente attraverso una rete sfruttando vulnerabilità.
-    
-- **Nessuna interazione umana** è necessaria per la propagazione.
-    
-- Si diffonde tramite:
-    
-    - Connessioni di rete dirette (es. lo Slammer worm).
-        
-    - Email o condivisione di file.
-        
-    - Meccanismi ibridi.
-        
-
-#### Cavalli di Troia (Trojan)
-
-[[Trojan]]
-
-- Software malevolo che si **maschera da qualcosa di benigno** (es. un gioco, un'utilità).
-    
-- Si basa sull'ingegneria sociale; gli utenti vengono indotti a installarli ed eseguirli volontariamente.
-    
-- Un payload comune è un **RAT (Remote Access Trojan)**.
-    
-
-#### Rootkit
-
-[[Rootkits]]
-
-- Software progettato per assumere il pieno controllo (a livello di amministratore) di una macchina **nascondendo attivamente la propria presenza**.
-    
-- Si agganciano al sistema operativo (o al kernel) per nascondere i propri file, processi e connessioni di rete agli strumenti di sicurezza.
-    
-- Spesso aprono una **backdoor** per permettere a un hacker di assumere il pieno controllo del sistema.
-    
-
----
-
-## Caratteristiche degli Attacchi (Riepilogo Classificazione)
-
-### Per Connessioni di Rete
-
-- **Connessioni multiple:** Tipico per attacchi [[DoS]] o scansioni su larga scala.
-    
-- **Connessione singola:** Spesso usata per uno specifico exploit o [[Compromises]].
-    
-
-### Per Origine
-
-- **Origine singola:** Una tipica scansione di porte dall'IP di un singolo attaccante.
-    
-- **Origini multiple:** Un attacco **Distributed Denial of Service ([[DDoS]])**, che usa una _botnet_ di molte macchine compromesse per attaccare un singolo bersaglio.
-    
-
-### Per Ambiente
-
-- **Intrusione su host:** Mirata a un singolo server o workstation.
-    
-- **Intrusione di rete:** Mirata all'infrastruttura di rete come router o switch.
-    
-- **Ambienti P2P:** Mirata a protocolli peer-to-peer.
-    
-- **Reti wireless:** Mirata a Wi-Fi, Bluetooth, ecc.
-    
-
-### Per Livello di Automazione
-
-- **Automatico:** Usa strumenti automatizzati (come worm o scanner) che sondano Internet senza intervento umano.
-    
-- **Semi-automatico:** Un attaccante usa script automatici per la scansione, ma poi analizza manualmente i risultati e lancia l'exploit finale.
-    
-- **Manuale:** Implica scansione e sfruttamento manuali. Non sono frequenti ma sono solitamente più pericolosi e difficili da rilevare, poiché un attaccante umano può adattarsi alle difese in tempo reale.
-    
-
----
-
 ## Monitoraggio degli Attacchi
 
 Un singolo attacco può avere un impatto su più sottosistemi, lasciando una scia di prove attraverso router, firewall, proxy e workstation.
@@ -219,14 +62,14 @@ I dati di monitoraggio sono generati da quasi tutti i sistemi IT attraverso l'in
 
 Ci sono tre fonti primarie di dati per il rilevamento delle intrusioni:
 
-1. **Flussi di Rete (Network Flow)**
+1. **Flussi di Rete ([[Network Flow]])**
     
-2. **Log di Eventi / Sistema**
+2. **Log di Eventi / Sistema** ([[Event Logs]])
     
-3. **Cattura Completa dei Pacchetti (FPC)**
+3. **Cattura Completa dei Pacchetti ([[FPC]])**
     
 
-### 1. Flussi di Rete (Network Flow)
+### 1. Flussi di Rete ([[Network Flow]])
 
 I flussi di rete sono record di **metadati** delle sessioni di comunicazione di rete. Pensateli come una "bolletta telefonica" per la vostra rete: mostrano _chi_ ha parlato con _chi_, per _quanto tempo_ e _quanti_ dati sono stati inviati, ma **NON il contenuto effettivo (payload)** della conversazione.
 
@@ -256,7 +99,7 @@ I flussi di rete sono record di **metadati** delle sessioni di comunicazione di 
 
 ---
 
-### 2. Log di Eventi / Sistema
+### 2. Log di Eventi / Sistema ([[Event Logs]])
 
 Questi sono record testuali delle attività generate da tutti gli asset IT, fornendo la "verità fondamentale" (ground truth) di ciò che è accaduto su un dispositivo specifico.
 
@@ -275,7 +118,7 @@ Questi sono record testuali delle attività generate da tutti gli asset IT, forn
 
 ---
 
-### 3. Cattura Completa dei Pacchetti (FPC)
+### 3. Cattura Completa dei Pacchetti ([[FPC]])
 
 FPC significa catturare e archiviare l'**intero pacchetto**, incluso il **payload** (il contenuto) dei dati.
 
@@ -299,7 +142,7 @@ FPC significa catturare e archiviare l'**intero pacchetto**, incluso il **payloa
 
 ## Sistemi di Rilevamento delle Intrusioni (IDS)
 
-Un IDS è un sistema che automatizza il processo di monitoraggio e analisi.
+Un [[IDS]] è un sistema che automatizza il processo di monitoraggio e analisi.
 
 ### Framework Generale
 
@@ -708,13 +551,14 @@ Questo definisce la differenza tra un **IDS (Detection)** passivo e un **IPS (Pr
 
 ---
 
+
 ## Segmentazione della Rete e Zero Trust
 
 ### Il Modello Tradizionale: "Castello e Fossato"
-
+[[Network Segmentation]]
 - Il design di rete tipico si basa sul concetto di **"fiducia interna" (internal trust)**.
     
-- Il mondo è diviso in due zone: "esterno" (non fidato) e "interno" (fidato).
+- Il mondo è diviso in due zone: "esterno" (non fidato) e "interno" (fidato). So the border between the trusted network and the outside needs to be setup. We can fully protect the assets inside our domain: this means that a machine inside my domain cannot be compromised even by someone inside my network. Most Attacks ignores the border but uses an already compromised PC inside the network (which is trusted). It may happen because the adversary is using my employees (who are dumb) and with a [[Phishing]] email gives the opportunity to the adversary to compromise a trusted PC in my network. 
     
 - Il trasferimento di dati è possibile solo attraverso checkpoint controllati (il **firewall**, o "fossato").
     
@@ -724,29 +568,40 @@ Questo definisce la differenza tra un **IDS (Detection)** passivo e un **IPS (Pr
 ---
 
 ## Architettura Zero Trust
-
-**Principio:** Un modello di sicurezza moderno che opera sul principio **"Mai fidarsi, sempre verificare" (Never trust, always verify).**
+[[Zero Trust Architecture]] 
+**Principio:** Un modello di sicurezza moderno che opera sul principio **"Mai fidarsi, sempre verificare" (Never trust, always verify).**  
 
 Assume che nessun utente o dispositivo debba essere considerato fidato per impostazione predefinita, anche se si trova "all'interno" del perimetro di rete.
+
+note that: imagine if we cannot define a phisical limit of the border:
+-  imagine if there are a smart working employees
+- or maybe some of things are in a cloud service
+- in those cases Zero Trust helps, because we don't care about the borders, we simply say "fuck you" to every one who are not idoneo.
 
 ### Principi Fondamentali
 
 - **Verifica Esplicita:** Convalida continuamente l'accesso per ogni richiesta usando tutti i punti dati disponibili (identità, posizione, salute del dispositivo, servizio).
     
 - **Usa il Minimo Privilegio di Accesso (Least Privilege):** Limita i permessi degli utenti al _minimo_ necessario per il loro lavoro, riducendo il potenziale raggio d'azione (blast radius) se le credenziali vengono compromesse.
+	- for example, my employees cannot modify particular parts of my documents.
     
 - **Presupponi la Violazione (Assume Breach):** Progetta la rete per _contenere_ potenziali violazioni e minimizzarne l'impatto. Non cercare solo di tenere fuori gli attaccanti; presupponi che siano già dentro.
+	- means that, even if you created a good security system, always assume that an attack may be successful: in those cases, i have to minimise the damages.  
     
 
 ### Componenti Chiave di un'Architettura Zero Trust
 
 - **Identity and Access Management (IAM):** Gestisce le identità degli utenti e impone autenticazione e autorizzazione forti.
+	- of course, i want to know who is acting in my devices
     
 - **Sicurezza dei Dispositivi (Device Security):** Monitora la "salute" dei dispositivi (es. "questo dispositivo ha le patch ed ha l'antivirus attivo?").
+	- i need to patch my software/hardware vulnerabilities
     
 - **Segmentazione della Rete:** (Vedi sotto) Suddivide la rete in piccole zone per limitare il movimento laterale.
+	- the idea is that: let's start by a border defence, if someone breaches my trusted network, then i'm fucked. So i decide to creating borders between my internal PC's. Of course i have to control each borders, so i have to control more stuff. The more borders i include in my systems, the more overhead i'll get.
     
 - **Protezione dei Dati (Data Protection):** Protegge i dati stessi (es. tramite crittografia) e impone la privacy dei dati.
+	- of course, it doesn't mean that my data can be shared everywhere. Reducing the risk means that we are reducing a lot the possibility to be breached.
     
 - **Monitoraggio Continuo e Analisi:** Traccia il comportamento di utenti e dispositivi per rilevare anomalie.
     
@@ -765,40 +620,51 @@ Assume che nessun utente o dispositivo debba essere considerato fidato per impos
 ---
 
 ## Strategie di Segmentazione della Rete (Implementare la Zero Trust)
-
+è il cuore pulsante della sicurezza di una rete: è assolutamente necessario essere esperti in questo campo. 
 ### Cos'è la Segmentazione della Rete?
 
 Una strategia di sicurezza che divide una rete in domini di protezione più piccoli e isolati (segmenti). Richiede l'implementazione di controlli (come i firewall) sui confini che collegano questi segmenti.
+- esempio: a humanity resources office, to communicate with the logistic ones has to respect many rules. Inside each office, is not controlled
+- può succedere anche che a volte questi bound sono validi solo per un certo periodo di tempo: se un team specifico deve lavorare solo per 2 anni, allora dopo 2 anni questi bound devono sparire
 
 **Vantaggi:**
 
 - **Ostacola il movimento laterale** per un attaccante.
     
 - **Riduce la superficie d'attacco** e limita i potenziali danni.
+	- la superficie d'attacco: immagina un adversary che è fuori dalla compagnia, fa un check da fuori delle possibili vulnerabilità della compagnia ([[Probing-Scanning]]): magari studiandone i servizi prodotti da possibili macchine internet. Dopo aver studiato queste opportunità, l'adversary ha davanti la "Superficie d'attacco". Che succede se l'adversary attacca anche i laptop personali degli employees? Potrebbe scoprire che magari qualche coglione nella mia compagnia è vulnerabile ad attacchi [[Phishing]], allora lo frega con un email [[Phishing]] e scopre nuove vulnerabilità della mia compagnia: in questo modo la superficie d'attacco cresce.   
     
 - **Permette un monitoraggio e una gestione più granulari** del traffico.
     
 - **Aiuta a soddisfare i requisiti normativi** isolando i dati sensibili (es. un segmento PCI per le carte di credito).
+	- Immagina il GDPR (dal 2018): se hai a che fare con dati sensibili, tu sei costretto a gestire correttamente questi dati. Può succedere che un controllore arrivi nella tua struttura e controlla che hai implementato tutti i best practices
     
 
 ---
 
 ### Segmentazione Fisica
 
-- Funziona a livello hardware, dividendo la rete in blocchi fisicamente separati (es. switch diversi, stanze diverse).
+- Funziona a **livello hardware**, dividendo la rete in blocchi fisicamente separati (es. switch diversi, stanze diverse).
     
 - L'esempio estremo è una rete **"air-gapped"** (fisicamente isolata) senza alcuna connessione ad altre reti.
     
 - **Pro:** Massima sicurezza e isolamento.
     
 - **Contro:** Estremamente inflessibile, costosa e difficile da gestire.
-    
+	- che succede se devo spostare un tizio da un ufficio ad un altro? devo staccare il suo PC fisicamente dal cavo Ethernet e portare fisicamente il PC da una parte all'altra.
+![[Pasted image 20251105143511.png]]
+this device is a device which impone la direzione della trasmissione dati in un unica direzione.
+
+è possibile anche lavorare con trasmissioni wireless, ma sono molto più insicure e difficili da gestire, perciò lo si ignora. Ancora di più se si parla di connessioni wireless tra più reti wireless.
+
+Una volta che hai creato la tua architettura della rete a partire dal livello hardware, allora sai già perfettamente quale PC fa cosa e come è connesso, perciò implementare la sicurezza a livello software sarà più semplice.
 
 ### Segmentazione Logica
+funziona semplicemente andando a modificare a livello software gli accessi. 
 
 - Funziona a livello software, creando confini definiti via software su hardware condiviso.
     
-- **Pro:** Molto più flessibile della segmentazione fisica; permette un controllo dinamico e centralizzato (es. Software-Defined Networking - SDN).
+- **Pro:** Molto più **flessibile** della segmentazione fisica; permette un **controllo dinamico** e **centralizzato** (es. Software-Defined Networking - SDN). questo però può essere un problema però: proprio perché è più semplice e flessibile, spesso per mancanza di attenzione si fanno errori. 
     
 - **Contro:** Può essere vulnerabile a bug software che rompono le garanzie di sicurezza.
     
@@ -810,6 +676,7 @@ Una strategia di sicurezza che divide una rete in domini di protezione più picc
 - **Esempio:** Invece di un segmento "Web Server", _ogni singolo web server_ è nel proprio segmento ed è autorizzato a parlare solo con il _suo specifico database_ sulla _sua specifica porta_, e nient'altro.
     
 - **Pro:** L'opzione migliore per implementare la Zero Trust; massima flessibilità; supporta ambienti ibridi e cloud.
+	- Bisogna lavorare anche con i Firewall
     
 - **Contro:** Può portare a una gestione complessa delle policy; potenziale overhead.
     
@@ -828,8 +695,9 @@ Una strategia di sicurezza che divide una rete in domini di protezione più picc
 ---
 
 ## VLAN (Virtual LAN)
+Le VLAN si possono implementare solo grazie ai Switch. Le VLAN funzionano grazie a Router per cui una specifica porta ethernet è associata come VLAN1 mentre un altra porta ethernet è VLAN2. in questo caso, una sottorete che è collegata alla porta VLAN1 non è in grado di comunicare con una VLAN2 (da approfondire meglio). 
 
-Le VLAN sono la tecnologia più comune per implementare la **segmentazione logica**.
+Le [[VLAN]] sono la tecnologia più comune per implementare la **segmentazione logica**.
 
 - Funzionano al **Livello 2 OSI** (Data Link).
     
@@ -838,19 +706,26 @@ Le VLAN sono la tecnologia più comune per implementare la **segmentazione logic
 - Permettono a un'unica infrastruttura fisica di rete di essere suddivisa in più domini di broadcast _logici_.
     
 
-Come mostrato nei diagrammi, i dispositivi sulla VLAN 10 (HR) e sulla VLAN 20 (Finance) possono essere collegati allo stesso switch fisico ma non possono comunicare direttamente.
+![[Pasted image 20251105150400.png]]
+Recuperare che cos'è un [[Trunk link]]. I trunk link si possono effettuare solamente tra Router.![[Pasted image 20251105150418.png]]
+Definiamo trusted i Switch ma non necessariamente i Client.
+![[Pasted image 20251105150428.png]]
+Notiamo che siamo a Livello 3, non possiamo lavorare solamente a Livello 2 (di collegamento). quindi la presenza di un router è necessario. 
+![[Pasted image 20251105150447.png]]Come mostrato nei diagrammi, i dispositivi sulla VLAN 10 (HR) e sulla VLAN 20 (Finance) possono essere collegati allo stesso switch fisico ma non possono comunicare direttamente.
 
-![[Pasted image 20251029134622.png]] Per comunicare _tra_ VLAN (es. per far accedere l'impiegato HR al DB HR), il traffico deve passare attraverso un **dispositivo di Livello 3 (un router)**. Questo router funge da checkpoint dove vengono applicate le Access Control List (ACL) per imporre le regole di sicurezza.
+Per comunicare _tra_ VLAN (es. per far accedere l'impiegato HR al DB HR), il traffico deve passare attraverso un **dispositivo di Livello 3 (un router, ricordiamo il livello di rete)**. Questo router funge da checkpoint dove vengono applicate le Access Control List (ACL) per imporre le regole di sicurezza. 
+
 
 ---
 
 ## SIEM – Security Information and Event Management
-
+[[SIEM]]
 ### Il Problema: Sovraccarico di Dati (Data Overload)
 
-Una rete moderna ha centinaia di dispositivi (firewall, IDS, server, switch), che generano tutti migliaia di log e allarmi.
+Una rete moderna ha centinaia di dispositivi ([[Firewall]], [[IDS]], server, switch), che generano tutti migliaia di log e allarmi.
 
-![[Pasted image 20251029134622.png]]
+![[Pasted image 20251029134622.png]]![[Pasted image 20251105152030.png]]![[Pasted image 20251105152035.png]]![[Pasted image 20251105152040.png]]
+
 
 Un singolo attacco crea una scia confusa di dati attraverso tutti questi sistemi.
 
@@ -879,15 +754,18 @@ L'obiettivo finale di un SIEM è "distillare" enormi quantità di informazioni d
         
 
 ### Obiettivi Chiave
+![[Pasted image 20251105152010.png]]
 
 - **Visibilità di Sicurezza Unificata:** Un unico pannello di controllo (single pane of glass) per la sicurezza dell'intera organizzazione.
     
 - **Rilevamento e Risposta agli Incidenti:** Aiuta a rilevare, prioritizzare e rispondere alle minacce in tempo reale.
     
 - **Compliance e Reporting:** Automatizza la raccolta dei log e la reportistica necessaria per le normative (es. PCI, HIPAA, GDPR).
-    
+
+Sembra proprio quello che fa un [[IDS]], però ricorda sempre cosa produce un [[IDS]]: un allarme e quindi bisogna prendere subito una decisione. Il SIEM prende quindi questo allarme e ti dice cosa dovresti fare per ridurre l'impatto dell'attacco.
 
 ### Esempio di SIEM in Azione
+![[Pasted image 20251105152101.png]]
 
 - **Log di basso livello:** `10.100.20.18 ha avviato la Copia del Database... verso l'Host 10.88.6.12`
     
