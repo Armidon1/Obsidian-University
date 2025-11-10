@@ -266,7 +266,7 @@ This problem is the basis for the **Diffie-Hellman key exchange** and the **ElGa
     
     - Find $x$ given $y$, $g$, and $p$ in the equation: $y \equiv g^x \pmod p$
         
-- **DL in $\mathbb{Z}^*_p$ as an OWF:**
+- **DL in $\mathbb{Z}^*_p$ as an [[OWF]]:**
     
     - The function $x \rightarrow g^x \pmod p$ is **easy** to compute.
         
@@ -291,7 +291,7 @@ This is the "easy" operation in the Discrete Logarithm problem (computing $y = g
     
     (See: https://en.wikipedia.org/wiki/Modular_arithmetic#Properties)
     
-- Optimization (Euler's Theorem): If $p$ is prime and $b$ and $p$ are [[Coprime]]:
+- Optimization ([[Euler's Theorem]]): If $p$ is prime and $b$ and $p$ are [[Coprime]]:
     
     $b^e \pmod p = (b \pmod p)^{e \pmod{\varphi(p)}} \pmod p$
     
@@ -796,55 +796,141 @@ The basic, "textbook" RSA algorithm ($C = M^e \pmod N$) is dangerously insecure.
 - **Solution:** Each person must generate their own unique $N$.
     
 
-### 6. Malleability & Chosen Ciphertext Attacks (CCA)
+---
 
-- Problem (Multiplicative Property): RSA is malleable. It has a multiplicative homomorphism:
-    
-    $RSA(m_1) \cdot RSA(m_2) = (m_1^e)(m_2^e) = (m_1 \cdot m_2)^e = RSA(m_1 \cdot m_2) \pmod n$
-    
-- This means an attacker can modify a ciphertext $C$ and cause a _predictable_ modification in the _plaintext_ $M$, _without knowing_ $M$.
-    
-- **Chosen Ciphertext Attack:**
-    
-    1. An attacker wants to decrypt $C = M^e \pmod n$.
-        
-    2. They choose a random number, $X$.
-        
-    3. They compute a new ciphertext $C' = C \cdot (X^e) \pmod n$.
-        
-    4. They ask a "decryption oracle" (a server that decrypts valid messages) to decrypt $C'$.
-        
-    5. The oracle computes $(C')^d = (C \cdot X^e)^d = C^d \cdot (X^e)^d = M \cdot X \pmod n$.
-        
-    6. The oracle returns $M \cdot X$.
-        
-    7. The attacker divides this result by $X$ to get the original message $M$.
-        
-- **Solution:** Require that all messages verify a given **structure (padding)**. The oracle will decrypt $C'$, find that the padding is invalid (it's just garbage), and return an error instead of the plaintext.
-    
+## Other Attacks on RSA
 
-### 7. Implementation (Side-Channel) Attacks
+Besides the basic factorization attack, there are many other ways to attack an RSA implementation, especially if it follows the "textbook" definition without proper padding.
 
-- **Problem:** Attacks that exploit the physical implementation of the algorithm.
+- **Factoring Attacks:** The most direct mathematical attack. If an attacker can factor the modulus $N$ into its prime components $p$ and $q$, they can compute the private key $d$.
     
-    - **Timing Attack:** Measuring the precise _time_ required to compute $C^d \pmod N$ can leak bits of the private key $d$.
+- **Low Exponent Attacks:** Using a small public exponent (like $e=3$) can make RSA vulnerable if the same message is sent to multiple recipients (e.g., Håstad's broadcast attack) or if the message is small.
+    
+- **Common Modulus Attack:** If the same modulus $N$ is used by different users (with different $(e,d)$ pairs), one user can potentially use their knowledge to factor $N$ or decrypt messages sent to others.
+    
+- **Small Prime Attack:** If one of the primes ($p$ or $q$) is too small, it can be easily found by trial division or other factorization methods.
+    
+- **Side-Channel Attacks:** These attacks don't break the math but exploit the physical implementation.
+    
+    - **Timing Attacks:** By measuring precisely how long decryption takes, an attacker might be able to deduce bits of the private key $d$.
         
-    - **Energy Attack:** Measuring the _power consumption_ of a smart card during the same computation can also leak $d$.
+    - **Energy/Power Analysis Attacks:** Measuring the power consumption of a device (like a smart card) during decryption can leak information about the private key.
         
-- **Solution:** Implementations must add random delays or "blinding" steps to ensure the computation time and power draw are constant.
-
-Prof example: we have an oracle for creating $HMAC_{H,K}$, the adversary creating a string of causal bits and consults the oracle to see if it's correct. when the oracle finds a bit mismatch (he knows the correct bit string) it produce a failure. So the attacker can measure the time to understand which bit failed and change his value. This gives the power of Universal Forgery to the adversary
+- **Fault-Injection Attacks:** Deliberately causing errors during the cryptographic computation (e.g., by fluctuating voltage or temperature) can sometimes cause the device to output corrupted data that reveals secret information.
+    
 
 ---
 
-## Conclusion: Textbook RSA is NOT Safe
+### Multiplicative Property and Malleability
 
-- The "textbook" implementation of RSA is vulnerable to a wide range of attacks.
+In cryptography, a function $f$ is said to have a multiplicative homomorphism (or simply be multiplicative) if:
+
+$$f(m_1 \cdot m_2) \equiv f(m_1) \cdot f(m_2) \pmod n$$
+
+This is true for "textbook" RSA encryption:
+
+$$RSA(m_1 \cdot m_2) = (m_1 \cdot m_2)^e \pmod N = (m_1^e \cdot m_2^e) \pmod N = RSA(m_1) \cdot RSA(m_2) \pmod N$$
+
+- This property makes RSA **malleable**. Malleability means an attacker can modify a ciphertext into another valid ciphertext for a related plaintext, without knowing either plaintext.
     
-- It does **not** meet modern security criteria on its own.
+- For example, if an attacker has ciphertext $C = M^e \pmod N$, they can easily create a ciphertext for $2M$ by computing $C' = C \cdot 2^e \pmod N$. The receiver will decrypt $C'$ as $2M$, potentially tricking them into accepting a modified message.
     
-- **Solution:** A standard version of RSA must be used, which **pre-processes** (pads) the message $M$ to get a new message $M'$ _before_ applying the RSA algorithm.
+
+---
+
+### Attacks on RSA: Exploiting Malleability
+
+The multiplicative property can be generalized:
+
+If $M = M_1 \cdot M_2 \cdot \dots \cdot M_k$, then:
+
+$$RSA(M) = RSA(M_1) \cdot RSA(M_2) \cdot \dots \cdot RSA(M_k) \pmod N$$
+
+This allows an adversary to construct ciphertexts for composite messages if they know the ciphertexts for their components.
+
+**Solution:** Always use a secure **padding scheme** (like OAEP) before encrypting. Padding destroys this multiplicative structure, making the encryption non-malleable.
+
+---
+
+### Chosen Ciphertext Attack (CCA) Example
+
+An adversary wants to decrypt a target ciphertext $C = M^e \pmod N$.
+
+1. The adversary computes a new ciphertext $X$ by multiplying $C$ with the encryption of a chosen number (e.g., $2$):
     
+    $$X = (C \cdot 2^e) \pmod N$$
+    
+2. The adversary sends $X$ to the victim (or a decryption oracle) and asks them to decrypt it. The victim might be tricked into doing this if $X$ looks like a different, valid message.
+    
+3. The victim decrypts $X$ and returns the result $Y$:
+    
+    $$Y = X^d \pmod N = (C \cdot 2^e)^d \pmod N = (C^d \cdot (2^e)^d) \pmod N$$
+    
+    Since $C^d = M$ and $(2^e)^d = 2^{ed} \equiv 2^1 \pmod N$, we get:
+    
+    $$Y = M \cdot 2 \pmod N$$
+    
+4. The adversary now has $Y = 2M$. They can easily recover the original message $M$ by computing:
+    
+    $$M = Y \cdot 2^{-1} \pmod N$$
+    
+    (where $2^{-1}$ is the modular multiplicative inverse of 2 modulo $N$).
+    
+
+---
+
+### Chosen Ciphertext Attack (General)
+
+This is a more general version of the attack above.
+
+Assume an attacker $T$ knows a target ciphertext $c = M^e \pmod N$.
+
+1. $T$ randomly chooses a value $X$.
+    
+2. $T$ computes a new ciphertext $c' = c \cdot X^e \pmod N$.
+    
+3. $T$ asks the decryption oracle to decrypt $c'$.
+    
+4. The oracle returns the plaintext $M' = (c')^d \pmod N$.
+    
+5. $T$ can now compute the original message $M$:
+    
+    $$M' = (c')^d = (c \cdot X^e)^d = c^d \cdot (X^e)^d = M \cdot X \pmod N$$
+    
+    So, $M = M' \cdot X^{-1} \pmod N$.
+    
+
+**Solution:** The decryption process must rigorously **verify the structure** of the decrypted message before returning it. If a secure padding scheme (like OAEP) is used, the decrypted message $M'$ will likely have invalid padding, and the oracle will return an error instead of the raw plaintext, thwarting the attack.
+
+---
+
+### Implementation Attacks (Side-Channel)
+
+These attacks don't break the mathematics of RSA but exploit weaknesses in how it is implemented on real hardware.
+
+- **Timing Attacks:** The time it takes to perform the modular exponentiation $C^d \pmod N$ can depend on the specific bits of the private key $d$ (e.g., a '1' bit might take longer to process than a '0' bit due to an extra multiplication step). By measuring these minute differences over many decryptions, an attacker can recover $d$.
+    
+- **Energy/Power Analysis:** Similar to timing, the amount of power consumed by a processor (like in a smart card) can vary depending on the operation being performed. Differential Power Analysis (DPA) can be used to extract the key.
+    
+- **Solution:** Use **constant-time implementations** where every decryption takes the same amount of time regardless of the key or input. Another technique is **blinding**, where random values are introduced into the computation to mask the actual inputs, and then removed at the end.
+    
+
+---
+
+## RSA - Attacks: Conclusion
+
+- **"Textbook" RSA implementation is NOT safe.** It does not satisfy modern security criteria (like indistinguishability under chosen ciphertext attack, IND-CCA).
+    
+- It is vulnerable to many mathematical and implementation attacks due to its deterministic nature and malleability.
+    
+- **Standard Version:** In practice, RSA is always used with a padding scheme. The message $M$ is preprocessed into a padded message $M'$ before encryption.
+    
+    - $C = (M')^e \pmod N$
+        
+    - Since $M'$ contains random data (from the padding scheme), the encryption becomes probabilistic and non-malleable.
+        
+
+---
 
 ### PKCS: The Standard for Padding
 

@@ -23,8 +23,6 @@
 		{"id":"be97a52b492288cc","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/Block Cipher.md","x":1078,"y":-662,"width":400,"height":400},
 		{"id":"8e2b250efc6a067c","type":"text","text":"[[DES]]","x":1100,"y":-177,"width":106,"height":50},
 		{"id":"c77023e61c85a613","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/CTR.md","x":1246,"y":83,"width":400,"height":487},
-		{"id":"9001965f83ef5478","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/CBC.md","x":1703,"y":100,"width":404,"height":470},
-		{"id":"143a78ba1a26f002","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/ECB.md","x":2172,"y":100,"width":409,"height":470},
 		{"id":"18e31eb440e85274","type":"text","text":"[[AES-CTR]]","x":1321,"y":723,"width":250,"height":63},
 		{"id":"ff3cad8ae1b74910","type":"text","text":"per usare i [[Block Cipher]], ci sono vari modi","x":1321,"y":-102,"width":250,"height":60},
 		{"id":"75428e3f93bdce2a","type":"text","text":"[[AES]]","x":1206,"y":-67,"width":81,"height":50},
@@ -50,7 +48,10 @@
 		{"id":"378f668b40cf8559","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/RSA.md","x":1780,"y":-628,"width":620,"height":428},
 		{"id":"1288c3ff1a061d1f","type":"text","text":"[[SHA-1]], basato su [[Merkle–Damgård]]","x":-1960,"y":129,"width":140,"height":111},
 		{"id":"d34ad685c678798c","type":"text","text":"[[SHA-2]], basato su [[Merkle–Damgård]]","x":-1780,"y":129,"width":140,"height":111},
-		{"id":"462751342c1e141a","type":"text","text":"[[SHA-3]], basato su [[Keccak]]","x":-1589,"y":129,"width":122,"height":111}
+		{"id":"462751342c1e141a","type":"text","text":"[[SHA-3]], basato su [[Keccak]]","x":-1589,"y":129,"width":122,"height":111},
+		{"id":"9001965f83ef5478","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/CBC.md","x":2240,"y":100,"width":404,"height":470},
+		{"id":"143a78ba1a26f002","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/ECB.md","x":2709,"y":100,"width":409,"height":470},
+		{"id":"e3bd1a52ea77eaee","x":1720,"y":83,"width":440,"height":487,"type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/OFB.md"}
 	],
 	"edges":[
 		{"id":"9402e0cfbca83f48","fromNode":"be97a52b492288cc","fromSide":"bottom","toNode":"8e2b250efc6a067c","toSide":"top"},
@@ -110,6 +111,7 @@
 		{"id":"17dc186eeed5ed24","fromNode":"99e18185dc952216","fromSide":"bottom","toNode":"378f668b40cf8559","toSide":"top"},
 		{"id":"bca9b405c814a491","fromNode":"3f6422578d9dfde7","fromSide":"bottom","toNode":"1288c3ff1a061d1f","toSide":"top"},
 		{"id":"7bffd32a92983d58","fromNode":"3f6422578d9dfde7","fromSide":"bottom","toNode":"d34ad685c678798c","toSide":"top"},
-		{"id":"64e2c1c9920d6971","fromNode":"3f6422578d9dfde7","fromSide":"bottom","toNode":"462751342c1e141a","toSide":"top"}
+		{"id":"64e2c1c9920d6971","fromNode":"3f6422578d9dfde7","fromSide":"bottom","toNode":"462751342c1e141a","toSide":"top"},
+		{"id":"9c17660109f688b9","fromNode":"ff3cad8ae1b74910","fromSide":"bottom","toNode":"e3bd1a52ea77eaee","toSide":"top"}
 	]
 }
