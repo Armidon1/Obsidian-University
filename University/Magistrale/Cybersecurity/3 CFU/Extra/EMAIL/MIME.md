@@ -20,7 +20,7 @@ MIME non è un protocollo di trasporto (come SMTP), ma un **protocollo di format
 ### Dettagli Tecnici e Cybersecurity per Ingegneri
 
 MIME opera aggiungendo una serie di _header_ al messaggio di posta elettronica per descrivere la struttura e la codifica del contenuto.
-![[Pasted image 20251028150024.png]]
+![[Pasted image 20251028150024.png|800]]
 
 |**Header MIME Chiave**|**Funzione**|**Esempio e Dettagli**|
 |---|---|---|

@@ -1,4 +1,4 @@
-Lezione precedente [[2 - Network Security]]
+Lezione precedente [[2 - CS - Application Level - Network Security]]
 # Web Technologies
 
 Questi appunti offrono una panoramica completa delle **Tecnologie Web**, partendo dalle fondamenta del modello **client-server** e del protocollo **HTTP/HTTPS**. Spiegano l'anatomia di richieste, risposte e **URL**, e come ispezionarli.
@@ -178,7 +178,7 @@ user=ugo&csrf_token=IjljMjlkMDE40DJmZWZIODhf
     
 
 ### HTTP Response
-You can see everything in a Network section in the [[3 - Web Technologies#Inspecting the Web with Developer Tools|Inspection Tool of the Browser]]
+You can see everything in a Network section in the [[3 - CS - Application Level - Web Technologies#Inspecting the Web with Developer Tools|Inspection Tool of the Browser]]
 ![[Pasted image 20251105115257.png]]
 
 When the server replies, it also sends a plain-text message:
@@ -532,12 +532,13 @@ In HTTP/1.1, a client can send multiple requests over one TCP connection (pipeli
     
 
 **HTTP/2 Key Ideas:**
+![[Pasted image 20251110142321.png]]
 
-- **Binary Protocol:** HTTP/2 is a binary protocol, not text-based like HTTP/1.1. This is more efficient to parse.
+- **Binary Protocol:** HTTP/2 is a binary protocol, not text-based like HTTP/1.1. This is more efficient to parse. SO you can send each binary data and text data
     
 - **Frames, Messages, and Streams:**
     
-    - **Frame:** The smallest unit of communication (e.g., a `HEADERS` frame, a `DATA` frame).
+    - **Frame:** The smallest unit of communication (e.g., a `HEADERS` frame, a `DATA` frame). Frames can travel freely. 
         
     - **Message:** A sequence of frames (e.g., one request or one response).
         
@@ -548,22 +549,25 @@ In HTTP/1.1, a client can send multiple requests over one TCP connection (pipeli
 
 ### HTTP/3 and QUIC
 
-- **Problem:** HTTP/2 solved HOL blocking at the _application_ layer, but it still exists at the _transport_ (TCP) layer. If a single TCP packet is lost, the entire TCP connection (and _all_ streams on it) must wait for that packet to be retransmitted.
+- **Problem:** [[HTTP-2|HTTP\2]] solved HOL blocking at the _application_ layer, but it still exists at the _transport_ (TCP) layer. If a single TCP packet is lost, the entire TCP connection (and _all_ streams on it) must wait for that packet to be retransmitted.
     
-- **HTTP/3** is the third revision, built on a new transport protocol called **QUIC**.
+- **[[HTTP-3|HTTP\3]]** is the third revision, built on a new transport protocol called **QUIC**.
     
-- **QUIC (Quick UDP Internet Connections):**
+- **[[QUIC]] (Quick UDP Internet Connections):**
     
     - **Switches from TCP to UDP:** This is the key change. By using UDP, QUIC avoids the TCP HOL blocking problem. If a packet for stream 1 is lost, only stream 1 waits; streams 3 and 5 continue unaffected.
         
     - **Reliability:** QUIC re-implements reliability (error recovery, retransmissions) on top of UDP.
         
     - **Faster Handshake:** QUIC integrates the TLS (encryption) handshake with the connection handshake, reducing setup latency.
+
+	 -  But is not back world compatible
         
 
 ---
 
 ## Cookies and State Management
+![[Pasted image 20251110142336.png]]
 
 ### HTTP(S) Sessions
 
@@ -585,6 +589,7 @@ In HTTP/1.1, a client can send multiple requests over one TCP connection (pipeli
     
 
 ### Cookies
+![[Pasted image 20251110142501.png]]
 
 Sessions are typically implemented using **cookies**.
 
@@ -618,9 +623,14 @@ A cookie is identified by the triplet (`name`, `domain`, `path`).
 
 #### Client-Side (JavaScript)
 
-- Set a cookie:
-    
+- Set a cookie (of course each cookie is set per website):
+
     document.cookie = "username=John Doe; expires=Thu, 18 Dec 2023 12:00:00 UTC; path=/";
+    where:
+	- username is the key (string)
+	- John Doe is the value (string) associated with the key-value
+	- Thu, 18 Dec 2013 12:00:00 UTC is the expiration date. When missing, the cookie expires at the end of the session
+	- path=/ is the path the cookie belongs to. By default, the cookie belongs to the current page.
     
 - Read cookies:
     
@@ -647,6 +657,7 @@ A cookie is identified by the triplet (`name`, `domain`, `path`).
     
     setcookie("user", "", time() - 3600);
     
+![[Pasted image 20251110144512.png]]
 
 ### Cookie Attributes and Security
 
@@ -665,12 +676,13 @@ When a server sets a cookie, it can add attributes to control its behavior:
 
 ### What are Cookies used for?
 
-1. **Authentication:** The most common use. The cookie (session token) proves the client has authenticated.
+1. **Authentication:** The most common use. The cookie (session token) proves the client has authenticated. The user section needs to be protected but we should use it as a proxy for authentication and not for directly [[Authentication]].
     
 2. **Personalization:** Helps the website remember user preferences (e.g., theme, language).
     
-3. **Tracking:** Follows a user's behavior, often across different sites.
-    
+3. **Tracking:** Follows a user's behavior, often across different sites. This may be a problem because for example Google with his ADS service which is implement in basically all the websites, they can easily know everything about what you are doing. What happens if we simply choose "use only necessary cookies"?:
+	1. in theory they should put inside your browser only cookies which are needed to let work properly the website (90% of those websites are using a sort of standard)
+	2. May happen also that those 10% of the website (which use custom stuff), and sometimes nothing happens if you decide "use only necessary cookies" and just install also the ADS Version.
 
 **Third-Party Cookies**
 
@@ -685,6 +697,7 @@ When a server sets a cookie, it can add attributes to control its behavior:
 
 ## Web Storage (DOM Storage)
 
+
 Modern browsers provide another way for web apps to store key-value pairs on the client, separate from cookies.
 
 - **Session Storage:** Kept _only for the current session_. Data is isolated per-tab and is deleted when the tab is closed.
@@ -698,7 +711,7 @@ Modern browsers provide another way for web apps to store key-value pairs on the
     
 - Maximum size is much larger than cookies (typically 5MB).
     
-- Storage is **NOT encrypted** on disk.
+- Storage is **NOT encrypted** on disk: firefox in example uses SQLite
     
 
 ### Cookie vs. Web Storage
@@ -728,10 +741,11 @@ localStorage.removeItem("lastname");
 sessionStorage.setItem("user", "Alice");
 ```
 
+
 ---
 
 ## Document Object Model (DOM)
-
+![[Pasted image 20251110144534.png]]
 The **DOM** is a cross-platform and language-independent interface that treats an HTML or XML document as a **tree structure**.
 
 - Each node in the tree is an object representing a part of the document (e.g., an element, an attribute, or text).
@@ -742,6 +756,7 @@ The **DOM** is a cross-platform and language-independent interface that treats a
     
 
 ### HTML DOM in Practice (JavaScript)
+![[Pasted image 20251110144623.png]]
 
 - **Finding elements:**
     
@@ -773,6 +788,7 @@ The **DOM** is a cross-platform and language-independent interface that treats a
 ## Modern Web Applications
 
 ### Old Approach: Server-Side Rendering (SSR)
+![[Pasted image 20251110144720.png]]
 
 In the "old" approach, the server does most of the work.
 
@@ -790,8 +806,9 @@ In the "old" approach, the server does most of the work.
     
 
 ### Modern Approach: Client-Side Rendering (CSR)
+![[Pasted image 20251110144915.png]]
 
-In the "modern" approach, the client does most of the work.
+In the "modern" approach, the client does most of the work. 
 
 - The server's main job is to provide a **REST API** (which sends data, usually in **JSON** format) and serve static resources (HTML, CSS, JS).
     
@@ -896,12 +913,13 @@ A more complex scheme designed to avoid sending the password in clear text.
     Authorization: Digest username="...", nonce="...", response="<\digest>", ...
     
 
-- This is a **challenge-response** protocol. It's more secure than Basic but is now largely obsolete in favor of cookie-based sessions.
+- This is a **challenge-response** protocol. It's more secure than Basic but is now largely obsolete in favor of cookie-based sessions. But, in those days are using [[MD5]], which is not secure as well.
     
 
 ### OAuth and Single Sign On (SSO)
+![[Pasted image 20251110145424.png]]
 
-OAuth is a standard for **authorization and delegation**. It allows a user to grant a third-party application limited access to their resources on another server, _without_ giving that application their password.
+[[OAuth]] is a standard for **authorization and delegation**. It allows a user to grant a third-party application limited access to their resources on another server, _without_ giving that application their password. [[OAuth]] is in generala an **Authorization Protocol** but is widely used as an [[Authentication]] protocol. The cool stuff is that at least, if someone data-breaches the server database, in the end the password won't be there.
 
 **Roles:**
 
@@ -933,7 +951,7 @@ OAuth is a standard for **authorization and delegation**. It allows a user to gr
 
 ### What is Burp Suite?
 
-- A platform of tools for performing web application security testing, made by **PortSwigger**.
+- A platform of tools for performing web application security testing, made by **PortSwigger**. Used a lot for penetration testing. it is not open-source.
     
 - It is the industry-standard tool for web penetration testers.
     
@@ -972,7 +990,7 @@ _(Note: While Burp is a powerful tool, you can accomplish the same things with o
     
 3. **Open Browser:** Click **"Open Browser"**. This launches a pre-configured Chromium browser that is already set up to send its traffic through Burp. _Use this browser for testing._
     
-4. **Intercept:** With "Intercept is on", navigate to a webpage in the Burp browser. The request will be "stuck" in Burp.
+4. **Intercept:** With "Intercept is on", , navigate to a webpage in the Burp browser. The request will be "stuck" in Burp.
     
     - You can edit the request (e.g., change the URL or headers) before clicking **Forward**.
         
@@ -1002,6 +1020,8 @@ _(Note: While Burp is a powerful tool, you can accomplish the same things with o
     
     - Used for automated attacks. You can mark "payload positions" in a request (e.g., a password parameter) and have Burp send hundreds of requests, iterating through a list of values (like a password dictionary).
         
+
+In italy you cannot hack webapplicatin but you can setup a VM with a WebApp with some vulnerabilities. You can also use some Web Pages dedicated for hacking training.
 
 ---
 

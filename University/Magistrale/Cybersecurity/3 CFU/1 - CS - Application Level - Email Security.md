@@ -1040,4 +1040,4 @@ S/MIME uses a completely different key management model: a centralized Public Ke
 
 ---
 
-prossima lezione [[2 - Network Security]]
+prossima lezione [[2 - CS - Application Level - Network Security]]

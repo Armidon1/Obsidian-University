@@ -1,4 +1,4 @@
-Previous lesson: [[1- Email Security]]
+Previous lesson: [[1 - CS - Application Level - Email Security]]
 
 See the italian and enriched version: [[NETWORK SECURITY]]
 # Network Security
@@ -916,4 +916,4 @@ The ultimate goal of a SIEM is to "distill" low-level information (logs, flows) 
     
 - Powell & Stroud, _MAFTIA Project Deliverable D2_, IBM Zurich, 2001
 
-Next lesson [[3 - Web Technologies]]
+Next lesson [[3 - CS - Application Level - Web Technologies]]

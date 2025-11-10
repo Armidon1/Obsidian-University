@@ -182,7 +182,7 @@ user=ugo&csrf_token=IjljMjlkMDE40DJmZWZIODhf
     
 
 ### HTTP Response
-You can see everything in a Network section in the [[3 - Web Technologies#Inspecting the Web with Developer Tools|Inspection Tool of the Browser]]
+You can see everything in a Network section in the [[3 - CS - Application Level - Web Technologies#Inspecting the Web with Developer Tools|Inspection Tool of the Browser]]
 ![[Pasted image 20251105115257.png]]
 
 When the server replies, it also sends a plain-text message:

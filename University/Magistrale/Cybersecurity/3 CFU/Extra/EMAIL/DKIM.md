@@ -19,7 +19,7 @@ DKIM è un componente fondamentale della moderna autenticazione e-mail, che lavo
 
 ## Possibile implementazione di DKIM
 
-![[Pasted image 20251028184726.png]]
+![[Pasted image 20251028184726.png|600]]
 
 Il diagramma illustra il flusso di un'e-mail firmata con DKIM:
 
