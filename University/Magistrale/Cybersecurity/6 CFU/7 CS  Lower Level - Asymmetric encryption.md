@@ -536,8 +536,6 @@ The Diffie-Hellman concept can be used with any mathematical group, _except_ for
 - It provides the same level of security as traditional DH but with **much smaller keys** (e.g., a 256-bit ECDH key is roughly equivalent in strength to a 3072-bit DH key), making it much faster and more suitable for mobile devices.
     
 - [https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman](https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman)
----
-Here is a comprehensive, enriched transcription of the provided lecture slides on RSA.
 
 ---
 
@@ -561,7 +559,7 @@ The core security services are:
 ---
 
 ## RSA: Two Ways of Encrypting
-
+[[RSA]]
 Recall that in an asymmetric system, there are two keys: one **public** (which everyone knows) and one **private** (which only the owner knows).
 
 RSA encryption behaves differently depending on _which key_ Alice uses to encrypt a block of data, M:
@@ -639,7 +637,7 @@ It's important to understand why an [[HMAC]] (a symmetric-key MAC) does _not_ pr
         
     - "Textbook" RSA is deterministic (encrypting "Attack" always yields the same ciphertext), which is insecure unless padding is used.
         
-- **Practical Use (Hybrid Encryption):**
+- **Practical Use ([[Hybrid Encryption]]):**
     
     1. Alice generates a new, random **symmetric key** (e.g., for AES).
         
@@ -673,7 +671,7 @@ Using private-key encryption directly is **not secure** and does not yet provide
     
 
 ### The Existential Forgery Attack
-
+[[Existential Forgery (E)]]
 An attacker, Fran, can forge a "valid" signed message _from scratch_ without Alice's private key.
 
 1. Fran (the attacker) creates a random binary file, $R$. This $R$ will be his _signature_.
@@ -715,13 +713,13 @@ The vulnerability is fixed by **signing a hash of the message**, not the message
         
 - **Why this works:**
     
-    - The hash function $H$ is a **One-Way Function (OWF)**, which makes the forgery attack impossible. Fran cannot find a message $D$ that hashes to $R$.
+    - The hash function $H$ is a **One-Way Function ([[OWF]])**, which makes the [[Forgery]] attack impossible. Fran cannot find a message $D$ that hashes to $R$.
         
     - Encrypting a hash is fast and efficient.
         
-    - $H$ guarantees **data integrity** (if $M$ is changed, $h_1$ changes).
+    - $H$ guarantees **data [[Integrity]]** (if $M$ is changed, $h_1$ changes).
         
-    - $E_V$ guarantees **authenticity** (only Alice could have created $h_2$).
+    - $E_V$ guarantees **[[Authenticity]]** (only Alice could have created $h_2$).
         
 
 ---

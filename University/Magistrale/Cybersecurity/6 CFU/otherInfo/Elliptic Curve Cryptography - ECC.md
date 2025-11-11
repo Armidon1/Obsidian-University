@@ -7,7 +7,7 @@ La **Crittografia a Curva Ellittica (ECC)** è un approccio alla **crittografia 
 Non è un singolo algoritmo, ma una _famiglia_ di algoritmi che implementano la crittografia asimmetrica. La sua sicurezza si basa sulla difficoltà computazionale del **Problema del Logaritmo Discreto su Curve Ellittiche (ECDLP)**.
 
 ### Il Concetto Ingegneristico: "Perché ECC?"
-
+ 
 L'unica e più importante ragione per cui ECC domina la crittografia moderna è l'**efficienza della dimensione della chiave**.
 
 L'ECC offre lo **stesso livello di sicurezza** di sistemi più vecchi (come RSA) utilizzando **chiavi drasticamente più piccole**.

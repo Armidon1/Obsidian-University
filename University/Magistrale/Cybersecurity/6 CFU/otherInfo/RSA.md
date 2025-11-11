@@ -73,7 +73,7 @@ Per questi motivi, RSA viene quasi sempre usato per la **confidenzialità** in u
 
 ## 2. Cifratura con Chiave Privata (Obiettivo: Firma Digitale)
 
-Questo è l'uso di RSA per autenticazione e non-ripudio.
+Questo è l'uso di RSA per [[Authentication]] e [[Non-Repudiation]].
 
 - **Scenario**: Alice (A) vuole inviare un messaggio (M) a Bob (B) in modo che Bob sia sicuro che provenga da Alice e non sia stato modificato.
     
@@ -85,14 +85,14 @@ Questo è l'uso di RSA per autenticazione e non-ripudio.
         
 - **Risultato**:
     
-    - **Autenticità**: Se la decifratura con la chiave pubblica di Alice funziona e produce un messaggio sensato, Bob sa che deve essere stata Alice a crearlo (poiché solo lei ha la chiave privata).
+    - **[[Authenticity]]**: Se la decifratura con la chiave pubblica di Alice funziona e produce un messaggio sensato, Bob sa che deve essere stata Alice a crearlo (poiché solo lei ha la chiave privata).
         
-    - **Integrità**: Se il messaggio fosse stato alterato, la decifratura fallirebbe.
+    - **[[Integrity]]**: Se il messaggio fosse stato alterato, la decifratura fallirebbe.
         
-    - **Nessuna Confidenzialità**: Chiunque può decifrare il messaggio usando la chiave pubblica di Alice.
+    - **Nessuna [[Confidentiality]]**: Chiunque può decifrare il messaggio usando la chiave pubblica di Alice.
         
 
-Questo processo è la base del **non-ripudio**.
+Questo processo è la base del **[[Non-Repudiation]]**.
 
 ### Non-Ripudio
 
@@ -177,56 +177,216 @@ _(Nota: L'uso di hash introduce il rischio teorico di collisioni (legato al "bir
 
 La sicurezza di RSA dipende da implementazioni attente. L'RSA "textbook" (la formula matematica di base) è vulnerabile.
 
-### Attacco 1: Fattorizzare $N$
+### 1. Fattorizzazione di $N$
 
-La sicurezza di RSA si basa sull'ipotesi che sia computazionalmente difficile fattorizzare il modulo $N$ nei suoi due fattori primi, $p$ e $q$.
-
-- Se un attaccante riesce a fattorizzare $N$, può calcolare $\phi(N) = (p-1)(q-1)$ e da lì calcolare facilmente la chiave privata $d$.
+- **Attacco:** Se un attaccante può fattorizzare $N$ in $p$ e $q$, può calcolare $\varphi(N)$ e poi usare $e$ per trovare la chiave privata $d$. Fattorizzare $N$ rompe RSA.
     
-- **Contromisure**:
+- **Problema Aperto:** Sappiamo che (Fattorizzare $N$) $\implies$ (Rompere RSA). È vero il contrario? (Rompere RSA) $\implies$ (Fattorizzare $N$)? Non è noto.
     
-    - Usare chiavi grandi: $p$ e $q$ devono essere molto grandi (oggi si raccomandano chiavi $N$ di almeno 2048 bit, quindi $p$ e $q$ di ~1024 bit).
+- **Soluzione:** Usare una corretta generazione della chiave:
+    
+    - $p$ e $q$ devono essere **sufficientemente grandi** (ad es., $N$ dovrebbe essere di 2048 o 4096 bit).
         
-    - $p$ e $q$ non devono essere troppo vicini tra loro.
+    - $p$ e $q$ **non devono essere troppo vicini** tra loro.
         
-    - $p-1$ e $q-1$ devono avere fattori primi grandi (per sconfiggere algoritmi di fattorizzazione specializzati come l'algoritmo $p-1$ di Pollard).
+    - $(p-1)$ e $(q-1)$ devono avere fattori primi grandi (per sventare l'algoritmo p-1 di Pollard).
         
-- **Stato dell'arte**: I "Factoring Challenges" di RSA hanno mostrato che chiavi un tempo considerate sicure (es. 640 bit) sono state fattorizzate (nel 2005).
-    
-- **Problema Aperto**: Se so fattorizzare $N$, rompo RSA. Ma l'inverso è vero? Se riesco a "rompere" RSA (cioè a calcolare $d$ senza fattorizzare), posso fattorizzare $N$? Questo rimane un problema teorico aperto.
-    
-- **Caso di Studio (Gpcode Ransomware, 2008)**: Una variante di questo ransomware usava RSA-1024. Kaspersky Labs stimò (teoricamente) che per fattorizzare una singola chiave a 1024 bit sarebbero serviti 15 milioni di computer per un anno. La chiave non fu rotta, dimostrando la forza pratica di RSA-1024 all'epoca.
+- **Contesto Storico:** Le sfide di fattorizzazione hanno mostrato la difficoltà. RSA-640 (bit) è stato fattorizzato nel 2005. Nel 2008, il ransomware Gpcode utilizzava una chiave a 1024 bit e Kaspersky Labs stimò che sarebbero stati necessari 15 milioni di computer moderni per 1 anno per romperla. La chiave non è mai stata rotta, dimostrando la forza pratica delle chiavi a 1024 bit all'epoca.
     
 
-### Attacco 2: Messaggi Facili da Decifrare (Senza Padding)
+---
 
-Se si usa l'RSA "textbook", alcuni messaggi sono problematici:
+### 2. Attacchi a Messaggi Semplici o Piccoli
 
-- **Messaggi $m = 0, 1, N-1$**: Cifrare questi valori spesso restituisce il valore stesso. Ad esempio, $1^e \bmod N = 1$. E $(N-1)^e \bmod N \equiv (-1)^e \bmod N$. Poiché $e$ è quasi sempre dispari, questo risulta $N-1$.
+- **Problema 1:** Se $m = 0$, $1$, o $N-1$, allora $RSA(m) = m$. Il testo cifrato è identico al testo in chiaro.
     
-- **Messaggi Piccoli e Esponente Piccolo**: Se sia il messaggio $m$ che l'esponente pubblico $e$ sono piccoli (es. $e=3$), è possibile che $m^e < N$.
-    
-    - In questo caso, l'operazione $c = m^e \bmod N$ si riduce a $c = m^e$.
+    - **Soluzione:** Usare un "salt" o padding (riempimento).
         
-    - L'attaccante può semplicemente calcolare la radice $e$-esima aritmetica di $c$ (un'operazione facile) per trovare $m$.
+- **Problema 2:** Se sia $m$ che $e$ sono piccoli (ad es., $e = 3$) e $m$ è piccolo, potremmo avere $m^e < N$.
+    
+    - In questo caso, $C = m^e \pmod N = m^e$.
+        
+    - L'attaccante non ha bisogno di fare aritmetica modulare; calcola semplicemente la radice $e$-esima di $C$ per trovare $m$.
+        
+    - **Soluzione:** Aggiungere un padding (riempimento) non nullo a _tutti_ i messaggi per assicurarsi che $m$ non sia mai piccolo.
         
 
-### Attacco 3: Esponente Pubblico Piccolo (es. $e=3$)
+---
 
-Un esponente pubblico piccolo come $e=3$ è molto efficiente per la cifratura/verifica, ma può essere pericoloso.
+### 3. Attacchi con Esponente Basso ($e=3$)
 
-- Se un avversario intercetta due cifrature di messaggi correlati, ad esempio $c_1 = m^3 \bmod n$ e $c_2 = (m+1)^3 \bmod n$, esistono tecniche algebriche per ricavare $m$ direttamente da $c_1$ e $c_2$ senza dover fattorizzare $N$.
+- **Problema 1 (Messaggi Correlati):** Se un attaccante intercetta due messaggi correlati da una trasformazione nota, ad es., $c_1 = m^3 \pmod n$ e $c_2 = (m+1)^3 \pmod n$, può usare questa relazione algebrica (l'attacco di Coppersmith) per ricavare $m$.
+    
+    - **Soluzione:** Scegliere un $e$ grande (come 65537) o usare il padding.
+        
+- **Problema 2 (Attacco del Teorema Cinese del Resto):** Se lo _stesso messaggio_ $m$ viene inviato a 3 utenti diversi (con $e=3$ e moduli diversi $n_1, n_2, n_3$), un attaccante intercetta:
+    
+    1. $c_1 = m^3 \pmod{n_1}$
+        
+    2. $c_2 = m^3 \pmod{n_2}$
+        
+    3. $c_3 = m^3 \pmod{n_3}$
+        
+    
+    - Usando il Teorema Cinese del Resto (CRT), l'attaccante può combinare questi valori per trovare $m^3 \pmod{n_1n_2n_3}$.
+        
+    - Dato che $m < n_i$ per ogni $i$, $m^3$ sarà più piccolo del prodotto $n_1n_2n_3$. Il risultato è semplicemente $m^3$.
+        
+    - L'attaccante calcola la semplice radice cubica e trova $m$.
+        
+    - **Soluzione:** Aggiungere un padding casuale a ogni messaggio. Questo assicura che lo _stesso_ messaggio non venga mai inviato due volte.
+        
+
+---
+
+### 4. Attacco alla Cifratura Deterministica
+
+- **Problema:** L'RSA "da manuale" (textbook) è deterministico. Se un attaccante sa che il messaggio è $m_1$ ("SÌ") o $m_2$ ("NO"), può cifrare sia $m_1$ che $m_2$ con la chiave pubblica. Confronta i risultati con il testo cifrato intercettato per scoprire il messaggio.
+    
+- **Soluzione:** Aggiungere una stringa casuale (padding) al messaggio.
     
 
-### Soluzione a tutti questi Attacchi: il Padding
+---
 
-Tutte le debolezze menzionate (determinismo, messaggi piccoli, attacchi con $e=3$) sono risolte non usando l'RSA "textbook", ma implementando **schemi di padding** (riempimento) standardizzati.
+### 5. Attacco del Modulo Comune
 
-Questi schemi (come **OAEP** per la cifratura e **PSS** per la firma) aggiungono dati casuali e strutturati al messaggio _prima_ che venga applicata l'operazione RSA. Questo assicura che:
-
-1. Il messaggio non sia mai "piccolo".
+- **Problema:** Se due utenti sono configurati con lo _stesso modulo $n$_ (ma $e$ e $d$ diversi), è catastrofico.
     
-2. La cifratura non sia deterministica (cifrare lo stesso messaggio due volte produce risultati diversi).
+- L'Utente 1 (con $e_1, d_1, n$) potrebbe usare le proprie chiavi per ricavare $p$ e $q$ (è complicato ma possibile).
     
-3. Le relazioni algebriche tra messaggi correlati vengano distrutte.
+- Una volta ottenuti $p$ e $q$, può calcolare $\varphi(N)$ e usarlo per trovare la chiave privata $d_2$ dell'Utente 2 dalla sua chiave pubblica $e_2$.
+    
+- **Soluzione:** Ogni persona deve generare il proprio $N$ univoco.
+
+## Altri Attacchi a RSA
+
+Oltre all'attacco base di fattorizzazione, ci sono molti altri modi per attaccare un'implementazione di RSA, specialmente se segue la definizione "da manuale" (textbook) senza un adeguato padding (riempimento).
+
+- **Attacchi di Fattorizzazione:** L'attacco matematico più diretto. Se un attaccante può fattorizzare il modulo $N$ nelle sue componenti prime $p$ e $q$, può calcolare la chiave privata $d$.
+    
+- **Attacchi con Esponente Basso:** Usare un esponente pubblico piccolo (come $e=3$) può rendere RSA vulnerabile se lo stesso messaggio viene inviato a più destinatari (es. l'attacco broadcast di Håstad) o se il messaggio è piccolo.
+    
+- **Attacco del Modulo Comune:** Se lo stesso modulo $N$ è usato da utenti diversi (con coppie $(e,d)$ diverse), un utente può potenzialmente usare le proprie conoscenze per fattorizzare $N$ o decifrare messaggi inviati ad altri.
+    
+- **Attacco del Primo Piccolo:** Se uno dei primi ($p$ o $q$) è troppo piccolo, può essere facilmente trovato per divisione di prova (trial division) o altri metodi di fattorizzazione.
+    
+- **Attacchi a Canale Laterale (Side-Channel):** Questi attacchi non rompono la matematica ma sfruttano l'implementazione fisica.
+    
+    - **Attacchi a Tempo (Timing):** Misurando precisamente quanto tempo impiega la decifratura, un attaccante potrebbe essere in grado di dedurre i bit della chiave privata $d$.
+        
+    - **Attacchi sull'Energia/Potenza:** Misurare il consumo energetico di un dispositivo (come una smart card) durante la decifratura può far trapelare informazioni sulla chiave privata.
+        
+- **Attacchi a Iniezione di Errore (Fault-Injection):** Causare deliberatamente errori durante il calcolo crittografico (ad es. fluttuando tensione o temperatura) può a volte portare il dispositivo a produrre dati corrotti che rivelano informazioni segrete.
+    
+
+---
+
+### Proprietà Moltiplicativa e Malleabilità
+
+In crittografia, si dice che una funzione $f$ ha un omomorfismo moltiplicativo (o è semplicemente moltiplicativa) se:
+
+$$f(m_1 \cdot m_2) \equiv f(m_1) \cdot f(m_2) \pmod n$$
+
+Questo è vero per la cifratura RSA "da manuale":
+
+$$RSA(m_1 \cdot m_2) = (m_1 \cdot m_2)^e \pmod N = (m_1^e \cdot m_2^e) \pmod N = RSA(m_1) \cdot RSA(m_2) \pmod N$$
+
+- Questa proprietà rende RSA **malleabile**. La malleabilità significa che un attaccante può modificare un testo cifrato in un altro testo cifrato valido per un testo in chiaro correlato, senza conoscere nessuno dei due testi in chiaro.
+    
+- Ad esempio, se un attaccante ha il testo cifrato $C = M^e \pmod N$, può facilmente creare un testo cifrato per $2M$ calcolando $C' = C \cdot 2^e \pmod N$. Il destinatario decifrerà $C'$ come $2M$, potendo essere ingannato nell'accettare un messaggio modificato.
+    
+
+---
+
+### Attacchi a RSA: Sfruttare la Malleabilità
+
+La proprietà moltiplicativa può essere generalizzata:
+
+Se $M = M_1 \cdot M_2 \cdot \dots \cdot M_k$, allora:
+
+$$RSA(M) = RSA(M_1) \cdot RSA(M_2) \cdot \dots \cdot RSA(M_k) \pmod N$$
+
+Questo permette a un avversario di costruire testi cifrati per messaggi compositi se conosce i testi cifrati delle loro componenti.
+
+**Soluzione:** Usare sempre uno schema di **padding** sicuro (come OAEP) prima di cifrare. Il padding distrugge questa struttura moltiplicativa, rendendo la cifratura non malleabile.
+
+---
+
+### Esempio di Attacco con Testo Cifrato Scelto (Chosen Ciphertext Attack - CCA)
+
+Un avversario vuole decifrare un testo cifrato target $C = M^e \pmod N$.
+
+1. L'avversario calcola un nuovo testo cifrato $X$ moltiplicando $C$ per la cifratura di un numero scelto (ad es., $2$):
+    
+    $$X = (C \cdot 2^e) \pmod N$$
+    
+2. L'avversario invia $X$ alla vittima (o a un oracolo di decifratura) e gli chiede di decifrarlo. La vittima potrebbe essere indotta a farlo se $X$ sembra un messaggio valido diverso.
+    
+3. La vittima decifra $X$ e restituisce il risultato $Y$:
+    
+    $$Y = X^d \pmod N = (C \cdot 2^e)^d \pmod N = (C^d \cdot (2^e)^d) \pmod N$$
+    
+    Dato che $C^d = M$ e $(2^e)^d = 2^{ed} \equiv 2^1 \pmod N$, otteniamo:
+    
+    $$Y = M \cdot 2 \pmod N$$
+    
+4. L'avversario ora ha $Y = 2M$. Può facilmente recuperare il messaggio originale $M$ calcolando:
+    
+    $$M = Y \cdot 2^{-1} \pmod N$$
+    
+    (dove $2^{-1}$ è l'inverso moltiplicativo modulare di 2 modulo $N$).
+    
+
+---
+
+### Attacco con Testo Cifrato Scelto (Generale)
+
+Questa è una versione più generale dell'attacco precedente.
+
+Assumiamo che un attaccante $T$ conosca un testo cifrato target $c = M^e \pmod N$.
+
+1. $T$ sceglie casualmente un valore $X$.
+    
+2. $T$ calcola un nuovo testo cifrato $c' = c \cdot X^e \pmod N$.
+    
+3. $T$ chiede all'oracolo di decifratura di decifrare $c'$.
+    
+4. L'oracolo restituisce il testo in chiaro $M' = (c')^d \pmod N$.
+    
+5. $T$ può ora calcolare il messaggio originale $M$:
+    
+    $$M' = (c')^d = (c \cdot X^e)^d = c^d \cdot (X^e)^d = M \cdot X \pmod N$$
+    
+    Quindi, $M = M' \cdot X^{-1} \pmod N$.
+    
+
+**Soluzione:** Il processo di decifratura deve **verificare rigorosamente la struttura** del messaggio decifrato prima di restituirlo. Se viene utilizzato uno schema di padding sicuro (come OAEP), il messaggio decifrato $M'$ avrà molto probabilmente un padding non valido e l'oracolo restituirà un errore invece del testo in chiaro grezzo, sventando l'attacco.
+
+---
+
+### Attacchi all'Implementazione (Side-Channel)
+
+Questi attacchi non rompono la matematica di RSA ma sfruttano le debolezze nel modo in cui è implementato sull'hardware reale.
+
+- **Attacchi a Tempo (Timing):** Il tempo necessario per eseguire l'esponenziazione modulare $C^d \pmod N$ può dipendere dai bit specifici della chiave privata $d$ (ad es., un bit '1' potrebbe richiedere più tempo per essere processato rispetto a un bit '0' a causa di un passo di moltiplicazione extra). Misurando queste minuscole differenze su molte decifrature, un attaccante può recuperare $d$.
+    
+- **Analisi dell'Energia/Potenza:** Similmente al tempo, la quantità di energia consumata da un processore (come in una smart card) può variare a seconda dell'operazione eseguita. L'Analisi Differenziale della Potenza (DPA) può essere usata per estrarre la chiave.
+    
+- **Soluzione:** Usare **implementazioni a tempo costante** in cui ogni decifratura richiede la stessa quantità di tempo indipendentemente dalla chiave o dall'input. Un'altra tecnica è il **blinding** (mascheramento), in cui valori casuali vengono introdotti nel calcolo per mascherare gli input effettivi, per poi essere rimossi alla fine.
+    
+
+---
+
+## RSA - Conclusione sugli Attacchi
+
+- **L'implementazione "da manuale" di RSA NON è sicura.** Non soddisfa i criteri di sicurezza moderni (come l'indistinguibilità sotto attacco con testo cifrato scelto, IND-CCA).
+    
+- È vulnerabile a molti attacchi matematici e implementativi a causa della sua natura deterministica e della sua malleabilità.
+    
+- **Versione Standard:** In pratica, RSA è sempre usato con uno schema di padding. Il messaggio $M$ viene pre-elaborato in un messaggio con padding $M'$ prima della cifratura.
+    
+    - $C = (M')^e \pmod N$
+        
+    - Poiché $M'$ contiene dati casuali (dallo schema di padding), la cifratura diventa probabilistica e non malleabile.
+
 vedi anche [[7 CS  Lower Level - Asymmetric encryption#RSA – the algorithm]]. 

@@ -148,7 +148,7 @@ you mustn't use CBC-MAC. You can use it only if is necessary backward compatibil
 - Such an adversary is called a **forger**, and the accepted pair (m, τ) is called a **forgery**
 
 ### FORGERY
-There are three types of forgery, with different power
+There are three types of [[Forgery]], with different power
 - Existential (E)
 - Selective (S)
 - Universal (U)

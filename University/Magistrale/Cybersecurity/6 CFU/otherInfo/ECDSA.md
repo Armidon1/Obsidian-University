@@ -2,7 +2,7 @@
 
 ### Definizione
 
-**ECDSA** è la versione della **[[Elliptic Curve Cryptography - ECC]]** del **Digital Signature Algorithm (DSA)**. È un algoritmo a chiave pubblica ampiamente utilizzato il cui unico scopo è fornire **firme digitali**.
+**ECDSA** è la versione della **[[Elliptic Curve Cryptography - ECC]]** del **[[Digital Signature Algorithm (DSA)]]**. È un algoritmo a chiave pubblica ampiamente utilizzato il cui unico scopo è fornire **firme digitali**.
 
 Come tutte le firme digitali, ECDSA garantisce:
 
