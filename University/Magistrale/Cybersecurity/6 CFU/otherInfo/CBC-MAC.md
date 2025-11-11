@@ -108,3 +108,65 @@ Il MAC è, nel caso del diagramma, il blocco $c_6$ o una sua porzione troncata.
 Domanda: quindi si possono usare AES-CBC per la [[Confidentiality]] e [[CBC-MAC]] per l'[[Integrity]] e [[Authenticity]], **con la stessa chiave** (esempio di [[EtM]] ma con la stessa chiave)? Assolutamente no! mai usare la stessa chiave! vedi in [[non usare la stessa chiave per autenticazione e cifratura]]. 
 
 Vedi anche [[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]]
+
+Certamente. Ecco una definizione di **CBC-MAC** che integra e struttura i tuoi appunti, spiegando la sua vulnerabilità critica.
+
+---
+
+
+### 🚨 Vulnerabilità Critica: Insecurità su Messaggi di Lunghezza Variabile
+
+Questa è la caratteristica fondamentale del CBC-MAC: è un algoritmo **sicuro SOLO per messaggi di lunghezza fissa e nota**. È completamente insicuro quando i messaggi possono avere lunghezze variabili.
+
+Un attaccante che conosce anche solo una coppia valida messaggio-tag $(m, t)$ può, con una certa facilità, falsificare i tag per altri messaggi. Se l'attaccante conosce due coppie $(m, t)$ e $(m', t')$, può condurre un attacco di _forgery_ (falsificazione) molto potente.
+
+#### L'Attacco di Falsificazione ([[Forgery]] attack)
+
+Un attaccante che conosce due coppie messaggio-tag valide, $(m, t)$ e $(m', t')$, può costruire un **nuovo messaggio** $m''$ (più lungo) che il verificatore accetterà erroneamente con il tag $t'$.
+
+Costruzione dell'Attacco:
+
+L'attaccante concatena il primo messaggio $m$ con una versione modificata del secondo messaggio $m'$:
+
+$$m'' = m \mathbin{||} (m1' \oplus t) \mathbin{||} m2' \mathbin{||} \dots \mathbin{||} m\ell'$$
+
+Dove $m1', m2', \dots$ sono i blocchi del messaggio $m'$.
+
+Dimostrazione Tecnica (Perché funziona):
+
+Il CBC-MAC funziona come una catena. L'output di un blocco diventa l'IV (vettore di inizializzazione) per il blocco successivo.
+
+1. **Fase 1:** Il verificatore processa il messaggio $m$. L'ultimo blocco di cifratura (lo stato CBC interno) è, per definizione, $t$.
+    
+2. **Fase 2:** Il verificatore processa il blocco successivo, che l'attaccante ha creato come $P_{new} = (m1' \oplus t)$.
+    
+3. **Fase 3 (Il "trucco"):** L'input al cifrario a blocchi è `TestoInChiaroCorrente \oplus CifraturaPrecedente`.
+    
+    - L'input diventa: $P_{new} \oplus t$
+        
+    - Che si espande in: $(m1' \oplus t) \oplus t$
+        
+4. **Fase 4:** A causa delle proprietà dell'operatore XOR, $t \oplus t$ si annulla (diventa 0). L'input al cifrario è quindi semplicemente $m1'$.
+    
+5. **Fase 5:** L'output di questa fase è $E_K(m1')$ (supponendo un IV a zero per l'inizio del messaggio $m'$), che è _esattamente_ lo stesso stato interno che si avrebbe dopo aver processato il primo blocco di $m'$.
+    
+
+Da questo punto in poi, l'elaborazione dei restanti blocchi ($m2', m3'$, ecc.) segue un percorso identico all'elaborazione originale di $m'$, portando inevitabilmente allo stesso tag finale $t'$.
+
+Perché è Pericoloso:
+
+Anche se $m''$ è costruito da blocchi visti in precedenza, la sequenza concatenata può assumere un significato completamente diverso a livello applicativo (es. concatenare più bonifici bancari, comandi IoT, o combinare parti di un firmware) e causare danni reali.
+
+---
+
+### Conclusioni su CBC-MAC
+
+- È sicuro **solo** per messaggi di lunghezza fissa e nota.
+    
+- **Non devi usare CBC-MAC** per dati di lunghezza variabile. Preferisci alternative moderne come **CMAC** (che è la versione "sistemata" di CBC-MAC) o **HMAC**.
+    
+- Se è necessaria anche la confidenzialità (cifratura), puoi usare la modalità CBC, ma devi usare una **chiave condivisa diversa** per la cifratura e per il MAC.
+    
+- Capire questa vulnerabilità è cruciale per una progettazione sicura.
+    
+- L'unica ragione per cui un ingegnere dovrebbe utilizzare CBC-MAC oggi è per garantire la **retrocompatibilità** con sistemi legacy che non possono essere aggiornati. In tutti gli altri casi, è da considerarsi obsoleto e insicuro.

@@ -389,4 +389,38 @@ Questi attacchi non rompono la matematica di RSA ma sfruttano le debolezze nel m
         
     - Poiché $M'$ contiene dati casuali (dallo schema di padding), la cifratura diventa probabilistica e non malleabile.
 
+Il padding è definito dai PKCS che sono standard da seguire.
+
+### PKCS: Lo Standard per il Padding
+
+**[[PKCS]]** sta per **Public-Key Cryptography Standards** (Standard per la Crittografia a Chiave Pubblica). Si tratta di un insieme di standard sviluppati da RSA Laboratories per garantire l'implementazione sicura e l'interoperabilità della crittografia a chiave pubblica.
+
+|**Standard**|**Titolo**|**Funzione / Descrizione**|
+|---|---|---|
+|**PKCS #1**|**RSA Cryptography Standard**|Definisce i formati corretti per la **cifratura RSA** e le **firme**, inclusi gli schemi di **padding** cruciali (come OAEP e PSS) necessari per fermare gli attacchi descritti sopra.|
+|**PKCS #3**|Diffie-Hellman Key Agreement|Definisce il formato di scambio chiavi DH. (Ora ampiamente obsoleto e sostituito da standard IETF).|
+|**PKCS #5**|Password-Based Cryptography|Definisce le funzioni di derivazione della chiave (PBKDF1, PBKDF2) per trasformare le password in chiavi crittografiche.|
+|**PKCS #6**|Extended Certificate Syntax|Definisce le estensioni dei certificati. (Obsoleto, sostituito da X.509v3).|
+
+---
+
+### Parte 5: La Soluzione - PKCS (Public-Key Cryptography Standards)
+
+**Conclusione: L'RSA "da manuale" (Textbook) NON è sicuro.**
+
+Per essere sicuro, RSA deve essere usato con uno **schema di padding**. Gli standard per questo sono definiti da **PKCS**.
+
+#### PKCS #1 (Vecchia Versione)
+
+Questo standard definiva uno schema di padding per la cifratura:
+
+`m = 0x00 || 0x02 || [almeno 8 byte casuali non zero] || 0x00 || M`
+
+- **0x00** (primo byte): Assicura che il numero risultante sia $< N$.
+    
+- **0x02**: Indica la cifratura (0x01 era usato per le firme).
+    
+- **Byte casuali**: Questo è il padding che risolve la maggior parte delle debolezze di RSA. Rende la cifratura non deterministica e previene attacchi a messaggi piccoli o correlati.
+
 vedi anche [[7 CS  Lower Level - Asymmetric encryption#RSA – the algorithm]]. 
+
