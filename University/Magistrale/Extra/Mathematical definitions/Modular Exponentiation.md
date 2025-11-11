@@ -1,5 +1,5 @@
 # ⚡ Esponenziazione Modulare (Modular Exponentiation)
-
+Poiché è un concetto elementare ma molto controinuitivo, guarda [[Modular Exponentiation Details|questa analisi nel dettaglio]] 
 ### Definizione
 
 L'**Esponenziazione Modulare** è un'operazione matematica che calcola il resto della divisione di un numero elevato a una grande potenza per un altro numero (il modulo). È l'operazione fondamentale alla base di quasi tutta la crittografia a chiave pubblica moderna.
