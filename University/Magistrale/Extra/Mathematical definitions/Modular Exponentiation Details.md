@@ -19,6 +19,7 @@ vogliamo calcolare il valore `C` tale che:
 
 Questo significa che `C` è il resto della divisione di `B^E` per `M`. L'operazione `mod M` (abbreviazione di "modulo M") denota proprio tale resto.
 
+
 ---
 
 ### Sezione 1: Fondamenti - Aritmetica Modulare e Congruenza
