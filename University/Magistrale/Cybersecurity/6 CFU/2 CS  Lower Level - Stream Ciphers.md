@@ -1,4 +1,4 @@
-last lesson [[1 CS -  Introduction]]
+last lesson [[1 CS  Lower Level -  Introduction]]
 # Stream ciphers ([[Stream Cipher]])
 old, but now back in the spotlight 
 
@@ -284,4 +284,4 @@ OpenSSH: option for encrypted shell sessions, now less used
 
 ---
 
-next lesson [[3 CS - Block Ciphers]]
+next lesson [[3 CS  Lower Level - Block Ciphers]]

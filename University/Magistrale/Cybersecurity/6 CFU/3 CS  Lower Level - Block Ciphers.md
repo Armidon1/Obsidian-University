@@ -1,4 +1,4 @@
-last lesson [[2 CS - Stream Ciphers]]
+last lesson [[2 CS  Lower Level - Stream Ciphers]]
 
 ---
 # Block Ciphers
@@ -91,7 +91,7 @@ Due to DES's growing weakness, NIST called for a new standard in 1997. It was an
 
 ### AES Internal Structure
 
-AES is a Substitution-Permutation Network (SPN), unlike DES which is a Feistel network. It operates in rounds (10-14 depending on key size).
+		AES is a Substitution-Permutation Network (SPN), unlike DES which is a Feistel network. It operates in rounds (10-14 depending on key size).
 
 - **SubBytes**: Non-linear substitution for confusion.
     
@@ -101,10 +101,10 @@ AES is a Substitution-Permutation Network (SPN), unlike DES which is a Feistel n
     
 
 ## 5. Iterating Block Ciphers & Attacks
-
+Guarda nel dettaglio in [[DES]], [[2DES]] e [[3DES]]
 ### Triple DES ([[3DES]])
 
-To extend the life of DES, it was applied three times.
+To extend the life of [[DES]], it was applied three times.
 
 - **Construction**: $C = E_{k3}(D_{k2}(E_{k1}(P)))$ (EDE mode is most common for backward compatibility).
     
@@ -114,7 +114,7 @@ To extend the life of DES, it was applied three times.
     
 
 ### Meet-in-the-Middle (MITM) Attack
-
+[[Meet-in-the-Middle (MitM)]]
 Not to be confused with _Man_-in-the-Middle, this is a cryptanalytic attack against iterated ciphers.
 
 - **Concept**: When attacking 2DES ($E_{k2}(E_{k1}(P))$), instead of brute-forcing $k1$ and $k2$ together ($2^{112}$), the attacker:
@@ -158,10 +158,10 @@ Understanding AES requires some background in number theory and abstract algebra
     
 - **[[Bézout's identity]]**: For any non-zero integers $a$ and $b$, let $d = GCD(a,b)$. There exist integers $x$ and $y$ such that $ax + by = d$.
     
-    - These coefficients $x,y$ can be found using the **[[Extended Euclidean Algorithm]]**, which is vital for finding multiplicative inverses in finite fields (used in the AES S-Box).
+    - These coefficients $x,y$ can be found using the **[[Extended Euclidean Algorithm (EEA)]]**, which is vital for finding multiplicative inverses in finite fields (used in the AES S-Box).
         
 
-### Finite Fields (Galois Fields)
+### Finite Fields ([[Galois Field]]s)
 
 AES does not use standard integer arithmetic; it uses arithmetic within a finite field to ensure results always stay within a fixed number of bits (a byte).
 
@@ -178,7 +178,7 @@ AES does not use standard integer arithmetic; it uses arithmetic within a finite
         - AES standard irreducible polynomial: $m(x) = x^8 + x^4 + x^3 + x + 1$.
             
         - For efficiency, multiplication in $GF(2^8)$ is often implemented using lookup tables (like `alogs` tables).
-            
+        ![[Pasted image 20251111103456.png]]
 
 ## 3. AES Design Rationale
 
@@ -197,12 +197,13 @@ Why was Rijndael chosen as AES?
 
 AES operates on a $4 \times 4$ matrix of bytes called the **State**.
 
-- **Input**: 128 bits are arranged into this $4 \times 4$ grid ($16$ bytes: $A_{0,0}$ to $A_{3,3}$).
+- **Input**: 128 bits are arranged into this $4 \times 4$ grid ($16$ bytes: $A_{0,0}$ to $A_{3,3}$).![[Pasted image 20251111103626.png]]
     
-- **Key**: The initial key is also arranged in a similar matrix (size depends on key length).
+- **Key**: The initial key is also arranged in a similar matrix (size depends on key length).![[Pasted image 20251111103633.png]]
     
 
 ### High-Level Algorithm
+![[Pasted image 20251111103712.png]]
 
 AES is an iterated cipher consisting of **Rounds**.
 
@@ -217,7 +218,7 @@ AES is an iterated cipher consisting of **Rounds**.
 
 Plaintext
 
-```
+```C
 AES(State, Key) {
     KeyExpansion(Key, ExpandedKey)
     AddRoundKey(State, ExpandedKey[0]) // Initial whitening step
@@ -243,6 +244,7 @@ Each regular round consists of four distinct transformations (layers):
     - **Purpose**: Provides _confusion_ and non-linearity. Without this, AES would just be a large system of linear equations, easily solvable.
         
 2. **ShiftRows (Permutation)**:
+   ![[Pasted image 20251111103804.png]]
     
     - **Diffusion layer (Rows)**: Rows of the state matrix are shifted cyclically to the left.
         
@@ -280,6 +282,9 @@ AES needs a separate 128-bit subkey for each round (plus one for the initial ste
 - Uses operations like `RotWord` (rotate bytes), `SubWord` (apply S-Box to all bytes in a word), and `Rcon` (Round Constants) to ensure each round key is derived non-linearly from the previous ones.
     
 - **Goal**: To prevent attackers from calculating round keys even if they know part of the original key, and to defend against related-key attacks.
+
+## Video animation
+![](https://youtu.be/gP4PqVGudtg?si=Xu7JpzlxAnexGEZ5)
 
 ---
 # Block Cipher Modes of Operation
@@ -408,4 +413,4 @@ The modern standard for many applications (uses in [[TLS]] 1.3, [[AES-GCM]] stan
 |**Security**|**Insecure** (leaks patterns)|Secure (if IV random)|Secure (if IV unique)|Secure (if IV unique)|
 
 ---
-next lesson [[4 CS - Data Integrity - MAC, attacks and SHA-1]]
+next lesson [[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1]]

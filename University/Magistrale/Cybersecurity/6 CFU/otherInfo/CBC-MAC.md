@@ -107,4 +107,4 @@ Il MAC è, nel caso del diagramma, il blocco $c_6$ o una sua porzione troncata.
 
 Domanda: quindi si possono usare AES-CBC per la [[Confidentiality]] e [[CBC-MAC]] per l'[[Integrity]] e [[Authenticity]], **con la stessa chiave** (esempio di [[EtM]] ma con la stessa chiave)? Assolutamente no! mai usare la stessa chiave! vedi in [[non usare la stessa chiave per autenticazione e cifratura]]. 
 
-Vedi anche [[4 CS - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]]
+Vedi anche [[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]]

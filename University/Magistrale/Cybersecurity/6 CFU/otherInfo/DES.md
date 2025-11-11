@@ -1,6 +1,6 @@
 # **DES (Data Encryption Standard)**
 
-> È un **algoritmo di cifratura simmetrica a blocchi**, sviluppato negli anni ’70 e standardizzato dal **NIST nel 1977**, per garantire la **[[Confidentiality]] dei dati elettronici**.  
+> È un **algoritmo di cifratura simmetrica a blocchi** ([[Symmetric Encryption]], [[Block Cipher]]), sviluppato negli anni ’70 e standardizzato dal **NIST nel 1977**, per garantire la **[[Confidentiality]] dei dati elettronici**.  
 > È stato per decenni lo **standard di riferimento**, ma oggi è considerato **insicuro** a causa della sua chiave troppo corta.
 
 ---
@@ -67,5 +67,5 @@
 **In breve:**
 
 > **DES** è stato il **primo standard di cifratura elettronica** diffuso globalmente,  
-> ma oggi è **deprecato e insicuro** per via della chiave da 56 bit.  
+> ma oggi è **deprecato e insicuro** per via della chiave da 56 bit. Per renderlo più sicuro ci sono delle varianti come [[2DES]] e meglio ancora [[3DES]]. Ormai sono tutti deprecati.
 > È stato **sostituito da [[AES]]** come standard moderno per la cifratura simmetrica.

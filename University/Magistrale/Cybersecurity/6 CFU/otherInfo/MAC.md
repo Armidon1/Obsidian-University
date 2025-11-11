@@ -18,7 +18,7 @@
 ❌ **Non garantisce:** _[[Confidentiality]]_ (non cifra i dati)
 
 
-come visto in [[4 CS - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]] :
+come visto in [[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs]] :
 ## An integrity mechanism: MAC
 this is not the MAC of the wifi card. 
 ### Recall final goal

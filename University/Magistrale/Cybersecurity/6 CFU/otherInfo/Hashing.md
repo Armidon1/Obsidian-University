@@ -52,4 +52,4 @@
 > utile per **verifica integrità, firme digitali e autenticazione**,  
 > ma non fornisce **confidenzialità** o **autenticazione** da solo.
 
-Vedi anche [[4 CS - Data Integrity - MAC, attacks and SHA-1#HASHING FOR INTEGRITY|HASHING FOR INTEGRITY]]
+Vedi anche [[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1#HASHING FOR INTEGRITY|HASHING FOR INTEGRITY]]

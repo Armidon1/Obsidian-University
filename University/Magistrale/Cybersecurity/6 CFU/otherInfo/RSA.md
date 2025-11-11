@@ -229,4 +229,4 @@ Questi schemi (come **OAEP** per la cifratura e **PSS** per la firma) aggiungono
 2. La cifratura non sia deterministica (cifrare lo stesso messaggio due volte produce risultati diversi).
     
 3. Le relazioni algebriche tra messaggi correlati vengano distrutte.
-vedi anche [[7 CS - Asymmetric encryption#RSA – the algorithm]]. 
+vedi anche [[7 CS  Lower Level - Asymmetric encryption#RSA – the algorithm]]. 

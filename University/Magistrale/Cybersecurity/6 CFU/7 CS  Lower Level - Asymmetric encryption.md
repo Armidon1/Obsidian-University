@@ -1,4 +1,4 @@
-last lesson [[6 CS - Authenticated Encryption]]
+last lesson [[6 CS  Lower Level - Authenticated Encryption]]
 # Asymmetric encryption: the Diffie-Hellman intuition
 
 So far, we have discussed symmetric encryption, where the same key is used for both encryption and decryption. Now, we shift to **asymmetric encryption**, where we use a pair of different keys.
@@ -184,6 +184,9 @@ The term "encrypt" can be confusing as it has two distinct uses:
 
 ---
 
+vedi anche [[Prerequisiti RSA]], per capire meglio il motivo di tutto sto casino.
+
+---
 # Introduction to one-way functions
 
 ## 1. Foundational Concepts: One-Way Functions (OWFs)
@@ -251,16 +254,18 @@ This problem is the basis for the **[[RSA]] algorithm**.
 ![[Pasted image 20251023113341.png]]
 
 ### Candidate 2: The Discrete Logarithm (DL) Problem
+[[The Discrete Logarithm (DL) Problem]]
 
-This problem is the basis for the **Diffie-Hellman key exchange** and the **ElGamal** encryption system.
+This problem is the basis for the **[[Diffie-Hellman Key Exchange]]** and the **[[ElGamal]]** encryption system.
 
 - **Definition:** Let $G$ be a finite cyclic group with _n_ elements and $g$ be a generator of $G$.
     
-- **Easy Problem:** Given $g$ and an integer $x$, it is easy (efficient) to compute $y = g^x$. This is **modular exponentiation**.
+- **Easy Problem:** Given $g$ and an integer $x$, it is easy (efficient) to compute $y = g^x$. This is **[[Modular Exponentiation]]**.
     
 - **Hard Problem:** Given $y$ and $g$, it is computationally infeasible to find the integer $x$ that satisfies the equation $y = g^x$.
     
-- **Terminology:** This $x$ is called the **discrete logarithm of $y$ to the base $g$**.
+- **Terminology:** This $x$ is called the **discrete logarithm of $y$ to the base $g$**. Ma perché diciamo logaritmo discreto? Questa è un'ottima domanda di approfondimento che va al cuore della differenza tra la matematica "classica" e quella usata in crittografia.
+	- La parola **"discreto"** viene usata per sottolineare che stiamo lavorando all'interno di un **insieme finito e specifico di numeri interi**, (come gli interi modulo p), e non sull'insieme **continuo** dei numeri reali. vedi qui un [[Logaritmo Discreto vs Logaritmo Standard#🧩 Logaritmo Discreto|Esempio di Logaritmo Discreto]]
     
 - **Example (a common group):** The multiplicative group of integers modulo a prime $p$, $\mathbb{Z}^*_p$. The problem is:
     
@@ -282,8 +287,9 @@ This problem is the basis for the **Diffie-Hellman key exchange** and the **ElGa
 To implement these cryptographic systems, we need efficient algorithms for modular arithmetic.
 
 ### Modular Exponentiation (The "Easy" Problem)
+[[Modular Exponentiation]]
 
-This is the "easy" operation in the Discrete Logarithm problem (computing $y = g^x \pmod p$).
+This is the "easy" operation in [[The Discrete Logarithm (DL) Problem]] (computing $y = g^x \pmod p$).
 
 - Key Property: We can avoid gigantic intermediate numbers by applying the modulus at every step.
     
@@ -333,10 +339,11 @@ long fastModExp(unsigned int base, unsigned int exp, long mod) {
 ---
 
 ### The Extended Euclidean Algorithm (EEA)
+[[Extended Euclidean Algorithm (EEA)]]
 
 This tool is essential for **RSA key generation**. Specifically, it's used to find the private exponent $d$ from the public exponent $e$ and the [[Euler's totient function]] $\varphi(N)$.
 
-- **Purpose:** To find the **multiplicative inverse** of a number in a modulus (e.g., find $x^{-1} \pmod y$).
+- **Purpose:** To find the **[[Multiplicative Inverse]]** of a number in a modulus (e.g., find $x^{-1} \pmod y$).
     
 - **Basis:** [[Bézout's identity]].
     
@@ -358,7 +365,7 @@ This tool is essential for **RSA key generation**. Specifically, it's used to fi
         
         - $ax \equiv 1 \pmod y$
             
-    - This means $a$ is the **multiplicative inverse of $x$ modulo $y$** (i.e., $a \equiv x^{-1} \pmod y$).
+    - This means $a$ is the **[[Multiplicative Inverse]] of $x$ modulo $y$** (i.e., $a \equiv x^{-1} \pmod y$).
         
     - Similarly, $b \equiv y^{-1} \pmod x$.
         
@@ -390,8 +397,9 @@ function extendedEuclid(a, b) // In the identity, a=x and b=y
 ```
 ---
 ## 3. Protocol 1: Diffie-Hellman (DH) Key Exchange
+[[Diffie-Hellman Key Exchange]]
 
-The Diffie-Hellman (DH) protocol is a practical application of the **Discrete Logarithm problem** designed to achieve a secure key exchange.
+The Diffie-Hellman (DH) protocol is a practical application of the **[[The Discrete Logarithm (DL) Problem]]** designed to achieve a secure key exchange.
 
 - **Goal:** To allow two parties (Alice and Bob), who initially share no secret information, to perform a protocol over a public (insecure) channel and jointly derive the **same shared secret key**.
     
@@ -519,7 +527,7 @@ The Diffie-Hellman concept can be used with any mathematical group, _except_ for
 - For example, it **cannot** be used with the additive group of $\mathbb{Z}_p$ ($y \equiv g+x \pmod p$), because the "logarithm" (finding $x$) is just simple subtraction.
     
 
-**ECDH (Elliptic-Curve Diffie–Hellman):**
+**[[ECDH]]:**
 
 - A modern, highly efficient variant of Diffie-Hellman that uses the group of points on an **elliptic curve**.
     
@@ -539,15 +547,15 @@ RSA is a public-key cryptosystem that provides several key security services, wh
 
 The core security services are:
 
-- **Confidentiality:** Keeping data secret.
+- **[[Confidentiality]]:** Keeping data secret.
     
-- **Authentication:** Proving who you are.
+- **[[Authentication]]:** Proving who you are.
     
-- **Integrity:** Ensuring data hasn't been altered.
-    
+- **[[Integrity]]:** Ensuring data hasn't been altered.
+	    
 - **Key Exchange:** Securely sharing a secret key.
     
-- **Non-Repudiation:** Creating undeniable proof that someone sent a message.
+- **[[Non-Repudiation]]:** Creating undeniable proof that someone sent a message.
     
 
 ---
@@ -600,7 +608,7 @@ These two methods achieve completely different goals:
 
 ### Non-Repudiation vs. HMAC
 
-It's important to understand why an HMAC (a symmetric-key MAC) does _not_ provide non-repudiation.
+It's important to understand why an [[HMAC]] (a symmetric-key MAC) does _not_ provide non-repudiation.
 
 - An HMAC is created using a **shared secret key** known by both Alice and Bob.
     

@@ -2,7 +2,7 @@
 
 ### Cos’è
 
-Un **Man-in-the-Middle (MITM)** è un attacco in cui un avversario si **inserisce tra due entità** (es. client ⇄ server) per **intercettare, leggere, modificare o reindirizzare** le comunicazioni senza che le parti se ne accorgano.
+Un **Man-in-the-Middle (MITM)** (anche definito come **"Meddler-In-The-Middle"**) è un attacco in cui un avversario si **inserisce tra due entità** (es. client ⇄ server) per **intercettare, leggere, modificare o reindirizzare** le comunicazioni senza che le parti se ne accorgano.
 
 ---
 

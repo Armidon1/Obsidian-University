@@ -1,4 +1,4 @@
-last lesson [[5 CS - Cryptographic Hash Functions - Design, Security, and Applications]]
+last lesson [[5 CS  Lower Level - Cryptographic Hash Functions - Design, Security, and Applications]]
 # Authenticated encryption
 
 - The result of applying in an integrated way
@@ -40,7 +40,7 @@ last lesson [[5 CS - Cryptographic Hash Functions - Design, Security, and Applic
 
 ## Approaches to AE
 
-- **Encrypt-then-[[4 CS - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs|MAC]] (EtM)** (most popular)
+- **Encrypt-then-[[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1#CBC Mode MACs|MAC]] (EtM)** (most popular)
     - Widely accepted as the most secure and robust approach
     - Proven secure under strong cryptographic assumptions
 - **Encrypt-and-MAC (E&M)**
@@ -59,7 +59,7 @@ sometimes from a unique master key two subkeys are derived. those subkeys has to
 ## E&M
 [[EaM]]
 ![[Pasted image 20251022133408.png]]
-in this case, the [[4 CS - Data Integrity - MAC, attacks and SHA-1#^04821e|Authentication Tag]] is created with the plaintext itself
+in this case, the [[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1#^04821e|Authentication Tag]] is created with the plaintext itself
 ## MtE
 [[MtE]]
 ![[Pasted image 20251022133430.png]]
@@ -389,4 +389,4 @@ After all blocks are processed: p(r) = acc
     - Specify in your report which tool (OpenSSL or age) was used in each case and how
 
 
-next lesson [[7 CS - Asymmetric encryption]]
+next lesson [[7 CS  Lower Level - Asymmetric encryption]]
