@@ -45,13 +45,13 @@ Questo numero $x$ è l'inverso di $a$ modulo $m$, indicato come $a^{-1}$.
 
 Questa capacità è la pietra angolare di molti sistemi crittografici a chiave pubblica.
 
-- **Generazione Chiavi RSA:** L'EEA è **essenziale** per la generazione delle chiavi RSA. Viene utilizzato per calcolare l'esponente privato $d$ partendo dall'esponente pubblico $e$ e dal [[Euler's totient function]] $\phi(n)$.
+- **Generazione Chiavi [[RSA]]:** L'EEA è **essenziale** per la generazione delle chiavi RSA. Viene utilizzato per calcolare l'esponente privato $d$ partendo dall'esponente pubblico $e$ e dal [[Euler's totient function]] $\phi(n)$.
     
     - Si deve risolvere l'equazione: $e \cdot d \equiv 1 \pmod{\phi(n)}$.
         
     - Questa è una classica ricerca di inverso modulare. Si usa l'EEA per trovare l'inverso di $e$ modulo $\phi(n)$. Il coefficiente $x$ restituito dall'algoritmo è l'esponente privato $d$.
         
-- **Elliptic Curve Cryptography (ECC):** L'algoritmo è utilizzato anche in varie operazioni sui campi finiti necessarie per l'aritmetica della curva.
+- **[[Elliptic Curve Cryptography - ECC]]:** L'algoritmo è utilizzato anche in varie operazioni sui campi finiti necessarie per l'aritmetica della curva.
     
 
 ### L'Algoritmo EEA (Pseudocodice)

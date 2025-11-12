@@ -19,7 +19,7 @@
         
 3. **Inverso esistente:**
     
-    - Ogni elemento diverso da zero ha un **inverso moltiplicativo**.
+    - Ogni elemento diverso da zero ha un **[[Multiplicative Inverse|inverso moltiplicativo]]**.
         
 4. **Uso in crittografia:**
     

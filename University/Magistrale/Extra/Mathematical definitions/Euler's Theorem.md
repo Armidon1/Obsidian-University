@@ -1,6 +1,6 @@
 # 🧮 Teorema di Eulero (Crittografia/Teoria dei Numeri)
 
-Il **Teorema di Eulero** è un risultato fondamentale della teoria dei numeri che generalizza il _[[Fermat's Little Theorem|Piccolo Teorema di Fermat]]_.
+Il **Teorema di Eulero** è un risultato fondamentale della teoria dei numeri. Il _[[Fermat's Little Theorem|Piccolo Teorema di Fermat]]_ è un  caso specifico del Teorema di Eulero.                
 
 >[!Definizione]
 >Se due numeri interi positivi $a$ e $n$ sono **[[Coprime|coprimi]]** (cioè, il loro massimo comun divisore è 1, $\gcd(a, n) = 1$), allora:

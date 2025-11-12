@@ -57,7 +57,7 @@ Nota che:
     
 #### 1.2 Chiarimento: La Divisione Intera e il Resto
 
-Qui sorge spesso la confusione che hai menzionato. Quando calcoliamo `a mod M`, non stiamo eseguendo una divisione in virgola mobile (come `1 / 3 = 0.333...`), ma stiamo applicando l'**Algoritmo di Divisione Euclidea**.
+Qui sorge spesso la confusione che hai menzionato. Quando calcoliamo `a mod M`, non stiamo eseguendo una divisione in virgola mobile (come `1 / 3 = 0.333...`), ma stiamo applicando l'**[[Algoritmo di Divisione Euclidea]]**.
 
 L'algoritmo afferma che per ogni coppia di interi `a` (dividendo) e `M` (divisore, con `M > 0`), esistono e sono unici due interi `q` (quoziente) e `r` (resto) tali che:
 
@@ -102,7 +102,7 @@ Il calcolo modulare non sarebbe utile se non obbedisse a regole algebriche preci
 
 Questa proprietà è la chiave di volta dell'esponenziazione modulare. Ci dice che, per calcolare il modulo di un prodotto, non è necessario calcolare prima l'intero prodotto. Possiamo calcolare il modulo dei singoli fattori, moltiplicarli e _poi_ calcolare il modulo del risultato.
 
-Generalizzazione:
+Generalizzazione: 
 
 Questo si estende a potenze. Per esempio, $B^2 \bmod M$:
 
@@ -143,10 +143,44 @@ L'algoritmo diventa:
     
 2. Esegui un ciclo E volte:
     
-    Risultato = (Risultato * B) mod M
+    Risultato = (Risultato * B) mod M.
     
 3. `Risultato` è la risposta.
     
+
+Il punto chiave è che la variabile `Risultato` all'interno del ciclo **è già un valore ridotto modulo M** (o, più formalmente, appartiene alla classe di resto).
+
+Analizziamo l'algoritmo passo dopo passo per calcolare, ad esempio, `B^3 mod M`.
+
+1. **Inizio:** `Risultato = 1`.
+    
+2. **Ciclo 1 (per B¹):**
+    
+    - `Risultato = (Risultato * B) mod M = (1 * B) mod M = B mod M`
+        
+    - Ora `Risultato` **contiene `B mod M`**.
+        
+3. **Ciclo 2 (per B²):**
+    
+    - L'algoritmo esegue: `Risultato = (Risultato * B) mod M`.
+        
+    - Sostituiamo il valore di `Risultato` dal passo precedente: `Risultato = ( (B mod M) * B ) mod M`
+        
+    - Se ora applichiamo la _piena_ proprietà `(a*b) mod M = [(a mod M)*(b mod M)] mod M` a questa espressione, dove `a = (B mod M)` e `b = B`, otteniamo: `[ ( (B mod M) mod M) * (B mod M) ] mod M`
+        
+    - Ma `(B mod M) mod M` è semplicemente `B mod M`. Quindi l'espressione diventa: `[ (B mod M) * (B mod M) ] mod M`
+        
+    - Che è la definizione corretta di `B^2 mod M`.
+        
+4. **Ciclo 3 (per B³):**
+    
+    - L'algoritmo esegue: `Risultato = (Risultato * B) mod M`.
+        
+    - Il `Risultato` che stiamo usando ora contiene `B^2 mod M`.
+        
+    - Quindi stiamo calcolando: `( (B^2 mod M) * B ) mod M`.
+        
+    - Per la stessa logica di prima, questo è equivalente a `[ (B^2 mod M) * (B mod M) ] mod M`, che è la definizione corretta di `B^3 mod M`.
 
 **Vantaggio:** In ogni passaggio, il `Risultato` non supera mai `M-1` e la moltiplicazione `(Risultato * B)` non supera `M * B`. I numeri rimangono gestibili.
 
@@ -166,7 +200,7 @@ Ogni numero intero E può essere scritto in modo unico come somma di potenze di 
 
 Esempio: E = 13
 
-- In binario, `13` si scrive `1101₂`.
+- In binario, `13` si scrive `1101₂` ([[Conversione Decimale, Binario, Esadecimale#Da Decimale a Binario|vedi qui]]) .
     
 - Questo significa: `13 = (1 * 2³) + (1 * 2²) + (0 * 2¹) + (1 * 2⁰)`
     
@@ -175,15 +209,15 @@ Esempio: E = 13
 
 Ora, applichiamo questa scomposizione all'esponenziazione:
 
-B^13 = B^(8 + 4 + 1)
+$B^{13} = B^{(8 + 4 + 1)}$
 
 Per le proprietà delle potenze, questo equivale a:
 
-B^13 = B^8 * B^4 * B^1
+$B^{13} = B^8 * B^4 * B^1$
 
 #### 4.2 L'Efficienza dei "Quadrati Ripetuti"
 
-Hai giustamente notato che `B^E` è `B` moltiplicato per sé stesso `E` volte. Ma il metodo "by squaring" nota che non abbiamo bisogno di calcolare `B^8` facendo `B*B*B*B*B*B*B*B`.
+Il metodo "by squaring" nota che non abbiamo bisogno di calcolare `B^8` facendo `B*B*B*B*B*B*B*B`.
 
 Possiamo ottenere tutte le potenze di 2 (`B^1`, `B^2`, `B^4`, `B^8`, `B^16`, ...) in modo molto efficiente, "quadrando" ripetutamente il risultato precedente:
 
@@ -202,97 +236,87 @@ Per calcolare `B^13`, ci servono solo `B^1`, `B^4` e `B^8`. Possiamo ottenerli i
 
 Naturalmente, applichiamo il modulo `M` ad _ogni singolo passaggio_ per mantenere i numeri piccoli.
 
-#### 4.3 Algoritmo Pratico (Right-to-Left) e Esempio
+### 5.2 Analisi dell'Algoritmo (Implementazione "Right-to-Left")
 
-Calcoliamo **`3^13 (mod 7)`**.
+L'algoritmo si basa sulla scomposizione binaria dell'esponente. Ricordiamo che `B^13 = B^8 * B^4 * B^1`. L'algoritmo calcola sistematicamente tutte le potenze di due di `B` (quadrando ripetutamente) e moltiplica nel risultato finale solo quelle necessarie.
 
-- Base `B = 3`
+Analizziamo lo pseudocodice (basato sul C fornito) per comprenderne l'eleganza.
+
+**Pseudocodice:**
+```C
+Funzione fastModExp(base, esponente, modulo):
+  1. risultato = 1
+  2. base = base % modulo  // Pre-riduzione della base
+  
+  3. while (esponente > 0):
+  4.   // Controlla l'ultimo bit (il bit meno significativo)
+  5.   if (esponente è dispari): // (esponente & 1)
+  6.     risultato = (risultato * base) % modulo
+  
+  7.   // Quadrato della base per il prossimo ciclo
+  8.   base = (base * base) % modulo
+  
+  9.   // Sposta i bit dell'esponente a destra
+  10.  esponente = esponente >> 1 // (divisione intera per 2)
+  
+  11. return risultato
+```
+
+### 5.3 Spiegazione Dettagliata dei Passaggi
+
+L'algoritmo itera sui bit dell'esponente `E`, da destra a sinistra (dal bit 0 in su).
+
+1. **Variabile `risultato` (riga 1, 6):** Questa è l'accumulatore. Inizia da 1 (l'identità moltiplicativa) e accumula il prodotto delle potenze di `B` necessarie.
     
-- Esponente `E = 13`
+2. **Variabile `base` (riga 2, 8):** Questa variabile è la più critica. Non memorizza la `B` originale. Ad ogni ciclo, viene **sempre quadrata** (riga 8).
     
-- Modulo `M = 7`
+    - Al ciclo 0, contiene `B^1 (mod M)`.
+        
+    - Al ciclo 1, contiene `B^2 (mod M)`.
+        
+    - Al ciclo 2, contiene `B^4 (mod M)`.
+        
+    - Al ciclo `k`, contiene `B^(2^k) (mod M)`.
+        
+3. **Variabile `esponente` (riga 3, 10):** Agisce come un "cursore" sui bit.
+    
+    - **`while (esponente > 0)`:** Il ciclo continua finché ci sono bit da leggere.
+        
+    - **`esponente >> 1` (Right Shift):** Questa è una divisione intera per 2. In termini binari, "scarta" il bit più a destra e sposta tutti gli altri bit di una posizione a destra. Questo permette di esaminare un nuovo bit a ogni ciclo.
+        
+4. **Il Controllo `if (esponente è dispari)` (riga 5):**
+    
+    - Questo è il cuore della logica. Controllare se `esponente` è dispari equivale a controllare se il suo bit più a destra (bit 0) è un `1`.
+        
+    - **Se il bit è 1:** Significa che la potenza di `B` corrispondente a questo ciclo (memorizzata in `base`) è _necessaria_ per il calcolo finale. Viene quindi moltiplicata nel `risultato` (riga 6).
+        
+    - **Se il bit è 0:** La potenza corrente non serve, e il `risultato` non viene toccato.
+        
+
+### 5.4 Esempio (Trace)
+
+Calcoliamo **`3^13 (mod 7)`** usando questo algoritmo.
+
+- `base` iniziale = 3, `esponente` iniziale = 13, `risultato` iniziale = 1
+    
+- `E = 13` in binario è `1101₂`
     
 
-L'esponente `E = 13` in binario è `1101₂`.
+|**Ciclo while**|**esponente (Valore)**|**esponente (Binario)**|**if (esponente & 1)?**|**risultato**|**base (Potenza)**|
+|---|---|---|---|---|---|
+|Inizio|13|`110**1**`|-|1|3 (corrisponde a 3¹)|
+|1|13|`110**1**`|**Sì (1)**|`(1 * 3) % 7 = 3`|`(3 * 3) % 7 = 2`|
+|2|6|`11**0**`|No (0)|3|`(2 * 2) % 7 = 4`|
+|3|3|`1**1**`|**Sì (1)**|`(3 * 4) % 7 = 5`|`(4 * 4) % 7 = 2`|
+|4|1|`**1**`|**Sì (1)**|`(5 * 2) % 7 = 3`|`(2 * 2) % 7 = 4`|
+|5|0|``|Fine (0 > 0 è Falso)|||
 
-L'algoritmo procede esaminando i bit di E da destra a sinistra (dal bit 0 al bit 3).
+**Risultato Finale:** `3`
 
-Manteniamo due variabili:
+Questo algoritmo ha eseguito 4 cicli (il numero di bit di 13) e non ha mai gestito numeri più grandi di `(5*2)` o `(4*4)`.
 
-1. `Risultato`: Il prodotto finale (inizia a 1).
-    
-2. `Potenza`: La potenza di `B` corrente (`B^1`, `B^2`, `B^4`, ...) (inizia con `B mod M`).
-    
+---
 
-**Inizio:**
-
-- `Risultato = 1`
-    
-- `Potenza = 3 mod 7 = 3`
-    
-
-**Ciclo (basato sui bit di 1101₂):**
-
-1. **Bit 0 (è 1):** `110**1**₂`
-    
-    - Il bit è 1, quindi moltiplichiamo `Risultato` per la `Potenza` attuale.
-        
-    - `Risultato = (Risultato * Potenza) mod 7 = (1 * 3) mod 7 = 3`
-        
-    - Aggiorniamo `Potenza` quadrandola per il prossimo ciclo.
-        
-    - `Potenza = (Potenza * Potenza) mod 7 = (3 * 3) mod 7 = 9 mod 7 = 2`
-        
-2. **Bit 1 (è 0):** `11**0**1₂`
-    
-    - Il bit è 0, quindi _non_ moltiplichiamo `Risultato`.
-        
-    - `Risultato = 3` (rimane invariato)
-        
-    - Aggiorniamo `Potenza` quadrandola.
-        
-    - `Potenza = (Potenza * Potenza) mod 7 = (2 * 2) mod 7 = 4`
-        
-3. **Bit 2 (è 1):** `1**1**01₂`
-    
-    - Il bit è 1, quindi moltiplichiamo `Risultato`.
-        
-    - `Risultato = (Risultato * Potenza) mod 7 = (3 * 4) mod 7 = 12 mod 7 = 5`
-        
-    - Aggiorniamo `Potenza` quadrandola.
-        
-    - `Potenza = (Potenza * Potenza) mod 7 = (4 * 4) mod 7 = 16 mod 7 = 2`
-        
-4. **Bit 3 (è 1):** `**1**101₂`
-    
-    - Il bit è 1, quindi moltiplichiamo `Risultato`.
-        
-    - `Risultato = (Risultato * Potenza) mod 7 = (5 * 2) mod 7 = 10 mod 7 = 3`
-        
-    - Aggiorniamo `Potenza` (anche se il ciclo finisce, per completezza).
-        
-    - `Potenza = (Potenza * Potenza) mod 7 = (2 * 2) mod 7 = 4`
-        
-
-Fine:
-
-Il ciclo è terminato. Il valore finale di Risultato è 3.
-
-Quindi, `3^13 mod 7 = 3`.
-
-Verifica:
-
-3^13 = 1.594.323
-
-1.594.323 / 7 = 227.760,42...
-
-227.760 * 7 = 1.594.320
-
-1.594.323 - 1.594.320 = 3.
-
-Il risultato è corretto.
-
-Come vedi, l'algoritmo ha eseguito solo 4 cicli (uno per bit) e i numeri più grandi gestiti sono stati `5*2=10` o `4*4=16`. Non abbiamo mai avuto bisogno di calcolare `1.594.323`.
 
 ---
 
@@ -308,6 +332,117 @@ Come vedi, l'algoritmo ha eseguito solo 4 cicli (uno per bit) e i numeri più gr
     
 5. **Come Funziona:** Calcola solo le potenze di `B` che sono potenze di 2 (es. `B^1, B^2, B^4, B^8...`) applicando il modulo a ogni quadratura. Poi, moltiplica tra loro solo le potenze che corrispondono ai bit "1" dell'esponente `E`.
 
+## Elenco Proprietà Fondamentali dell'Aritmetica Modulare
+
+L'aritmetica modulare, definita dalla relazione di congruenza, non sarebbe utile se non obbedisse a un insieme coerente di regole. Queste proprietà ci permettono di trattare le congruenze in modo algebricamente simile alle equazioni standard.
+
+### Sezione 1: Proprietà Fondamentali (Relazione di Equivalenza)
+
+La relazione di congruenza $a \equiv b \pmod M$ è una **relazione di equivalenza**, il che significa che possiede le seguenti tre proprietà:
+
+1. Proprietà Riflessiva: Per ogni intero $a$:
+    
+    $$a \equiv a \pmod M$$
+    
+2. Proprietà Simmetrica: Se $a \equiv b \pmod M$, allora:
+    
+    $$b \equiv a \pmod M$$
+    
+3. Proprietà Transitiva: Se $a \equiv b \pmod M$ e $b \equiv c \pmod M$, allora:
+    
+    $$a \equiv c \pmod M$$
+    
+
+### Sezione 2: Compatibilità con le Operazioni Algebriche
+
+La potenza della congruenza risiede nel fatto che è **compatibile con le operazioni aritmetiche** di addizione, sottrazione e moltiplicazione.
+
+Se abbiamo due congruenze:
+
+$a \equiv b \pmod M$
+
+$c \equiv d \pmod M$
+
+Allora valgono le seguenti proprietà:
+
+1. Compatibilità con l'Addizione:
+    
+    $$a + c \equiv b + d \pmod M$$
+    
+    (In breve: puoi sommare le congruenze).
+    
+2. Compatibilità con la Sottrazione:
+    
+    $$a - c \equiv b - d \pmod M$$
+    
+    (Puoi sottrarre le congruenze).
+    
+3. Compatibilità con la Moltiplicazione:
+    
+    $$a \times c \equiv b \times d \pmod M$$
+    
+    (Puoi moltiplicare le congruenze).
+    
+
+### Sezione 3: Regola di Sostituzione e Potenze
+
+Questa sezione generalizza le proprietà della Sezione 2 ed è quella che hai appena utilizzato.
+
+1. **Moltiplicazione per una Costante:** Un corollario diretto della proprietà di moltiplicazione è che puoi moltiplicare entrambi i lati di una congruenza per lo stesso intero $k$:
+    
+    > Se $a \equiv b \pmod M$, allora $a \cdot k \equiv b \cdot k \pmod M$
+    
+2. **Esponenziazione (o Congruenza di Potenze):** Questa è la proprietà che hai invocato. Applicando ripetutamente la proprietà di moltiplicazione (Sezione 2.3) a se stessa, si ottiene:
+    
+    > Se $a \equiv b \pmod M$, allora per ogni intero $k \ge 1$:
+    > 
+    > $$a^k \equiv b^k \pmod M$$
+    
+    È esattamente per questo che, avendo stabilito $2^7 \equiv 1 \pmod{127}$, possiamo _immediatamente_ concludere che $(2^7)^{10} \equiv (1)^{10} \pmod{127}$.
+    
+3. **Principio di Sostituzione Generale (Funzioni Polinomiali):** La regola si estende a qualsiasi polinomio $P(x)$ con coefficienti interi.
+    
+    > Se $a \equiv b \pmod M$, allora $P(a) \equiv P(b) \pmod M$
+    
+
+### Sezione 4: Proprietà Avanzate (Cancellazione e Teoremi)
+
+1. Legge di Cancellazione (Attenzione alla Divisione):
+    
+    Nell'algebra standard, se $a \cdot c = b \cdot c$ (con $c \neq 0$), si può "cancellare" $c$. Nell'aritmetica modulare, questo è falso in generale.
+    
+    - Esempio errato: $10 \equiv 4 \pmod 6$ (entrambi sono $\equiv 4$).
+        
+        $5 \cdot 2 \equiv 2 \cdot 2 \pmod 6$.
+        
+        Se cancellassimo il 2, otterremmo $5 \equiv 2 \pmod 6$, che è falso.
+        
+    
+    La **legge di cancellazione corretta** richiede una condizione aggiuntiva:
+    
+    > Se $a \cdot c \equiv b \cdot c \pmod M$ e $\text{MCD}(c, M) = 1$ (cioè $c$ e $M$ sono coprimi),
+    > 
+    > allora si può cancellare $c$ e $a \equiv b \pmod M$.
+    
+2. **Teoremi di Riduzione dell'Esponente:** Come visto nell'esercizio, questi teoremi ci permettono di semplificare gli esponenti.
+    
+    - Piccolo Teorema di Fermat: Se $p$ è un numero primo e $p$ non divide $a$:
+        
+        $$a^{p-1} \equiv 1 \pmod p$$
+        
+    - Teorema di Eulero (Generalizzazione): Se $\text{MCD}(a, M) = 1$:
+        
+        $$a^{\phi(M)} \equiv 1 \pmod M$$
+        
+3. Proprietà di Riduzione dell'Esponente (Il "Perché" dell'Esercizio):
+    
+    Una conseguenza diretta dei teoremi di Fermat ed Eulero è la regola computazionale più importante per l'esponenziazione:
+    
+    > Se $\text{MCD}(a, M) = 1$, allora per qualsiasi esponente $E$:
+    > 
+    > $$a^E \equiv a^{E \pmod{\phi(M)}} \pmod M$$
+    
+    Questo è il motivo per cui, per calcolare $2^{200} \pmod{127}$, abbiamo ridotto l'esponente $200$ modulo $\phi(127) = 126$, ottenendo $2^{74}$.
 
 # Eserciziario di Aritmetica Modulare ed Esponenziazione
 
@@ -597,3 +732,357 @@ Questa sezione implementa l'algoritmo efficiente `O(log E)`. Si richiede di calc
 - **Risultato:** Il valore finale del `Risultato` è 21.
     
     > `123^32 mod 100 = 21`
+    
+
+
+
+---
+
+## Sezione 6: Esercizi sull'Algoritmo Binario
+
+Si richiede di risolvere i seguenti problemi utilizzando il metodo di esponenziazione rapida (binario). Si consiglia di produrre una tabella di _trace_ (come quella nell'Esempio 5.4) per mostrare l'evoluzione delle variabili `risultato`, `base` ed `esponente`.
+
+### Esercizi Proposti
+
+- **Esercizio 6.1:** Calcolare `3^10 mod 11`
+    
+- **Esercizio 6.2:** Calcolare `15^9 mod 17`
+    
+- **Esercizio 6.3:** Calcolare `7^16 mod 13` (Nota: questo è un caso particolare interessante)
+    
+
+---
+
+---
+
+## Soluzioni Svolte (Esercizi Sezione 6)
+
+### Soluzione 6.1: `3^10 mod 11`
+
+- `base` iniziale = 3, `esponente` iniziale = 10, `risultato` iniziale = 1
+    
+- `E = 10` in binario è `1010₂`
+    
+
+|**Ciclo while**|**esponente**|**esponente (Binario)**|**if (dispari)?**|**risultato**|**base**|
+|---|---|---|---|---|---|
+|Inizio|10|`101**0**`|-|1|3|
+|1|10|`101**0**`|No (0)|1|`(3 * 3) % 11 = 9`|
+|2|5|`10**1**`|**Sì (1)**|`(1 * 9) % 11 = 9`|`(9 * 9) % 11 = 81 % 11 = 4`|
+|3|2|`1**0**`|No (0)|9|`(4 * 4) % 11 = 16 % 11 = 5`|
+|4|1|`**1**`|**Sì (1)**|`(9 * 5) % 11 = 45 % 11 = 1`|`(5 * 5) % 11 = 25 % 11 = 3`|
+|5|0|``|Fine|||
+
+**Risultato Finale:** `1`
+
+---
+
+### Soluzione 6.2: `15^9 mod 17`
+
+- Passo 0 (Semplificazione): 15 mod 17.
+    
+    Possiamo notare che 15 ≡ -2 (mod 17). Calcolare (-2)^9 mod 17 è più facile.
+    
+    - `(-2)^9` è negativo. `(-2)^9 = -512`.
+        
+    - Calcoliamo `-512 mod 17`.
+        
+    - `-512 = (-31) * 17 + 15`. (Oppure: `512 = 30 * 17 + 2`, quindi `512 mod 17 = 2`. Poiché `(-512) mod 17` è `(-2) mod 17`, il risultato è `17-2 = 15`).
+        
+- **Applichiamo l'algoritmo standard (con `B=15`):**
+    
+- `base` iniziale = 15, `esponente` iniziale = 9, `risultato` iniziale = 1
+    
+- `E = 9` in binario è `1001₂`
+    
+
+|**Ciclo while**|**esponente**|**esponente (Binario)**|**if (dispari)?**|**risultato**|**base**|
+|---|---|---|---|---|---|
+|Inizio|9|`100**1**`|-|1|15|
+|1|9|`100**1**`|**Sì (1)**|`(1 * 15) % 17 = 15`|`(15 * 15) % 17 = 225 % 17 = 4`|
+|2|4|`10**0**`|No (0)|15|`(4 * 4) % 17 = 16 % 17 = 16`|
+|3|2|`1**0**`|No (0)|15|`(16 * 16) % 17 = (-1 * -1) % 17 = 1`|
+|4|1|`**1**`|**Sì (1)**|`(15 * 1) % 17 = 15`|`(1 * 1) % 17 = 1`|
+|5|0|``|Fine|||
+
+**Risultato Finale:** `15`
+
+---
+
+### Soluzione 6.3: `7^16 mod 13`
+
+- `base` iniziale = 7, `esponente` iniziale = 16, `risultato` iniziale = 1
+    
+- `E = 16` in binario è `10000₂`
+    
+
+|**Ciclo while**|**esponente**|**esponente (Binario)**|**if (dispari)?**|**risultato**|**base**|
+|---|---|---|---|---|---|
+|Inizio|16|`1000**0**`|-|1|7|
+|1|16|`1000**0**`|No (0)|1|`(7 * 7) % 13 = 49 % 13 = 10`|
+|2|8|`100**0**`|No (0)|1|`(10 * 10) % 13 = 100 % 13 = 9`|
+|3|4|`10**0**`|No (0)|1|`(9 * 9) % 13 = 81 % 13 = 3`|
+|4|2|`1**0**`|No (0)|1|`(3 * 3) % 13 = 9`|
+|5|1|`**1**`|**Sì (1)**|`(1 * 9) % 13 = 9`|`(9 * 9) % 13 = 3`|
+|6|0|``|Fine|||
+
+Risultato Finale: 9
+
+(Nota: L'algoritmo ha calcolato 7^1, 7^2, 7^4, 7^8, 7^16 e ha moltiplicato risultato (che era 1) solo per 7^16 (mod 13)).
+
+---
+## Esercizi di Esponenziazione Modulare con Fermat ed Eulero
+
+Si risolvano le seguenti congruenze utilizzando, ove appropriato, il Piccolo Teorema di Fermat o il Teorema di Eulero per ridurre l'esponente, e le proprietà di congruenza per semplificare il calcolo.
+
+### Esercizi Proposti
+
+1. **Esercizio 1 (Fermat):** Calcolare $3^{100} \pmod{13}$
+    
+2. **Esercizio 2 (Fermat e Cicli Brevi):** Calcolare $7^{1002} \pmod{19}$
+    
+3. **Esercizio 3 (Eulero - Semplice):** Calcolare $3^{80} \pmod{20}$
+    
+4. **Esercizio 4 (Eulero - Complesso):** Calcolare $11^{123} \pmod{30}$
+    
+
+---
+
+## Soluzioni Svolte
+
+### Soluzione 1: $3^{100} \pmod{13}$
+
+1. **Analisi:**
+    
+    - Base $a = 3$, Esponente $E = 100$, Modulo $M = 13$.
+        
+    - Il modulo 13 è un **numero primo**.
+        
+    - Controlliamo la coprimalità: $\text{MCD}(3, 13) = 1$.
+        
+    - Possiamo applicare il **Piccolo Teorema di Fermat**.
+        
+2. **Applicazione di Fermat:**
+    
+    - Il teorema afferma $a^{p-1} \equiv 1 \pmod p$.
+        
+    - $p-1 = 13 - 1 = 12$.
+        
+    - Quindi, $3^{12} \equiv 1 \pmod{13}$.
+        
+3. **Riduzione Esponente:**
+    
+    - Riduciamo l'esponente $E=100$ modulo $\phi(13)=12$.
+        
+    - Usiamo la divisione euclidea: $100 = q \cdot 12 + r$.
+        
+    - $100 = 8 \times 12 + 4$. (Poiché $8 \times 12 = 96$).
+        
+    - L'esponente $100$ è congruente a $4 \pmod{12}$.
+        
+4. **Calcolo:**
+    
+    - $3^{100} = 3^{(12 \times 8 + 4)} = (3^{12})^8 \times 3^4$
+        
+    - Applichiamo il modulo:
+        
+        $$\equiv (1)^8 \times 3^4 \pmod{13}$$
+        
+        $$\equiv 3^4 \pmod{13}$$
+        
+    - Ora calcoliamo $3^4$:
+        
+        $3^4 = 81$
+        
+    - Calcoliamo $81 \pmod{13}$:
+        
+        $81 = 6 \times 13 + 3$. (Poiché $6 \times 13 = 78$).
+        
+    - $81 \equiv 3 \pmod{13}$.
+        
+
+**Risultato:** $3^{100} \pmod{13} = 3$.
+
+---
+
+### Soluzione 2: $7^{1002} \pmod{19}$
+
+1. **Analisi:**
+    
+    - Base $a = 7$, Esponente $E = 1002$, Modulo $M = 19$.
+        
+    - Il modulo 19 è un **numero primo**.
+        
+    - $\text{MCD}(7, 19) = 1$. Applichiamo Fermat.
+        
+2. **Applicazione di Fermat:**
+    
+    - $p-1 = 19 - 1 = 18$.
+        
+    - Quindi, $7^{18} \equiv 1 \pmod{19}$.
+        
+3. **Riduzione Esponente:**
+    
+    - Riduciamo $E=1002$ modulo $\phi(19)=18$.
+        
+    - $1002 \div 18$. Facciamo $18 \times 50 = 900$. Restano 102. $18 \times 5 = 90$. Restano 12.
+        
+    - $1002 = 18 \times 55 + 12$.
+        
+    - L'esponente $1002$ è congruente a $12 \pmod{18}$.
+        
+4. **Calcolo:**
+    
+    - $7^{1002} \equiv 7^{12} \pmod{19}$.
+        
+    - Ora dobbiamo calcolare $7^{12}$. Usiamo l'esponenziazione rapida (quadrati):
+        
+        - $7^1 \equiv 7$
+            
+        - $7^2 \equiv 49 \equiv 11 \pmod{19}$ (perché $49 = 2 \times 19 + 11$)
+            
+        - $7^4 \equiv (7^2)^2 \equiv 11^2 \equiv 121 \pmod{19}$.
+            
+            - $121 = 6 \times 19 + 7$. (perché $6 \times 19 = 114$).
+                
+            - $7^4 \equiv 7 \pmod{19}$.
+                
+        - $7^8 \equiv (7^4)^2 \equiv 7^2 \equiv 11 \pmod{19}$.
+            
+    - L'esponente 12 è $8 + 4$.
+        
+        $7^{12} = 7^8 \times 7^4$
+        
+        $$\equiv 11 \times 7 \pmod{19}$$
+        
+        $$\equiv 77 \pmod{19}$$
+        
+    - Calcoliamo $77 \pmod{19}$:
+        
+        $77 = 4 \times 19 + 1$. (Poiché $4 \times 19 = 76$).
+        
+    - $77 \equiv 1 \pmod{19}$.
+        
+
+**Risultato:** $7^{1002} \pmod{19} = 1$.
+
+- Metodo Alternativo (Astuto): Se calcolando le potenze notiamo $7^2 \equiv 11$ e $7^3 \equiv 7 \times 11 \equiv 77 \equiv 1$. Abbiamo trovato un ciclo breve! $7^3 \equiv 1$.
+    
+    L'esponente è $1002$. $1002$ è divisibile per 3 (somma delle cifre 1+2=3).
+    
+    $1002 = 3 \times 334$.
+    
+    $7^{1002} = (7^3)^{334} \equiv (1)^{334} \equiv 1$.
+    
+
+---
+
+### Soluzione 3: $3^{80} \pmod{20}$
+
+1. **Analisi:**
+    
+    - Base $a = 3$, Esponente $E = 80$, Modulo $M = 20$.
+        
+    - Il modulo 20 **non** è primo. Non possiamo usare Fermat.
+        
+    - Controlliamo la coprimalità: $\text{MCD}(3, 20) = 1$. (3 è primo, 20 non è div. per 3).
+        
+    - Possiamo applicare il **Teorema di Eulero**.
+        
+2. **Applicazione di Eulero:**
+    
+    - Dobbiamo calcolare $\phi(20)$.
+        
+    - Fattorizzazione di 20: $20 = 2^2 \times 5$.
+        
+    - $\phi(20) = \phi(2^2) \times \phi(5)$
+        
+    - $\phi(p^k) = p^k - p^{k-1}$. $\phi(2^2) = 2^2 - 2^1 = 4 - 2 = 2$.
+        
+    - $\phi(p) = p-1$. $\phi(5) = 4$.
+        
+    - $\phi(20) = 2 \times 4 = 8$.
+        
+    - Il teorema afferma $a^{\phi(M)} \equiv 1 \pmod M$, quindi $3^8 \equiv 1 \pmod{20}$.
+        
+3. **Riduzione Esponente:**
+    
+    - Riduciamo $E=80$ modulo $\phi(20)=8$.
+        
+    - $80 \div 8 = 10$ con resto $0$.
+        
+    - L'esponente $80$ è congruente a $0 \pmod 8$.
+        
+4. **Calcolo:**
+    
+    - $3^{80} = 3^{(8 \times 10)} = (3^8)^{10}$
+        
+    - Applichiamo il modulo:
+        
+        $$\equiv (1)^{10} \pmod{20}$$
+        
+        $$\equiv 1 \pmod{20}$$
+        
+    - (Nota: un esponente $0$ implica il risultato $1$, poiché $a^0=1$).
+        
+
+**Risultato:** $3^{80} \pmod{20} = 1$.
+
+---
+
+### Soluzione 4: $11^{123} \pmod{30}$
+
+1. **Analisi:**
+    
+    - Base $a = 11$, Esponente $E = 123$, Modulo $M = 30$.
+        
+    - Modulo 30 non è primo.
+        
+    - Controlliamo la coprimalità: $\text{MCD}(11, 30) = 1$.
+        
+    - Possiamo applicare il **Teorema di Eulero**.
+        
+2. **Applicazione di Eulero:**
+    
+    - Calcoliamo $\phi(30)$.
+        
+    - $30 = 2 \times 3 \times 5$.
+        
+    - $\phi(30) = \phi(2) \times \phi(3) \times \phi(5)$
+        
+    - $\phi(30) = (2-1) \times (3-1) \times (5-1) = 1 \times 2 \times 4 = 8$.
+        
+    - Il teorema afferma $11^8 \equiv 1 \pmod{30}$.
+        
+3. **Riduzione Esponente:**
+    
+    - Riduciamo $E=123$ modulo $\phi(30)=8$.
+        
+    - $123 \div 8$. $120 = 15 \times 8$.
+        
+    - $123 = 15 \times 8 + 3$.
+        
+    - L'esponente 123 è congruente a $3 \pmod 8$.
+        
+4. **Calcolo:**
+    
+    - $11^{123} \equiv 11^3 \pmod{30}$.
+        
+    - Ora calcoliamo $11^3$:
+        
+        - $11^1 \equiv 11 \pmod{30}$
+            
+        - $11^2 \equiv 121 \pmod{30}$. $121 = 4 \times 30 + 1$.
+            
+        - $11^2 \equiv 1 \pmod{30}$.
+            
+    - (Abbiamo trovato un ciclo breve di 2! Possiamo usarlo.)
+        
+        $11^3 = 11^2 \times 11^1$
+        
+        $$\equiv 1 \times 11 \pmod{30}$$
+        
+        $$\equiv 11 \pmod{30}$$
+        
+
+**Risultato:** $11^{123} \pmod{30} = 11$.

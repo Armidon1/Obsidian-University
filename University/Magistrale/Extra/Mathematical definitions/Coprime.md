@@ -9,6 +9,7 @@
 - Il massimo comune divisore (GCD) è 1:  $$\text{GCD}(a, b) = 1  $$
 - Non è necessario che siano primi tra loro; devono solo **non avere fattori comuni**.
     
+- Se un numero $a$ è prime (primo), allora è comprimo con qualsiasi $b$ tale che $1 \le b<a$.
 
 ---
 
