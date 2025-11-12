@@ -28,7 +28,7 @@ A hash function _h: $D \Rightarrow R$_ is called _**weakly collision resistant**
 
  - **Hard** → computationally ***infeasible***, which means that it would take too long (years or more)
 - Birthday bound shows that short fingerprints (≤160 bits) are feasible today
-	- SHA-1 (we saw it in [[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1#SHA-1 basics]]) was a cryptographic function until 2014
+	- [[SHA-1]]  (we saw it in [[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1#SHA-1 basics]]) was a cryptographic function until 2014
 
 **Note:** in SHA we consider not only the original message m, but also the padding. different padding creates different hashes. so we care, not only the message's bits but also how we pad. For instance, OpenSSL use a padding with a standard called PKCS#7 (the standard number 7), which says that the padding, for example, we want to add 6 padding bytes, each byte contains the number 6.   
 
