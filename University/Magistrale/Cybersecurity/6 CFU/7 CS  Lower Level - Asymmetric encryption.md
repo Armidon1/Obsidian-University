@@ -1813,9 +1813,8 @@ While the process is complex, the core idea is:
         
 4. **Mask:** Create a "Data Block" (`DB`) containing the salt and padding. $$DB = PS || 0x01 || salt$$
    - PS = zero bytes (padding)
-   - |PS| = |N|8 - hLen - saltLen - 2
-    
-- |PS| = |N|8 - hLen - saltLen - 2
+   - $|PS| = |N|_8 - hLen - saltLen - 2$
+   
 1. Then, use a **Mask Generation Function (MGF)** (which is a hash-based function) to "stretch" $H'$ into a mask. This mask is XORed with the `DB`.
     
     - $maskedDB = DB \oplus \text{MGF1}(H')$`
@@ -1853,6 +1852,15 @@ The verifier essentially reverses the process to check if all the components mat
         
 7. **Verify:** The signature is valid **if and only if** the recovered $H'$ from the signature matches the re-computed `H'_check`.
     
+
+---
+## Why prefer PSS 
+
+- Probabilistic → immune to many attacks targeting PKCS#1 v1.5
+    
+- Flexibility in choosing hash and salt lengths
+    
+- Recommended by modern standards (e.g., FIPS 186-5, TLS 1.3, OpenPGP)
 
 ---
 
