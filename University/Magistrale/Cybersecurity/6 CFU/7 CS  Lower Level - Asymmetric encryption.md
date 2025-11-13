@@ -1252,9 +1252,7 @@ To find the private key $d$, we must solve $d \cdot e \equiv 1 \pmod{\phi(N)}$. 
 
 - **Pseudocode:**
     
-    C
-    
-    ```
+    ```C
     /*
      * Finds the modular multiplicative inverse of e modulo phi.
      * Returns d such that (d * e) % phi == 1
@@ -1289,7 +1287,7 @@ To find the private key $d$, we must solve $d \cdot e \equiv 1 \pmod{\phi(N)}$. 
 
 ## Encoding: Bridging Text and Numbers
 
-RSA primitives (like RSAEP/RSADP) only operate on numbers, but messages are streams of bytes (text, files, etc.). We need a standard way to convert between them.
+RSA primitives (like [[RSAEP]]/[[RSADP]]) only operate on numbers, but messages are streams of bytes (text, files, etc.). We need a standard way to convert between them.
 
 - **OS2IP (Octet-Stream to Integer Primitive):**
     
@@ -1358,19 +1356,19 @@ This is the original, widely-used padding standard.
         
     - `M' = 0x00 || 0x02 || [153 random non-zero bytes] || 0x00 || [100-byte message]`
         
-
-### Full Encryption Process (RSAES)
+This helps for being protected by some [[Forgery]] attacks. 
+### Full Encryption Process ([[RSAES]])
 
 1. **Pad:** Create the padded message $M'$ according to the v1.5 scheme.
     
 2. **Convert:** Create the integer $m = \text{OS2IP}(M')$.
     
-3. **Encrypt (Primitive):** Compute the ciphertext integer $c = m^e \pmod N$. (This is the **RSAEP**).
+3. **Encrypt (Primitive):** Compute the ciphertext integer $c = m^e \pmod N$. (This is the **[[RSAEP]]**).
     
 4. **Convert:** Convert the integer $c$ back to bytes: $C = \text{I2OSP}(c)$.
     
 
-Decryption (**RSADP**) is the reverse: $C \rightarrow c \rightarrow m \rightarrow M'$. The receiver then parses $M'$ to find the separator `0x00` and extract the original message $M$.
+Decryption (**[[RSADP]]**) is the reverse: $C \rightarrow c \rightarrow m \rightarrow M'$. The receiver then parses $M'$ to find the separator `0x00` and extract the original message $M$.
 
 ### Security Warning: PKCS#1 v1.5
 
@@ -1391,11 +1389,11 @@ To address the severe security flaws in v1.5, a new padding scheme was created: 
 
 ## Introduction to OAEP
 
-**OAEP** stands for **Optimal Asymmetric Encryption Padding**.
+**OAEP** stands for **Optimal Asymmetric Encryption Padding**. This is the PKCS#1 v2.2. 
 
 - What is it?
     
-    OAEP is a secure padding scheme designed to be used with RSA encryption. It is not an encryption algorithm itself, but rather a "pre-processor" for the message.
+    OAEP is a secure padding scheme designed to be used with RSA encryption. It is not an encryption algorithm itself, Remember what is a "Perfect Cipher" 
     
 - Purpose:
     
@@ -1403,9 +1401,9 @@ To address the severe security flaws in v1.5, a new padding scheme was created: 
     
 - **Key Features:**
     
-    - **Prevents Chosen-Ciphertext Attacks (CCA):** This is its primary advantage over the older PKCS#1 v1.5 padding.
+    - **Prevents [[Chosen-Ciphertext Attack (CCA)]]:** This is its primary advantage over the older PKCS#1 v1.5 padding.
         
-    - **Probabilistic Encryption:** It uses a random **seed** and a **Mask Generation Function (MGF)**.
+    - **Probabilistic Encryption:** It uses a random **seed** and a **Mask Generation Function (MGF1)**.
         
     - **Semantic Security:** Because of the random seed, encrypting the _same message_ multiple times will produce a _different ciphertext_ every time.
         
@@ -1413,14 +1411,18 @@ To address the severe security flaws in v1.5, a new padding scheme was created: 
         
 - Use Case:
     
-    The full, secure encryption process is Ciphertext = RSA_Encrypt(OAEP(message, seed)). It is the recommended standard for all new RSA-based confidentiality applications.
+    The full, secure encryption process is: 
+  ```C
+    Ciphertext = RSA_Encrypt(OAEP(message, seed)). 
+   ```
+    It is the recommended standard for all new RSA-based confidentiality applications. this kind of usage of RSA is recognised as [[RSA-OAEP]]. 
     
 
 ---
 
 ## OAEP: Background and Security Goals
 
-OAEP was introduced by Bellare and Rogaway in 1994 to fix the known vulnerabilities of "textbook" RSA.
+OAEP was introduced by Bellare and Rogaway in 1994 to fix the known vulnerabilities of "textbook" RSA. See the original resource: "Optimal Asymmetric Encryption - How to Encrypt with RSA" 1994, 1995 ([https://cseweb.ucsd.edu/~mihir/papers/oaep.pdf](https://cseweb.ucsd.edu/~mihir/papers/oaep.pdf "https://cseweb.ucsd.edu/~mihir/papers/oaep.pdf")).
 
 - **Random Oracles:** The original proof of security for OAEP models the internal hash functions, **G** and **H**, as "random oracles" (perfect, idealized hash functions). In practice, these are replaced by specific cryptographic hash functions (like SHA-256) and a Mask Generation Function (MGF).
     
@@ -1441,9 +1443,129 @@ OAEP is designed to achieve the highest practical level of security, IND-CCA2.
 
 OAEP (when implemented correctly) provides **IND-CCA2** security, which is the gold standard for public-key encryption.
 
+## PPT (Probabilistic Polynomial Time)
+
+Se un algoritmo probabilistico, che produce un output a partire da un imput e da un random string, se non gli inserisco un random string allora diventa un algoritmo deterministico. Allora la classe di algoritmi probabilistici sono più forti di quelli deterministici..
+
+### Analisi:
+
+> gli algoritmi probabilistici possono includere tutti gli algoritmi deterministici.
+
+Questo è vero! Un algoritmo deterministico è solo un caso speciale di algoritmo probabilistico che "ignora" la sua stringa casuale (o usa sempre la stessa).
+
+La tua seconda osservazione:
+
+> anche se non usiamo il random string, noi lo consideriamo comunque un output random.
+
+Qui c'è un piccolo malinteso.
+
+- Se un algoritmo è _probabilistico_ (come OAEP), **deve** usare la "random string" (il _seed_ casuale) per essere sicuro. Se non la usi, l'algoritmo diventa deterministico e perde tutte le sue garanzie di sicurezza.
+    
+- L'output **non** è random se non usi un input random.
+    
+
+Quando diciamo che l'**Avversario** è PPT (Probabilistic Polynomial Time), intendiamo due cose:
+
+1. **Polynomial Time:** Non può impiegare un miliardo di anni per trovare la risposta. Ha un tempo di calcolo "ragionevole".
+    
+2. **Probabilistic:** Anche l'Avversario può "lanciare monete", cioè usare la casualità per aiutarsi nel suo attacco.
+    
+
+Spero che questo chiarisca il ruolo del Challenger e lo scenario del gioco!
+
+Vuoi che esaminiamo perché l'algoritmo "textbook" RSA fallirebbe questo gioco?
+
+
+### Spiegazione Dettagliata (Passo-Passo)
+
+Ecco una descrizione più strutturata della fase di sfida che hai descritto:
+
+1. **Preparazione dell'Attacco:** L'**Adversary** (l'attaccante) sonda il sistema. Ha accesso a un **oracolo di decifratura** (e talvolta di cifratura), gestito dal Challenger, e lo usa per capire come funziona il sistema.
+    
+2. **Produzione della Sfida:** Quando si sente pronto, l'Adversary sceglie due messaggi distinti della stessa lunghezza, $m_0$ e $m_1$, che vuole provare a distinguere. Invia entrambi questi messaggi al **Challenger**.
+    
+3. **Il Lancio della Moneta:** Il **Challenger** riceve $m_0$ e $m_1$. Esegue il "toss a coin": sceglie un bit $b$ in modo perfettamente casuale (o 0 o 1).
+    
+4. **Creazione del Testo Cifrato di Sfida:** Il Challenger seleziona il messaggio $m_b$ (quindi $m_0$ se $b=0$, oppure $m_1$ se $b=1$). Cifra _solo quel messaggio_ usando la chiave pubblica, ottenendo il "ciphertext di sfida" $c_b$.
+    
+5. **Invio della Sfida:** Il Challenger invia $c_b$ all'Adversary.
+    
+
+
+### 1. Chi è il "Challenger" (Lo Sfidante)?
+
+Pensa al **Challenger** come all'**arbitro del gioco**.
+
+- È un'entità teorica (un computer nel nostro esperimento) che **imposta la sfida**.
+    
+- **Possiede le chiavi:** È lui che genera la coppia di chiavi (pubblica e privata) all'inizio.
+    
+- **Rappresenta l'utente "onesto":** Si comporta come un normale utente che cifra e decifra messaggi.
+    
+- **Fornisce gli "oracoli":** Quando l'attaccante chiede di cifrare o decifrare qualcosa (l'oracolo), è il Challenger che esegue l'operazione usando le chiavi che possiede.
+    
+
+### 2. Chi è l'"Adversary" (L'Avversario)?
+
+È l'**attaccante** (il "cattivo"). Il suo obiettivo è **vincere il gioco**, ovvero "rompere" la sicurezza del sistema.
+
+### 3. Cosa sta succedendo? (Il Gioco IND-CCA2)
+
+Il gioco che hai descritto serve a dimostrare l'**Indistinguibilità** (IND). L'obiettivo dell'Avversario è capire se riesce a **distinguere** tra la cifratura di due messaggi diversi.
+
+Ecco i passaggi esatti:
+
+1. **Fase di Preparazione (Fase 1 del CCA):**
+    
+    - L'**Avversario** può "imparare" il sistema.
+        
+    - Chiede all'**Oracolo** (gestito dal Challenger) di decifrare tutti i messaggi che vuole. Questa è la parte "Chosen-Ciphertext Attack" (CCA).
+        
+    - Il Challenger risponde onestamente a tutte le richieste.
+        
+2. **La Sfida (Il cuore del gioco):**
+    
+    - L'**Avversario** ora sceglie due messaggi qualsiasi della stessa lunghezza, $m_0$ e $m_1$. Pensa a $m_0$ = "Attacca all'alba" e $m_1$ = "Ritirata generale".
+        
+    - L'Avversario invia entrambi i messaggi al **Challenger**.
+        
+3. **Il Lancio della Moneta:**
+    
+    - Il **Challenger** riceve $m_0$ e $m_1$.
+        
+    - Fa esattamente quello che hai scritto: "toss a coin". Sceglie un bit casuale $b$ (che può essere 0 o 1).
+        
+    - Cifra **uno solo** dei due messaggi: $c_b = \text{Encrypt}(m_b)$.
+        
+    - Invia questo singolo testo cifrato, $c_b$ (chiamato il "challenge ciphertext"), all'Avversario.
+        
+4. **La Prova (Fase 2 del CCA):**
+    
+    - L'**Avversario** riceve $c_b$. Non sa se contiene $m_0$ o $m_1$.
+        
+    - Per scoprirlo, può continuare a fare domande all'Oracolo di decifratura (questa è la parte "adattiva" o "CCA2").
+        
+    - **Regola importante:** L'Avversario può chiedere di decifrare _qualsiasi cosa_, **tranne** l'esatto $c_b$ che ha appena ricevuto (sarebbe troppo facile!).
+        
+5. **L'Indovinello Finale:**
+    
+    - Alla fine, l'Avversario deve fare una scelta. Deve dire: "Il $c_b$ che mi hai mandato conteneva $m_0$ o $m_1$?"
+        
+
+### Come si vince (e cosa significa)?
+
+- **Sistema Insicuro (es. RSA "textbook"):** L'Avversario riesce a trovare un modo per indovinare correttamente con una probabilità molto più alta del 50%. Ha trovato una falla. Il sistema **perde**.
+    
+- **Sistema Sicuro (come OAEP):** Non importa quanto l'Avversario studi il sistema o quante domande faccia all'oracolo, non ottiene **nessuna informazione** utile. L'unica cosa che può fare è tirare a indovinare a caso. La sua probabilità di azzeccare è esattamente del 50% (come lanciare una moneta). Il sistema **vince**.
+    
+
+In sintesi: **il Challenger è l'arbitro che testa l'Avversario** per vedere se quest'ultimo sa distinguere tra due messaggi cifrati. Se l'Avversario non sa farlo (non fa meglio che tirare a indovinare), l'algoritmo è sicuro.
+
+
 ---
 
 ## The OAEP Scheme (Feistel Structure)
+![[Pasted image 20251113160151.png]]
 
 OAEP works by taking the message $m$ and a random seed $r$, and formatting them using a structure similar to a **Feistel network**.
 
@@ -1457,7 +1579,7 @@ OAEP works by taking the message $m$ and a random seed $r$, and formatting them 
         
     - $m$ = plaintext message
         
-    - $G, H$ = cryptographic hash functions (or MGFs)
+    - $G, H$ = cryptographic hash functions (or [[MGF]]s)
         
 - **Encryption (Padding) Process:**
     
@@ -1489,6 +1611,7 @@ OAEP works by taking the message $m$ and a random seed $r$, and formatting them 
             
     4. **Verify:** The receiver checks if the $k1$ padding bits are all zeros. If they are not, the message is rejected as invalid. This check is critical for security.
         
+Notice that, thanks to how in the scheme the randomness ins well integrated, the result is way more powerful compared to the PKCS#1 v1.5.
 
 ### "All-or-Nothing" Security
 
@@ -1506,8 +1629,9 @@ This Feistel structure creates an "all-or-nothing" property.
 ---
 
 ## RSAES-OAEP: The Full Process
+[[RSAES-OAEP]]
 
-**RSAES (RSA Encryption Scheme)** combines the OAEP padding with the RSA primitives.
+**[[RSAES]] (RSA Encryption Scheme)** combines the OAEP padding with the RSA primitives.
 
 - **Encryption:**
     
@@ -1545,12 +1669,13 @@ The use of a hash function (like SHA-256) in OAEP is critical.
     
 - It cryptographically links the message and the random seed, preventing attackers from manipulating the padding and the message independently.
     
+Fun fact: in this algorithm is considered still usefull [[SHA-1]] because somehow provides enough security.
 
 ---
 
 ## Summary
 
-- **RSA-OAEP (PKCS#1 v2.2)** offers significant and necessary security advantages over the old **PKCS#1 v1.5** standard.
+- **RSA-OAEP (PKCS#1 v2.2)** offers significant and necessary security advantages over the old **PKCS#1 v1.5** standard. 
     
 - Its **randomized padding** (using a seed and MGF) provides semantic security, preventing attackers from recognizing patterns.
     
@@ -1558,9 +1683,11 @@ The use of a hash function (like SHA-256) in OAEP is critical.
     
 - It is the preferred and modern standard for any application requiring high-security data confidentiality with RSA.
 
+Again: RSA is not used for [[Confidentiality]] but just for Key Exchange, which gives the opportunity to have [[Confidentiality]] with a [[Symmetric Encryption]]. 
+
 ---
 # RSA for Non-Repudiation
-
+THIS IS THE MOST IMPORTANT PART OF THIS COURSE. What happens if the adversary let you believe that his public key is the Bob's public key? The Adversary wins. So how can we be sure about the ownership of the public key? 
 ## What is Non-Repudiation?
 
 **Non-repudiation** is the assurance that someone cannot deny having performed a particular action or having sent a particular message. In digital communications, this means providing proof of the origin, authenticity, and integrity of data.
@@ -1569,18 +1696,18 @@ The use of a hash function (like SHA-256) in OAEP is critical.
 
 A digital signature provides three key security services:
 
-1. **Authentication:** Proof of who the sender is.
+1. **[[Authentication]]:** Proof of who the sender is.
     
-2. **Integrity:** Proof that the message was not altered in transit.
+2. **[[Integrity]]:** Proof that the message was not altered in transit.
     
-3. **Non-Repudiation:** The sender cannot later deny having signed the message.
+3. **[[Non-Repudiation]]:** The sender cannot later deny having signed the message.
     
 
 The RSA algorithm achieves this by reversing its encryption process:
 
-- **To Encrypt (Confidentiality):** You use the recipient's **Public Key**.
+- **To Encrypt ([[Confidentiality]]):** You use the recipient's **Public Key**.
     
-- **To Sign (Non-Repudiation):** You use your _own_ **Private Key**.
+- **To Sign ([[Non-Repudiation]]):** You use your _own_ **Private Key**.
     
 
 Because only the sender possesses the private key, a signature created with it serves as undeniable proof of origin. Anyone can then use the sender's public key to verify that the signature is valid.
@@ -1601,8 +1728,8 @@ This is the original and still widely used signature standard, though it is now 
         
 - **Key Feature:** It uses a **deterministic padding** format. This means signing the same message twice always produces the exact same signature, which is a known vulnerability.
     
-- **Standard:** The encoding method is called **EMSA** (Encoding Method for Signature with Appendix).
-    
+- **Standard:** The encoding method is called **EMSA** (Encoding Method for Signature with Appendix). 
+	- Preprocessing before signature
 
 ### v1.5 Signature Generation
 
@@ -1628,12 +1755,16 @@ This is the original and still widely used signature standard, though it is now 
     
     - $S = \text{EM}^d \pmod n$
         
-
+Full method named RSASSA (RSA+MSA)
 ### v1.5 Signature Verification
 
 1. **Hash:** The receiver hashes the original message $M$ to get $h$.
     
-2. **Encode:** The receiver _re-creates_ the expected encoded message, `EM_expected`, by following the same padding steps (using $h$ and its OID).
+2. **Encode:** The receiver _re-creates_ the expected encoded message, `
+   ```
+   EM_expected = EMSA-PKCS1-v1_5-ENCODE(h, |N|_8)
+   ```
+    by following the same padding steps (using $h$ and its OID).
     
 3. **Verify (Decrypt):** The receiver applies the RSA Verification Primitive (RSAVP) using the sender's **public key**.
     
@@ -1642,13 +1773,15 @@ This is the original and still widely used signature standard, though it is now 
 4. **Compare:** The signature is valid **if and only if** the recovered $\text{EM}'$ is identical to the `EM_expected`.
     
 
+Fun fact: Tampered means changed by the adversary, Forgery means successfully tampered
+
 ### Security Flaws of v1.5
 
 - **Deterministic:** The biggest flaw is that the padding is deterministic. This opens it up to practical attacks.
     
 - **Vulnerability:** It is vulnerable to **padding oracle attacks**. An attacker can trick a server into verifying modified signatures and, based on whether the server reports a "valid" or "invalid" signature, progressively forge a signature without ever knowing the private key.
     
-- **Status:** Due to these flaws, it is deprecated for new applications but is still widely used in legacy systems like TLS 1.2, S/MIME, and older code-signing standards.
+- **Status:** Due to these flaws, it is deprecated for new applications but is still widely used in legacy systems like TLS 1.2, [[S-MIME|S/MIME]], and older [[Code-Signing]] standards.
     
 
 ---
@@ -1676,17 +1809,22 @@ While the process is complex, the core idea is:
     
 3. **Combine:** Create a new hash $H'$ by hashing the original hash $H$ _and_ the random `salt` together.
     
-    - $H' = \text{Hash}(0x00... || H || \text{salt})$
+    - $H' = \text{Hash}(0x00...*8\ times || H || \text{salt})$
         
-4. **Mask:** Create a "Data Block" (`DB`) containing the salt and padding. Then, use a **Mask Generation Function (MGF)** (which is a hash-based function) to "stretch" $H'$ into a mask. This mask is XORed with the `DB`.
+4. **Mask:** Create a "Data Block" (`DB`) containing the salt and padding. $$DB = PS || 0x01 || salt$$
+   - PS = zero bytes (padding)
+   - |PS| = |N|8 - hLen - saltLen - 2
     
-    - `maskedDB = DB \oplus \text{MGF1}(H')`
+- |PS| = |N|8 - hLen - saltLen - 2
+1. Then, use a **Mask Generation Function (MGF)** (which is a hash-based function) to "stretch" $H'$ into a mask. This mask is XORed with the `DB`.
+    
+    - $maskedDB = DB \oplus \text{MGF1}(H')$`
         
-5. **Encode:** The final encoded message `EM` is built from the `maskedDB` and the hash $H'$.
+2. **Encode:** The final encoded message `EM` is built from the `maskedDB` and the hash $H'$.
     
     - `EM = \text{maskedDB} || H' || 0xbc` (The `0xbc` is a fixed trailer byte).
         
-6. **Sign:** Sign the final `EM` block with the **private key**.
+3. **Sign:** Sign the final `EM` block with the **private key**.
     
     - $S = \text{EM}^d \pmod n$
         
