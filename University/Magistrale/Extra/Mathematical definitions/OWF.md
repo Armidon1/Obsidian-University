@@ -43,7 +43,7 @@ Nel dettaglio
     
 - **Moltiplicazione di grandi numeri primi:**  $$f(p, q) = p \cdot q  $$
     Facile moltiplicare, difficile fattorizzare → base della sicurezza **[[RSA]]**.
-    
+- [[Modular Exponentiation]]: $$a \equiv b\ (\bmod n\ )$$Estremamente rapido da implementare lato Hardware, ma, dato un resto $a$ è incredibilmente difficile trovare il Dividendo $b$. Usato in [[Diffie-Hellman Key Exchange]].
 ---
 
 vedi di più in [[7 CS  Lower Level - Asymmetric encryption#2. Candidate One-Way Functions]]
@@ -60,9 +60,9 @@ Le one-way functions sono **fondamentali** perché sono alla base di molti mecca
     
 - **Password storage**
     
-- **Key derivation functions**
+- **[[KDF|Key derivation function]]**
     
-- **Public key cryptography**
+- **[[Public-Key Encryption|Public key cryptography]]**
     
 
 ---

@@ -33,9 +33,9 @@ Ecco il confronto diretto:
         
     - $3^2 = 9$
         
-    - $3^3 = 27 \equiv 10$
+    - $3^3 = 27 \equiv 10 \bmod 17$
         
-    - $3^4 = 81 \equiv 13$
+    - $3^4 = 81 \equiv 13 \bmod 17$
         
     - ...quindi il logaritmo discreto di 13 in base 3 (modulo 17) è **$x=4$**.
         

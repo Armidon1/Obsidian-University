@@ -6,7 +6,7 @@ Il **Diffie-Hellman (DH)** è un **protocollo di accordo sulla chiave** (_key ag
 
 **Punto Chiave:** DH _non_ è un algoritmo di cifratura. Non cifra né decifra i dati. Il suo unico scopo è generare una chiave segreta condivisa, che sarà poi utilizzata da un altro algoritmo (come AES) per la cifratura simmetrica.
 
-La sua sicurezza si basa sulla difficoltà computazionale del **[[The Discrete Logarithm (DL) Problem|Problema del Logaritmo Discreto (DLP)]]**.
+La sua sicurezza si basa sulla difficoltà computazionale del **[[Discrete Logarithm (DL) Problem|Problema del Logaritmo Discreto (DLP)]]**.
 
 ---
 
@@ -47,16 +47,15 @@ Il protocollo si basa sull'aritmetica modulare e sull'esponenziazione.
 
 Il Risultato:
 
-Entrambi arrivano allo stesso identico numero segreto $S$, che ora è la loro chiave simmetrica condivisa.
+Entrambi arrivano allo stesso identico numero segreto $S$, che ora è la loro chiave simmetrica condivisa. (magari può far comodo rivedere le proprietà del [[Modular Exponentiation Details#Elenco Proprietà Fondamentali dell'Aritmetica Modulare|Modular Exponentiation]])
 
-- Calcolo di Alice: $S = (g^b)^a \pmod p = g^{ba} \pmod p$
+- Calcolo di Alice: $$S = B^a \pmod p = (g^b (\bmod p))^a \pmod p = (g^b)^a \pmod p =g^{ba} \pmod p$$
     
-- Calcolo di Bob: $S' = (g^a)^b \pmod p = g^{ab} \pmod p$
-    
+- Calcolo di Bob (medesimo calcolo): $$S'= A^b \pmod p = (g^a)^b \pmod p = g^{ab} \pmod p$$
 - Quindi: $S = S'$
     
 
-Un osservatore (Eve) sul canale pubblico vede $g, p, A, B$. Per trovare il segreto $S$, Eve deve calcolare $a$ (da $A=g^a$) o $b$ (da $B=g^b$). Questo è il **Problema del Logaritmo Discreto**, che è computazionalmente infattibile se i numeri sono sufficientemente grandi.
+Un osservatore (Eve) sul canale pubblico vede $g, p, A, B$. Per trovare il segreto $S$, Eve deve calcolare $a$ (da $A=g^a$) o $b$ (da $B=g^b$). Questo è il **[[Discrete Logarithm (DL) Problem|Problema del Logaritmo Discreto]]** (cioè: *dato $A \equiv g^a \pmod p$, $a$ è il logaritmo discreto di $A$ base $g$, modulo $p$*), che è computazionalmente infattibile se i numeri sono sufficientemente grandi.
 
 ---
 
@@ -148,3 +147,4 @@ Il concetto di Diffie-Hellman può essere applicato a qualsiasi gruppo matematic
 - Questo rende ECDH molto più veloce, con un minore carico computazionale, ed è la scelta preferita per i dispositivi mobili e moderni.
     
 - La versione effimera, **[[ECDHE]]**, è la combinazione di [[Elliptic Curve Cryptography - ECC]] + Ephemeral DH, ed è la base della maggior parte delle connessioni web sicure ([[HTTPS]]) oggi.
+

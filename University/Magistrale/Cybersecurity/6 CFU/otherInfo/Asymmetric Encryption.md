@@ -17,11 +17,11 @@
     
     - Fattorizzazione di grandi numeri primi ([[RSA]])
         
-    - Problema del logaritmo discreto (DSA, ElGamal)
+    - Problema del logaritmo discreto ([[Diffie-Hellman Key Exchange]] (DSA), [[ElGamal]])
         
-    - Curve ellittiche (ECC)
+    - [[Elliptic Curve Cryptography - ECC]]
         
-3. **Supporta anche firme digitali**, garantendo autenticità e non-repudiation.
+3. **Supporta anche firme digitali**, garantendo [[Authenticity]] e [[Non-Repudiation]].
     
 
 ---
@@ -35,7 +35,7 @@
 
 **Non garantisce da sola:**
 
-- ❌ Efficienza per grandi quantità di dati – di solito viene usata **per cifrare chiavi simmetriche** in sistemi ibridi.
+- ❌ Efficienza per grandi quantità di dati – di solito viene usata **per cifrare chiavi simmetriche** in sistemi ibridi ([[Hybrid Encryption]]).
     
 
 ---
@@ -44,9 +44,9 @@
 
 - **[[RSA]]** – cifratura e firme digitali
     
-- **ElGamal / DSA** – cifratura e firma digitale
+- **[[ElGamal]] / [[Diffie-Hellman Key Exchange]] DSA** – cifratura e firma digitale
     
-- **ECC (Elliptic Curve Cryptography)** – chiavi più corte, maggiore efficienza
+- **[[Elliptic Curve Cryptography - ECC]]** – chiavi più corte, maggiore efficienza
     
 
 ---

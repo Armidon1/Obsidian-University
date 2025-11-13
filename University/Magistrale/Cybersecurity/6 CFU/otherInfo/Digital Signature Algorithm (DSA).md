@@ -17,7 +17,7 @@ Come tutte le firme digitali, DSA garantisce:
 
 ### Come Funziona (Concettualmente)
 
-La sicurezza di DSA si basa sulla difficoltà computazionale del **[[The Discrete Logarithm (DL) Problem|Problema del Logaritmo Discreto (DLP)]]** all'interno di un gruppo moltiplicativo (simile a [[ElGamal]]).
+La sicurezza di DSA si basa sulla difficoltà computazionale del **[[Discrete Logarithm (DL) Problem|Problema del Logaritmo Discreto (DLP)]]** all'interno di un gruppo moltiplicativo (simile a [[ElGamal]]).
 
 #### 1. Parametri Comuni (Setup)
 

@@ -11,9 +11,9 @@ L'algoritmo RSA è un sistema di crittografia asimmetrica che si basa sull'uso d
 
 A seconda di quale chiave viene utilizzata per l'operazione iniziale (che chiamiamo genericamente "cifratura"), RSA può essere utilizzato per due scopi principali e distinti:
 
-1. **Cifratura con Chiave Pubblica**: Per garantire **Confidenzialità**.
+1. **Cifratura con Chiave Pubblica**: Per garantire **[[Confidentiality]]**.
     
-2. **Cifratura con Chiave Privata**: Per garantire **Autenticità** e **[[Non-Repudiation]]** (la base per le firme digitali).
+2. **Cifratura con Chiave Privata**: Per garantire **[[Authenticity]]** e **[[Non-Repudiation]]** (la base per le firme digitali).
     
 
 Analizziamo entrambi i casi.
@@ -41,7 +41,7 @@ Questo è l'uso più intuitivo di RSA.
 
 Sebbene efficace per la confidenzialità, questo metodo non è quasi mai usato per cifrare messaggi lunghi per diversi motivi:
 
-- **Performance**: La crittografia asimmetrica (RSA) è estremamente lenta (ordini di grandezza più lenta) rispetto alla crittografia simmetrica (come AES).
+- **Performance**: La crittografia asimmetrica (RSA) è estremamente lenta (ordini di grandezza più lenta) rispetto alla [[Symmetric Encryption]] (come [[AES]]).
     
 - **Limiti di Dimensione**: RSA opera su blocchi di numeri. Il messaggio (interpretato come un numero) deve essere più piccolo del modulo $N$ (la dimensione della chiave). Non è adatto per file di grandi dimensioni.
     
@@ -50,7 +50,7 @@ Sebbene efficace per la confidenzialità, questo metodo non è quasi mai usato p
 - **Consumo Energetico**: L'intensità computazionale lo rende problematico per dispositivi a bassa potenza (es. "battery draining").
     
 
-### Soluzione: Cifratura Ibrida
+### Soluzione: Cifratura Ibrida ([[Hybrid Encryption]])
 
 Per questi motivi, RSA viene quasi sempre usato per la **confidenzialità** in un sistema ibrido, tipicamente per lo **scambio di chiavi**:
 
@@ -103,7 +103,7 @@ Il **non-ripudio** è la proprietà che impedisce al mittente di un messaggio di
 
 ### Problema: L'RSA "Textbook" non è ancora una Firma Sicura
 
-Applicare l'RSA "puro" (chiamato "textbook RSA") per le firme ha una grave vulnerabilità chiamata **falsificazione esistenziale (Existential Forgery)**.
+Applicare l'RSA "puro" (chiamato "textbook RSA") per le firme ha una grave vulnerabilità chiamata **falsificazione esistenziale ([[Existential Forgery (E)]])**.
 
 - **Notazione**: Sia $U$ la chiave pubblica di Alice e $V$ la sua chiave privata.
     
@@ -422,5 +422,6 @@ Questo standard definiva uno schema di padding per la cifratura:
     
 - **Byte casuali**: Questo è il padding che risolve la maggior parte delle debolezze di RSA. Rende la cifratura non deterministica e previene attacchi a messaggi piccoli o correlati.
 
+vedi anche [[PKCS]]
 vedi anche [[7 CS  Lower Level - Asymmetric encryption#RSA – the algorithm]]. 
 

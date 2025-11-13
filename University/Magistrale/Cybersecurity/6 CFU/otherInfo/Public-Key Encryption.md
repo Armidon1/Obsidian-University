@@ -1,6 +1,6 @@
 # 🔑 Public Key Encryption (Crittografia a Chiave Pubblica)
 
-La **Crittografia a Chiave Pubblica** (o _Public Key Cryptography_, PKC) è un **sistema crittografico** che utilizza una **coppia di chiavi** matematicamente correlate per garantire la confidenzialità e l'autenticazione:
+La **Crittografia a Chiave Pubblica** (o _Public Key Cryptography_, PKC) è un **sistema crittografico** che utilizza una **coppia di chiavi** matematicamente correlate per garantire la [[Confidentiality]] e l'[[Authentication]]:
 
 1. Una **Chiave Pubblica:** Può (e deve) essere distribuita liberamente. Viene usata per **cifrare** i dati e per **verificare le firme digitali**.
     
@@ -14,9 +14,9 @@ Per un ingegnere, la sua proprietà fondamentale è l'**asimmetria funzionale**:
 
 Il suo scopo principale è risolvere due problemi fondamentali:
 
-1. **Confidenzialità (Scambio Chiavi):** Permette a due parti (es. Alice e Bob) di stabilire un canale sicuro (di solito scambiandosi una chiave simmetrica) senza aver mai condiviso un segreto in precedenza. Alice cifra la chiave di sessione usando la chiave pubblica di Bob.
+1. **[[Confidentiality]] (Scambio Chiavi):** Permette a due parti (es. Alice e Bob) di stabilire un canale sicuro (di solito scambiandosi una chiave simmetrica) senza aver mai condiviso un segreto in precedenza. Alice cifra la chiave di sessione usando la chiave pubblica di Bob. Potrebbe pure garantire [[Confidentiality]] semplicemente cifrando ogni singolo pacchetto con la chiave pubblica del destinatario (per poi essere decifrato dalla chiave privata del destinatario) ma per larga scala di pacchetti non è efficiente.
     
-2. **Autenticazione (Firme Digitali):** Permette ad Alice di _firmare_ un messaggio con la sua chiave privata. Chiunque può usare la chiave pubblica di Alice per verificare che il messaggio provenga da lei e non sia stato alterato.
+2. **[[Authentication]] (Firme Digitali):** Permette ad Alice di _firmare_ un messaggio con la sua chiave privata. Chiunque può usare la chiave pubblica di Alice per verificare che il messaggio provenga da lei e non sia stato alterato. Ancora di più, questo garantisce una proprietà più forte: [[Non-Repudiation]].
     
 
 ---
@@ -25,7 +25,7 @@ Il suo scopo principale è risolvere due problemi fondamentali:
 
 Questa è una distinzione tecnica importante che spesso viene trascurata, poiché nel linguaggio comune i due termini sono usati come sinonimi.
 
-1. Crittografia Asimmetrica (Asymmetric Encryption):
+1. Crittografia Asimmetrica ([[Asymmetric Encryption]]):
     
     Questa è la proprietà matematica di un algoritmo. Definisce qualsiasi sistema crittografico in cui la chiave usata per la cifratura ($K_E$) è diversa dalla chiave usata per la decifratura ($K_D$).
     

@@ -27,11 +27,11 @@ Remember: Encryption as a mechanism doesn't _only_ provide confidentiality. As w
 
 ## Public-Key Encryption
 
-A primary application of asymmetric encryption ($K_1 \neq K_2$) is **[[Public-key encryption]]**. It's crucial to understand the relationship:
+A primary application of asymmetric encryption ($K_1 \neq K_2$) is **[[Public-Key Encryption]]**. It's crucial to understand the relationship:
 
-- [[Public-key encryption]] $\Rightarrow$ [[Asymmetric Encryption]]
+- [[Public-Key Encryption]] $\Rightarrow$ [[Asymmetric Encryption]]
     
-- [[Asymmetric Encryption]] $\nRightarrow$ [[Public-key encryption]] (Asymmetric just means the keys are different; public-key is a specific system where one key is published).
+- [[Asymmetric Encryption]] $\nRightarrow$ [[Public-Key Encryption]] (Asymmetric just means the keys are different; public-key is a specific system where one key is published).
     
 
 **Main Purposes:**
@@ -254,7 +254,7 @@ This problem is the basis for the **[[RSA]] algorithm**.
 ![[Pasted image 20251023113341.png]]
 
 ### Candidate 2: The Discrete Logarithm (DL) Problem
-[[The Discrete Logarithm (DL) Problem]]
+[[Discrete Logarithm (DL) Problem]]
 
 This problem is the basis for the **[[Diffie-Hellman Key Exchange]]** and the **[[ElGamal]]** encryption system.
 
@@ -289,7 +289,7 @@ To implement these cryptographic systems, we need efficient algorithms for modul
 ### Modular Exponentiation (The "Easy" Problem)
 [[Modular Exponentiation]]
 
-This is the "easy" operation in [[The Discrete Logarithm (DL) Problem]] (computing $y = g^x \pmod p$).
+This is the "easy" operation in [[Discrete Logarithm (DL) Problem]] (computing $y = g^x \pmod p$).
 
 - Key Property: We can avoid gigantic intermediate numbers by applying the modulus at every step.
     
@@ -399,7 +399,7 @@ function extendedEuclid(a, b) // In the identity, a=x and b=y
 ## 3. Protocol 1: Diffie-Hellman (DH) Key Exchange
 [[Diffie-Hellman Key Exchange]]
 
-The Diffie-Hellman (DH) protocol is a practical application of the **[[The Discrete Logarithm (DL) Problem]]** designed to achieve a secure key exchange.
+The Diffie-Hellman (DH) protocol is a practical application of the **[[Discrete Logarithm (DL) Problem]]** designed to achieve a secure key exchange.
 
 - **Goal:** To allow two parties (Alice and Bob), who initially share no secret information, to perform a protocol over a public (insecure) channel and jointly derive the **same shared secret key**.
     
@@ -1158,411 +1158,573 @@ Here is an overview of several key standards from the collection.
 
 
 ---
+DA SCHEMATIZZARE ANCORA NEL CANVAS
+# RSA Implementation
 
-# RSA: Implementation and Properties
+This section covers the practical steps required to implement the RSA algorithm, from key generation to the secure encryption and decryption process.
 
-## Properties of RSA (Recap)
+The core "textbook" algorithm involves two main formulas:
 
-- **Uniqueness:** The requirement that $\gcd(e, \phi(N)) = 1$ is critical. It ensures that the encryption function is a one-to-one mapping (a permutation), which guarantees that every ciphertext corresponds to exactly one plaintext, making decryption possible.
+- **Encryption (Public Key):** $c = m^e \pmod n$
     
-- **The RSA Assumption:**
+- **Decryption (Private Key):** $m = c^d \pmod n$
     
-    - Finding the private key $d$ is **easy** if you know the prime factors $p$ and $q$.
-        
-    - Finding $d$ when you _only_ know the public key $(N, e)$ is **assumed to be hard**. This is because finding $d$ requires knowing $\phi(N) = (p-1)(q-1)$, which in turn requires being able to factor $N$. Therefore, the security of RSA rests on the assumption that **factoring large numbers is computationally infeasible**.
-        
-- **The Public Exponent (e):**
+
+However, a secure _implementation_ requires several more steps to be safe against attacks.
+
+## Key Properties (Recap)
+
+- **Uniqueness:** The requirement that $\gcd(e, \phi(n)) = 1$ is crucial. It ensures that $e$ has a unique modular multiplicative inverse $d$, which is necessary for decryption to work.
     
-    - $e$ can be, and often is, a small number to make encryption fast.
-        
-    - A value of $e=3$ is problematic as it is vulnerable to certain attacks (like cube root attacks) if padding is not used correctly.
-        
-    - A very common and secure choice is $e = 65537$ (which is $2^{16} + 1$).
-        
-- **Performance:**
+- **The RSA Assumption:** Finding the private key $d$ is computationally _easy_ if you know the prime factors $p$ and $q$. However, finding $d$ given only the public key $(n, e)$ is assumed to be computationally _hard_. This is the core assumption RSA's security relies on.
     
-    - Both encryption and decryption involve modular exponentiation ($m^e \pmod N$ or $c^d \pmod N$).
+- **Public Exponent (e):** The public exponent $e$ is _chosen_, not calculated. It can be small to make encryption fast.
+    
+    - A common value is **$e=3$**, but this is **problematic** as it is vulnerable to specific attacks (like small-message attacks or broadcast attacks) if not implemented with proper padding.
         
-    - Since $e$ is usually small (like 65537) and $d$ is a very large number, **decryption is typically much slower** than encryption.
+    - The most common and recommended value is **$e = 65537$** (which is $2^{16}+1$).
+        
+- **Performance:** Encryption and decryption both involve modular exponentiation.
+    
+    - **Encryption** is generally _fast_ because $e$ is chosen to be small.
+        
+    - **Decryption** is significantly _slower_ because the private exponent $d$ is calculated, is typically very large (on the same order of magnitude as $n$), and cannot be optimized in the same way.
         
 
----
+## Constructing an RSA Key Pair (Alice's Job)
 
-## Constructing an RSA Key Pair
+Here is the step-by-step process for generating the public and private keys:
 
-This is the standard algorithm for generating the public and private keys.
-
-1. **Choose Primes:** Alice randomly chooses two large, distinct prime numbers, $p$ and $q$.
+1. **Generate Primes:** Alice randomly chooses two distinct, very large prime numbers, $p$ and $q$. These must be cryptographically random so an attacker cannot guess them.
     
-2. **Compute Modulus:** Alice computes the modulus $N = p \cdot q$. This $N$ will be part of the public key.
+2. **Compute Modulus:** Alice computes the modulus $n$ by multiplying the primes: $n = p \cdot q$.
     
-3. **Compute Totient:** Alice computes $\phi(N) = (p-1)(q-1)$. This value is kept secret.
+3. **Compute Totient:** Alice computes Euler's totient function $\phi(n)$: $\phi(n) = (p-1)(q-1)$.
     
-4. **Choose Public Exponent (e):** Alice chooses a public exponent $e$, such that $1 < e < \phi(N)$ and $e$ is coprime to $\phi(N)$ (i.e., $\gcd(e, \phi(N)) = 1$).
+4. **Choose Public Exponent:** Alice _chooses_ a public exponent $e$ (e.g., 65537) that is coprime to $\phi(n)$. This means $\gcd(e, \phi(n)) = 1$.
     
-    - _(Alternatively, as is common practice, Alice can pick $e$ first, like $e=65537$, and then ensure that the $p$ and $q$ she generates result in a $\phi(N)$ that is coprime to $e$)._
-        
-5. **Compute Private Exponent (d):** Alice computes $d$ such that $de \equiv 1 \pmod{\phi(N)}$. This is the **multiplicative inverse** of $e$ modulo $\phi(N)$, and it is found using the **Extended Euclidean Algorithm**.
+5. **Compute Private Exponent:** Alice _calculates_ the private exponent $d$ by finding the modular multiplicative inverse of $e$ modulo $\phi(n)$. This is the value that satisfies the equation: $d \cdot e \equiv 1 \pmod{\phi(N)}$.
     
 6. **Publish/Keep Keys:**
     
-    - **Public Key:** Alice publishes $(N, e)$ for the world to see.
+    - **Public Key:** Alice publishes $(n, e)$. This is shared with the world.
         
-    - **Private Key:** Alice keeps $(N, d)$ secret. She must also keep $p$, $q$, and $\phi(N)$ secret, as they can be used to derive $d$.
+    - **Private Key:** Alice keeps $(n, d)$ secret.
+        
+    - **Crucial Secret:** Alice must also keep $p$, $q$, and $\phi(N)$ secret. If any of these are leaked, $d$ can be easily recalculated. The primes $p$ and $q$ are often kept secret alongside $d$ to enable a much faster decryption process using the **Chinese Remainder Theorem (CRT)**.
         
 
----
+## Three-Step Implementation Details
 
-## RSA: Implementation Steps
+### Step 1. Finding Large Primes
 
-### 1. Find Two Large Primes (p and q)
+This is a critical step for key generation.
 
 - **Algorithm:**
     
-    1. Randomly choose a large odd integer.
+    1. Randomly choose a large odd integer of the desired bit-length (e.g., 1024 bits).
         
-    2. Test if it is prime.
+    2. Test if this integer is prime. This is **not** done with a deterministic test (which is too slow), but with a fast **probabilistic primality test** like the **Miller-Rabin** algorithm.
         
-    3. If not, repeat.
+    3. If the test fails, repeat with a new random integer.
         
-- **How do we test for primality?** We don't. Proving primality for a 1024-bit number is too slow. Instead, we use a **probabilistic primality test**, like the **Miller-Rabin test**. This test doesn't _prove_ primality, but it can state with extremely high probability (e.g., $1 - (1/4)^{100}$) that the number is prime, which is more than good enough. the algorithm may be produce a false result, but the probability is so low that we can be sure that this won't happen.
-    
-- **Are primes rare?** No. The **[[Prime Number Theorem]]** states that primes are relatively frequent. The average gap between primes near a large number $N$ is roughly $\ln(N)$. This means we only expect to test a few hundred candidates (not millions) before finding a prime.
+- **Why this works:** The **Prime Number Theorem** states that prime numbers are relatively frequent. The average gap between primes near a large number $N$ is roughly $\ln(N)$. This means on average, we only need to test about $\ln(N)$ random odd numbers to find a prime.
     
 
-### 2. Fast Encryption (Modular Exponentiation)
+### Step 2. Modular Exponentiation (Encryption/Decryption)
 
-To compute $c = m^e \pmod N$, we _do not_ first compute $m^e$ and then find the remainder. That intermediate number would be astronomically large.
+Calculating $m^e \pmod n$ is not done by computing $m^e$ and then taking the remainder, as the intermediate number would be astronomically large.
 
-- We use the **exponentiation by squaring** (or binary) method.
+- **Algorithm:** The operation is performed using **Exponentiation by Repeated Squaring** (also called the binary method).
     
-- This algorithm performs a series of modular squarings and multiplications based on the binary representation of the exponent $e$.
+- **Cost:** This algorithm is very efficient, requiring only $O(\log N)$ modular multiplications.
     
-- **Cost:** This is very efficient, requiring only $O(\log N)$ operations.
+- **Fast Encryption ($e$):**
     
-- **Example (for $e=65537$):**
-    
-    - $e = 65537 = 2^{16} + 1$.
+    - If **$e=3$**: $m^3 \pmod n$ is just $(m^2 \pmod n) \cdot m \pmod n$. (2 multiplications).
         
-    - To compute $m^{65537}$, you first compute $m^2, m^4, m^8, \dots, m^{2^{16}}$ (which takes 16 modular squarings).
-        
-    - The final result is $m^{65537} = m^{65536} \cdot m^1$.
-        
-    - This requires only **16 squarings and 1 additional multiplication**, making it extremely fast. This is why $e=65537$ is such a popular choice.
+    - If **$e=65537 = 2^{16}+1$**: The calculation is $m^{2^{16}+1} \pmod n$. This requires 16 squarings (to get $m^{2^{16}}$) and 1 final multiplication (to get $m^{2^{16}} \cdot m$), for a total of **17** operations.
         
 
-### 3. Compute 'd' (Extended Euclidean Algorithm)
+### Step 3. Computing $d$ (The Extended Euclidean Algorithm)
 
-To find $d$ from $e$ and $\phi(N)$, we need to solve $de \equiv 1 \pmod{\phi(N)}$. We use the Extended Euclidean Algorithm (EEA) to find the inverse.
+To find the private key $d$, we must solve $d \cdot e \equiv 1 \pmod{\phi(N)}$. This is done using the **Extended Euclidean Algorithm (EEA)**, which finds the modular multiplicative inverse of $e$ modulo $\phi(N)$.
 
-Here is a C-like implementation that finds the inverse of $e$ modulo $\phi$:
-
-```C
-/*
- * Finds the modular multiplicative inverse of e modulo phi
- * using the Extended Euclidean Algorithm.
- * Returns x0 such that (e * x0) % phi == 1.
- */
-int mod_inverse(int e, int phi) {
-    int x0 = 1, x1 = 0;
-    int a = e, b = phi;
-
-    while (b) {
-        int q = a / b;
-        int t = b;
-        b = a % b;
-        a = t;
-
-        t = x1;
-        x1 = x0 - q * x1;
-        x0 = t;
+- **Pseudocode:**
+    
+    C
+    
+    ```
+    /*
+     * Finds the modular multiplicative inverse of e modulo phi.
+     * Returns d such that (d * e) % phi == 1
+     */
+    function mod_inverse(int e, int phi) {
+        int x0 = 1, x1 = 0;
+        int a = e, b = phi;
+    
+        while (b != 0) {
+            int q = a / b;
+    
+            // Standard Euclidean step
+            int t = b;
+            b = a % b;
+            a = t;
+    
+            // Update Bézout coefficients
+            t = x1;
+            x1 = x0 - q * x1;
+            x0 = t;
+        }
+    
+        // At the end, x0 is the modular inverse.
+        // If x0 is negative, add phi to bring it into the correct range.
+        if (x0 < 0) {
+            x0 = x0 + phi;
+        }
+        return x0;
     }
+    ```
     
-    // x0 can be negative, so we adjust it to be in the range [1, phi-1]
-    if (x0 < 0) {
-        x0 = x0 + phi;
-    }
+
+## Encoding: Bridging Text and Numbers
+
+RSA primitives (like RSAEP/RSADP) only operate on numbers, but messages are streams of bytes (text, files, etc.). We need a standard way to convert between them.
+
+- **OS2IP (Octet-Stream to Integer Primitive):**
     
-    return x0;
-}
-```
-
----
-
-## Encoding Text for RSA
-
-RSA operates on **numbers**, not text. We need a standard way to convert a message (a stream of bytes, or "octet-stream") into an integer, and back.
-
-### OS2IP: Octet-Stream to Integer Primitive
-
-This converts a byte string into a single large integer.
-
-- The $k$ bytes are interpreted as a number in **base 256**, with the first byte ([[Big-Endian]]) being the most significant.
+    - Converts a $k$-byte string into a single large integer.
+        
+    - It does this by interpreting the byte string as a **big-endian** number in base 256.
+        
+    - _Example:_ `b'\x01\x02\x03\x04'` becomes:
+        
+        - $1 \times 256^3 = 16,777,216$
+            
+        - $2 \times 256^2 = 131,072$
+            
+        - $3 \times 256^1 = 768$
+            
+        - $4 \times 256^0 = 4$
+            
+        - **Total Integer:** 16,909,060
+            
+- **I2OSP (Integer to Octet-Stream Primitive):**
     
-- **Example:**
+    - Converts an integer back into a $k$-byte string.
+        
+    - $k$ is the fixed length of the modulus $N$ in bytes (e.g., $k=256$ for a 2048-bit key).
+        
+    - _Example:_ Convert integer 84,281,096 to an 8-byte string.
+        
+        - Integer in hex: `0x05060708`
+            
+        - Padded to 8 bytes: `00 00 00 00 05 06 07 08`
+            
+        - **Result (Octet String):** `b'\x00\x00\x00\x00\x05\x06\x07\x08'`
+            
+
+## The Secure Scheme: RSA with Padding (PKCS#1)
+
+"Textbook" RSA (just $m^e \pmod n$) is **dangerously insecure**. It is deterministic (same $m$ always gives same $c$) and malleable (an attacker can alter the ciphertext). To be secure, RSA _must_ use a **padding scheme**.
+
+### RSAES-PKCS1-v1.5
+
+This is the original, widely-used padding standard.
+
+- Padding Format: A padded message $M'$ is constructed before encryption:
     
-    - `octet_string = b'\x01\x02\x03\x04'`
-        
-    - This is interpreted as:
-        
-    - $(1 \times 256^3) = 16,777,216$
-        
-    - $(2 \times 256^2) = 131,072$
-        
-    - $(3 \times 256^1) = 768$
-        
-    - $(4 \times 256^0) = 4$
-        
-    - **Result (Integer):** $16,909,060$
-        
-
-### I2OSP: Integer to Octet-Stream Primitive
-
-This is the reverse: it converts an integer back into a byte string of a _specific length $k$_.
-
-- $k$ is typically the number of bytes in the modulus $N$ (e.g., 256 bytes for a 2048-bit key).
+    M' = 0x00 || 0x02 || PS || 0x00 || M
     
-- **Example:**
+- **Components:**
     
-    - `integer = 84,281,096`
+    - `0x00`: A single byte, ensures the final number is less than $N$.
         
-    - `desired length k = 8 bytes`
-        
-    - The integer in hexadecimal is `0x05060708` (which is only 4 bytes long).
-        
-    - To represent this as an 8-byte string, we **pad it with leading zeros** to reach length $k$.
-        
-    - `00 00 00 00 05 06 07 08`
-        
-    - **Result (Byte String):** `b'\x00\x00\x00\x00\x05\x06\x07\x08'`
-        
-
----
-
-## RSA Padding Schemes
-
-"Textbook" RSA (encrypting the raw message number $m$) is **dangerously insecure**. To be secure, the message $M$ _must_ be pre-processed using a **padding scheme** before being converted to an integer $m$.
-
-### RSAES-PKCS1-v1_5 (Legacy Encryption Padding)
-
-This is an older, widely-used padding scheme that is now considered **INSECURE and VULNERABLE**.
-
-1. Padding: Given a message $M$, a padded message $M'$ is constructed:
-    
-    $M' = 0x00 \mid\mid 0x02 \mid\mid \text{PS} \mid\mid 0x00 \mid\mid M$
-    
-    - `0x00 || 0x02`: A fixed 2-byte header indicating encryption padding.
+    - `0x02`: A single byte, the block type, indicating encryption.
         
     - `PS`: A padding string of random, **non-zero** bytes. Must be at least 8 bytes long.
         
-    - `0x00`: A single zero-byte that acts as a separator.
+    - `0x00`: A single byte separator.
         
-    - `M`: The actual message.
+    - `M`: The original message.
         
-    - The total length of $M'$ must be exactly $k$, the byte-length of the modulus $N$.
-        
-    - Example (for $|M|=100$ bytes, $|N|=2048$ bits $= 256$ bytes):
-        
-        $M' = 0x00 \mid\mid 0x02 \mid\mid \text{[153 random non-zero bytes]} \mid\mid 0x00 \mid\mid \text{[100-byte message]}$
-        
-2. **Encryption Process:**
+- **Example (2048-bit key, 100-byte message):**
     
-    - Convert $M'$ to an integer: $m = \text{OS2IP}(M')$
+    - Key/Modulus size ($k$) = 256 bytes.
         
-    - Apply the RSA Encryption Primitive: $c = \text{RSAEP}((N, e), m)$ (i.e., $c = m^e \pmod N$)
+    - Message size = 100 bytes.
         
-    - Convert the resulting integer $c$ to bytes: $C = \text{I2OSP}(c, k)$
+    - Padding size = $256 - 1 \text{ (00)} - 1 \text{ (02)} - 1 \text{ (sep)} - 100 \text{ (msg)} = 153$ bytes.
         
-3. **Decryption Process:** This is the reverse. The recipient decrypts $C$, converts it to $M'$, and then _must_ carefully parse the padding to find the $0x00$ separator and extract $M$.
+    - `M' = 0x00 || 0x02 || [153 random non-zero bytes] || 0x00 || [100-byte message]`
+        
+
+### Full Encryption Process (RSAES)
+
+1. **Pad:** Create the padded message $M'$ according to the v1.5 scheme.
+    
+2. **Convert:** Create the integer $m = \text{OS2IP}(M')$.
+    
+3. **Encrypt (Primitive):** Compute the ciphertext integer $c = m^e \pmod N$. (This is the **RSAEP**).
+    
+4. **Convert:** Convert the integer $c$ back to bytes: $C = \text{I2OSP}(c)$.
     
 
-**Summary:** PKCS#1 v1.5 adds random padding to make encryption non-deterministic, but its rigid structure makes it vulnerable to "padding oracle" attacks (like the Bleichenbacher attack) that can decrypt messages.
+Decryption (**RSADP**) is the reverse: $C \rightarrow c \rightarrow m \rightarrow M'$. The receiver then parses $M'$ to find the separator `0x00` and extract the original message $M$.
+
+### Security Warning: PKCS#1 v1.5
+
+**PKCS#1 v1.5 is now considered insecure and deprecated for encryption.** While its random padding prevents simple deterministic attacks, it is critically vulnerable to **Chosen-Ciphertext Attacks (CCA)**, specifically **Bleichenbacher's "padding oracle" attack**. An attacker can decrypt messages by sending slightly modified ciphertexts and observing whether the server responds with a "padding error".
+
+## The Modern Standard: RSA-OAEP
+
+To address the severe security flaws in v1.5, a new padding scheme was created: **OAEP (Optimal Asymmetric Encryption Padding)**.
+
+- OAEP is a more complex padding scheme that incorporates a hash function and a Mask Generation Function (MGF).
+    
+- It is not vulnerable to padding oracle attacks.
+    
+- It is the current recommended standard for all new applications using RSA for encryption.
 
 ---
+# RSA: OAEP (Optimal Asymmetric Encryption Padding)
 
-### RSAES-OAEP (Modern Secure Padding)
+## Introduction to OAEP
 
-**OAEP (Optimal Asymmetric Encryption Padding)** is the modern, secure padding scheme that fixes the vulnerabilities of v1.5. It is **strongly recommended** for all new implementations.
+**OAEP** stands for **Optimal Asymmetric Encryption Padding**.
 
-- **What is it?** A padding scheme that adds randomness and structure to achieve **semantic security** (IND-CCA).
+- What is it?
+    
+    OAEP is a secure padding scheme designed to be used with RSA encryption. It is not an encryption algorithm itself, but rather a "pre-processor" for the message.
+    
+- Purpose:
+    
+    Its goal is to format the plaintext message $M$ in a specific, structured way before the raw RSA encryption ($m^e \pmod n$) is applied. It adds randomness and structure to achieve semantic security (IND-CPA) and, crucially, security against chosen-ciphertext attacks (IND-CCA).
     
 - **Key Features:**
     
-    - Prevents **Chosen-Ciphertext Attacks (CCA)**.
+    - **Prevents Chosen-Ciphertext Attacks (CCA):** This is its primary advantage over the older PKCS#1 v1.5 padding.
         
-    - Uses a **Mask Generation Function (MGF)** (based on a hash function like SHA-256) and a random **seed**.
+    - **Probabilistic Encryption:** It uses a random **seed** and a **Mask Generation Function (MGF)**.
         
-    - **Probabilistic:** Encrypting the same message twice produces two _different_ ciphertexts.
+    - **Semantic Security:** Because of the random seed, encrypting the _same message_ multiple times will produce a _different ciphertext_ every time.
         
-- **Standard:** Defined in PKCS#1 v2.2 (RFC 8017).
-    
-
-#### OAEP Scheme (How it Works)
-
-OAEP uses a **Feistel network** (a structure that XORs data back and forth) to create the padded message.
-
-1. **Input:** A message $m$ and a random $k0$-bit string called a **seed** ($r$).
-    
-2. **Step 1:** The seed $r$ is fed into a Mask Generation Function (MGF) $G$ (a hash-based function) to create a mask of length $n-k0$.
-    
-3. **Step 2:** The message $m$ (padded with zeros) is XORed with this mask to create $X$.
-    
-    - $X = (m \mid\mid 00...0) \oplus G(r)$
+    - **Standardization:** It is the modern standard, defined in **PKCS#1 v2.2** (RFC 8017).
         
-4. **Step 3:** $X$ is fed into another hash function $H$ to create a second mask of length $k0$.
+- Use Case:
     
-5. **Step 4:** The seed $r$ is XORed with this second mask to create $Y$.
-    
-    - $Y = r \oplus H(X)$
-        
-6. **Output:** The final padded block to be encrypted is the concatenation $X \mid\mid Y$.
-    
-
-"All-or-Nothing" Security:
-
-To recover the message $m$, an attacker must recover the entire block $X$ and $Y$.
-
-- To get $m$ from $X$, you need the mask $G(r)$.
-    
-- To get $r$ (to compute the mask), you need to calculate $r = Y \oplus H(X)$.
-    
-- This means you **need $X$ to get $r$, and you need $r$ to get $m$**.
-    
-- Because $G$ and $H$ are cryptographic hash functions, flipping a _single bit_ in the ciphertext will, after decryption, cause a cascade of unpredictable changes, completely corrupting _both_ $X$ and $Y$. The recipient will be unable to validate the padding and will simply reject the message, leaking no information.
-    
-
-#### RSAES-OAEP (The Full Process)
-
-1. **Encoding:** The message $M$ is encoded using the OAEP scheme to produce $M'$.
-    
-2. **Conversion:** $m = \text{OS2IP}(M')$
-    
-3. **Encryption:** $c = \text{RSAEP}((N, e), m)$
-    
-4. **Conversion:** $C = \text{I2OSP}(c, k)$
+    The full, secure encryption process is Ciphertext = RSA_Encrypt(OAEP(message, seed)). It is the recommended standard for all new RSA-based confidentiality applications.
     
 
 ---
 
-## RSA Padding Schemes: Overview
+## OAEP: Background and Security Goals
 
-### Key Benefits of RSA-OAEP (PKCS#1 v2.2)
+OAEP was introduced by Bellare and Rogaway in 1994 to fix the known vulnerabilities of "textbook" RSA.
 
-- **Randomization (Semantic Security):** OAEP uses a random seed and an MGF. This ensures that encrypting the _same plaintext_ multiple times results in _different ciphertexts_, preventing pattern recognition.
+- **Random Oracles:** The original proof of security for OAEP models the internal hash functions, **G** and **H**, as "random oracles" (perfect, idealized hash functions). In practice, these are replaced by specific cryptographic hash functions (like SHA-256) and a Mask Generation Function (MGF).
     
-- **Resistance to Chosen-Ciphertext Attacks (CCA):** OAEP is provably secure against CCA. Tampering with the ciphertext will produce a cryptographically invalid padded block, which the decryption process will reject. This starves the attacker of the information they need (this defends against the Bleichenbacher attack).
+- **Probabilistic Scheme:** The random seed ensures the encryption is **probabilistic**, not deterministic, which is the first line of defense against attacks.
+    
+- **CCA Security:** OAEP is designed to prevent sophisticated attacks, like **Chosen-Ciphertext Attacks (CCA)**, which exposed the vulnerabilities of the older PKCS#1 v1.5 standard (e.g., Bleichenbacher's attack).
     
 
-### PKCS#1 v1.5 vs. v2.2 (OAEP)
+### Understanding Security Levels ("IND-" Attacks)
 
-|**Feature**|**PKCS#1 v1.5 (Legacy)**|**PKCS#1 v2.2 (RSA-OAEP) (Modern)**|
+OAEP is designed to achieve the highest practical level of security, IND-CCA2.
+
+|**Notation**|**Full Name**|**Attacker's Capabilities**|
 |---|---|---|
-|**Randomization**|Less randomness; structured padding|**Probabilistic** (uses a random seed + MGF)|
-|**Resistance to CCA**|**Vulnerable** (e.g., Bleichenbacher attack)|**Secure against CCA**|
-|**Hash-Based Security**|No use of hash functions in padding|Integrates a hash function (e.g., SHA-256)|
-|**Recommendation**|**DO NOT USE** (for new systems)|**Recommended for all new implementations**|
+|**IND-CPA**|Indistinguishability under Chosen Plaintext Attack|Attacker can ask for encryptions of any message they choose. (This is the "semantic security" OAEP provides).|
+|**IND-CCA1**|Indistinguishability under Chosen Ciphertext Attack (non-adaptive)|Attacker can decrypt ciphertexts _before_ they receive the challenge ciphertext.|
+|**IND-CCA2**|Indistinguishability under Adaptive Chosen Ciphertext Attack|Attacker can decrypt _any_ ciphertext (before _and after_ the challenge), _except_ for the challenge ciphertext itself. This is the strongest level.|
+
+OAEP (when implemented correctly) provides **IND-CCA2** security, which is the gold standard for public-key encryption.
 
 ---
 
-## RSA for Non-Repudiation (Digital Signatures)
+## The OAEP Scheme (Feistel Structure)
 
-**Non-repudiation** is the assurance that someone cannot deny having performed an action (like sending a message). Digital signatures are the primary way to achieve this.
+OAEP works by taking the message $m$ and a random seed $r$, and formatting them using a structure similar to a **Feistel network**.
 
-- As discussed, RSA signatures work by **encrypting with the sender's private key**.
+- **Parameters:**
     
-- This provides verifiable proof of authorship.
-    
-- But just like with encryption, "textbook" signing is insecure. We need a secure padding scheme.
-    
-
-### RSA Signature in PKCS#1 v1.5 (Legacy Signature)
-
-This is the _legacy_ signature scheme. It is still widely used but is **not recommended** for new applications.
-
-- It follows the "hash-then-sign" paradigm.
-    
-- It uses a **deterministic** padding format.
-    
-
-#### Signature Generation (RSASSA-PKCS1-v1_5)
-
-1. **Hash:** Compute $H = \text{Hash}(M)$.
-    
-2. **Encode (EMSA):** The hash $H$ is combined with its algorithm identifier (OID) to create a structure called `DigestInfo`, $T$.
-    
-3. Pad: A padded block $EM$ is built. This padding is deterministic (not random).
-    
-    $EM = 0x00 \mid\mid 0x01 \mid\mid \text{PS} \mid\mid 0x00 \mid\mid T$
-    
-    - `0x00 || 0x01`: Fixed header for signatures.
+    - $n$ = number of bits in the RSA modulus (e.g., 2048)
         
-    - `PS`: A padding string of all `0xFF` bytes.
+    - $k0$ = length of the random seed $r$ (e.g., 256 bits for SHA-256)
         
-    - `0x00`: Separator.
+    - $k1$ = length of the padding block (e.g., a block of zeros)
         
-    - `T`: The `DigestInfo` (e.g., an OID for SHA-256 + the 32-byte SHA-256 hash).
+    - $m$ = plaintext message
         
-4. Sign: Apply the RSA Decryption Primitive (i.e., "encrypt" with the private key):
+    - $G, H$ = cryptographic hash functions (or MGFs)
+        
+- **Encryption (Padding) Process:**
     
-    $S = EM^d \pmod n$
+    1. **Pad Message:** The message $m$ is padded with $k1$ zeros to a fixed length.
+        
+    2. **Generate Seed:** A random $k0$-bit string $r$ is generated.
+        
+    3. **Mask Message:** The seed $r$ is put through the hash function $G$ to create a mask. This mask is XORed with the padded message to create block $X$:
+        
+        - $X = (m \ || \ 00...0) \oplus G(r)$
+            
+    4. **Mask Seed:** The new block $X$ is put through the hash function $H$ to create a second mask. This mask is XORed with the seed $r$ to create block $Y$:
+        
+        - $Y = r \oplus H(X)$
+            
+    5. **Output:** The final padded message to be encrypted by RSA is the concatenation $X || Y$.
+        
+- **Decryption (Unpadding) Process:**
     
+    1. **Split Blocks:** The decrypted block is split back into $X$ and $Y$.
+        
+    2. **Recover Seed:** The seed $r$ is recovered by re-calculating the mask from $X$ and XORing it with $Y$:
+        
+        - $r = Y \oplus H(X)$
+            
+    3. **Recover Message:** The message $m$ is recovered by re-calculating the mask from the recovered $r$ and XORing it with $X$:
+        
+        - $m \ || \ 00...0 = X \oplus G(r)$
+            
+    4. **Verify:** The receiver checks if the $k1$ padding bits are all zeros. If they are not, the message is rejected as invalid. This check is critical for security.
+        
 
-#### Signature Verification
+### "All-or-Nothing" Security
 
-1. Compute the hash of the original message: $H' = \text{Hash}(M)$.
-    
-2. Re-create the expected encoded block `EM` from $H'$ (using the same OID and `0xFF` padding).
-    
-3. Decrypt the signature $S$ with the public key: $EM' = S^e \pmod n$.
-    
-4. Compare: If $EM = EM'$, the signature is valid.
-    
+This Feistel structure creates an "all-or-nothing" property.
 
-**Security:** Because this padding is deterministic, it is vulnerable to certain attacks if implemented incorrectly.
+- To recover the message $m$, you must have the _entire_ block $X$ and the _entire_ block $Y$.
+    
+- You need $X$ to recover $r$ from $Y$.
+    
+- You need $r$ to recover $m$ from $X$.
+    
+- If an attacker modifies _even a single bit_ of the ciphertext, the properties of the cryptographic hash functions will cause the decrypted $X$ and $Y$ to be completely scrambled. This will result in the recovered padding ($k1$ bits) _not_ being all zeros, and the entire decryption will fail. This prevents the very "padding oracle" attacks that plague the v1.5 standard.
+    
 
 ---
 
-### RSA-PSS (Modern Secure Signature)
+## RSAES-OAEP: The Full Process
 
-**PSS (Probabilistic Signature Scheme)** is the modern, secure standard for RSA signatures, introduced in PKCS#1 v2.1.
+**RSAES (RSA Encryption Scheme)** combines the OAEP padding with the RSA primitives.
 
-- It is **probabilistic**, not deterministic.
+- **Encryption:**
     
-- It adds a **random salt** to the hashing process.
+    1. **Encode:** Given message $M$, produce the encoded message $M'$ using the OAEP scheme.
+        
+    2. **OS2IP:** Convert the octet-stream $M'$ into an integer $m$ ($m = \text{OS2IP}(M')$).
+        
+    3. **RSAEP:** Apply the RSA Encryption Primitive: $c = \text{RSAEP}((N, e), m)$, which is $c = m^e \pmod N$.
+        
+    4. **I2OSP:** Convert the integer $c$ into the final ciphertext octet-stream $C$ ($C = \text{I2OSP}(c, |N|)$).
+        
+- Decryption:
     
-- It provides **provable security** under standard assumptions.
-    
-- It is **recommended for all modern applications** (e.g., TLS 1.3, OpenPGP).
-    
-
-#### RSA-PSS Construction (Simplified)
-
-1. Compute the hash of the message: $H = \text{Hash}(M)$.
-    
-2. Generate a **random salt** (e.g., 32 bytes).
-    
-3. Hash again: $H' = \text{Hash}(\text{zeros} \mid\mid H \mid\mid \text{salt})$.
-    
-4. Build a data block: $DB = \text{padding_zeros} \mid\mid 0x01 \mid\mid \text{salt}$.
-    
-5. Use an MGF (based on $H'$) to create a mask and XOR it with the $DB$:
-    
-    $\text{maskedDB} = DB \oplus \text{MGF}(H')$
-    
-6. Create the final encoded message: $EM = \text{maskedDB} \mid\mid H' \mid\mid 0xbc$.
-    
-7. Sign: $S = EM^d \pmod n$.
+    This is the symmetric reverse, using the RSA Decryption Primitive (RSADP) and the OAEP unpadding operation ($OAEP^{-1}$).
     
 
-**Key takeaway:** The inclusion of the **random salt** makes the signature probabilistic. Signing the same message twice will produce two different, valid signatures. This thwarts many advanced attacks.
+This full process is the modern standard, **PKCS#1 v2.2**.
 
 ---
 
-### Final Comparison: Signature Schemes
+## Comparison of RSA Padding Schemes
+
+|**Feature**|**PKCS#1 v2.2 (RSA-OAEP)**|**PKCS#1 v1.5**|
+|---|---|---|
+|**Randomization**|Uses MGF for robust, structured randomization.|Weaker randomization; less structured.|
+|**CCA Resistance**|**Secure** against adaptive CCA (e.g., Bleichenbacher's attack).|**Vulnerable** to adaptive CCA attacks.|
+|**Hash-Based**|**Yes**, integrates a hash function (e.g., SHA-256) into the padding.|**No**, does not use hash functions in the padding.|
+|**Recommendation**|**Recommended for all new implementations.**|**Deprecated.** Use only for backward compatibility (e.g., TLS < 1.3).|
+
+### Importance of Hash-Based Security in OAEP
+
+The use of a hash function (like SHA-256) in OAEP is critical.
+
+- It adds an extra layer of cryptographic robustness.
+    
+- It cryptographically links the message and the random seed, preventing attackers from manipulating the padding and the message independently.
+    
+
+---
+
+## Summary
+
+- **RSA-OAEP (PKCS#1 v2.2)** offers significant and necessary security advantages over the old **PKCS#1 v1.5** standard.
+    
+- Its **randomized padding** (using a seed and MGF) provides semantic security, preventing attackers from recognizing patterns.
+    
+- Its **all-or-nothing structure** provides provable resistance to **chosen-ciphertext attacks (CCA)**, ensuring data robustness.
+    
+- It is the preferred and modern standard for any application requiring high-security data confidentiality with RSA.
+
+---
+# RSA for Non-Repudiation
+
+## What is Non-Repudiation?
+
+**Non-repudiation** is the assurance that someone cannot deny having performed a particular action or having sent a particular message. In digital communications, this means providing proof of the origin, authenticity, and integrity of data.
+
+**Digital signatures** are the primary cryptographic tool used to achieve non-repudiation.
+
+A digital signature provides three key security services:
+
+1. **Authentication:** Proof of who the sender is.
+    
+2. **Integrity:** Proof that the message was not altered in transit.
+    
+3. **Non-Repudiation:** The sender cannot later deny having signed the message.
+    
+
+The RSA algorithm achieves this by reversing its encryption process:
+
+- **To Encrypt (Confidentiality):** You use the recipient's **Public Key**.
+    
+- **To Sign (Non-Repudiation):** You use your _own_ **Private Key**.
+    
+
+Because only the sender possesses the private key, a signature created with it serves as undeniable proof of origin. Anyone can then use the sender's public key to verify that the signature is valid.
+
+However, simply signing a raw message ($S = M^d \pmod n$) is insecure. A robust, standardized process is needed, which is defined by standards like PKCS#1.
+
+---
+
+## 1. Legacy Standard: RSASSA-PKCS1-v1_5
+
+This is the original and still widely used signature standard, though it is now considered a legacy system.
+
+- **Paradigm:** It follows the **"hash-then-sign"** model.
+    
+    - **Why?** Signing a large message with RSA is extremely slow. Hashing the message first (e.g., with SHA-256) produces a small, fixed-size string (the "digest").
+        
+    - Signing this small digest is very fast and provides the same security, as any change to the message will change the hash.
+        
+- **Key Feature:** It uses a **deterministic padding** format. This means signing the same message twice always produces the exact same signature, which is a known vulnerability.
+    
+- **Standard:** The encoding method is called **EMSA** (Encoding Method for Signature with Appendix).
+    
+
+### v1.5 Signature Generation
+
+1. **Hash:** First, the message $M$ is hashed to produce a digest $H$.
+    
+    - $H = \text{Hash}(M)$
+        
+2. **Encode Digest:** The hash $H$ is combined with its algorithm identifier to create a standard structure called `DigestInfo`, which is denoted as $T$. This structure is encoded using a format called **DER** (Distinguished Encoding Rules).
+    
+3. **Build Encoded Message (EM):** A padding block is constructed. This block is deterministic.
+    
+    - `EM = 0x00 || 0x01 || PS || 0x00 || T`
+        
+    - `0x00 || 0x01`: A standard header to indicate a signature block (distinguishing it from the `0x02` encryption block).
+        
+    - `PS`: A padding string of all `0xFF` bytes. This fills the block until it is the same length as the modulus $n$.
+        
+    - `0x00`: A single-byte separator.
+        
+    - `T`: The DER-encoded `DigestInfo` (hash + algorithm ID) from Step 2.
+        
+4. **Sign:** The RSA Signature Primitive (RSASP) is applied to the final encoded message using the **private key**.
+    
+    - $S = \text{EM}^d \pmod n$
+        
+
+### v1.5 Signature Verification
+
+1. **Hash:** The receiver hashes the original message $M$ to get $h$.
+    
+2. **Encode:** The receiver _re-creates_ the expected encoded message, `EM_expected`, by following the same padding steps (using $h$ and its OID).
+    
+3. **Verify (Decrypt):** The receiver applies the RSA Verification Primitive (RSAVP) using the sender's **public key**.
+    
+    - $\text{EM}' = S^e \pmod N$
+        
+4. **Compare:** The signature is valid **if and only if** the recovered $\text{EM}'$ is identical to the `EM_expected`.
+    
+
+### Security Flaws of v1.5
+
+- **Deterministic:** The biggest flaw is that the padding is deterministic. This opens it up to practical attacks.
+    
+- **Vulnerability:** It is vulnerable to **padding oracle attacks**. An attacker can trick a server into verifying modified signatures and, based on whether the server reports a "valid" or "invalid" signature, progressively forge a signature without ever knowing the private key.
+    
+- **Status:** Due to these flaws, it is deprecated for new applications but is still widely used in legacy systems like TLS 1.2, S/MIME, and older code-signing standards.
+    
+
+---
+
+## 2. Modern Standard: RSASSA-PSS (Probabilistic Signature Scheme)
+
+**PSS (Probabilistic Signature Scheme)** is the modern, recommended standard for RSA signatures, introduced in PKCS#1 v2.1.
+
+- **Key Feature:** It is **probabilistic**, not deterministic.
+    
+- **How it Works:** It achieves this by adding a random **salt** (a random string of bytes) to the signature process.
+    
+- **Result:** Every time you sign the _same message_, you will get a **different signature** due to the new random salt.
+    
+- **Security:** PSS is **provably secure** in the random oracle model (meaning its security can be mathematically reduced to the hardness of the RSA problem).
+    
+
+### PSS Signature Generation
+
+While the process is complex, the core idea is:
+
+1. **Hash:** $H = \text{Hash}(M)$ (Hash the message).
+    
+2. **Salt:** Generate a random string, `salt`.
+    
+3. **Combine:** Create a new hash $H'$ by hashing the original hash $H$ _and_ the random `salt` together.
+    
+    - $H' = \text{Hash}(0x00... || H || \text{salt})$
+        
+4. **Mask:** Create a "Data Block" (`DB`) containing the salt and padding. Then, use a **Mask Generation Function (MGF)** (which is a hash-based function) to "stretch" $H'$ into a mask. This mask is XORed with the `DB`.
+    
+    - `maskedDB = DB \oplus \text{MGF1}(H')`
+        
+5. **Encode:** The final encoded message `EM` is built from the `maskedDB` and the hash $H'$.
+    
+    - `EM = \text{maskedDB} || H' || 0xbc` (The `0xbc` is a fixed trailer byte).
+        
+6. **Sign:** Sign the final `EM` block with the **private key**.
+    
+    - $S = \text{EM}^d \pmod n$
+        
+
+### PSS Signature Verification
+
+The verifier essentially reverses the process to check if all the components match.
+
+1. **Hash:** $H = \text{Hash}(M)$ (Hash the original message).
+    
+2. **Recover EM:** Use the **public key** to recover the encoded message.
+    
+    - $\text{EM} = S^e \pmod n$
+        
+3. **Check & Split:** Check that the trailer byte is `0xbc`, then split `EM` into its `maskedDB` and $H'$ components.
+    
+4. **Unmask:** Use the recovered $H'$ to unmask the `maskedDB` and recover the `DB`.
+    
+    - `DB = \text{maskedDB} \oplus \text{MGF1}(H')`
+        
+5. **Parse & Recover Salt:** Parse the `DB` to extract the `salt`.
+    
+6. **Recompute H':** The verifier now re-computes what $H'$ _should_ be, using the _original_ message hash $H$ (from Step 1) and the _extracted_ `salt` (from Step 5).
+    
+    - `H'_check = \text{Hash}(0x00... || H || \text{salt})`
+        
+7. **Verify:** The signature is valid **if and only if** the recovered $H'$ from the signature matches the re-computed `H'_check`.
+    
+
+---
+
+## Final Comparison: PKCS#1 v1.5 vs. PSS
+
+PSS is the superior standard in every practical way.
 
 |**Feature**|**PKCS#1 v1.5 (Legacy)**|**RSA-PSS (Modern)**|
 |---|---|---|
-|**Padding Type**|**Deterministic**|**Probabilistic**|
-|**Security Proof**|None (heuristic)|**Yes** (provably secure)|
-|**Random Salt**|No|**Yes**|
-|**Standard Use**|Legacy systems (TLS 1.2, S/MIME)|**Modern standards** (TLS 1.3, OpenPGP)|
+|**Padding**|**Deterministic** (Same message = same signature)|**Probabilistic** (Same message = different signature)|
+|**Security Proof**|**None.** Has known vulnerabilities.|**Yes.** Provably secure in the random oracle model.|
+|**Salt**|No|**Yes** (a random value is added to each signature)|
+|**Standard Use**|Legacy systems (TLS 1.2, S/MIME)|Modern standards (TLS 1.3, FIPS 186-5)|

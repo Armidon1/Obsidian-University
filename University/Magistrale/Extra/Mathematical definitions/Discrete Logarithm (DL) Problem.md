@@ -29,7 +29,7 @@ Per un ingegnere informatico, il DLP è l'esempio perfetto di una **funzione uni
 
 - **Andare avanti (Esponenziazione):** Facile. È come mescolare due colori di vernice per ottenerne un terzo. Se ti do il blu e il giallo, ottieni facilmente il verde.
     
-- **Tornare indietro (Logaritmo Discreto):** Difficile. È come se ti dessi il secchio di vernice verde e ti chiedessi: "Esattamente quali tonalità di blu e giallo ho usato, e in quali proporzioni?". È un problema quasi impossibile.
+- **Tornare indietro (Logaritmo Discreto):** Difficile. È come se ti dessi il secchio di vernice verde e ti chiedessi: "Esattamente quali tonalità di blu e giallo ho usato, e in quali proporzioni?". È un problema quasi impossibile. Inoltre è computazionalmente infattibile se i numeri in gioco sono molto grandi
     
 
 ### Implicazioni in Crittografia

@@ -4,7 +4,7 @@
 
 Il **Problema del Logaritmo Discreto su Curve Ellittiche (ECDLP)** è il problema matematico **computazionalmente difficile** su cui si fonda l'intera sicurezza della **[[Elliptic Curve Cryptography - ECC|Crittografia a Curva Ellittica (ECC)]]**.
 
-È un'analogia del [[The Discrete Logarithm (DL) Problem|Problema del Logaritmo Discreto (DLP)]] standard, ma applicato al contesto dei _punti_ su una curva ellittica invece che ai _numeri_ in un gruppo moltiplicativo.
+È un'analogia del [[Discrete Logarithm (DL) Problem|Problema del Logaritmo Discreto (DLP)]] standard, ma applicato al contesto dei _punti_ su una curva ellittica invece che ai _numeri_ in un gruppo moltiplicativo.
 
 ### La Funzione Unidirezionale (One-Way Function)
 
