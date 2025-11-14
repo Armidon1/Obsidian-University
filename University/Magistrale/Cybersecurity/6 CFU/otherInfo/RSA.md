@@ -116,13 +116,13 @@ Applicare l'RSA "puro" (chiamato "textbook RSA") per le firme ha una grave vulne
 
 1. Un attaccante, Fran, non cerca di falsificare una firma per un messaggio $M$ specifico.
     
-2. Fran sceglie un file binario _casuale_ $R$.
+2. Fran sceglie un file binario _casuale_ $R$, sostenendolo come firma digitale di Alice.
     
-3. Fran usa la chiave **pubblica** $U$ di Alice (che tutti conoscono) e calcola $D = E_U(R)$. (Ricorda: in RSA, la cifratura e la decifratura sono la stessa operazione matematica, $x^k \bmod N$).
+3. Fran usa la chiave **pubblica** $U$ di Alice (che tutti conoscono) e calcola $D = E_U(R)$. (Ricorda: in RSA, la cifratura e la decifratura sono la stessa operazione matematica, $x^k \bmod N$, in questo caso $D=R^e \pmod N$ dove $(e,N)$ formano la chiave pubblica di Alice).
     
 4. Fran invia a Bob la coppia $(D, R)$, sostenendo che sia un messaggio $(M, S)$ firmato da Alice.
     
-5. Bob riceve $(D, R)$ ed esegue la verifica: controlla se $E_U(R) = D$.
+5. Bob riceve $(D, R)$ ed esegue la verifica: controlla se $E_U(R) = D$. Cioè fa la stessa identica operazione che ha fatto Fran per generare D. 
     
 6. L'uguaglianza è vera per costruzione! Bob accetta $(D, R)$ come un messaggio $D$ validamente firmato da Alice con la firma $R$.
     
@@ -164,7 +164,7 @@ Per risolvere questo problema (e per efficienza), **non si firma mai l'intero me
     
 - **Non-Ripudio**: Si ottiene solo se la verifica ha successo.
     
-- **Sicurezza (vs Forgery)**: L'attacco di Fran fallisce. Fran può ancora scegliere $R$ e calcolare $D = E_U(R)$, ma non può trovare un messaggio $M$ tale che $H(M) = D$, perché $H$ è una funzione _one-way_ (non invertibile).
+- **Sicurezza (vs Forgery)**: L'attacco di Fran fallisce. Fran può ancora scegliere $R$ e calcolare $D = E_U(R)$, ma non può trovare un messaggio $M$ tale che $H(M) = D$, perché $H$ è una funzione _one-way_ (non invertibile). Proprio perché introduco un qualcosa che non è invertibile, per funzionare è strettamente necessario avere $M$ per produrre il digest $h_1$ che verrà poi criptato con la chiave pubblica.
     
 - **Efficienza**: Firmare un hash (es. 256 bit) è molto più veloce che firmare un file di gigabyte.
     
