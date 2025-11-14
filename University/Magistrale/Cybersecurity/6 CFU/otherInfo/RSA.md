@@ -4,7 +4,165 @@
 > Serve sia per **[[Confidentiality]] dei dati** che per **firme digitali e [[Authenticity]]**.
 
 ---
+  
 
+il meccanismo di funzionamento RSA si basa sulla generazione di un valore $N = p*q$, dove $p$ e $q$ due numeri primi molto grandi. Ma in che modo vengono usati $p$ e $q$ per la generazione della chiave privata $d$ e pubblica $e$?
+
+![[Pasted image 20251023113341.png]]
+
+Ecco i passaggi dettagliati che mostrano come `p` e `q` (i numeri primi segreti) vengano usati per generare `e` (l'esponente pubblico/public key) e `d` (l'esponente privato/private key).
+
+---
+
+### Meccanismo di Generazione delle Chiavi RSA
+
+Il processo si basa sul fatto che `p` e `q` sono il **segreto fondamentale** dell'intero sistema.
+
+#### Passo 1: Generazione di `p` e `q`
+
+Come hai detto, il processo inizia scegliendo due numeri primi (`p` e `q`) distinti e molto grandi (es. 2048 bit ciascuno, in seguito verrà anche mostrato quanto i 2048 bit sono sicuri).
+
+- Questi numeri sono scelti casualmente e testati per la primalità.
+    
+- **Segretezza:** `p` e `q` devono rimanere assolutamente segreti.
+    
+
+#### Passo 2: Calcolo del Modulo `N`
+
+Viene calcolato il modulo N (modulo perché verrà usato per $e \times d \equiv 1 \pmod{\phi(N)}$, che è la formula di base per generare le chiavi RSA), che è il prodotto dei due numeri primi:
+
+$$N = p \times q$$
+
+- **Pubblicità:** Questo N è pubblico insieme alla chiave pubblica $e$. Questo numero `N` farà parte sia della chiave pubblica che di quella privata.
+    
+- **Sicurezza:** La sicurezza di RSA si basa sul fatto che, sebbene tutti conoscano `N`, è computazionalmente impossibile (o meglio, richiede un tempo irragionevole) risalire ai fattori originali `p` e `q`. Questo è noto come il **[[Problema della Fattorizzazione]]**.
+    
+
+#### Passo 3: Calcolo del Totiente di Eulero, $\phi(N)$
+
+Questo è il passaggio cruciale che lega `p` e `q` agli esponenti. Si calcola la **Funzione [[Euler's totient function|Totiente di Eulero]]** di `N`, indicata come $\phi(N)$ (phi di N).
+
+- $\phi(N)$ conta quanti numeri interi positivi, minori di `N`, sono coprimi con `N`.
+    
+- Grazie a una proprietà della funzione totiente, poiché p e q sono primi, il calcolo è molto semplice:
+    
+    $$\phi(N) = \phi(p) \times \phi(q) = (p - 1) \times (q - 1)$$
+    
+- **Segretezza:** Il valore $\phi(N)$ è un **segreto** tanto quanto `p` e `q`. Se un attaccante riuscisse a indovinare $\phi(N)$, potrebbe calcolare la chiave privata `d`. E qui sorge una domanda: Se $N$ è pubblica, non posso calcolarmi facilmente $\phi(n)$? (che dovrebbe essere privata)
+	- la risposta è NO! Ed è il cuore della sicurezza di RSA questo punto. Vedi a breve il perché (ma se hai fretta perché hai il cazzo duro guarda [[RSA#Spiegazione difficoltà calcolo $ phi(N)$|QUI]])
+
+
+#### Passo 4: Scelta dell'Esponente Pubblico `e`
+
+Ora si sceglie l'esponente pubblico `e`. Questo numero non deve essere segreto.
+
+- `e` deve soddisfare due condizioni:
+    
+    1. Deve essere compreso tra $1$ e $\phi(N)$ (cioè $1 < e < \phi(N)$).
+        
+    2. Deve essere **coprimo** con $\phi(N)$. Questo significa che $\text{MCD}(e, \phi(N)) = 1$.
+        
+- Scelta Pratica: Per ragioni di efficienza, e non viene calcolato, ma scelto da una lista di valori noti. La scelta più comune al mondo è:
+    
+    e = 65537 (che è $2^{16} + 1$)
+    
+    Questo numero è primo e piccolo, rendendo l'operazione di "cifratura" (o verifica della firma) molto veloce.
+    
+
+#### Passo 5: Calcolo dell'Esponente Privato `d`
+
+Infine, si calcola l'esponente privato `d`. Questo è il cuore matematico della creazione della chiave.
+
+- `d` viene definito come l'**inverso moltiplicativo modulare** di `e` modulo $\phi(N)$.
+    
+- In altre parole, `d` è quel numero unico che, moltiplicato per `e`, dà come resto 1 se diviso per $\phi(N)$.
+    
+- La formula è:
+    
+    $$e \times d \equiv 1 \pmod{\phi(N)}$$
+    
+    (o, equivalentemente, $e \times d = 1 + k \times \phi(N)$ per qualche intero $k$).
+    
+- **Come si calcola?** `d` viene calcolato utilizzando l'**Algoritmo di Euclide Esteso**, che prende `e` e $\phi(N)$ come input e restituisce `d`.
+    
+
+---
+
+### Riepilogo Finale
+
+Alla fine del processo, abbiamo:
+
+- Chiave Pubblica: La coppia (e, N). Questa viene distribuita al mondo.
+    
+    (Esempio: (65537, N))
+    
+- Chiave Privata: La coppia (d, N). Questa deve rimanere assolutamente segreta.
+    
+    (Esempio: (d_calcolato, N))
+    
+
+Come puoi vedere, `p` e `q` sono fondamentali:
+
+1. `p` e `q` generano **`N`** (la parte pubblica).
+    
+2. `p` e `q` generano **$\phi(N)$** (il "modulo segreto" per gli esponenti).
+    
+3. $\phi(N)$ ed `e` (pubblico) generano **`d`** (il segreto privato).
+    
+
+Senza `p` e `q`, è impossibile calcolare $\phi(N)$ e, di conseguenza, è impossibile calcolare `d` a partire da `e` e `N`.
+
+## Spiegazione difficoltà calcolo $\phi(N)$ 
+### Il "Perché" (Il Problema della Fattorizzazione)
+
+La tua domanda implicita è: "Ma se `N` è pubblico, non posso semplicemente _calcolare_ $\phi(N)$?"
+
+La risposta è **NO**, e questo è _esattamente_ il motivo per cui RSA è sicuro. Il motivo si chiama **Problema della Fattorizzazione**.
+
+Analizziamo il processo di pensiero di un attaccante che conosce solo `N` (pubblico):
+
+1. **Obiettivo dell'Attaccante:** Calcolare $\phi(N)$.
+    
+2. **Formula Conosciuta:** L'attaccante sa che $\phi(N) = (p - 1) \times (q - 1)$.
+    
+3. **Informazione Mancante:** Per usare questa formula, l'attaccante ha bisogno di conoscere `p` e `q`.
+    
+4. **Informazione Disponibile:** L'attaccante ha solo `N`.
+    
+5. **Il Blocco:** Per trovare `p` e `q` da `N`, l'attaccante deve **fattorizzare `N`**.
+    
+6. **Conclusione:** Come abbiamo visto, fattorizzare `N` (quando è un numero di migliaia di bit) è un problema computazionalmente impossibile da risolvere in un tempo ragionevole.
+    
+
+**In sintesi:**
+
+È vero che `N` e $\phi(N)$ sono matematicamente correlati. Ma l'unico modo noto per passare da `N` a $\phi(N)$ è attraverso `p` e `q`, che sono nascosti dal Problema della Fattorizzazione.
+
+### Analogia della Cassaforte
+
+Pensa a `N` e $\phi(N)$ in questo modo:
+
+- **`N` (Pubblico):** È come la **cassaforte** stessa. Puoi vederla, toccarla, misurare le sue dimensioni esterne. È lì, visibile a tutti.
+    
+- **`p` e `q` (Privati):** Sono i **numeri della combinazione**. Sono segreti e non sono scritti da nessuna parte sulla cassaforte.
+    
+- **$\phi(N)$ (Privato):** È il **meccanismo interno** della serratura. Il suo funzionamento dipende _direttamente_ dalla combinazione (`p` e `q`), ma è impossibile capirlo o calcolarlo semplicemente guardando la scatola di metallo (`N`).
+    
+
+### Tabella Riassuntiva
+
+Questa tabella riassume cosa è pubblico e cosa è privato, e _perché_.
+
+| **Componente**         | **È Pubblico o Privato?** | **Perché?**                                                                         |
+| ---------------------- | ------------------------- | ----------------------------------------------------------------------------------- |
+| `p` e `q`              | **Privato**               | I "segreti originali" scelti dal creatore.                                          |
+| `N = p \times q`       | **Pubblico**              | È "facile" da calcolare (moltiplicare), ma "difficile" da invertire (fattorizzare). |
+| $\phi(N) = (p-1)(q-1)$ | **Privato**               | **Impossibile** da calcolare conoscendo solo `N`. Richiede `p` e `q`.               |
+| `e`                    | **Pubblico**              | Scelto (spesso 65537). Fa parte della chiave pubblica.                              |
+| `d`                    | **Privato**               | Calcolato usando `e` e $\phi(N)$. È il "segreto finale".                            |
+    
+
+---
 ## Panoramica dell'Algoritmo RSA e delle sue Applicazioni
 
 L'algoritmo RSA è un sistema di crittografia asimmetrica che si basa sull'uso di una coppia di chiavi: una **chiave pubblica** (che può essere condivisa con tutti) e una **chiave privata** (che deve essere tenuta segreta dal proprietario).
