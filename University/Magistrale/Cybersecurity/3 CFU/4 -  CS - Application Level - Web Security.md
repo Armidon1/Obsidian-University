@@ -164,11 +164,11 @@ Il Web è un ecosistema "maledetto" per la sicurezza a causa di:
 
 Le contromisure si applicano a diversi livelli:
 
-- **Client:** Filtri XSS (ormai spesso rimossi dai browser moderni perché potevano introdurre nuove vulnerabilità), Sandbox, Isolamento dei siti.
+- **Client:** Filtri XSS (ormai spesso rimossi dai browser moderni perché potevano introdurre nuove vulnerabilità), Sandbox, Isolamento dei siti. Questi sono Defense-in-depth Mechanism
     
-- **Ibrido (Client/Server):** HSTS (forza HTTPS), CSP (Content Security Policy), CORS (Cross-Origin Resource Sharing), Fetch Metadata, Trusted Types, policy dei cookie (es. `SameSite`, `HttpOnly`, `Secure`).
+- **Ibrido (Client/Server):** HSTS (forza HTTPS), CSP (Content Security Policy), CORS (Cross-Origin Resource Sharing), Fetch Metadata, Trusted Types, policy dei cookie (es. `SameSite`, `HttpOnly`, `Secure`). Questi sono Policy-Based Mechanism
     
-- **Server:** Prepared statements (contro SQLi), filtri lato server, Web Application Firewall (WAF), token CSRF.
+- **Server:** Prepared statements (contro SQLi), filtri lato server, Web Application Firewall (WAF), token CSRF. 
     
 
 ---
@@ -186,7 +186,7 @@ Le contromisure si applicano a diversi livelli:
     
 2. **A02: Cryptographic Failures:** Protezione inadeguata dei dati sensibili (es. password in chiaro, crittografia debole). Era "Sensitive Data Exposure".
     
-3. **A03: Injection:** Include SQL, NoSQL, OS command injection, e ora anche Cross-Site Scripting (XSS).
+3. **A03: Injection:** Include SQL, NoSQL, OS command injection, e ora anche Cross-Site Scripting (XSS). Questa classe esiste dagli albori di internet e si pensa che non possano essere fermati in alcun modo.
     
 4. **A04: Insecure Design:** Nuova categoria che si concentra sui rischi legati a difetti di progettazione e architettura.
     
@@ -247,7 +247,7 @@ Questi prezzi riflettono la difficoltà di trovare e sfruttare queste vulnerabil
 # Minacce e Difese Web: Parte 1
 
 ## Path Traversal
-
+![[Pasted image 20251117143625.png]]
 ### Path Traversal in sintesi
 
 Il **Path Traversal** (noto anche come Directory Traversal o Dot-Dot-Slash attack) è una vulnerabilità che consente a un attaccante di accedere a file e directory memorizzati al di fuori della cartella radice del web (webroot).
@@ -276,9 +276,7 @@ Consideriamo un server web con la seguente configurazione:
 
 Codice vulnerabile (`show.php`):
 
-PHP
-
-```
+```php
 <?php
     // Vulnerabilità: l'input $_GET["page"] viene concatenato direttamente
     echo file_get_contents("pages/" . $_GET["page"]);
@@ -294,6 +292,7 @@ Una richiesta legittima per visualizzare un file di testo nella directory consen
 GET /show.php?page=team.txt HTTP/2
 
 Risultato: Il server restituisce il contenuto di /var/www/html/pages/team.txt.
+![[Pasted image 20251117143825.png]]
 
 #### L'Attacco
 
@@ -305,11 +304,13 @@ GET /show.php?page=../../../etc/passwd HTTP/2
 
 Risultato: Il server risolve il percorso in /var/www/html/pages/../../../etc/passwd, che equivale a /etc/passwd, e ne restituisce il contenuto (es. root:x:0:0:root:/root:/bin/bash...).
 
+![[Pasted image 20251117143839.png]]
+
 ---
 
 ### Prevenzione del Path Traversal
 
-Ideale: Non utilizzare mai l'input dell'utente direttamente per costruire percorsi di file.
+**Ideale: Non utilizzare mai l'input dell'utente direttamente per costruire percorsi di file.**
 
 Nel mondo reale: Se necessario, validare rigorosamente tutto l'input utente.
 
@@ -320,9 +321,7 @@ Nel mondo reale: Se necessario, validare rigorosamente tutto l'input utente.
 
 Esempio di correzione in PHP:
 
-PHP
-
-```
+```php
 <?php
 $pdir = "/var/www/html/pages/";
 // realpath risolve i '../', i link simbolici e restituisce il percorso assoluto
@@ -344,7 +343,7 @@ _Arricchimento: `realpath()` è fondamentale perché normalizza il percorso, rim
 
 Non affidarsi a un solo meccanismo di difesa. Aggiungere strati di sicurezza:
 
-- **Privilegi minimi:** Il processo del web server dovrebbe avere accesso solo alle directory strettamente necessarie.
+- **Privilegi minimi:** Il processo del web server dovrebbe avere accesso solo alle directory strettamente necessarie. Questo perché il browser non ha alcun motivo di accedere in altre directory.
     
 - **Sandboxing:** Utilizzare ambienti isolati come **chroot jail** (che cambia la directory root apparente per il processo), **SELinux** (che applica politiche di controllo accessi obbligatorie) o **container** (Docker) per limitare i danni in caso di compromissione dell'applicazione.
     
@@ -404,6 +403,7 @@ Bisogna prestare attenzione ai permessi:
 ---
 
 ## Command & Code Injection
+![[Pasted image 20251117145401.png]]
 
 ### Command Injection in sintesi
 
@@ -422,9 +422,7 @@ Queste funzioni avviano una shell (come /bin/sh o cmd.exe) per elaborare il coma
 
 **Esempio vulnerabile (`ping.php`):**
 
-PHP
-
-```
+```php
 <?php
 // Vulnerabilità: concatenazione diretta dell'input utente in un comando shell
 system("ping -c 4 " . $_GET["ip"] . " -i 1");
@@ -438,6 +436,7 @@ Richiesta: GET /ping.php?ip=8.8.8.8
 Comando eseguito: ping -c 4 8.8.8.8 -i 1
 
 Risultato: Output standard del comando ping.
+![[Pasted image 20251117145644.png]]
 
 #### L'Attacco
 
@@ -455,7 +454,8 @@ Richiesta: `GET /ping.php?ip=8.8.8.8;cat+/etc/passwd+#`
 - #: Commenta il resto del comando originale ( -i 1) per evitare errori di sintassi.
     
     Comando eseguito: ping -c 4 8.8.8.8; cat /etc/passwd # -i 1
-    
+![[Pasted image 20251117145701.png]]
+Command Injection può essere anche fixato (anche qui) inserendo dei permessi in base al gruppo di appartenenza. Come
 
 ---
 
@@ -464,17 +464,15 @@ Richiesta: `GET /ping.php?ip=8.8.8.8;cat+/etc/passwd+#`
 La **Code Injection** è simile, ma invece di eseguire comandi del sistema operativo, l'attaccante inietta codice che viene interpretato ed eseguito dall'applicazione stessa (es. codice PHP, Python, JavaScript).
 
 **Esempio vulnerabile (`calc.php`):**
-
-PHP
-
-```
+```PHP
 <?php
 // Vulnerabilità: eval() esegue la stringa come codice PHP
 eval("echo " . $_GET["expr"] . ";");
 ?>
 ```
 
-_Arricchimento: Funzioni come `eval()` sono estremamente pericolose perché permettono di fare qualsiasi cosa il linguaggio supporti._
+_Arricchimento: Funzioni come `eval()` sono estremamente pericolose perché permettono di fare qualsiasi cosa il linguaggio supporti.
+![[Pasted image 20251117150531.png]]_
 
 #### L'Attacco
 
@@ -483,6 +481,16 @@ Richiesta: GET /calc.php?expr=file_get_contents('/etc/passwd')
 Il server esegue: eval("echo file_get_contents('/etc/passwd');");
 
 Risultato: Il contenuto del file viene visualizzato. L'attaccante ha ottenuto l'esecuzione di codice arbitrario (RCE - Remote Code Execution).
+
+![[Pasted image 20251117150554.png]]
+
+### Moodle Command line Injection (2018)
+![[Pasted image 20251117151028.png]]
+Details: https://blog.ripstech.com/2018/moodle-remote-code-execution/
+guarda [[Moodle Command Line Injection Example|qui]]
+Ci sono volute 4 patch per sistemare questa vulnerabilità. Non è assolutamente facile gestire user-inputs.
+
+---
 
 ### Prevenzione
 
@@ -533,41 +541,31 @@ Ecco le operazioni fondamentali (CRUD - Create, Read, Update, Delete):
 
 - **Recuperare record (SELECT):**
     
-    SQL
-    
-    ```
+    ```SQL
     SELECT * FROM users WHERE user='admin' AND password='1f4sdge!';
     ```
     
 - **Aggiungere nuovi record (INSERT):**
     
-    SQL
-    
-    ```
+    ```SQL
     INSERT INTO users VALUES ('karl', 's3cr3t', 23);
     ```
     
 - **Aggiornare record esistenti (UPDATE):**
     
-    SQL
-    
-    ```
+    ```SQL
     UPDATE users SET age=age+1;
     ```
     
 - **Rimuovere record (DELETE):**
     
-    SQL
-    
-    ```
+    ```SQL
     DELETE FROM users WHERE age < 25;
     ```
     
 - **Rimuovere una tabella (DROP):**
     
-    SQL
-    
-    ```
+    ```SQL
     DROP TABLE users;
     ```
     
@@ -575,6 +573,7 @@ Ecco le operazioni fondamentali (CRUD - Create, Read, Update, Delete):
 ---
 
 ## SQL Injection (SQLi) in Sintesi
+![[Pasted image 20251117152059.png]]
 
 La **SQL Injection (SQLi)** è una vulnerabilità di validazione dell'input che si verifica quando dati non fidati forniti dall'utente vengono concatenati direttamente all'interno di una query SQL inviata al database. È un'istanza specifica delle vulnerabilità di **Code Injection**, ma nel contesto dei database.
 
@@ -596,10 +595,7 @@ _La celebre vignetta di XKCD che illustra un attacco distruttivo SQLi dove il no
 ### Esempio Base: Bypass dell'Autenticazione
 
 Consideriamo un codice PHP vulnerabile per il login:
-
-PHP
-
-```
+```php
 <?php
 $db = new PDO(CONNECTION_STRING, DB_USER, DB_PASS);
 // VULNERABILE: Concatenazione diretta dell'input utente
@@ -616,6 +612,7 @@ if ($user !== false) {
 }
 ?>
 ```
+Sono le peggiori 10 line di codice mostrate dal prof: ha un botto di vulnerabilità
 
 #### Caso d'uso legittimo
 
@@ -663,48 +660,219 @@ La condizione `LIKE '%'` è sempre vera (matcha qualsiasi sequenza di caratteri)
 
 ## Tecniche Avanzate di SQL Injection
 
-### Stacking Queries (Query Multiple)
+## Stacking Queries (Query Impilate)
 
-Se il database e il driver utilizzato (es. alcune configurazioni di PHP con PDO o driver specifici per MSSQL/PostgreSQL) supportano le query multiple separate da punto e virgola (`;`), l'attaccante può iniettare intere nuove istruzioni SQL.
+Le **Query Impilate** si riferiscono alla possibilità di eseguire istruzioni SQL multiple e distinte in un'unica chiamata al database, tipicamente separandole con un punto e virgola (`;`).
 
-- Aggiungere un utente:
+Se la configurazione del server di database abilita questa funzione (spesso è disabilitata di default nei driver moderni rivolti al web), apre la porta a gravi attacchi che possono compromettere l'integrità e la disponibilità del database.
+
+L'attacco funziona "evadendo" dalla query prevista e "impilando" una nuova query dannosa subito dopo.
+
+### Esempio 1: Aggiungere un Nuovo Utente
+
+Un attaccante può iniettare un nuovo utente nella tabella `users`.
+
+- **Input dell'Attaccante:** `'; INSERT INTO users (user, password, age) VALUES ('attacker', 'mypwd', 1) -- -`
     
-    Payload: '; INSERT INTO users (user, password, age) VALUES ('attacker', 'mypwd', 1) -- -
+- **SQL Risultante Inviato al DB:**
+    ```SQL
+    SELECT * FROM users WHERE user=''; 
+    INSERT INTO users (user, password, age) VALUES ('attacker', 'mypwd', 1);
+    -- -' AND password='whatever'
+    ```
     
-- Modificare la password dell'admin:
+- **Come Funziona:**
     
-    Payload: '; UPDATE users SET password='newpwd' WHERE user='admin'-- -
+    1. La prima query (`SELECT...`) fallisce in modo innocuo.
+        
+    2. Il database esegue quindi la _seconda_ query, un'istruzione `INSERT` dannosa, creando un nuovo utente.
+        
+    3. Il `-- -` (uno spazio è cruciale dopo i due trattini) è un commento SQL, che neutralizza il resto della stringa di query originale (`' AND password='whatever'`), prevenendo errori di sintassi.
+        
+
+### Esempio 2: Modificare Dati (Cambiare Password Admin)
+
+Un attaccante può prendere il controllo di un account admin modificandone la password.
+
+- **Input dell'Attaccante:** `'; UPDATE users SET password='newpwd' WHERE user='admin'-- -`
     
-- Cancellare tabelle (Distruttivo):
+- **SQL Risultante Inviato al DB:**
     
-    Payload: '; DROP TABLE users -- -
-    
-
-_Arricchimento:_ MySQL/MariaDB con le funzioni PHP standard `mysql_query()` o `mysqli::query()` spesso _non_ permette lo stacking per default per motivi di sicurezza, mentre è più comune su Microsoft SQL Server o PostgreSQL.
-
-### UNION-Based SQL Injection
-
-Questa tecnica viene utilizzata per estrarre dati da _altre_ tabelle visualizzandoli nei risultati della query originale.
-
-Richiede due condizioni:
-
-1. La query originale deve restituire dei risultati visibili a schermo.
-    
-2. Le due subquery combinate con `UNION` devono avere lo **stesso numero di colonne** e tipi di dati compatibili.
+    ```SQL
+    SELECT * FROM users WHERE user=''; 
+    UPDATE users SET password='newpwd' WHERE user='admin';
+    -- -' AND password=""
+    ```
     
 
-Esempio di payload nel campo di ricerca:
+### Esempio 3: Distruggere Dati (Eliminare una Tabella)
 
-' UNION SELECT user, password FROM users -- -
+Questo è il tipo più distruttivo di attacco stacked query, in cui l'attaccante elimina un'intera tabella.
 
-Query risultante:
-```SQL
-SELECT sender, content FROM messages WHERE receiver='...' AND content LIKE '%' UNION SELECT user, password FROM users -- - %'
+- **Input dell'Attaccante:** `'; DROP TABLE users -- -`
+    
+- **SQL Risultante Inviato al DB:**
+    
+    ```SQL
+    SELECT * FROM users WHERE user=''; 
+    DROP TABLE users;
+    -- - AND password=";
+    ```
+    
+    Questo comando elimina completamente la tabella `users`, portando a una catastrofica perdita di dati.
+    
+
+---
+
+## Il "Piccolo Bobby Tables" (Monito)
+
+Questa famosa vignetta di xkcd è l'illustrazione più nota di un attacco SQL injection di tipo stacked query.
+
+[Immagine della vignetta xkcd "Little Bobby Tables"](https://xkcd.com/327/)
+
+Nella vignetta, una madre chiama suo figlio `Robert'); DROP TABLE Students;--`, nome che, una volta inserito nel database scolastico non protetto, provoca la cancellazione di tutti i record degli studenti.
+
+La battuta finale della vignetta, "Spero che abbiate imparato a sanificare i vostri input del database," è la lezione fondamentale. Nello sviluppo moderno, la best practice non è solo "sanificare" (che è difficile e soggetto a errori), ma usare **query parametrizzate** (prepared statements), che separano la _logica_ della query dai _dati_, rendendo impossibile questa intera classe di attacchi.
+
+---
+
+## Attacco UNION (Fuga di Dati da Altre Tabelle)
+
+Questo è un tipo diverso di SQL Injection che non modifica o distrugge i dati, ma li _ruba_. Questo attacco usa l'operatore SQL `UNION` per "unire" i risultati della query legittima con i risultati di una nuova query `SELECT` dannosa.
+
+### Esempio di Codice Vulnerabile
+
+Questo codice PHP è vulnerabile perché costruisce una query concatenando l'input dell'utente (`$_GET["search"]`) direttamente nella stringa.
+
+```PHP
+<?php
+$db = new PDO(CONNECTION_STRING, DB_USER, DB_PASS);
+start_session();
+
+// VULNERABILE: $_GET["search"] è concatenato direttamente
+$query = "SELECT sender, content FROM messages WHERE
+          receiver = '".$_SESSION["user"]."' AND
+          content LIKE '%".$_GET["search"]. "%'";
+
+$sth = $db->query($query);
+foreach ($sth as $row) {
+    echo "Sender:".$row["sender"];
+    echo "Content: ".$row["content"];
+}
+?>
 ```
 
-Questo unirà i risultati dei messaggi con l'elenco di utenti e password, mostrandoli all'attaccante.
+### Il Payload dell'Attacco
 
-_Arricchimento:_ Per determinare il numero corretto di colonne, gli attaccanti spesso usano tecniche come `ORDER BY 1`, `ORDER BY 2`, ecc., finché il database non restituisce un errore, indicando che si è superato il numero di colonne esistenti.
+Un attaccante può usare questo parametro `search` per rubare nomi utente e password dalla tabella `users`.
+
+- **Input dell'Attaccante:** `' UNION SELECT user, password FROM users -- -`
+    
+- **SQL Risultante Inviato al DB:**
+    
+    ```SQL
+    SELECT sender, content FROM messages WHERE 
+    receiver='attacker' AND content LIKE '%' 
+    UNION SELECT user, password FROM users 
+    -- - %'
+    ```
+    
+
+### Come Funziona e Requisiti
+
+1. **`'` (Apostrofo):** Il primo apostrofo nel payload (`'`) chiude la stringa `content LIKE '%`.
+    
+2. **`UNION`:** L'operatore `UNION` aggiunge i risultati di una nuova query.
+    
+3. **Query Dannosa:** L'attaccante _indovina_ che esista una tabella chiamata `users` e che abbia colonne `user` e `password`.
+    
+4. **`-- -` (Commento):** Questo commenta il `%'` finale della query originale per evitare un errore di sintassi.
+    
+
+L'applicazione ora eseguirà questa query combinata. I risultati mostreranno prima eventuali messaggi legittimi, seguiti da un elenco completo di tutti i nomi utente e password dalla tabella `users`.
+
+**Perché un attacco UNION funzioni, devono essere soddisfatte due condizioni:**
+
+1. La query originale deve essere un'istruzione `SELECT`.
+    
+2. L'istruzione `SELECT` dannosa deve restituire lo **stesso numero di colonne** della query originale. (Qui, la query originale selezionava `sender, content` (2 colonne), quindi la query dell'attaccante `user, password` (2 colonne) corrisponde perfettamente).
+    
+3. I tipi di dati delle colonne devono essere compatibili tra le due query.
+    
+
+---
+
+## Ricognizione del Database (Scoprire i Metadati)
+
+Come fa un attaccante a sapere che la tabella si chiama `users` o che le colonne sono `user` e `password`? Può eseguire una ricognizione _interrogando i metadati stessi del database_.
+
+La maggior parte dei database SQL mantiene un database speciale e integrato che descrive tutti gli altri database, tabelle e colonne.
+
+- information_schema (per MySQL, PostgreSQL, ecc.)
+    
+    Questo è un database standard che può essere interrogato come qualsiasi altro.
+    
+    - Per trovare tutti i nomi delle tabelle:
+        
+        ...UNION SELECT table_name, table_schema FROM information_schema.tables -- -
+        
+    - Per trovare tutti i nomi delle colonne di una tabella specifica:
+        
+        ...UNION SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'users' -- -
+        
+- sqlite_master (per SQLite)
+    
+    SQLite usa una tabella master speciale.
+    
+    - Per trovare tutte le tabelle:
+        
+        ...UNION SELECT name, tbl_name FROM sqlite_master WHERE type='table' -- -
+        
+
+Utilizzando queste tabelle di metadati, un attaccante può mappare alla cieca l'intera struttura del database, trovare tabelle sensibili (`users`, `credit_cards`) e quindi lanciare un attacco `UNION` per estrarne il contenuto.
+
+---
+
+## Second-Order SQL Injection (Stored SQLi)
+![[Pasted image 20251117154202.png]]
+
+In questo scenario, il payload malevolo viene prima **memorizzato** nel database (in una fase in cui l'input potrebbe essere sanitizzato correttamente o considerato "sicuro") e poi **eseguito** in una seconda query successiva che utilizza quel dato senza adeguata validazione. Ad esempio, il dato viene memorizzato per essere sanitizzato in un secondo momento, ma leggendolo esegue la query maledetta.
+
+**Esempio:**
+
+1. **Inserimento:** Un attaccante si registra con un username malevolo: `'; UPDATE users SET password='...' WHERE user='admin'--`. L'applicazione lo salva correttamente nel DB.
+    
+2. **Esecuzione:** Quando l'applicazione usa questo username in una seconda query (es. per mostrare il profilo o registrare un log), la stringa viene concatenata in una nuova query SQL ed eseguita, attivando l'attacco. 
+```sql
+$query = "SELECT sender, content FROM messages WHERE
+receiver='" . $_SESSION["user"] . "' AND content LIKE '%" . $_GET["search"] . "%'";
+ 
+ che diventerebbe 
+ 
+SELECT * FROM messages WHERE receiver = ''; UPDATE TABLE users SET
+password='newpwd' WHERE user='admin' -- -' AND content LIKE '%%'
+```
+    
+
+---
+
+## Esfiltrazione dei Metadati del Database
+
+Se non conosciamo la struttura del database, possiamo interrogarlo per chiedergli i suoi stessi metadati. La maggior parte dei DBMS moderni ha un database standard chiamato `INFORMATION_SCHEMA` (o tabelle di sistema specifiche come `sqlite_master` in SQLite).
+
+- `information_schema.tables`: Contiene i nomi di tutte le tabelle.
+    
+- `information_schema.columns`: Contiene i nomi delle colonne per ogni tabella.
+    
+
+Esempio per SQLite per trovare i nomi delle tabelle:
+
+SQL
+
+```
+SELECT name FROM sqlite_master WHERE type='table';
+```
+
 
 ---
 
@@ -747,44 +915,11 @@ Payload (esempio per MS SQL Server):
 '; IF (SELECT COUNT(Username) FROM Users WHERE Username = 'Administrator' AND SUBSTRING(Password, 1, 1) > 'm') = 1 WAITFOR DELAY '0:0:10'--
 ```
 
-Se il server impiega più di 10 secondi a rispondere, l'attaccante sa che la condizione è vera.
+Se il server impiega più di 10 secondi a rispondere, l'attaccante sa che la condizione è vera. Da notare che ogni richiesta errata che produce errori sono tracciati nei Log.
 
 Arricchimento: Su MySQL si usa spesso SLEEP(n), su PostgreSQL pg_sleep(n). Questa tecnica è lenta e può essere influenzata dal carico di rete.
 
 ---
-
-## Second-Order SQL Injection (Stored SQLi)
-
-In questo scenario, il payload malevolo viene prima **memorizzato** nel database (in una fase in cui l'input potrebbe essere sanitizzato correttamente o considerato "sicuro") e poi **eseguito** in una seconda query successiva che utilizza quel dato senza adeguata validazione.
-
-**Esempio:**
-
-1. **Inserimento:** Un attaccante si registra con un username malevolo: `'; UPDATE users SET password='...' WHERE user='admin'--`. L'applicazione lo salva correttamente nel DB.
-    
-2. **Esecuzione:** Quando l'applicazione usa questo username in una seconda query (es. per mostrare il profilo o registrare un log), la stringa viene concatenata in una nuova query SQL ed eseguita, attivando l'attacco.
-    
-
----
-
-## Esfiltrazione dei Metadati del Database
-
-Se non conosciamo la struttura del database, possiamo interrogarlo per chiedergli i suoi stessi metadati. La maggior parte dei DBMS moderni ha un database standard chiamato `INFORMATION_SCHEMA` (o tabelle di sistema specifiche come `sqlite_master` in SQLite).
-
-- `information_schema.tables`: Contiene i nomi di tutte le tabelle.
-    
-- `information_schema.columns`: Contiene i nomi delle colonne per ogni tabella.
-    
-
-Esempio per SQLite per trovare i nomi delle tabelle:
-
-SQL
-
-```
-SELECT name FROM sqlite_master WHERE type='table';
-```
-
----
-
 ## Prevenzione delle SQL Injection
 
 ### Difesa Primaria: Prepared Statements (Query Parametrizzate)

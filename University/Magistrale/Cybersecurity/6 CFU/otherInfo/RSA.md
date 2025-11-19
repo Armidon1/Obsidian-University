@@ -20,7 +20,7 @@ Il processo si basa sul fatto che `p` e `q` sono il **segreto fondamentale** del
 
 #### Passo 1: Generazione di `p` e `q`
 
-Come hai detto, il processo inizia scegliendo due numeri primi (`p` e `q`) distinti e molto grandi (es. 2048 bit ciascuno, in seguito verrà anche mostrato quanto i 2048 bit sono sicuri).
+Come hai detto, il processo inizia scegliendo due numeri primi (`p` e `q`) distinti e molto grandi (es. 2048 bit ciascuno, in seguito verrà anche mostrato quanto i 2048 bit sono sicuri ed inoltre verranno mostrati [[RSA#1. Fattorizzazione di $N$|altri criteri di scelta di p e q]]).
 
 - Questi numeri sono scelti casualmente e testati per la primalità.
     
@@ -117,26 +117,52 @@ Senza `p` e `q`, è impossibile calcolare $\phi(N)$ e, di conseguenza, è imposs
 
 La tua domanda implicita è: "Ma se `N` è pubblico, non posso semplicemente _calcolare_ $\phi(N)$?"
 
-La risposta è **NO**, e questo è _esattamente_ il motivo per cui RSA è sicuro. Il motivo si chiama **Problema della Fattorizzazione**.
+La risposta è **NO**, e questo è _esattamente_ il motivo per cui RSA è sicuro. Il motivo si chiama **Problema della Fattorizzazione**: Non è solo "computazionalmente impossibile", ma è stato dimostrato che calcolare $\phi(N)$ è **computazionalmente equivalente a fattorizzare $N$**.
 
-Analizziamo il processo di pensiero di un attaccante che conosce solo `N` (pubblico):
+Questo significa che se tu trovassi un "trucco" magico per calcolare $\phi(N)$ velocemente senza conoscere $p$ e $q$, potresti usare quel trucco per fattorizzare $N$ (e viceversa). I due problemi sono legati a doppio filo.
 
-1. **Obiettivo dell'Attaccante:** Calcolare $\phi(N)$.
+Per capire il perché, analizziamo i due (e unici) modi che un attaccante ha per calcolare $\phi(N)$ conoscendo solo $N$.
+
+### Metodo 1: La Definizione (Brute Force)
+
+La definizione formale di $\phi(N)$ è: "Contare tutti i numeri $k$ tra $1$ e $N-1$ che sono coprimi con $N$ (cioè $\text{MCD}(k, N) = 1$)".
+
+Un computer potrebbe provare a farlo:
+
+1. Controlla `MCD(1, N)`. (È 1)
     
-2. **Formula Conosciuta:** L'attaccante sa che $\phi(N) = (p - 1) \times (q - 1)$.
+2. Controlla `MCD(2, N)`.
     
-3. **Informazione Mancante:** Per usare questa formula, l'attaccante ha bisogno di conoscere `p` e `q`.
+3. Controlla `MCD(3, N)`.
     
-4. **Informazione Disponibile:** L'attaccante ha solo `N`.
-    
-5. **Il Blocco:** Per trovare `p` e `q` da `N`, l'attaccante deve **fattorizzare `N`**.
-    
-6. **Conclusione:** Come abbiamo visto, fattorizzare `N` (quando è un numero di migliaia di bit) è un problema computazionalmente impossibile da risolvere in un tempo ragionevole.
+4. ...fino a `MCD(N-1, N)`.
     
 
-**In sintesi:**
+- **Il problema:** Se $N$ è un numero a 2048 bit, il suo valore è circa $10^{617}$. Il computer dovrebbe eseguire questo controllo $10^{617}$ volte. Questo è un numero di operazioni così colossale da essere **infinitamente più lento** della stessa fattorizzazione. Questo metodo è fuori discussione.
+    
 
-È vero che `N` e $\phi(N)$ sono matematicamente correlati. Ma l'unico modo noto per passare da `N` a $\phi(N)$ è attraverso `p` e `q`, che sono nascosti dal Problema della Fattorizzazione.
+### Metodo 2: La Scorciatoia (La Fattorizzazione)
+
+L'unica "scorciatoia" conosciuta per calcolare $\phi(N)$ è usare la formula:
+
+$$\phi(N) = (p - 1) \times (q - 1)$$
+
+Ma per usare questa formula, devi prima trovare $p$ e $q$. E per trovare $p$ e $q$ da $N$, devi risolvere il **Problema della Fattorizzazione**.
+
+Come mostra un grafico di complessità, entrambi i metodi sono "intrattabili" (linea rossa ed esponenziale), mentre le operazioni "facili" come la moltiplicazione o l'esponenziazione rapida sono "trattabili" (linea verde, tempo polinomiale).
+
+### Conclusione
+
+L'attaccante si trova di fronte a un vicolo cieco:
+
+- **Non può** contare i numeri coprimi (Metodo 1), perché $N$ è troppo grande.
+    
+- **Non può** usare la formula (Metodo 2), perché non conosce $p$ e $q$.
+    
+- **Non può** trovare $p$ e $q$, perché la fattorizzazione è un problema troppo difficile.
+    
+
+Ecco perché $\phi(N)$, pur essendo un "parente stretto" del numero pubblico $N$, rimane un segreto inespugnabile.
 
 ### Analogia della Cassaforte
 
@@ -316,13 +342,13 @@ Per risolvere questo problema (e per efficienza), **non si firma mai l'intero me
 
 **Perché funziona:**
 
-- **Integrità**: L'hash $H(M)$ garantisce che il messaggio $M$ non sia stato alterato dopo la firma (se lo fosse, $h_1$ sarebbe diverso).
+- **[[Integrity]]**: L'hash $H(M)$ garantisce che il messaggio $M$ non sia stato alterato dopo la firma (se lo fosse, $h_1$ sarebbe diverso).
     
-- **Autenticità**: La firma $S$ (cifrata con $V$) garantisce che provenga da Alice (altrimenti $h_2$ non corrisponderebbe).
+- **[[Authenticity]]**: La firma $S$ (cifrata con $V$) garantisce che provenga da Alice (altrimenti $h_2$ non corrisponderebbe).
     
-- **Non-Ripudio**: Si ottiene solo se la verifica ha successo.
+- **[[Non-Repudiation]]**: Si ottiene solo se la verifica ha successo.
     
-- **Sicurezza (vs Forgery)**: L'attacco di Fran fallisce. Fran può ancora scegliere $R$ e calcolare $D = E_U(R)$, ma non può trovare un messaggio $M$ tale che $H(M) = D$, perché $H$ è una funzione _one-way_ (non invertibile). Proprio perché introduco un qualcosa che non è invertibile, per funzionare è strettamente necessario avere $M$ per produrre il digest $h_1$ che verrà poi criptato con la chiave pubblica.
+- **Sicurezza (vs [[Forgery]])**: L'attacco di Fran fallisce. Fran può ancora scegliere $R$ e calcolare $D = E_U(R)$, ma non può trovare un messaggio $M$ tale che $H(M) = D$, perché $H$ è una funzione _one-way_ (non invertibile). Proprio perché introduco un qualcosa che non è invertibile, per funzionare è strettamente necessario avere $M$ per produrre il digest $h_1$ che verrà poi criptato con la chiave pubblica.
     
 - **Efficienza**: Firmare un hash (es. 256 bit) è molto più veloce che firmare un file di gigabyte.
     
@@ -356,7 +382,7 @@ La sicurezza di RSA dipende da implementazioni attente. L'RSA "textbook" (la for
 
 ### 2. Attacchi a Messaggi Semplici o Piccoli
 
-- **Problema 1:** Se $m = 0$, $1$, o $N-1$, allora $RSA(m) = m$. Il testo cifrato è identico al testo in chiaro.
+- **Problema 1:** Se $m = 0$, $1$, o $N-1$, allora $RSA(m) = m$. Il testo cifrato è identico al testo in chiaro. Infatti, notiamo che $e$ deve essere dispari ed anche ≥ 3, quindi $(N-1)^e \pmod N ≡ N-1$, perché $(N-1)^2 \pmod N ≡ 1$
     
     - **Soluzione:** Usare un "salt" o padding (riempimento).
         
@@ -373,7 +399,7 @@ La sicurezza di RSA dipende da implementazioni attente. L'RSA "textbook" (la for
 
 ### 3. Attacchi con Esponente Basso ($e=3$)
 
-- **Problema 1 (Messaggi Correlati):** Se un attaccante intercetta due messaggi correlati da una trasformazione nota, ad es., $c_1 = m^3 \pmod n$ e $c_2 = (m+1)^3 \pmod n$, può usare questa relazione algebrica (l'attacco di Coppersmith) per ricavare $m$.
+- **Problema 1 (Messaggi Correlati):** Se un attaccante intercetta due messaggi correlati da una trasformazione nota, ad es., $c_1 = m^3 \pmod n$ e $c_2 = (m+1)^3 \pmod n$, può usare questa relazione algebrica (l'attacco di Coppersmith) per ricavare $m$:$$m = (c2 + 2 c1 - 1) / (c2 - c1 +2)$$
     
     - **Soluzione:** Scegliere un $e$ grande (come 65537) o usare il padding.
         
@@ -402,13 +428,73 @@ La sicurezza di RSA dipende da implementazioni attente. L'RSA "textbook" (la for
 - **Problema:** L'RSA "da manuale" (textbook) è deterministico. Se un attaccante sa che il messaggio è $m_1$ ("SÌ") o $m_2$ ("NO"), può cifrare sia $m_1$ che $m_2$ con la chiave pubblica. Confronta i risultati con il testo cifrato intercettato per scoprire il messaggio.
     
 - **Soluzione:** Aggiungere una stringa casuale (padding) al messaggio.
+
+#### Esempio ***Attacco (Senza Padding)***
+
+L'attaccante sa che il messaggio è "NO" o "SÌ".
+
+1. Bob (Mittente): Cifra "NO".
+    
+    Cifratura_RSA("NO") -> produce sempre C1 (es: 12345)
+    
+2. **Fran (Attaccante):** Intercetta `C1` (`12345`).
+    
+3. **Lavoro di Fran:**
+    
+    - Testa "NO": `Cifratura_RSA("NO")` -> produce `12345`.
+        
+    - Testa "SÌ": `Cifratura_RSA("SÌ")` -> produce `67890`.
+        
+4. **Confronto:** Fran vede che `12345` (intercettato) è uguale a `12345` (calcolato). Ha la certezza che il messaggio fosse "NO".
     
 
+#### Esempio tentativo di Attacco ***Con Padding Casuale***
+
+Il padding è un blocco di dati, in parte casuale, che viene aggiunto al messaggio _prima_ della cifratura.
+
+1. **Bob (Mittente):** Vuole cifrare "NO".
+    
+    - Genera una stringa casuale: `R1` (es: `askf98H3`)
+        
+    - Crea il blocco da cifrare: `M_paddato = "NO" + R1`
+        
+    - `Cifratura_RSA(M_paddato)` -> produce `C_A` (es: `55543`)
+        
+2. **Fran (Attaccante):** Intercetta `C_A` (`55543`).
+    
+3. **Lavoro di Fran:**
+    
+    - Fran non può più solo "testare NO". Deve testare "NO" _più un padding_. Ma non conosce il padding `R1` usato da Bob.
+        
+    - Fran prova a indovinare:
+        
+        - Genera la sua stringa casuale: `R2` (es: `JkL0f77s`)
+            
+        - Crea il suo blocco di test: `M_test = "NO" + R2`
+            
+        - `Cifratura_RSA(M_test)` -> produce `C_B` (es: `98712`)
+            
+4. **Confronto:** Fran confronta `C_A` (`55543`) con `C_B` (`98712`). **Sono diversi.**
+    
+
+**Risultato:** L'attacco fallisce. Fran non ottiene alcuna informazione. Il suo calcolo non corrisponde a quello che ha intercettato, anche se il messaggio di base ("NO") era lo stesso.
+
+Per questo motivo, l'RSA "da manuale" (puro) non si usa mai nella pratica. Si usano **schemi di padding** standardizzati come **OAEP** (Optimal Asymmetric Encryption Padding), che sono progettati specificamente per incorporare casualità e prevenire questi e altri tipi di attacchi.
+
 ---
+### 5. Messaggi troppo piccoli (si ricollega a quello precedente)
 
-### 5. Attacco del Modulo Comune
+**Se lo spazio dei messaggi è piccolo, allora un avversario (adv.) può testare tutti i messaggi possibili.**
+ 
+ - **esempio:** l'avversario conosce la codifica di `m` e sa che `m` è o `m1 = 10101010` o `m2 = 01010101`.
+	 - L'avversario cifra `m1` e `m2` usando la chiave pubblica e verifica.
+ 
+ **SOLUZIONE:** Aggiungi una stringa casuale nel messaggio.
 
-- **Problema:** Se due utenti sono configurati con lo _stesso modulo $n$_ (ma $e$ e $d$ diversi), è catastrofico.
+---
+### 6. Attacco del Modulo Comune
+
+- **Problema:** Se due utenti sono configurati con lo _stesso modulo $n$_ (ma $e$ e $d$ diversi), è catastrofico. Supponiamo quindi di avere due Utenti: Utente 1 che si comporta da adversary ed Utente 2 che è la vittima:
     
 - L'Utente 1 (con $e_1, d_1, n$) potrebbe usare le proprie chiavi per ricavare $p$ e $q$ (è complicato ma possibile).
     
