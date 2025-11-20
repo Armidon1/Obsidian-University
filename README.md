@@ -4,7 +4,13 @@
 - Omnisearch
 - Various Complements
 - Minimal theme settings (per il tema `Minimal Theme`)
-## Promt per Gemini
+- Admonition
+- Edge TTS
+- Whisper
+- LanguageTool integration
+- Excalibur
+- PDF++
+## Prompt per Gemini
 per trascrivere delle slide usa Gemini Pro con il seguente prompt:
 ```
 questo è un pdf di un blocco di slide. trascrivi il suo contenuto in makdown (di modo che lo posso copiare in Obsidian) senza citare le fonti e, oltre a trascriverlo, arricchisci i contenuti con le tue conoscenze (senza quindi perdere informazioni presenti nel file), mantenendo però la sua struttura ed anche eventuali link a immagini o altri link a file. inoltre scrivilo in italiano 
