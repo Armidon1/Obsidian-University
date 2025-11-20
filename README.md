@@ -96,3 +96,6 @@ NON dividere "Slide" e "Parlato". Fondi le due fonti: usa le slide come scheletr
 
 _(Prosegui per tutta la lezione seguendo il flusso logico, non quello delle pagine)_
 ```
+
+Spesso Gemini potrebbe ficcarci dentro delle fonti. Usare questo per rimuoverle:
+https://bpetrynski.github.io/gemini-citation-remover/
