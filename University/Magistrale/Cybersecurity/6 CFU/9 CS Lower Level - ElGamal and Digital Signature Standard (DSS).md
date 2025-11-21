@@ -1,192 +1,179 @@
 # ElGamal and Digital Signature Standard (DSS)
 
-## Overview and Historical Context
+**Tags:** #engineering #cryptography #digital_signature #ElGamal #DSS #NIST
 
-The **ElGamal cryptosystem** was developed by **Taher Elgamal** (often referred to as the "father of SSL") around 1985. A crucial distinction in this system, compared to others like RSA, is that it introduced two distinct methods:
-1. **ElGamal Encryption** (for confidentiality).
-2. **ElGamal Digital Signature** (for authenticity).
+## 1. Introduction and Historical Context
 
-It is fundamental to understand that **these are different algorithms**. While they share the same mathematical foundation—the **Discrete Logarithm (DL)** problem—you cannot use the encryption algorithm to sign a message, nor can you use the signature algorithm to encrypt. This differs from RSA, where the mathematical operation is theoretically reversible for both purposes.
+**ElGamal** is a cryptosystem designed by **Taher Elgamal** (often called the "father of SSL"). It is significant because it defines **two distinct methods**:
 
-`![[Insert screen slide of the Unification Diagram showing ElGamal vs DSS]]`
+- One for **Encryption** (Confidentiality).
+    
+- One for **Digital Signatures**.
+    
 
-> [!img-desc] Visual Analysis
->
-> **What to look at:** The diagram divides the concepts into four quadrants. Note how **ElGamal** is split into Encryption and Signatures, while **DSS** is strictly derived from the signature side.
->
-> **Significance:** This highlights that while inspired by Diffie-Hellman (DH), the application logic for encryption and signatures is separated.
+Both methods are inspired by the **Diffie-Hellman** key exchange and rely on the difficulty of the **Discrete Logarithm** problem 1.
 
----
-
-## ElGamal Encryption
-
-ElGamal encryption is a public-key cryptosystem based on the difficulty of the Discrete Logarithm problem in a cyclic group.
-
-### Key Generation
-1. **Public Parameters:** Alice chooses a large prime $p$ and a generator $g$ of the multiplicative group $Z_p^*$. The order of the set is $p$.
-2. **Private Key:** Alice selects a random integer $x$ such that $1 < x < p-1$.
-3. **Public Key:** Alice computes $y = g^x \mod p$. She publishes $(p, g, y)$.
-
-### Encryption Process
-Imagine Bob wants to send a message $m$ to Alice.
-1. The message is mapped to an integer $m < p$.
-2. Bob chooses a **random ephemeral value** $y_{rand}$ (often denoted as $k$ or $r$) for *this specific message*. This randomness is essential.
-3. Bob computes the ciphertext as a pair $(C_1, C_2)$:
-* **Shared Secret Clue:** $C_1 = g^{y_{rand}} \mod p$.
-* **Masked Message:** $C_2 = m \cdot (g^x)^{y_{rand}} \mod p$.
-* Note: $(g^x)^{y_{rand}}$ is the shared secret established similarly to Diffie-Hellman.
-
-### Decryption Process
-Alice receives $(C_1, C_2)$. To recover $m$:
-1. She uses her private key $x$ to compute the shared secret from $C_1$:
-$$S = (C_1)^x \mod p = (g^{y_{rand}})^x = g^{x \cdot y_{rand}} \mod p$$
-2. She computes the modular inverse of $S$.
-3. She retrieves the message:
-$$m = C_2 \cdot (S)^{-1} \mod p$$
-$$m = (m \cdot g^{x \cdot y_{rand}}) \cdot (g^{x \cdot y_{rand}})^{-1} \mod p = m$$
-
-> [!tip] Exam Note: Historical Value
-> The professor emphasizes that ElGamal encryption has mainly **historical value** today. It is computationally expensive because it requires **two exponentiations** per message block, and it doubles the size of the ciphertext (sending 2 blocks for every 1 block of message).
+> [!abstract] Visual Analysis
+> 
+> ![[SCREEN_SLIDE_UNIFICATION_DIAGRAM]]
+> 
+> What to look at: The diagram showing ElGamal and DSS as related concepts rooted in Modular Arithmetic and Prime numbers.
+> 
+> **Meaning:** It visualizes how DSS is an evolution/standardization based on ElGamal, which in turn is based on Diffie-Hellman principles2.
 
 ---
 
-## ElGamal Digital Signature
+## 2. ElGamal Encryption
 
-The signature scheme is where the major differences with RSA appear regarding **randomness**.
+Although the main focus is often on signatures, ElGamal encryption is historically important. It is composed of three components: Key Generator, Encryption Algorithm, and Decryption Algorithm.
 
-### The Role of Randomness (vs. RSA)
-- **RSA:** To generate distinct signatures for the same message, RSA relies on an **external framework** (like PKCS#1 v2.2) to add padding and randomness (pre-processing) .
-- **ElGamal:** The mechanism to ensure different signatures for the same message is **built-in** to the algorithm itself via a random parameter $k$ chosen for every signature.
+### [Technical Logic / Math]
 
-### Signature Key Generation
-1. **Parameters:** Prime $p$ (large, e.g., 1024+ bits), generator $g$.
-2. **Private Key:** Random $x$ where $2 \le x \le p-2$.
-3. **Public Key:** $y = g^x \mod p$.
+**The mathematical definition for Key Generation is:**
 
-### Signing Procedure
-To sign a message $M$:
-1. Compute the hash $m = H(M)$.
-2. Generate a **random secret** $k$ such that $gcd(k, p-1) = 1$ (relatively prime).
-3. **Compute $r$:**
-$$r = g^k \mod p$$
-* *Note:* $r$ does not depend on the message $m$. It can be **pre-computed**.
-4. **Compute $s$:**
-$$s = (m - r \cdot x) \cdot k^{-1} \mod (p-1)$$
-* *Crucial Detail:* The operation is modulo **$p-1$**, not modulo $p$. If $s=0$, restart with a new $k$.
+$$\begin{align*} & \text{Public Parameters:} \quad p \text{ (prime)}, g \in \mathbb{Z}_p^* \text{ (generator)} \\ & \text{Private Key:} \quad x \in \{0, 1, \dots, p-1\} \text{ (chosen at random)} \\ & \text{Public Key:} \quad y = g^x \pmod p \end{align*}$$
 
-The signature is the pair $(r, s)$.
+**The mathematical definition for Encryption (Bob sends to Alice) is:**
 
-`![[Insert screen slide showing ElGamal Signing Equation]]`
+$$\begin{align*} & \text{Choose random } y_{rand} \in \{0, 1, \dots, p-1\} \\ & C_1 = g^{y_{rand}} \pmod p \\ & C_2 = m \cdot g^{x \cdot y_{rand}} \pmod p \\ & \text{Ciphertext:} \quad (C_1, C_2) \end{align*}$$
 
-> [!img-desc] Analysis of the Formula
->
-> **What to look at:** The equation for $s$ involves $k^{-1}$. This implies we need the multiplicative inverse of $k$ modulo $p-1$.
->
-> **Significance:** This is why $k$ must be coprime to $p-1$. The distinct moduli ($p$ for $r$, $p-1$ for $s$) are characteristic of this algorithm.
-
-### Verification Procedure
-The verifier checks if:
-$$y^r \cdot r^s \equiv g^m \mod p$$
-
-**Proof of correctness:**
-From the signature equation: $s \equiv (m - rx)k^{-1} \pmod{p-1}$.
-Multiply by $k$: $sk \equiv m - rx \pmod{p-1}$.
-Rearrange: $m \equiv sk + rx \pmod{p-1}$.
-Exponentiating $g$ with these values:
-$$g^m \equiv g^{sk + rx} \equiv (g^x)^r \cdot (g^k)^s \equiv y^r \cdot r^s \pmod p$$
+> [!abstract] Math Analysis
+> 
+> Randomness: Bob chooses a new random $y_{rand}$ for every message. This ensures that encrypting the same message twice yields different ciphertexts (probabilistic encryption).
+> 
+> **Decryption:** Alice computes $(C_1)^x = g^{x \cdot y_{rand}}$ and uses its inverse to recover $m$ 3.
 
 ---
 
-## Digital Signature Standard (DSS) & DSA
+## 3. ElGamal Signature Scheme
 
-NIST standardized the **DSA (Digital Signature Algorithm)** in FIPS 186. It is a variant of ElGamal, optimized for performance and storage.
-- **DSS** is the Standard document.
-- **DSA** is the Algorithm itself.
+Unlike RSA, where the signature is often described as "decryption with the private key," ElGamal signatures use a dedicated algorithm that generates a pair of values $(r, s)$.
 
-### Mathematical Setup (The Two Primes)
-DSA uses a double-prime structure to reduce signature size:
-1. **$p$ (L-bits):** A large prime (originally 512-1024, now 2048-3072+ bits). This provides the security hardness (Discrete Log).
-2. **$q$ (N-bits):** A smaller prime (e.g., 160-256 bits) such that **$q$ divides $p-1$**.
-* $$p - 1 = j \cdot q$$.
+> [!example] Professor's Example
+> 
+> In RSA, to get different signatures for the same message, we need an external framework (like PKCS/PSS) to add randomness. In ElGamal, the randomness is built-in to the algorithm itself. This means no external pre-processing is needed to ensure signatures are unique 4.
 
-### The Generator $\alpha$
-We need a generator $\alpha$ that produces a subgroup of order $q$.
-$$\alpha = h^{(p-1)/q} \mod p$$
-* Where $h$ is an arbitrary integer $1 < h < p-1$ such that $\alpha \neq 1$.
-* By Fermat's Little Theorem, since $\alpha^q \equiv h^{p-1} \equiv 1 \mod p$, $\alpha$ is a $q$-th root of unity.
+### [Technical Logic / Math]
 
-`![[Insert screen slide of Alpha Computation]]`
+**The mathematical definition for Key Generation is:**
 
-> [!img-desc] Algorithm for Alpha
->
-> **What to look at:** The process of selecting $h$ and computing $g$ (or $\alpha$).
->
-> **Significance:** The professor mentions that calculating $\alpha$ is a frequent **exercise** to check understanding of the setup process.
+$$\begin{align*} & \text{Pick prime } p \text{ (1024 bits) s.t. Discrete Log is hard} \\ & \text{Let } g \text{ be a generator of } \mathbb{Z}_p^* \\ & \text{Pick } x \in [2, p-2] \text{ at random (Private Key)} \\ & \text{Compute } y = g^x \pmod p \text{ (Public Key: } p, g, y\text{)} \end{align*}$$
 
-### DSA Execution
-**Keys:**
-- **Private Key:** $s$ (random, $0 < s < q$).
-- **Public Key:** $y = \alpha^s \mod p$.
+**The mathematical definition for Signing is:**
 
-**Signing (Message $M$):**
-1. Pick random secret $k$ ($0 < k < q$).
-2. **Compute $P_1$ (Coordinate 1):**
-$$P_1 = (\alpha^k \mod p) \mod q$$
-* *Efficiency:* $P_1$ is independent of the message $M$ and can be **pre-processed**.
-3. **Compute $P_2$ (Coordinate 2):**
-$$P_2 = (H(M) + s \cdot P_1) \cdot k^{-1} \mod q$$
-4. Signature: $(P_1, P_2)$.
+$$\begin{align*} & \text{Let } m = H(M) \\ & \text{Pick } k \in [1, p-2] \text{ s.t. } \gcd(k, p-1) = 1 \\ & r = g^k \pmod p \\ & s = (m - r \cdot x) \cdot k^{-1} \pmod{p-1} \end{align*}$$
 
-**Verification:**
-The verifier computes:
-1. $e_1 = H(M) \cdot P_2^{-1} \mod q$
-2. $e_2 = P_1 \cdot P_2^{-1} \mod q$
-3. **Accept if:**
-$$(\alpha^{e_1} \cdot y^{e_2} \mod p) \mod q = P_1$$
+**Procedural Step:**
 
-> [!img-desc] Verification Logic
->
-> **What to look at:** The double modulo operation: $(\dots \mod p) \mod q$.
->
-> **Significance:** This confines the final check to the size of $q$ (small), making the signature compact, while the security remains tied to the hardness of DL in $p$ (large).
+- **If $s$ is zero, restart.**
+    
+
+> [!abstract] Math Analysis
+> 
+> - **The pair (r, s):** The signature consists of two numbers.
+>     
+> - **Pre-processing:** Notice that $r = g^k \pmod p$ does **not** depend on the message $m$. This allows $r$ to be computed **in advance** (offline), improving efficiency during the actual signing phase 5.
+>     
+> - **Modulo:** The calculation of $s$ is done modulo $p-1$, not $p$.
+>     
+
+### [Verification]
+
+**The mathematical definition for Verification is:**
+
+$$\text{Accept if } (0 < r < p) \land (0 < s < p-1) \land (y^r \cdot r^s \equiv g^m \pmod p)$$
+
+> [!tip] Exam Focus
+> 
+> The verification works because:
+> 
+> $$ y^r r^s = g^{rx} g^{ks} = g^{rx + k(m-rx)k^{-1}} = g^{rx + m - rx} = g^m $$
+> 
+> This equality confirms authenticity without revealing the private key $x$ 6.
 
 ---
 
-## Security Analysis: The "k" Vulnerability
+## 4. ElGamal vs RSA
 
-The random parameter $k$ is the Achilles' heel of both ElGamal and DSA.
+A comparison of the two major public-key systems.
 
-1. **Uniqueness:** Since $k$ changes every time, signatures are unique.
-2. **Secrecy:** If $k$ is discovered, the **private key $s$ is revealed**.
-* From the equation: $P_2 \cdot k = H(M) + s \cdot P_1 \mod q$.
-* If $k$ is known, $s$ is the only unknown variable and can be solved linearly .
-3. **Reuse Attack:** If the **same $k$** is used for two different messages ($M$ and $M'$), an attacker can compute $k$ and subsequently $s$.
-* You get a system of two equations with two unknowns ($s, k$) which is easily solvable.
+|**Feature**|**ElGamal**|**RSA**|
+|---|---|---|
+|**Computation**|Multiple exponentiations (slower verify)|One exponentiation (faster verify)|
+|**Signature Size**|Larger (2 components: $r, s$)|Smaller (1 component)|
+|**Security**|Discrete Logarithm|Integer Factorization|
+|**Randomness**|**Required** for every signature|Not required for core algo (needs padding)|
 
-> [!example] Real-world Failure
-> The professor implicitly refers to implementation failures (like the Sony PS3 hack) where fixed or predictable $k$ values allowed attackers to extract the master signing key.
+> [!abstract] Visual Analysis
+> 
+> ![[SCREEN_SLIDE_ELGAMAL_VS_RSA]]
+> 
+> What to look at: The comparison table highlighting "Computation", "Signature Size", and "Security Level".
+> 
+> **Meaning:** RSA is generally preferred for environments prioritizing fast verification (like SSL certs in browsers), while ElGamal/DSS is useful if pre-processing can be leveraged 7.
+
+---
+
+## 5. Digital Signature Standard (DSS) & DSA
+
+**DSS** (FIPS 186) is the NIST standard that uses the **DSA** (Digital Signature Algorithm). It is essentially an optimized version of ElGamal designed specifically for signatures.
+
+### [Technical Logic / Math]
+
+**The mathematical definition for Preparation is:**
+
+$$\begin{align*} & p \text{: L-bit prime (1024 to 3072 bits)} \\ & q \text{: 160 to 256-bit prime that divides } p-1 \quad (p = j \cdot q + 1) \\ & \alpha \text{: A } q\text{-th root of 1 modulo } p \quad (\alpha^q \equiv 1 \pmod p) \end{align*}$$
+
+**How to compute $\alpha$:**
+
+$$\begin{align*} & \text{Take random } h \text{ s.t. } 1 < h < p-1 \\ & g = h^{(p-1)/q} \pmod p \\ & \text{If } g = 1 \text{ try different } h \\ & \text{Set } \alpha = g \end{align*}$$
+
+> [!example] Professor's Example
+> 
+> "Sometimes when I am bored designing the exam, I insert an exercise: compute alpha for this case." It's a simple check of understanding the construction8.
+
+### [DSA Execution]
+
+**The mathematical definition for Signing is:**
+
+$$\begin{align*} & \text{Choose random } k \quad (1 \le k \le q-1) \\ & P_1 = (\alpha^k \pmod p) \pmod q \\ & P_2 = (H(M) + s \cdot P_1) \cdot k^{-1} \pmod q \\ & \text{Signature: } (P_1, P_2) \end{align*}$$
+
+> [!abstract] Math Analysis
+> 
+> - Modulo q: Unlike ElGamal (mod $p-1$), DSA calculates the second component modulo $q$ (a much smaller prime, e.g., 160 bits). This results in smaller signatures.
+>     
+>     * Pre-processing: $P_1$ is independent of the message $M$ 9.
+>     
+
+### [DSA Verification]
+
+**The mathematical definition for Verification is:**
+
+$$\begin{align*} & w = P_2^{-1} \pmod q \\ & e_1 = H(M) \cdot w \pmod q \\ & e_2 = P_1 \cdot w \pmod q \\ & \text{Accept if } ( (\alpha^{e_1} y^{e_2} \pmod p) \pmod q ) = P_1 \end{align*}$$
 
 ---
 
-## RSA vs. DSS Comparison
+## 6. Security: The "k" Vulnerability
 
-| Feature | RSA | DSS (ElGamal Variant) |
-| :--- | :--- | :--- |
-| **Function** | Encryption & Signature | Signature Only |
-| **Math Problem** | Integer Factorization | Discrete Logarithm |
-| **Verification Speed** | **Fast** (small $e$, one exponentiation). | **Slower** (complex calculation). |
-| **Signing Speed** | Slower. | **Fast** (especially with pre-processing of $P_1$). |
-| **Signature Size** | Large ($\approx$ key size). | **Small** (constrained by $q$). |
-| **Randomness** | Not needed inherently (added via padding). | **Mandatory** ($k$) for every operation. |
-| **Quantum Safety** | Broken by Shor's Algorithm. | Broken by Shor's Algorithm. |
+The security of DSA (and ElGamal) depends critically on the random number $k$.
 
-> [!tip] Final Note
-> While ElGamal/DSS offers theoretical advantages and smaller signatures, RSA is often preferred in contexts where **fast verification** is the priority (e.g., verifying SSL certificates in a browser).
+> [!failure] Common Pitfall
+> 
+> Never reuse k! If an adversary finds two different messages signed with the same k, they can mathematically recover the private key $s$.
+> 
+> Additionally, if $k$ is known, $s$ is trivially revealed 10.
+
+### [Technical Logic / Math]
+
+**If the adversary knows $k$:**
+
+$$s = (P_2 \cdot k - H(M)) \cdot P_1^{-1} \pmod q$$
+
+If $k$ is reused for two messages ($M, M'$):
+
+We have two equations with two unknowns ($s$ and $k$), which can be solved linearly to find $s$.
 
 ---
-ELGAMAL
-in el gamal singature slide dice che, proprio perché i dati generati non dipendono dal messaggio in questione, qui abbiamo il cosidetto preprocessing.
-
 nella parte in cui fa accept if (..)  And (..) and (QUI) dice che è la parte più importante perché dipende dal messaggio (il digest)
 
 nelle slide del signature (verification) mancano dei Mod p

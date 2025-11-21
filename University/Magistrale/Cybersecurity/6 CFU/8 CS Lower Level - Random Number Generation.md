@@ -1,179 +1,302 @@
-Here are the integrated notes for Obsidian, translated into English as requested.
+# Random Number Generation: An Introduction
 
-***
+**Tags:** #engineering #cryptography #cybersecurity #RNG #PRNG #CSPRNG
 
-# Random Number Generation
-
-## 1. Introduction and the Importance of Randomness
+## 1. Introduction and The Importance of Randomness
 
 > "The generation of random numbers is too important to be left to chance."
+> 
 > — Robert Coveyou, Oak Ridge National Laboratory
 
-This quote is ironic but fundamental: we cannot leave number generation to "chance" (meaning poor design), because random numbers are the foundation of many cryptographic algorithms.
+In the context of security, we cannot rely on poor design or simple "chance." Random numbers are the **foundation** of many cryptographic algorithms. If the generator is weak, the entire security system collapses.
 
-When we speak generally of "random numbers," we are imprecise. In the context of security, we must always aim for the concept of a **Cryptographically Secure Pseudo-Random Number Generator (CSPRNG)**.
+**Why do we need them?**
 
-### Why do we need them?
-We primarily use random numbers for:
-- **Session Keys:** Temporary keys to encrypt communications.
-- **Nonces and Salts:** Unique values to prevent replay attacks or to strengthen passwords.
+- **Session Keys:** Temporary keys to encrypt communications (avoid key guessing).
+    
+- **Nonces and Salts:** Unique values to prevent replay attacks or strengthen passwords.
+    
+- **Key Generation:** Creating public/private key pairs 1.
+    
 
-> [!tip] Fundamental Concept: The Adversary
-> The security of a generator is measured against the power of the adversary.
-> If an attacker knows all **past session keys**, the probability of them guessing the **next** one must be **negligible** (at least for an adversary with polynomial computational power).
+> [!tip] Exam Focus
+> 
+> The security of a generator is measured against the computational power of the adversary.
+> 
+> Given a sequence of past session keys, the probability of correctly predicting the next one must be negligible2.
 
 ---
 
-## 2. Generation Methods: TRNG vs. PRNG
+## 2. Generators of Randomness: TRNG vs PRNG
 
-There are two main approaches to obtaining "randomness".
+There are two principal methods to generate random numbers.
 
 ### A. True Random Number Generators (TRNG)
-These rely on **physical phenomena** that we expect to be intrinsically random.
-- **Examples:** Temperature, atmospheric noise, radioactive decay, pressure.
-- **Problems:**
-1. **Bias:** Physical values can be unbalanced. It is often necessary to compensate for these biases ("whitening").
-2. **Measurement Precision:** If we measure time or temperature, precision is limited. We cannot have infinite decimal places. This reduces the number of real entropy bits we can extract.
+
+These rely on **physical phenomena** expected to be intrinsically random.
+
+- **Examples:** Temperature, atmospheric noise, radioactive decay, thermal noise.
+    
+- **Issues:** They may have biases (require "whitening") and measurement precision limits the extraction of entropy bits3.
+    
 
 ### B. Pseudo-Random Number Generators (PRNG)
-This is the most common computational approach. It uses a **deterministic algorithm**.
-- **Mechanism:** Given an initial input (**Seed**), the algorithm produces a sequence of numbers that *look* random.
-- **The Paradox:** Since the algorithm is deterministic, if I provide the same input (Seed), I will *always* get the same output sequence.
 
-> [!img-desc] Analysis of the Generator Schema
-> `![[Insert PRNG block diagram with Seed and Salt]]`
->
-> **What to look at:** The diagram shows a "box" (the algorithm) that takes a Seed as input (often combined with a Salt).
-> **Meaning:** The real input is the sum of Seed + Salt. For the adversary, guessing the output must be as hard as guessing the secret input. According to **Kerckhoffs's Principle**, the adversary knows the algorithm, so security relies entirely on the secrecy and unpredictability of the initial Seed.
+This is the most common computational approach. It uses a **deterministic algorithm**.
+
+- **Mechanism:** Given an initial input (**Seed**), the algorithm produces a long sequence of numbers that _look_ random.
+    
+- **The Paradox:** Since the algorithm is deterministic, providing the same Seed results in the **exact same output sequence**4.
+    
+
+`![[SCREEN_SLIDE_PRNG_DIAGRAM]]`
+
+> [!abstract] Visual Analysis
+> 
+> What to look at: The diagram typically shows an input (Seed) entering a "box" (Algorithm) to produce a stream of numbers.
+> 
+> Meaning: Security relies entirely on the secrecy and unpredictability of the Seed. According to Kerckhoffs's Principle, the adversary knows the algorithm; they must not know the Seed.
 
 ---
 
 ## 3. The Source of Entropy (The Seed)
 
-If the PRNG is deterministic, true randomness must come from the **Seed**. Where do we get it?
+Since the PRNG is deterministic, true randomness must come from the **Seed**. We must collect data that is difficult for a remote attacker to replicate.
 
-### System and User Sources
-We need to collect data that is difficult for a remote attacker to replicate:
-- **System Clock:** Widely used, but dangerous if used alone (see below).
-- **Disk State:** Free space, head position.
-- **Network:** Packet inter-arrival times.
-- **User:** Mouse movements, typing speed on the keyboard.
+**Common Sources:**
 
-> [!example] The Mouse Example
-> Many libraries ask the user to "move the mouse randomly" to generate a key.
-> **Prof's Note:** It's not that mouse movement is magical. The point is that, even if the adversary knows you are moving the mouse, the probability of them replicating *exactly* the same trajectory and timing (down to the millisecond) is extremely low.
+- **System/Network:** Clock, free disk space, number of files, I/O queues, packet inter-arrival times.
+    
+- **User Input:** Keyboard typing speed, mouse movements 5.
+    
 
-### The Quantity of Entropy Problem
-We often have the illusion of having a lot of randomness, but we have very little. We need to be quantitative.
-- **Time Stamp Example:** Using date and time as a seed. The adversary knows the day and probably the hour. Only the milliseconds remain uncertain.
-* If the granularity is 10ms, we are talking about roughly **10 bits of randomness** ($2^{10} \approx 1000$ combinations).
-* An attacker can try 1000 combinations in an instant. It is too little.
+> [!example] Professor's Example: Mouse Movement
+> 
+> Many systems ask you to "move the mouse randomly" to generate a key. It is not magic. Even if an adversary sees you moving the mouse, they cannot replicate the exact trajectory and timing down to the millisecond. This timing difference provides the necessary entropy bits.
 
-**Solution:** Do not use a single source. Take everything (time, mouse, network), mix it together (via **Hashing**) to obtain a robust seed.
+### The "Quantity of Entropy" Problem
+
+We often have the illusion of randomness.
+
+- **Clock Granularity:** Using only milliseconds might yield only ~10 bits of randomness ($2^{10} \approx 1000$ combinations).
+    
+- **Day/Hour:** These are easily guessable by an attacker.
+    
+- **Solution:** Mix several sources using crypto functions (Hashing) 6.
+    
 
 ---
 
 ## 4. Case Studies: Historical Failures
 
-The professor highlights how errors in generator implementation have caused critical vulnerabilities.
+Errors in RNG implementation have caused massive vulnerabilities in the past.
 
 ### Case 1: Netscape 1.1 (1996)
-Netscape used a generator to create SSL keys. The source code (reverse-engineered) revealed the seed was created like this:
 
-`![[Insert Netscape RNG_CreateContext C code]]`
+Netscape used a weak generator for SSL keys. The source code revealed the seed was derived from predictable values.
 
-> [!img-desc] Code Analysis
-> **What to look at:** The variables used for the seed are `time_of_day` (seconds and microseconds), `pid` (Process ID), and `ppid` (Parent Process ID).
-> **Meaning:** These look like variable data, but for an attacker with an account on the same machine (or who can query the server), they are predictable.
+### [Implementation / Code]
 
-- **The Vulnerability:**
-* `seconds` are known (just look at the clock).
-* `pid` and `ppid` on Unix machines of that era were often predictable or sequential.
-* **The `sendmail` Attack:** The prof explains that by sending an email to the server, the server responded with a header containing the **Message-ID**. At that time, the Message-ID was generated using the current Process ID.
-* **Result:** The attacker obtained the PID, knew the time, and the only unknown remained the microseconds. Entropy collapsed to about **47 bits** (or less), making brute-forcing the SSL key possible in minutes/hours.
+**Here is the exact implementation shown in the slides:**
+
+C
+
+```
+/* Netscape 1.1  seeding & key generation (1996) */
+
+global variable seed;
+
+RNG_CreateContext()
+    (seconds, microseconds) = time of day;
+    /* Time elapsed since 1970 */
+    pid = process ID; ppid = parent process ID;
+    a = mklcpr(microseconds);
+    b = mklcpr(pid + seconds + (ppid << 12));
+    seed = MD5(a, b);
+    MD5 broken since 1996
+    /* not cryptographically significant */
+mklcpr(x)
+    return ((0xDEECE66D * x + 0x2BBB62DC) >> 1);
+
+RNG_GenerateRandomBytes()
+    x = MD5(seed);
+    seed = seed + 1;
+    return x;
+```
+
+> [!abstract] Code Analysis
+> 
+> Vulnerability:
+> 
+> - `seconds` are known.
+>     
+> - `pid` and `ppid` were often predictable or sequential on UNIX systems.
+>     
+> - **Attack Vector:** An attacker could send an email to the `sendmail` daemon. The reply's **Message-ID** contained the PID.
+>     
+> - **Result:** Entropy collapsed to ~47 bits. The key could be broken in minutes 7.
+>     
 
 ### Case 2: Debian OpenSSL (2008)
-A catastrophic bug introduced "for code cleanliness".
 
-- **The Event:** A developer used debug tools (like *Valgrind* or *Purify*) on the OpenSSL code. These tools flagged a warning: "Use of uninitialized variable".
-- **The "Fix":** The developer removed the line of code that added uninitialized entropy to the pool.
-- **The Consequence:** The only variable left to generate keys was the **Process ID**.
-* On Linux, the maximum PID was 32,768.
-* **Disaster:** There were only ~32,000 possible SSH/SSL keys worldwide for that Debian version. An attacker could try them all in a few seconds.
+A catastrophic bug introduced by "cleaning up" code to satisfy a debugger.
 
-> [!tip] Exam Note
-> These examples demonstrate that even if the cryptographic algorithm (e.g., RSA, AES) is secure, if the random number generator is weak (low entropy or software bugs), the entire system collapses.
+- **The Cause:** A developer used **Valgrind** (debug tool) which warned about "Use of uninitialized variable".
+    
+- **The "Fix":** The developer removed the line `MD_Update(&m,buf,j);` which added uninitialized entropy to the pool.
+    
+- **The Result:** The only variable left was the **Process ID** (max 32,768 on Linux).
+    
+- **Impact:** Any SSH/SSL key generated on Debian/Ubuntu during that period was trivially guessable (only ~32,000 possibilities) 8.
+    
+
+> [!failure] Common Pitfall
+> 
+> **Divulging the Seed:** Never include the seed source (like the time of day) in unencrypted parts of the message (e.g., headers), as happened in some implementations 9.
 
 ---
 
-## 5. PRNG vs. CS-PRNG (Cryptographically Secure)
+## 5. PRNG vs. CS-PRNG
 
-Not all pseudo-random generators are suitable for security.
+Not all generators are suitable for security. We must distinguish between standard PRNG and **Cryptographically Secure** PRNG.
 
-### Standard Pseudo-Random Number Generator (PRNG)
-- **Use:** Simulations, video games, debugging.
-- **Properties:** Good statistics (uniform distribution), speed.
-- **Flaw:** If I know the internal state, I can predict all future numbers.
+`![[SCREEN_SLIDE_PRNG_VS_CSPRNG]]`
 
-### Cryptographically Secure PRNG (CS-PRNG)
-- **Use:** Cryptography (keys, nonces).
-- **Fundamental Property:** **Unpredictability**.
-* Even if the adversary sees a long sequence of numbers, they must not be able to guess the next one (Next-Bit Test).
-* They must not be able to deduce the internal state or past numbers (**Backward Secrecy**).
-* If the state is compromised, they should not be able to deduce future keys if new entropy is added (**Forward Secrecy**).
+> [!abstract] Visual Analysis
+> 
+> What to look at: The comparison table highlighting "Predictability" and "Security Properties".
+> 
+> Meaning: PRNGs focus on statistical distribution (for games/simulations). CS-PRNGs focus on unpredictability (for crypto) 10.
 
-> [!img-desc] PRNG vs CS-PRNG Comparison Table
-> `![[Insert PRNG vs CS-PRNG comparison table from slide]]`
->
-> **Meaning:** Note how the CS-PRNG requires resistance to cryptanalysis, not just statistical tests.
+### [Technical Logic / Math]
+
+**Challenge: Is this a PRNG or CS-PRNG?**
+
+Plaintext
+
+```
+hash function H
+random initial seed s
+y = s
+for i = 1 to n do
+    y = H(y)
+    output(y)
+```
+
+**Requirements for CS-PRNG:**
+
+1. **Next-Bit Test:** Given $k$ bits, no algorithm can predict the $(k+1)^{th}$ bit with probability $> 50\%$.
+    
+2. **Forward Secrecy:** If the state is compromised, _future_ keys remain secure.
+    
+3. **Backward Secrecy:** If the state is compromised, _past_ keys cannot be reconstructed 11.
+    
 
 ---
 
 ## 6. BSI Evaluation Criteria
 
-The German agency BSI defines 4 classes of generators:
-- **K1:** Sequence without obvious repeating patterns (basic statistics).
-- **K2:** Statistically indistinguishable from true random (advanced statistical tests like Monobit, Runs).
-- **K3:** Impossible to calculate past or future outputs or the internal state starting from the output.
-- **K4 (Cryptographic Standard):** Impossible to calculate past outputs **even knowing the internal state** (Forward Secrecy mechanism).
+The German Federal Office for Information Security (BSI) defines 4 criteria for RNG quality:
 
-> [!tip] Important
-> For real security applications, **K4** compliance is required.
+- **K1:** Sequence without obvious repeating patterns.
+    
+- **K2:** Indistinguishable from "true random" via statistical tests (Monobit, Poker, Runs).
+    
+- **K3:** Impossible to calculate past/future outputs or internal state from the **output**.
+    
+- **K4 (Crypto Standard):** Impossible to calculate past outputs **even if the internal state is known** (requires Forward Secrecy mechanisms) 12.
+    
 
 ---
 
 ## 7. Algorithms and Practical Solutions
 
-The prof presents several solutions for building a CS-PRNG.
+### A. Generator "Cipher of a Counter"
 
-### A. Cyclic Approach (Cipher Counter)
-Uses a block cipher (e.g., AES) and a counter.
-$$Random\_Value = E_K(Counter + i)$$
-By incrementing the counter and encrypting it with a secret key, I get unpredictable numbers (as long as the key remains secret). This is similar to **AES-CTR** mode.
+Uses a block cipher (like AES) in a cyclic manner.
 
-### B. RSA-Based Generator
-Exploits the mathematical difficulty of RSA.
-$$z_{i} = (z_{i-1})^e \pmod n$$
-The LSB (Least Significant Bit) of the result is taken as the random bit. It is **provably secure** (if you can predict the bit, you can invert RSA), but it is **very slow**.
+**Here is the exact implementation shown in the slides:**
+
+Plaintext
+
+```
+cyclic cryptography: use counter + cipher
+Meyer and Matyas, 1982
+crypto algorithm E
+C + 1 mod N
+C
+master key Km
+Xi = E[Km, C + 1]
+```
+
+### B. RSA Based Generator
+
+Exploits the mathematical difficulty of inverting RSA. Provably secure but slow.
+
+**Here is the exact implementation shown in the slides:**
+
+Plaintext
+
+```
+prime numbers p, q
+n = p∙q
+integer e s.t. GCD(e, (p-1)∙(q-1)) = 1
+z = seed
+loop
+    zi = (zi-1)e mod n
+    i = i +1
+    output:  least significant bit of zi
+```
 
 ### C. Blum Blum Shub (BBS)
-Very famous in theory. Based on the quadratic residuosity problem.
-* Choose two large prime numbers $p, q$ congruent to 3 mod 4.
-* $$x_{i} = (x_{i-1})^2 \pmod n$$
-* Extract the parity bit.
-- **Security:** Very strong (linked to factoring), but slow.
 
-### D. AES-CTR DRBG (Modern Standard)
-This is what is used today (e.g., NIST SP 800-90A).
-* Uses AES in counter mode.
-* Includes **Reseeding** mechanisms: periodically the algorithm stops, collects new entropy from the system, updates the key, and restarts.
-* Guarantees both *Forward* and *Backward Secrecy*.
+Based on the quadratic residuosity problem.
+
+**Here is the exact implementation shown in the slides:**
+
+Plaintext
+
+```
+choose p, q big prime s.t. p ≡ q ≡ 3 (mod 4)
+n = p∙q
+randomly choose s s.t. GCD(s, n) = 1
+output the sequence of bits Bi
+
+X0 = s2 mod n
+for i = 1 to ∞
+    Xi = (Xi-1)2 mod n
+    Bi = Xi mod 2
+    return Bi
+```
+
+### D. CTR_DRBG (AES)
+
+Current best practice (NIST SP 800-90A). Uses AES in Counter Mode with reseeding capabilities.
+
+**Here is the exact implementation shown in the slides:**
+
+Plaintext
+
+```
+Maybe the current best (Counter mode Deterministic Random Bit Generator, 2012)
+State: Key K, counter V
+Block cipher: AES-128 / AES-256 in CTR mode
+Generate:
+    V ⟵ V + 1 (mod  2block size)
+    out_block = EK(V)
+    Repeat until enough bits produced
+Update:  regenerate K and V by encrypting V+1, V+2, … with current K and using the output blocks to form the new state
+Security: Forward & backward secure (if reseeded periodically)
+```
 
 ---
 
-## 8. Conclusions and Best Practices
+## 8. Best Practices
 
-1. **Never invent your own generator:** "Don't roll your own crypto".
-2. **Avoid `rand()` in C:** Standard library functions (like `rand()` in C or Java) are great for tests but are **not** cryptographically secure.
-3. **Use OS libraries:** `/dev/urandom` on Linux or Windows cryptographic APIs (`CryptGenRandom`). These handle entropy collection from various sources (network, disk, keyboard) and secure hashing for us.
-4. **Bruce Schneier advises:** Vulnerabilities in RNGs are easy to create by accident and very hard to detect. Rely on standard and reviewed algorithms.
+1. **"Don't roll your own crypto":** Never invent your own generator.
+    
+2. **Avoid `rand()`:** Standard library functions are for simulations, not security.
+    
+3. **Use OS APIs:** `/dev/urandom` (Linux) or `CryptGenRandom` (Windows). These libraries handle entropy collection and hashing securely.
+    
+4. **Reference:** RFC 1750 13.

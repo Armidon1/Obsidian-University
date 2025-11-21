@@ -1,356 +1,210 @@
-# Authentication: Introduction and Attacker Models
+# Authentication: An Introduction
 
-## The Concept of Authentication
+**Tags:** #engineering #cybersecurity #authentication #security_design #biometrics
 
-Authentication is the fundamental process of establishing and verifying identity in a digital system.
+## 1. Definition and Scenario
 
-In a typical scenario, we have two parties: **Alice** (who needs to prove her identity) and **Bob** (who needs to verify it). Alice typically wants to access a service, information, or a resource. The core problem is ensuring that Alice is truly who she claims to be, preventing **Trudy** (an intruder) from impersonating her.
+**Authentication** is distinct from legal identification. In a digital context, we don't necessarily need the full legal identity (Name, Surname, ID number), but we need to establish a link with a previous registration.
 
-### Definition vs. Legal Identification
-
-It is crucial to distinguish between **Authentication** and **Legal Identification**.
-
-- **Authentication** is the process of establishing that the subject attempting access is the _same subject_ who originally registered with the system.
+- **Alice (User):** Needs to access a service or resource1.
     
-- **Legal Identification** involves verifying the physical and legal identity of a person (e.g., name, surname, ID number).
+- **Bob (Server):** Needs to be sure of Alice’s identity to grant access2.
+    
+- **Trudy (Attacker):** Tries to impersonate Alice3.
     
 
-> [!tip] Important Distinction
+### [Technical Logic]
+
+**The logical relationship provided is:**
+
+$$\text{absolute identification} \implies \text{authentication}$$
+
+> [!abstract] Math Analysis
 > 
-> Authentication does not necessarily provide absolute or fully legal identification. You can register with an anonymous email; authentication only proves you are the owner of that anonymous account, not who you are in the real world.
-> 
-> Systems like SPID (in Italy) bridge this gap by providing both identification and authentication, but standard computer authentication is strictly about matching a user to a registered account.
-
-`![[Insert screen slide showing Authentication definition]]`
-
-> [!img-desc] Visual Analysis
-> 
-> What to look at: The slide likely defines authentication as validating factors against trusted reference data.
-> 
-> Significance: The professor emphasizes that absolute identification != authentication. Authentication increases assurance but is not absolute proof of identity.
-
-### One-Way vs. Mutual Authentication
-
-Authentication is directional:
-
-1. **One-Way:** Alice proves her identity to Bob (e.g., logging into a website).
-    
-2. **Mutual Authentication:** Alice proves her identity to Bob, **AND** Bob proves his identity to Alice.
-    
-
-> [!example] Professor's Example: Man-in-the-Middle
-> 
-> Mutual authentication is critical to prevent Man-in-the-Middle (MITM) attacks. In a MITM scenario, an attacker sits between Alice and Bob. Alice thinks she is talking to Bob, but she is talking to the attacker. If the protocol requires Bob to authenticate himself to Alice (Mutual Auth), the attacker will fail to prove they are Bob, and the attack stops.
+> Meaning: Identification implies authentication, but authentication does not necessarily provide absolute or fully legal identification. It simply verifies that the subject is the same one who registered previously 4.
 
 ---
 
-## The Authentication Lifecycle
+## 2. The Authentication Cycle
 
-The life of an identity in a system follows a structured cycle.
+The life cycle of authentication involves specific phases. It is crucial to understand that the security of the entire process depends on the **Registration** phase ("ground truth").
 
-### 1. Registration / Enrollment
+`![[SCREEN_SLIDE_AUTH_CYCLE]]`
 
-This is the initial phase where the subject creates credentials.
-
-- The user provides information (e.g., email, username).
-    
-- The system verifies this information (e.g., checking control of the email address).
-    
-- **Note:** The information provided is arbitrary based on the service's needs (it could be a phone number, a nickname, etc.).
-    
-
-### 2. Credential Storage
-
-The system must securely store the authentication data.
-
-- **Rule of Thumb:** **Never store a password in plain text.**
-    
-- Data should be **hashed** or encrypted.
-    
-- Modern hardware often uses **Secure Modules** to store private keys or sensitive data, preventing even the OS from accessing them directly.
-    
-
-> [!tip] Critical Security Rule
+> [!abstract] Visual Analysis
 > 
-> If you find a system where administrators can see your password, that system is fundamentally broken and vulnerable. Passwords should ideally be stored as hashes, not even as encrypted text, because if the server is compromised, the decryption key is likely compromised too.
-
-### 3. The Authentication Loop
-
-This occurs every time access is requested:
-
-- **Authentication Attempt:** Subject presents credentials.
-    
-- **Verification:** System validates credentials against the stored reference.
-    
-- **Access Management:** Granting/Denying access.
-    
-
-`![[Insert screen slide showing the Authentication Cycle]]`
-
-> [!img-desc] Analysis of the Cycle
+> What to look at: The cycle showing Registration, Credential Storage, and the Authentication Loop (Attempt -> Verification) 5.
 > 
-> What to look at: The flow from Registration -> Storage -> The recurring Loop of Attempt/Verification.
+> Meaning: The system validates credentials against trusted data stored during enrollment.
+
+- **Registration / Enrollment:** The subject creates credentials. This is the moment the identity is established6.
+    
+- **Credential Storage:** The system securely stores data (hashed, encrypted, or in secure hardware)7.
+    
+- **Verification:** The system validates provided credentials against the stored reference8.
+    
+
+> [!failure] Common Pitfall: Storing Passwords
 > 
-> Significance: This highlights that authentication relies entirely on the integrity of the data captured during the Registration phase.
+> Never store a password in clear text. The professor emphasizes that even storing encrypted passwords is a weakness.
+> 
+> If the server is compromised, the decryption key is likely compromised too. The standard is to store Hashes (digests), not encrypted files 9.
 
 ---
 
-## The Closed World Assumption
+## 3. Closed World Assumption
 
-In security and logic, we often operate under specific assumptions regarding knowledge.
+This is a fundamental logical approach in security policies (e.g., Firewalls).
 
-- **Closed World Assumption:** The presumption that what is not currently known to be true, is **false**.
+### [Logical Definition]
+
+**Here is the exact definition shown in the slides:**
+
+> Presumption that what is not currently known to be true, is false.
+
+- **Closed World Assumption:** Default is **False** (Blocked).
     
-    - _Context:_ False by default. "If I don't know you, you are not allowed."
+    - _Practical implication:_ **Whitelisting** (Allow only known good)10101010.
         
-- **Open World Assumption:** The lack of knowledge does not imply falsity.
+- **Open World Assumption:** Lack of knowledge does not imply falsity.
     
-    - _Context:_ True by default.
+    - _Practical implication:_ **Blacklisting** (Allowed by default, block only known bad)11111111.
         
 
-### Application in Firewalls and Access Control
+> [!tip] Exam Focus
+> 
+> Understanding the difference between Negation as failure (related to Closed World) and Open World assumptions is critical for configuring security policies like firewalls12.
 
-The professor relates this directly to network security policies:
+---
 
-- **Whitelisting (Closed World):** Block everything by default. Only allow specific IP addresses/Users listed. (More secure).
+## 4. Human vs. Computer Authentication
+
+There is a distinct difference in capabilities:
+
+- **Computers:** Can store high-quality secrets (long random numbers) and perform **cryptographic operations**13.
     
-- **Blacklisting (Open World):** Allow everything by default. Only block specific known bad IP addresses.
+- **Humans:** Cannot perform crypto math in their heads. They rely on **Passwords** (short keys) or tokens14141414.
+    
+
+### Authentication Factors
+
+To authenticate a human, we rely on three main categories:
+
+1. **What you know:** Passwords, PINs15.
+    
+2. **What you have:** Smart cards, tokens, smartphones16.
+    
+3. **Who you are:** Biometrics (Fingerprint, Retina)17.
+    
+4. _(Weaker)_ **Where you are:** Network address (prone to spoofing)18.
     
 
 ---
 
-## Authenticating Humans vs. Computers
+## 5. Passwords ("What you know")
 
-There is a fundamental difference in how we authenticate a person versus a machine.
+Passwords are essentially **short keys** used to derive or unlock longer cryptographic keys.
 
-|**Feature**|**Human Authentication**|**Computer Authentication**|
-|---|---|---|
-|**Secret Type**|**Passwords** (Short keys, easy to remember)|**Cryptographic Keys** (Long, high entropy, random)|
-|**Capability**|Cannot perform crypto operations mentally|Can perform complex crypto operations|
-|**Storage**|Memory (brain)|Secure Storage / TEE / Encrypted files|
-|**Vulnerability**|Easy to guess, phishing, social engineering|Malware, Key extraction|
+- **Vulnerabilities:** Easy to guess, susceptible to Phishing and Trojan Horses19.
+    
+- **Login Trojan:** A fake login window prompts the user to enter credentials, collecting them before passing control to the real OS20.
+    
 
-> [!example] Public Workstations (Historical Context)
+> [!example] Professor's Example: The Mainframe Trick
 > 
-> In the past, "public workstations" posed a unique authentication problem. A user would sit at a terminal without logging in. Today, we almost always login (Authentication), identifying the user to the machine. Even tablets authenticate via PIN or biometrics.
+> The professor recounts a personal anecdote: writing a simple program on a university mainframe that displayed a fake "Login:" prompt.
+> 
+> Users would type their credentials, the program would save them to a file, display a "Login failed" message, and then exit. The user, thinking they made a typo, would log in again successfully on the real prompt, never realizing their password was stolen 21.
+
+> [!example] Professor's Example: Leslie Lamport
+> 
+> One-Time Passwords (OTP) were strongly introduced by Leslie Lamport.
+> 
+> Fun fact: LaTeX is named after him ("Lamport TeX") 22.
 
 ---
 
-## Authentication Factors
+## 6. Biometrics ("Who you are")
 
-To authenticate a human, we rely on three (plus one) main categories of factors:
+Biometrics link authentication to physical characteristics.
 
-### 1. What You Know (Knowledge)
-
-- **Examples:** Passwords, PINs, Answers to secret questions.
+- **Physiological:** Fingerprint, Retina, Face.
     
-- **Characteristics:** Short secrets (metaphorically "short keys").
-    
-- **Weakness:** Vulnerable to guessing, sniffing, and phishing.
+- **Behavioral:** Voice, Keystroke timing, Handwriting dynamics23.
     
 
-### 2. What You Have (Possession)
+### Accuracy & Issues
 
-- **Examples:** Smart card, Hardware Token, Smartphone (for OTP apps).
-    
-- **Characteristics:** Requires physical possession of an object.
-    
+Biometrics are probabilistic. We deal with **False Positives** and **False Negatives**.
 
-### 3. Who You Are (Inherence / Biometrics)
-
-- **Examples:** Fingerprint, Retina scan, Voice recognition, FaceID.
+- **Fingerprint:** Can be faked (gummy fingers), changes with manual labor or age 24.
     
-- **Characteristics:** Based on physical or behavioral traits.
+- **Voice:** Affected by colds, noise, or tape recordings25.
     
 
-### 4. Where You Are (Location)
-
-- **Examples:** Network IP address, GPS location.
-    
-- **Weakness:** Easy to spoof (VPNs, GPS spoofing), so it is considered a "weak" factor usually used to reinforce others.
-    
-
-`![[Insert screen slide showing Authentication Factors]]`
-
-> [!img-desc] Visual Analysis
+> [!example] Professor's Example: Bank Signatures
 > 
-> What to look at: The classification of factors: Know, Have, Are.
-> 
-> Significance: Multi-Factor Authentication (MFA) is defined as using more than one of these different categories (e.g., Password + Token). Using two passwords is NOT multi-factor.
+> Banks use special tablets for signatures not just to check the "image" of the signature, but to measure dynamics: speed, pressure, and pen inclination. These behavioral metrics are harder to forge than the visual signature itself 26262626.
 
 ---
 
-## Biometric Analysis
+## 7. Attacker Models
 
-Biometrics are increasingly popular but have specific challenges regarding **False Positives** (authenticating the wrong person) and **False Negatives** (rejecting the right person).
+To design a secure system, we must model the adversary. Security is not "one size fits all" 27.
 
-### Fingerprinting
+### Attacker Dimensions
 
-- **Issues:**
+- **Motivation:** Financial gain, Espionage, Revenge, Fun 28.
     
-    - **Stability:** Not stable over time. Children's fingers grow; manual labor can damage fingerprints.
-        
-    - **Spoofing:** Fake fingerprints (gelatin/silicone) or, grimly, fingerprints from dead people.
-        
-
-### Voice Recognition
-
-- **Issues:**
+- **Resources:** Time, Computational power (botnets), Budget 29.
     
-    - Affected by health (cold/flu).
-        
-    - Background noise.
-        
-    - **Replay Attacks:** An attacker can record your voice (e.g., from a phone call) and replay it to the system.
-        
-
-### Handwritten Signature (Behavioral Biometric)
-
-- **Static Signature:** Just the image (Low security).
+- **Skills:**
     
-- **Dynamic Signature (Tablets):** Used heavily in **Banks**.
-    
-    - It measures **Timing, Pressure, Speed, and Pen Inclination**.
+    - _Script Kiddies:_ Use pre-made tools, low understanding.
         
-    - This is much harder to forge than a static image because the attacker needs to replicate the _motion_, not just the look.
+    - _APT (Advanced Persistent Threats):_ High skill, targeted, long-term 30.
         
 
-> [!example] Bank Enrollment
+### Attack Vectors
+
+- **Spray Phishing:** Sending millions of emails hoping for one click (Law of large numbers) 31.
+    
+- **Spear Phishing:** Highly targeted, researched attacks against a specific victim. Even experts fall for this 32.
+    
+- **Replay Attack:** Capturing a valid message and resending it.
+    
+    - _Note:_ Authentication messages must **always** be different (using nonces/timestamps) to prevent this33333333.
+        
+- **Insider Threat:** A legitimate user causing damage. They bypass the perimeter and have trust34343434.
+    
+
+`![[SCREEN_SLIDE_ATTACKER_MODEL]]`
+
+> [!abstract] Visual Analysis
 > 
-> When you register a signature at a bank, they ask you to sign multiple times. This is to calculate an "average" profile of your speed and pressure to set a threshold for future verification.
+> What to look at: The diagram contrasting different attacker types (Passive vs Active) .
+> 
+> Meaning: A Passive attacker monitors/collects metadata. An Active attacker modifies/injects messages 35.
 
 ---
 
-## Attacker Models
+## 8. Mapping Threats to Defenses
 
-Understanding **who** is attacking is essential to design the right defense (Scope). Security is not "one size fits all."
+We design defenses based on specific threats.
 
-### Why Model Attackers?
+|**Threat**|**Defense Strategy**|
+|---|---|
+|**MITM (Man-in-the-Middle)**|Mutual Authentication, TLS with certificate pinning 36.|
+|**Replay Attack**|Nonces, Timestamps, One-Time Passwords (OTP) 37.|
+|**Credential Theft**|Multi-Factor Authentication (MFA) 38.|
+|**Brute Force**|Rate limiting, Account lockouts, **Salted Hashing** 39.|
 
-1. **Resource Focus:** Don't waste money defending against the NSA if your threat is a script kiddie (or vice versa).
+### Security Design Principles
+
+- **Networks are untrusted:** Assume traffic is monitored40.
     
-2. **Protocol Design:** Ensure the protocol mitigates the _specific_ risks relevant to the environment.
+- **Endpoints are compromised:** Assume malware exists41.
     
-
-### Dimensions of an Attacker
-
-1. **Motivation:**
+- **Users are fallible:** They will click phishing links42.
     
-    - Financial gain (Cybercrime).
-        
-    - Espionage (Corporate/Political).
-        
-    - Disruption/Sabotage.
-        
-2. **Resources:**
-    
-    - Computational power (CPU/GPU for cracking).
-        
-    - Time (Patience for long-term monitoring).
-        
-    - Budget.
-        
-3. **Skills:**
-    
-    - **Script Kiddies:** Low skill, use pre-made tools/scripts found online (e.g., from YouTubers).
-        
-    - **APTs (Advanced Persistent Threats):** High skill, professional, state-sponsored.
-        
-
-### Attack Strategies: Distributed vs. Targeted
-
-- **Distributed Attacks (e.g., Generic Phishing):**
-    
-    - "Spray and pray." Sending 1 million emails hoping for a 0.1% success rate.
-        
-    - Easy to spot for humans (generic greetings, "your cloud is blocked").
-        
-    - Relies on large numbers.
-        
-- **Targeted Attacks (e.g., Spear Phishing):**
-    
-    - Focuses on **one specific victim**.
-        
-    - Attacker studies the victim for months (Passive monitoring).
-        
-    - **Spear Phishing:** Emails are customized with real references to the victim's job, colleagues, or recent activities.
-        
-    - **Danger:** Even security experts often fall for well-crafted spear phishing.
-        
-
-`![[Insert screen slide showing Attacker Dimensions/Model]]`
-
-> [!img-desc] Attacker Profile
-> 
-> What to look at: The dimensions: Motivation, Resources, Skills, Access, Persistence.
-> 
-> Significance: A "Passive, Insider, High Resource" attacker is the most dangerous combination.
-
----
-
-## Attack Vectors and Defenses
-
-### 1. Replay Attack
-
-- **Mechanism:** The attacker captures a valid authentication message (e.g., a hashed password sent over the network) and "replays" (resends) it later to the server.
-    
-- **Note:** The attacker doesn't need to decrypt the password; they just need to send the identical encrypted blob.
-    
-- **Defense:**
-    
-    - **Nonces:** Random numbers used only once.
-        
-    - **Timestamps:** Message is only valid for a few seconds.
-        
-    - **OTPs (One-Time Passwords):** The password itself changes every time.
-        
-
-### 2. Man-in-the-Middle (MITM)
-
-- **Mechanism:** Intercepting and modifying traffic. Often done via Malware acting as a proxy.
-    
-- **Defense:** **Mutual Authentication** (Server authenticates to Client, Client to Server) and TLS (Certificates).
-    
-
-### 3. Credential Theft (Keyloggers/Phishing)
-
-- **Mechanism:** Malware recording keystrokes or fake login pages.
-    
-- **Defense:** **Multi-Factor Authentication (MFA)**. Even if they have the password, they don't have the token/phone.
-    
-
-### 4. Brute Force
-
-- **Mechanism:** Guessing passwords repeatedly.
-    
-- **Defense:**
-    
-    - **Rate Limiting:** Block IP after N failed attempts.
-        
-    - **Salted Hashing:** Prevents the use of **Rainbow Tables** (pre-computed hash tables) by adding random data ("salt") to the password before hashing.
-        
-
-### 5. Insider Threat
-
-- **Mechanism:** A legitimate user abusing privileges or being tricked (Social Engineering).
-    
-- **Danger:** High access level, trusted by the network.
-    
-
-> [!tip] Security Design Summary
-> 
-> "Who, What, How": Before designing a system, define Who you are defending against, What assets are at risk, and How the attacker might operate. Security is a combination of Protocol Soundness, Endpoint Security, and Human Factor Resilience.
-
----
-
-the [[Authentication]] is the process to verify if you are really the one that you claim to be. ovviamente questa cosa si può fare solo dopo la fase di registrazione 
-absolute [[Authentication]] is the spid
-
-nella slide closed worklds assumpptions ha fatto un paraagone con la blakclist e whitelist dei firewall 
-
-il professore nella slide - **A particular case: the closed environment** ha aggiunto di un caso della realtà con internet
-
-never store a password, not even the encrypted version: why im weak? when a server is compromised, so the key for doing the encryption and decryption is also comprimised. So a 2 ways function, like encryption and decryption, are not used. What about the digest? we will see it later. what happens if we manage many password (and ignoring the danger)? at least for each password is needed a different key, so if one key is compromised, we have just one password compromised.
-
-il prof ha fatto vedere anche un trojan password simpatico
-
+- **Design Rule:** "Define who, what, how" before designing defenses43.
