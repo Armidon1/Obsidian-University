@@ -68,7 +68,7 @@ A search problem is formally defined by the following 5 components :
 
 ## 4. Algorithms and Search Trees
 
-A **Search Algorithm** takes a problem as input and returns a solution or failure. Most algorithms work by superimposing a **Search Tree** over the state space graph.
+A **Search Algorithm** takes a problem as input and returns a solution or failure. Most algorithms work by superimposing a **[[Search Tree]]** over the state space graph.
 
 ### Fundamental Distinction: State vs Node
 - **State:** A physical configuration of the world (e.g., "Being in Arad").
@@ -110,7 +110,7 @@ Algorithms are divided into two categories:
 
 ## 6. Best-First Search (General Approach)
 
-Most search algorithms are variants of **Best-First Search**.
+Most search algorithms are variants of **Best-First Search (which is not Breadth-First Search [[BFS]])**.
 The idea is to select the node to expand based on an **evaluation function $f(n)$**.
 * Always expand the node with the **minimum $f(n)$**.
 * The Frontier is implemented as a **Priority Queue** ordered by $f$.
@@ -130,6 +130,13 @@ if s is not in reached or child.PATH-COST < reached[s].PATH-COST then
 reached[s] <- child
 add child to frontier
 return failure
+
+function EXPAND(problem, node) yields nodes 
+s ← node.STATE 
+for each action in problem.ACTIONS(s) do 
+	s′ ← problem.RESULT(s, action) 
+	cost ← node.PATH-COST + problem.ACTION-COST(s, action, s′) 
+	yield NODE(STATE=s′, PARENT=node, ACTION=action, PATH-COST=cost)
 ````
 
 > Figure 3.7: Best-First Search Algorithm (adapted pseudocode)1.
@@ -149,13 +156,13 @@ We evaluate an algorithm using 4 criteria 2:
 4. **Space Complexity:** How much memory does it require (number of stored nodes)?
 
 
-Typical parameters3:
+Typical parameters:
 
-- $b$: branching factor.
+- $b$: branching factor or number of successors of a node that need to be considered.
 
-- $d$: depth of the shallowest solution.
+- $d$: depth of the shallowest solution or number of actions inDepth an optimal solution.
 
-- $m$: maximum length of any path in the state space.
+- $m$: maximum length of any path in the state space or the maximum number of actions in any path.
 
 
 ---
@@ -164,26 +171,26 @@ Typical parameters3:
 
 These algorithms have no information about the "distance" to the goal. They only know how to generate successors and check if they have arrived4.
 
-### 8.1 Breadth-First Search (BFS)
+### 8.1 Breadth-First Search ([[BFS]])
 
-Explores all nodes at depth $d$ before moving to $d+1$5.
+Explores all nodes at depth $d$ before moving to $d+1$.
 
 - **Strategy:** FIFO Queue. $f(n) = \text{depth}(n)$.
 
 - **Completeness:** Yes (if $b$ is finite).
 
-- **Optimality:** Yes, but **only if all action costs are equal** (or 1)6.
+- **Optimality:** Yes, but **only if all action costs are equal** (or 1).
 
 - **Complexity:** $O(b^d)$ for both time and space.
 
-- _Problem:_ Memory is the critical bottleneck (exponential)7.
+- _Problem:_ Memory is the critical bottleneck (exponential).
 
 
-![[Insert Image Figure 3.8 from PDF here]]
+![[Pasted image 20251125194516.png]]
 
 > Figure 3.8: Progress of BFS8.
 
-### 8.2 Uniform-Cost Search (Dijkstra)
+### 8.2 Uniform-Cost Search ([[Dijkstra Algorithm]])
 
 Expands the node with the lowest path cost $g(n)$9.
 
@@ -196,32 +203,32 @@ Expands the node with the lowest path cost $g(n)$9.
 - **Complexity:** $O(b^{1 + \lfloor C^*/\epsilon \rfloor})$. Can be worse than BFS if there are many small cost steps11.
 
 
-![[Insert Image Figure 3.10 from PDF here]]
+![[Pasted image 20251125194555.png]]
 
 > Figure 3.10: Uniform-Cost Search on the Romania map. Expands based on cost, not depth121314.1516
 
-### 8.3 Depth-First Search (DFS)1718
+### 8.3 Depth-First Search ([[DFS]])1718
 
-Explores every branch to the end before backtracking192021.2223
+Explores every branch to the end before backtracking
 
-- **Strategy:** LIFO Queue (Stack).2425
+- **Strategy:** LIFO Queue (Stack).
 
-- **Completeness:** No (can get stuck in loops or infinite paths) 262728.2930
+- **Completeness:** No (can get stuck in loops or infinite paths) 
 
-- **Optimality:** No (returns the first solution found, 31even if long).32
+- **Optimality:** No (returns the first solution found, 31even if long).
 
-- **Space:33** Very efficient: $O(bm)$ (linear with respect to depth)34.
+- **Space:** Very efficient: $O(bm)$ (linear with respect to depth)
 
 - **Time:** $O(b^m)$.
 
 
-![[Insert Image Figure 3.11 from PDF here]]
+![[Pasted image 20251125194621.png]]
 
-> Figure 3.11: Progress of DFS. Note how the frontier (green) is very small compared to expanded nodes35.
+> Figure 3.11: Progress of DFS. Note how the frontier (green) is very small compared to expanded nodes.
 
 ### 8.4 Depth-Limited & Iterative Deepening (IDS)
 
-To solve DFS problems (non-completeness) while keeping its advantages (low memory)36363636:
+To solve DFS problems (non-completeness) while keeping its advantages (low memory):
 
 1. **Depth-Limited:** DFS with a depth limit $l$. Incomplete if solution is at $d > l$.
 
@@ -236,13 +243,13 @@ To solve DFS problems (non-completeness) while keeping its advantages (low memor
 - _Note:_ Regenerating nodes seems expensive, but the cost is dominated by the last level ($b^d$ nodes), so asymptotically it has the same time complexity as BFS ($O(b^d)$). It is the preferred algorithm for uninformed search with large state spaces37373737.
 
 
-![[Insert Image Figure 3.13 from PDF here]]
+![[Pasted image 20251125194647.png]]
 
 > Figure 3.13: Iterative Deepening Search38.
 
 ### Summary Table
 
-![[Insert Image Figure 3.15 from PDF here]]
+![[Pasted image 20251125194709.png]]
 
 > Figure 3.15: Comparison of uninformed search strategies39.
 
