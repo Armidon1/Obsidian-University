@@ -55,7 +55,7 @@ An agent is any entity capable of:
 
 The agent possesses an "Agent Function" (or deliberation module) that maps the history of perceptions into an action.
 
-![[Insert Image Figure 2.1 from PDF here]]
+![[Pasted image 20251124095414.png]]
 > *Figure 2.1: General Agent-Environment interaction scheme. The agent receives Percepts and returns Actions.*
 
 ### Rational Agent
@@ -79,10 +79,11 @@ To design an agent, one must first define the problem using the acronym **PEAS**
 - **A**ctuators
 - **S**ensors
 
-### Example: Autonomous Taxi (Figure 2.4)
-![[Insert Image Figure 2.4 from PDF here]]
+### Examples
+![[Pasted image 20251124095447.png]]
 > *Figure 2.4: PEAS description example for an automated taxi driver.*
-
+![[Pasted image 20251124095707.png]]
+> Figure 2.5: Examples of agent types and their PEAS descriptions.
 ### Properties of Environments
 The difficulty of the task depends on the characteristics of the environment. The main dimensions (Fig 2.6 of the book) are :
 
@@ -93,7 +94,7 @@ The difficulty of the task depends on the characteristics of the environment. Th
 5. **Static vs. Dynamic:** Does the environment change while the agent is "thinking"?
 6. **Discrete vs. Continuous:** Are the states finite or continuous? (Chess = Discrete; Driving = Continuous).
 
-![[Insert Image Figure 2.6 from PDF here]]
+![[Pasted image 20251124095759.png]]
 > *Figure 2.6: Examples of environments classified according to their properties.*
 
 ---
@@ -105,29 +106,29 @@ The slides focus on agents that *reason*, meaning they use a **model of the envi
 ### A. Simple Reflex Agent
 Acts only based on the *current* perception. *Condition-Action* rules (e.g., `IF car in front brakes THEN brake`) .
 * *Limit:* Works well only if the environment is fully observable.
-
+![[Pasted image 20251124100531.png]]
+>Figure 2.9 Schematic diagram of a simple reflex agent. We use rectangles to denote the current internal state of the agent’s decision process, and ovals to represent the background information used in the process.
 ### B. Model-Based Reflex Agent
 Maintains an **Internal State** to handle partial observability .
 Must know:
 1. How the world evolves independently of the agent.
 2. How the agent's actions affect the world.
 
-![[Insert Image Figure 2.11 from PDF here]]
+![[Pasted image 20251124100429.png]]
 > *Figure 2.11: Scheme of a model-based agent. Note "What the world is like now" which persists over time.*
 
 ### C. Goal-Based Agent
 Knowing how the world works is not enough; it needs to know **where it wants to go** (Goal).
 The agent uses search and planning to find sequences of actions that lead to the *Goal*.
 
-![[Insert Image Figure 2.13 from PDF here]]
+![[Pasted image 20251124100656.png]]
 > *Figure 2.13: Goal-based agent. Introduces future projection: "What it will be like if I do action A".*
-
 ### D. Utility-Based Agent - **Slide Focus**
 Often there are many ways to reach a goal, but some are better (faster, safer, cheaper).
 - **Utility Function:** Assigns a real number (score) to how "good" a state is.
 * The agent chooses the action that maximizes the **Expected Utility**.
 
-![[Insert Image Figure 2.14 from PDF here]]
+![[Pasted image 20251124100837.png]]
 > *Figure 2.14: Utility-based agent. This is the most general and flexible model for rational agents.*
 
 ---

@@ -56,7 +56,7 @@ Un agente è qualsiasi entità in grado di:
 
 L'agente possiede una "Funzione Agente" (o modulo di deliberazione) che mappa la storia delle percezioni in un'azione.
 
-![[Inserire qui Immagine Figura 2.1 dal PDF]]
+![[Pasted image 20251124095414.png]]
 > *Figura 2.1: Schema generale di interazione Agente-Ambiente. L'agente riceve percorsi (Percepts) e restituisce Azioni.*
 
 ### Agente Razionale
@@ -80,8 +80,11 @@ Per progettare un agente, bisogna prima definire il problema tramite l'acronimo 
 * **A**ctuators (Attuatori)
 * **S**ensors (Sensori)
 
-### Esempio: Taxi a guida autonoma (Figura 2.4)
-![[Inserire qui Immagine Figura 2.4 dal PDF]]
+### Esempi
+![[Pasted image 20251124095447.png]]
+> *Figure 2.4: PEAS description example for an automated taxi driver.*
+![[Pasted image 20251124095707.png]]
+> Figure 2.5: Examples of agent types and their PEAS descriptions.
 > *Figura 2.4: Esempio di descrizione PEAS per un tassista automatico.*
 
 ### Proprietà degli Ambienti
@@ -94,7 +97,7 @@ La difficoltà del compito dipende dalle caratteristiche dell'ambiente. Le dimen
 5.  **Statico vs Dinamico:** L'ambiente cambia mentre l'agente "pensa"?
 6.  **Discreto vs Continuo:** Gli stati sono finiti o continui? (Scacchi = Discreto; Guida = Continuo).
 
-![[Inserire qui Immagine Figura 2.6 dal PDF]]
+![[Pasted image 20251124095948.png]]
 > *Figura 2.6: Esempi di ambienti classificati secondo le proprietà.*
 
 ---
@@ -113,14 +116,14 @@ Deve sapere:
 1.  Come evolve il mondo indipendentemente dall'agente.
 2.  Come le azioni dell'agente influenzano il mondo.
 
-![[Inserire qui Immagine Figura 2.11 dal PDF]]
+![[Pasted image 20251124100434.png]]
 > *Figura 2.11: Schema di un agente basato su modello. Nota il "What the world is like now" che persiste nel tempo.*
 
 ### C. Agente Basato su Obiettivi (Goal-Based)
 Non basta sapere come è fatto il mondo, bisogna sapere **dove si vuole arrivare**.
 L'agente usa ricerca e pianificazione per trovare sequenze di azioni che portano al *Goal*.
 
-![[Inserire qui Immagine Figura 2.13 dal PDF]]
+![[Pasted image 20251124100705.png]]
 > *Figura 2.13: Agente basato su obiettivi. Introduce la proiezione futura: "What it will be like if I do action A".*
 
 ### D. Agente Basato su Utilità (Utility-Based) - **Focus Slide**
@@ -128,7 +131,7 @@ Spesso ci sono molti modi per raggiungere un obiettivo, ma alcuni sono migliori 
 * **Funzione di Utilità:** Assegna un numero reale (punteggio) a quanto è "buono" uno stato.
 * L'agente sceglie l'azione che massimizza l'**Utilità Attesa**.
 
-![[Inserire qui Immagine Figura 2.14 dal PDF]]
+![[Pasted image 20251124100842.png]]
 > *Figura 2.14: Agente basato su utilità. È il modello più generale e flessibile per agenti razionali.*
 
 ---
