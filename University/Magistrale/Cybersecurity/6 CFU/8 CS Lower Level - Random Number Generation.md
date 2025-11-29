@@ -99,9 +99,7 @@ Netscape used a weak generator for SSL keys. The source code revealed the seed w
 
 **Here is the exact implementation shown in the slides:**
 
-C
-
-```
+```C
 /* Netscape 1.1  seeding & key generation (1996) */
 
 global variable seed;
@@ -172,9 +170,7 @@ Not all generators are suitable for security. We must distinguish between standa
 
 **Challenge: Is this a PRNG or CS-PRNG?**
 
-Plaintext
-
-```
+```C
 hash function H
 random initial seed s
 y = s
@@ -217,9 +213,7 @@ Uses a block cipher (like AES) in a cyclic manner.
 
 **Here is the exact implementation shown in the slides:**
 
-Plaintext
-
-```
+```C
 cyclic cryptography: use counter + cipher
 Meyer and Matyas, 1982
 crypto algorithm E
@@ -235,15 +229,13 @@ Exploits the mathematical difficulty of inverting RSA. Provably secure but slow.
 
 **Here is the exact implementation shown in the slides:**
 
-Plaintext
-
-```
+```C
 prime numbers p, q
 n = p∙q
 integer e s.t. GCD(e, (p-1)∙(q-1)) = 1
 z = seed
 loop
-    zi = (zi-1)e mod n
+    zi = (zi-1)^e mod n
     i = i +1
     output:  least significant bit of zi
 ```
@@ -254,9 +246,7 @@ Based on the quadratic residuosity problem.
 
 **Here is the exact implementation shown in the slides:**
 
-Plaintext
-
-```
+```C
 choose p, q big prime s.t. p ≡ q ≡ 3 (mod 4)
 n = p∙q
 randomly choose s s.t. GCD(s, n) = 1
@@ -264,7 +254,7 @@ output the sequence of bits Bi
 
 X0 = s2 mod n
 for i = 1 to ∞
-    Xi = (Xi-1)2 mod n
+    Xi = (Xi-1)^2 mod n
     Bi = Xi mod 2
     return Bi
 ```
@@ -275,9 +265,7 @@ Current best practice (NIST SP 800-90A). Uses AES in Counter Mode with reseeding
 
 **Here is the exact implementation shown in the slides:**
 
-Plaintext
-
-```
+```C
 Maybe the current best (Counter mode Deterministic Random Bit Generator, 2012)
 State: Key K, counter V
 Block cipher: AES-128 / AES-256 in CTR mode

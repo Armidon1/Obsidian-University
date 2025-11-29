@@ -1,5 +1,5 @@
 # Consensus Problem
-
+[[Consensus]]
 #### Overview  
 A group of processes must agree on a value that has been proposed by one of them (e.g., commit/abort of a transaction).  
 
