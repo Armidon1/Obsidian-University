@@ -792,7 +792,7 @@ Per ottenere ciò, è necessario utilizzare tattiche e pattern specifici e autom
 ---
 # Containerization
 
-## Virtualizzazione basata su container
+## Virtualizzazione basata su [[Container]]
 
 La **virtualizzazione basata su container** (o _containerization_) è un'infrastruttura che permette alle applicazioni di girare in ambienti isolati noti come **container**.
 
