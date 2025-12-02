@@ -67,6 +67,7 @@ A Blockchain is defined as a **[[Distributed Ledger (DLT)]]** that records trans
 Not all Blockchains are Bitcoin. We classify them based on **Read/Write permissions**:
 - Permissioned: Only approved participants can participate
 - Permissionless: Anyone ca participate.
+
 But who can see the blockcain?:
 - Public: everyone can **see** the transactions
 - private: Only the ones who are permissioned can see transactions
@@ -82,12 +83,14 @@ But who can see the blockcain?:
 
 ## 4\. Technology Stack (Layer 1)
 
-A blockchain is not a single technology, but a combination of four existing computer science concepts :
+A blockchain is not a single technology, but a combination of six existing computer science concepts :
 
-1. **P2P Communication Protocols:** For broadcasting data.
-2. **Asymmetric Encryption (PKI):** Digital signatures for identity and authorization.
-3. **Hash Functions:** For immutability and linking blocks.
-4. **Merkle Trees:** For efficient data verification.
+1. **[[Peer-To-Peer (P2P)]] Communication Protocols:** For broadcasting data.
+2. **[[Asymmetric Encryption]] (PKI):** Digital signatures for identity and authorization.
+3. **[[Hashing|Hash Functions]]:** For immutability and linking blocks.
+4. **[[Merkle Trees]]:** For efficient data verification.
+5. **Key-Value database**: to create our own database from a blockchain, to increase [[Performance]].
+6. **[[Consensus]]**: For each transaction, it requires everyone consensus to add a block.
 
 ### Key Properties
 
@@ -99,7 +102,7 @@ A blockchain is not a single technology, but a combination of four existing comp
 
 ## 5\. Ethereum: The World Computer
 
-While Bitcoin is a calculator (Transaction $\rightarrow$ Payment), Ethereum is a computer (Transaction $\rightarrow$ Code Execution).
+While Bitcoin is a calculator (Transaction $\rightarrow$ Payment), [[Ethereum]] is a computer (Transaction $\rightarrow$ Code Execution).
 
 ### The State Transition Function
 
@@ -110,14 +113,15 @@ $$
 \text{State}' = \Upsilon(\text{State}, \text{Transaction})
 $$
 
-> [\!abstract] Math Analysis
+> [!abstract] Math Analysis
 > \* **State:** The current status of all accounts (balances, storage, code).
 > \* **Transaction:** The input (data + signature + value).
 > \* **$\Upsilon$ (Upsilon):** The State Transition Function (EVM execution) that processes the transaction and updates the state.
 
+![[Pasted image 20251130131001.png]]
 ### Smart Contracts
 
-Smart contracts are immutable programs deployed on the blockchain. They execute logic autonomously.
+[[Smart Contracts]] are immutable programs deployed on the blockchain. They execute logic autonomously.
 
 **Here is the exact implementation shown in the slides (Solidity):**
 
@@ -130,27 +134,27 @@ pragma solidity >=0.7.0 <0.9.0;
 */
 contract Storage {
 
-uint256 number;
+	uint256 number;
 
-/**
-* @dev Store value in variable
-* @param num value to store
-*/
-function store(uint256 num) public {
-number = num;
-}
+	/**
+	* @dev Store value in variable
+	* @param num value to store
+	*/
+	function store(uint256 num) public {
+		number = num;
+	}
 
-/**
-* @dev Return value
-* @return value of 'number'
-*/
-function retrieve() public view returns (uint256){
-return number;
-}
+	/**
+	* @dev Return value
+	* @return value of 'number'
+	*/
+	function retrieve() public view returns (uint256){
+		return number;
+	}
 }
 ```
 
-> [\!abstract] Code Analysis
+> [!abstract] Code Analysis
 > This is a basic "Getter/Setter" contract.
 >
 > * `uint256 number;` defines the **State** variable stored on the blockchain.
@@ -172,9 +176,9 @@ Blockchains are **deterministic** and isolated systems. They cannot natively mak
 
 This distinction is vital for engineering modern DApps (Decentralized Applications).
 
-\![[SCREEN\_SLIDE\_55\_WEB3\_ARCH]]
+![[Pasted image 20251130131546.png]]
 
-> [\!abstract] Visual Analysis
+> [!abstract] Visual Analysis
 > **Web 2.0:**
 >
 > * Front-end $\rightarrow$ Backend Server (Node/Python) $\rightarrow$ Centralized Database.
@@ -183,12 +187,7 @@ This distinction is vital for engineering modern DApps (Decentralized Applicatio
 > **Web 3.0:**
 >
 > * Front-end $\rightarrow$ **Provider (JSON RPC)** $\rightarrow$ **Blockchain Network (EVM)**.
-> \* *Storage:* Often uses IPFS/Swarm (decentralized storage) instead of AWS S3.
+> \* *Storage:* Often uses [[IPFS]]/[[Swarm]] (decentralized storage) instead of AWS S3.
 > \* *Identity:* Handled by a "Signer" (e.g., MetaMask), not a username/password database.
 
 -----
-
-### 💡 Next Step for the Student
-
-Since you want to be challenged with coding, would you like to try the **"Hash Challenge"**?
-I can ask you to write a Python script that simulates the "Mining" process (Proof of Work). You will have to find a number (nonce) that, when added to a text string and hashed, results in a hash starting with '0000'. This will explain exactly *why* blockchains are secure but slow. Shall we do this?

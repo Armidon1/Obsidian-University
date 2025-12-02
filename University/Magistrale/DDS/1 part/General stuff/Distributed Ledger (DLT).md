@@ -117,4 +117,4 @@ Utilizzato nei registri distribuiti dove la storia non può essere alterata.
 
 ---
 
-Poiché hai menzionato il concetto di "Burn" e "Append", potrebbe interessarti una nota sugli **Smart Contracts** (che eseguono queste logiche) o sul **Blockchain Trilemma** (che spiega le sfide di scalabilità dovute proprio a questo modello CRAB)?
+Poiché hai menzionato il concetto di "Burn" e "Append", potrebbe interessarti una nota sugli **[[Smart Contracts]]** (che eseguono queste logiche) o sul **Blockchain Trilemma** (che spiega le sfide di scalabilità dovute proprio a questo modello CRAB).
