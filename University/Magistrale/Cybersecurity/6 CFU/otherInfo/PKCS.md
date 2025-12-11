@@ -91,7 +91,7 @@ Ecco una panoramica di diversi standard chiave della collezione.
         
     - [[PBKDF1]] (legacy) e [[PBKDF2]] (lo standard moderno) sono i più famosi.
         
-    - [[PBKDF2]] "stira" (key stretching) una password mescolandola con un **Salt** (un valore casuale unico) ed eseguendola attraverso una funzione pseudo-casuale (come HMAC-SHA256) migliaia di volte (il **conteggio delle iterazioni**).
+    - [[PBKDF2]] "stira" (key stretching) una password mescolandola con un **Salt** (un valore casuale unico) ed eseguendola attraverso una funzione pseudo-casuale (come [[HMAC-SHA256]]) migliaia di volte (il **conteggio delle iterazioni**).
         
     - **Funzione:** `Chiave Derivata = PBKDF2(password, salt, iterazioni, lunghezza_chiave_output)`
         
@@ -122,7 +122,7 @@ Ecco una panoramica di diversi standard chiave della collezione.
         
 - **Applicazioni:**
     
-    - Questo è il formato che si vede nei **file PEM** usati per TLS/HTTPS:
+    - Questo è il formato che si vede nei **file PEM** usati per [[TLS]]/[[HTTPS]]:
         
         - `-----BEGIN PRIVATE KEY-----` (PKCS #8 non criptato)
             

@@ -537,8 +537,10 @@ $$RSA(m_1 \cdot m_2) = (m_1 \cdot m_2)^e \pmod N = (m_1^e \cdot m_2^e) \pmod N =
 
 - Questa proprietà rende RSA **malleabile**. La malleabilità significa che un attaccante può modificare un testo cifrato in un altro testo cifrato valido per un testo in chiaro correlato, senza conoscere nessuno dei due testi in chiaro.
     
-- Ad esempio, se un attaccante ha il testo cifrato $C = M^e \pmod N$, può facilmente creare un testo cifrato per $2M$ calcolando $C' = C \cdot 2^e \pmod N$. Il destinatario decifrerà $C'$ come $2M$, potendo essere ingannato nell'accettare un messaggio modificato.
-    
+- Ad esempio, se un attaccante ha il testo cifrato $C = M^e \pmod N$, può facilmente creare un testo cifrato per $2M$ calcolando $C' = C \cdot 2^e \pmod N$. Il destinatario decifrerà $C'$ come $2M$, potendo essere ingannato nell'accettare un messaggio modificato. Infatti:
+
+	- adv. uses $C'$ as chosen ciphertext and asks the oracle for $Y = (C')^d \bmod N$, but….$$C' = (C \bmod N)\cdot(2^e \bmod N) = (M^e \bmod N)\cdot(2^e \bmod n) = (2M)^e \bmod N$$
+	- thus adv. got Y = (2M)
 
 ---
 

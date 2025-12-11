@@ -1,5 +1,3 @@
-	Ecco la definizione di PBKDF e la spiegazione di PBKDF1 e 2.
-
 ### 🔑 PBKDF (Password-Based Key Derivation Function)
 
 Una **PBKDF (Password-Based Key Derivation Function)** è una **funzione crittografica** (specificamente una KDF) progettata per un unico scopo: prendere una password a bassa entropia (come `password123`) e trasformarla in una **chiave crittografica forte e sicura** di lunghezza desiderata (es. 256 bit).
@@ -32,7 +30,7 @@ Entrambe sono standard specificati nel **PKCS #5**, ma PBKDF2 è il successore c
 
 - **Definizione:** Il successore e attuale standard industriale (definito in RFC 2898 / PKCS #5 v2.0).
     
-- **Funzionamento:** Sostituisce la semplice funzione di hash con una **PRF (Pseudorandom Function)**, quasi sempre implementata come **HMAC** (es. HMAC-SHA256).
+- **Funzionamento:** Sostituisce la semplice funzione di hash con una **[[PRF (Pseudorandom Function)]]**, quasi sempre implementata come **[[Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/HMAC|HMAC]]** (es. HMAC-SHA256).
     
 - **Vantaggi Chiave:**
     
