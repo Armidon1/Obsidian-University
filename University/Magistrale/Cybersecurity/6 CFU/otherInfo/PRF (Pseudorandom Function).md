@@ -57,7 +57,7 @@ Una PRF è sicura se nessun avversario computazionalmente limitato può distingu
 
 ## 4. PRF vs PRG (Generatori Pseudo-Casuali)
 
-È comune confondere PRF e PRG (che hai visto nei tuoi appunti precedenti), ma hanno scopi diversi:
+È comune confondere PRF e [[PRG]] (che hai visto nei tuoi appunti precedenti), ma hanno scopi diversi:
 
 |**Caratteristica**|**PRG (Generator)**|**PRF (Function)**|
 |---|---|---|

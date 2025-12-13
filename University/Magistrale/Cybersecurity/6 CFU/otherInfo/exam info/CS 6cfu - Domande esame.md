@@ -1,5 +1,3 @@
-Ecco il contenuto riscritto come richiesto, senza i numeri di citazione alla fine delle frasi.
-
 ### 1. Concetti Base, Confidenzialità e Integrità
 
 - Spiegare i termini confidenzialità ed integrità.

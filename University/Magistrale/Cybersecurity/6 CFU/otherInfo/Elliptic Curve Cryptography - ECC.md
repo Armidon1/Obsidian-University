@@ -66,7 +66,7 @@ L'ECC sposta la crittografia dal "mondo" dei numeri interi (come RSA) al "mondo"
 
 ### Il Problema Difficile (ECDLP)
 
-La sicurezza di ECC si basa sul fatto che l'operazione di moltiplicazione scalare è una **funzione unidirezionale (trapdoor, [[OWF]])**:
+La sicurezza di ECC si basa sul fatto che l'operazione di moltiplicazione scalare è una **funzione unidirezionale (trapdoor, [[One-Way Function (OWF)]])**:
 
 - **Facile:** Conoscendo la chiave privata $d$ e il punto base $G$, è computazionalmente facile calcolare la chiave pubblica $Q$.
     

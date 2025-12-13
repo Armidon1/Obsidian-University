@@ -19,7 +19,7 @@ $$f(x) \text{ è facile da calcolare, ma dato } y = f(x), \text{ è computaziona
 Nel dettaglio
 > [!One-Way Function]
 > 
-> A function $f: \{0,1\}^* \rightarrow \{0,1\}^*$ is called a one-way function ([[OWF]]) if it satisfies two properties:
+> A function $f: \{0,1\}^* \rightarrow \{0,1\}^*$ is called a one-way function ([[One-Way Function (OWF)]]) if it satisfies two properties:
 > 
 > 1. **Efficiently computable:**
 >     

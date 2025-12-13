@@ -25,7 +25,7 @@ $$x = \log_g(y) \pmod p \quad (\text{Trovare } x)$$
 
 ### Analogia: La "Funzione Unidirezionale"
 
-Per un ingegnere informatico, il DLP è l'esempio perfetto di una **funzione unidirezionale ([[OWF]])**:
+Per un ingegnere informatico, il DLP è l'esempio perfetto di una **funzione unidirezionale ([[One-Way Function (OWF)]])**:
 
 - **Andare avanti (Esponenziazione):** Facile. È come mescolare due colori di vernice per ottenerne un terzo. Se ti do il blu e il giallo, ottieni facilmente il verde.
     
@@ -55,7 +55,7 @@ This problem is the basis for the **[[Diffie-Hellman Key Exchange]]** and the **
     
     - Find $x$ given $y$, $g$, and $p$ in the equation: $y \equiv g^x \pmod p$
         
-- **DL in $\mathbb{Z}^*_p$ as an [[OWF]]:**
+- **DL in $\mathbb{Z}^*_p$ as an [[One-Way Function (OWF)]]:**
     
     - The function $x \rightarrow g^x \pmod p$ is **easy** to compute.
         

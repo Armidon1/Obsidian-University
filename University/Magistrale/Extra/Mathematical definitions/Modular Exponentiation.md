@@ -75,7 +75,7 @@ L'esponenziazione modulare è il cavallo di battaglia della crittografia asimmet
     - Utilizza l'esponenziazione modulare per la cifratura e la firma.
         
 
-È una **funzione unidirezionale ([[OWF]])**: è computazionalmente facile da eseguire (grazie allo _Square-and-Multiply_), ma estremamente difficile da invertire (questo è il **[[Discrete Logarithm (DL) Problem]]**).
+È una **funzione unidirezionale ([[One-Way Function (OWF)]])**: è computazionalmente facile da eseguire (grazie allo _Square-and-Multiply_), ma estremamente difficile da invertire (questo è il **[[Discrete Logarithm (DL) Problem]]**).
 
 #### Fast Modular Exponentiation (Algorithm)
 

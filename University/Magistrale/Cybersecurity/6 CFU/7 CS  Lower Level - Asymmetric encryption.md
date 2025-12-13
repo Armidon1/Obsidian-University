@@ -200,7 +200,7 @@ Modern cryptography is built on the concept of "hard problems." These are formal
 
 > [!One-Way Function]
 > 
-> A function $f: \{0,1\}^* \rightarrow \{0,1\}^*$ is called a one-way function ([[OWF]]) if it satisfies two properties:
+> A function $f: \{0,1\}^* \rightarrow \{0,1\}^*$ is called a one-way function ([[One-Way Function (OWF)]]) if it satisfies two properties:
 > 
 > 1. **Efficiently computable:**
 >     
@@ -271,7 +271,7 @@ This problem is the basis for the **[[Diffie-Hellman Key Exchange]]** and the **
     
     - Find $x$ given $y$, $g$, and $p$ in the equation: $y \equiv g^x \pmod p$
         
-- **DL in $\mathbb{Z}^*_p$ as an [[OWF]]:**
+- **DL in $\mathbb{Z}^*_p$ as an [[One-Way Function (OWF)]]:**
     
     - The function $x \rightarrow g^x \pmod p$ is **easy** to compute.
         
@@ -713,7 +713,7 @@ The vulnerability is fixed by **signing a hash of the message**, not the message
         
 - **Why this works:**
     
-    - The hash function $H$ is a **One-Way Function ([[OWF]])**, which makes the [[Forgery]] attack impossible. Fran cannot find a message $D$ that hashes to $R$.
+    - The hash function $H$ is a **One-Way Function ([[One-Way Function (OWF)]])**, which makes the [[Forgery]] attack impossible. Fran cannot find a message $D$ that hashes to $R$.
         
     - Encrypting a hash is fast and efficient.
         
