@@ -1203,6 +1203,229 @@ Curiosità: in questo algoritmo [[SHA-1]] è considerato ancora utile perché in
 
 Di nuovo: RSA non è usato per la [[Confidentiality]] (Confidenzialità) ma solo per lo Scambio di Chiavi, che dà l'opportunità di avere Confidenzialità con una [[Symmetric Encryption]] (Cifratura Simmetrica).
 
+---
+
+# RSA per Non-Ripudio e Firma Digitale
+
+**Tags:** #ingegneria #crittografia #RSA #firma_digitale #non_ripudio #PSS
+
+## 1. Introduzione al Non-Ripudio
+
+Il concetto di **Non-Ripudio** è fondamentale nella sicurezza informatica. Si riferisce alla garanzia che un soggetto non possa negare di aver compiuto una determinata azione o inviato un messaggio.
+
+Nello specifico:
+
+- **Obiettivo:** Assicurare paternità verificabile di messaggi e azioni.
+    
+- **Mezzo:** La **[[Digital Signature|Firma Digitale]]**.
+    
+
+Nel contesto RSA, la firma si ottiene "invertendo" l'uso delle chiavi rispetto alla cifratura:
+
+1. Si **cifra** (firma) usando la **Chiave Privata** del mittente.
+    
+2. Chiunque può **verificare** usando la **Chiave Pubblica** del mittente.
+    
+
+> [!example] Professor's Example
+> 
+> Pensate alla firma autografa su un contratto cartaceo: serve a dire "l'ho scritto io e accetto le conseguenze". La firma digitale RSA fa la stessa cosa matematicamente. Se cifro con la mia chiave privata, solo io potevo generare quel dato, quindi non posso dire "non sono stato io".
+
+---
+
+## 2. RSA Signature Scheme: PKCS#1 v1.5 (Legacy)
+
+Questo è lo schema "classico", ancora molto diffuso (es. TLS 1.2, email S/MIME), ma considerato **Legacy** per le nuove applicazioni.
+
+### Il Paradigma "Hash-then-Sign"
+
+Non firmiamo mai tutto il messaggio (sarebbe troppo lento). Firmiamo solo l'impronta (Hash).
+
+1. **Preprocessing:** Calcolo dell'Hash del messaggio $M$.
+    
+2. **Encoding:** Formattazione secondo lo standard EMSA-PKCS1-v1_5.
+    
+3. **Firma:** Cifratura RSA.
+    
+
+### Struttura dell'Encoding (EM)
+
+Il blocco dati preparato per la firma ($EM$) ha una struttura fissa e **deterministica**:
+
+**Struttura visuale del blocco:**
+
+Plaintext
+
+```
+EM = 0x00 || 0x01 || PS || 0x00 || T
+```
+
+- **0x00**: Byte iniziale (per garantire che il numero sia minore del modulo).
+    
+- **0x01**: Tipo di blocco (indica "Firma").
+    
+- **PS**: Padding String (serie di byte `0xFF` per riempire lo spazio).
+    
+- **0x00**: Separatore.
+    
+- **T**: DigestInfo (contiene l'algoritmo Hash usato + l'Hash del messaggio).
+    
+
+### Matematica della Firma
+
+Una volta costruito $EM$, la firma $S$ si calcola con la formula RSA standard:
+
+$$S = EM^d \pmod n$$
+
+Dove $d$ è l'esponente privato.
+
+> [!abstract] Visual Analysis
+> 
+> ![[Pasted image 20251213184149.png]]
+> 
+> What to look at: Nota come l'hash $H$ viene incapsulato dentro la struttura $T$ e poi dentro $EM$.
+> 
+> Meaning: Non stiamo firmando il messaggio "grezzo", ma una struttura complessa che dice "Questo è l'hash SHA-256 di questo messaggio".
+> 
+> Da notare anche che il metodo completo è chiamato [[RSASSA]]
+
+---
+
+## 3. Verifica della Firma (v1.5)
+
+Il ricevente, per verificare che la firma sia autentica, esegue il processo inverso.
+
+**Passaggi Logici:**
+
+1. Calcola autonomamente l'Hash del messaggio ricevuto: $H' = \text{Hash}(M)$.
+    
+2. Costruisce il blocco atteso ($EM_{expected}$) usando lo stesso formato di encoding.
+    
+3. Decifra la firma digitale $S$ usando la chiave pubblica $e$:
+    
+
+$$EM' = S^e \pmod N$$
+
+4. **Confronto:** Se $EM' == EM_{expected}$, la firma è valida.
+    
+
+> [!failure] Common Pitfall
+> 
+> Errore comune: Pensare che la verifica decifri il messaggio originale.
+> 
+> Realtà: La verifica decifra solo l'impronta (Hash) e la struttura di padding. Se il messaggio originale $M$ è stato modificato anche di un solo bit, l'hash calcolato dal ricevente non corrisponderà a quello contenuto nella firma decifrata.
+
+---
+
+## 4. Sicurezza di PKCS#1 v1.5 vs PSS
+
+Perché stiamo abbandonando la v1.5?
+
+- **Determinismo:** Lo schema v1.5 è deterministico. Firmare lo stesso messaggio produce sempre la stessa firma.
+    
+- **Vulnerabilità:** Se implementato male, è vulnerabile ad attacchi di tipo **Padding Oracle** (simili a Bleichenbacher).
+    
+- **Soluzione:** Passare a **RSA-PSS**.
+    
+
+---
+
+## 5. RSA-PSS (Probabilistic Signature Scheme)
+
+Introdotto in **PKCS#1 v2.1** (RFC 8017), è lo standard raccomandato oggi.
+
+### Caratteristiche Chiave
+
+- **Probabilistico:** Introduce un **Salt** casuale. Due firme dello stesso messaggio saranno diverse (ma entrambe valide).
+    
+- **Sicurezza:** Offre una sicurezza "provabile" basata sulla difficoltà del problema RSA.
+    
+
+### Costruzione PSS (Generazione)
+
+Il processo è più complesso e usa una maschera (MGF1) simile a OAEP.
+
+Fase 1: Hashing e Salting
+
+Si calcola l'hash del messaggio $H$. Si genera un Salt casuale. Si calcola un nuovo hash intermedio $H'$:
+
+$$H' = \text{Hash}(0x00 \dots 00 \ || \ H \ || \ \text{salt})$$
+
+Fase 2: Costruzione Data Block (DB)
+
+Si crea un blocco dati contenente il padding e il salt:
+
+Plaintext
+
+```
+DB = PS || 0x01 || salt
+```
+
+_(Dove PS sono byte di zeri)_
+
+Fase 3: Mascheramento (Masking)
+
+Si usa la MGF1 (Mask Generation Function) per nascondere il DB:
+
+$$maskedDB = DB \oplus \text{MGF1}(H', \text{len}(DB))$$
+
+Fase 4: Encoding Finale (EM)
+
+Il messaggio codificato finale è composto da:
+
+Plaintext
+
+```
+EM = maskedDB || H' || 0xbc
+```
+
+_(Nota: `0xbc` è il byte finale fisso per PSS)_
+
+**Fase 5: Firma**
+
+$$S = EM^d \pmod N$$
+
+> [!abstract] Visual Analysis
+> 
+> ![[Pasted image 20251213184800.png]]
+> 
+> What to look at: Osserva l'uso dello XOR ($\oplus$) tra il DB e l'output della MGF1.
+> 
+> Meaning: Questo meccanismo di mascheramento lega crittograficamente il salt e l'hash del messaggio, rendendo la struttura robusta.
+
+---
+
+## 6. Verifica RSA-PSS
+
+La verifica in PSS è più rigorosa.
+
+1. **Recupero:** Si ottiene $EM$ dalla firma usando la chiave pubblica: $EM = S^e \pmod N$.
+    
+2. **Splitting:** Si divide $EM$ per separare il $maskedDB$ dall'hash $H'$. Si controlla che l'ultimo byte sia `0xbc`.
+    
+3. **Unmasking:** Si rimuove la maschera per recuperare il $DB$ originale:
+    
+
+$$DB = maskedDB \oplus \text{MGF1}(H', \text{len}(DB))$$
+
+4. **Parsing:** Dal $DB$ "pulito", si estrae il **Salt**.
+    
+5. **Verifica Finale:** Il ricevente ricalcola $H'_{new}$ usando il messaggio originale, l'hash originale e il salt appena estratto. Se $H'_{new}$ coincide con l'$H'$ trovato nella firma, tutto è corretto.
+    
+
+> [!tip] Exam Focus
+> 
+> Il professore potrebbe chiedere: "Qual è la differenza principale tra la firma v1.5 e PSS?"
+> 
+> Risposta sintetica:
+> 
+> 1. La **v1.5 è deterministica** (niente casualità), la **PSS è probabilistica** (usa un Salt).
+>     
+> 2. PSS usa una struttura a maschera (MGF) più sicura.
+>     
+> 3. PSS ha una prova di sicurezza formale più forte.
+>
+
 
 vedi anche [[7 CS  Lower Level - Asymmetric encryption#RSA – the algorithm]]. 
 
