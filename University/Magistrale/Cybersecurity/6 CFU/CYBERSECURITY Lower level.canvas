@@ -120,9 +120,12 @@
 		{"id":"8e2b1bbed66bbeac","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/RSAES-OAEP.md","x":4728,"y":5920,"width":1160,"height":2040,"color":"4"},
 		{"id":"5d8116550c300b36","type":"text","text":"Usando [[RSAES]] con [[RSA-OAEP]] come algoritmo di padding del messaggio, ottengo [[RSAES-OAEP]], l'implementazione moderna standard di [[RSA]] secondo [[PKCS1|PKCS#1]].","x":5127,"y":5560,"width":362,"height":140,"color":"4"},
 		{"id":"1f5357fb9d35ed6e","type":"text","text":"[[RSA-OAEP]] viene quindi usato in:","x":5216,"y":4616,"width":185,"height":84,"color":"4"},
-		{"id":"1358fd8e0237e910","type":"text","text":"[[RSA-OAEP]] usa le [[Mask Generation Function (MGF)]]","x":5375,"y":3709,"width":265,"height":91,"color":"4"},
-		{"id":"c54f4040c10feaab","x":6082,"y":3400,"width":828,"height":720,"color":"4","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/Mask Generation Function (MGF).md"},
-		{"id":"2319144acb63e841","x":8027,"y":5822,"width":345,"height":98,"color":"4","type":"text","text":"[[EMSA-PSS]] usa le [[Mask Generation Function (MGF)]]"}
+		{"id":"2319144acb63e841","type":"text","text":"[[EMSA-PSS]] usa le [[Mask Generation Function (MGF)]]","x":8027,"y":5822,"width":345,"height":98,"color":"4"},
+		{"id":"5869fa2859bf34dc","x":11244,"y":2880,"width":1076,"height":2560,"color":"4","type":"text","text":"![[Pasted image 20251215185143.png]]"},
+		{"id":"1358fd8e0237e910","type":"text","text":"[[RSA-OAEP]] usa le [[Mask Generation Function (MGF)]]","x":5360,"y":4220,"width":265,"height":91,"color":"4"},
+		{"id":"c54f4040c10feaab","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/Mask Generation Function (MGF).md","x":6160,"y":4958,"width":828,"height":720,"color":"4"},
+		{"id":"6699c5dd5599183f","x":6473,"y":3466,"width":400,"height":239,"type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/images/Pasted image 20251113160151.png"},
+		{"id":"86a8e4c0c1b2dc1d","x":5401,"y":3025,"width":1537,"height":882,"color":"4","type":"text","text":"![[Pasted image 20251113160151.png]]"}
 	],
 	"edges":[
 		{"id":"9402e0cfbca83f48","fromNode":"be97a52b492288cc","fromSide":"bottom","toNode":"8e2b250efc6a067c","toSide":"top"},
@@ -268,6 +271,8 @@
 		{"id":"43f40e177d20ec18","fromNode":"229dcdec1fdf0286","fromSide":"right","toNode":"1358fd8e0237e910","toSide":"left"},
 		{"id":"58c4afd4c0bfc757","fromNode":"1358fd8e0237e910","fromSide":"right","toNode":"c54f4040c10feaab","toSide":"left"},
 		{"id":"6868cf94b2247684","fromNode":"db807c02d23745f1","fromSide":"bottom","toNode":"2319144acb63e841","toSide":"right"},
-		{"id":"aff13ffbcf9bc732","fromNode":"2319144acb63e841","fromSide":"left","toNode":"c54f4040c10feaab","toSide":"bottom"}
+		{"id":"aff13ffbcf9bc732","fromNode":"2319144acb63e841","fromSide":"left","toNode":"c54f4040c10feaab","toSide":"bottom"},
+		{"id":"9dfc7e68e06869a4","fromNode":"a219fd817830590c","fromSide":"right","toNode":"5869fa2859bf34dc","toSide":"left"},
+		{"id":"7915a6b8daa0f4be","fromNode":"229dcdec1fdf0286","fromSide":"right","toNode":"86a8e4c0c1b2dc1d","toSide":"left"}
 	]
 }

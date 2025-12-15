@@ -1341,8 +1341,11 @@ Introdotto in **PKCS#1 v2.1** (RFC 8017), è lo standard raccomandato oggi.
     
 
 ### Costruzione PSS (Generazione)
+>[!Abstract] Visual Analysis
+>![[Pasted image 20251215175434.png]]
+>Funzionamento di [[EMSA-PSS]] per generare $EM$, che verrà poi firmato con la chiave privata tramite [[RSA]].
 
-Il processo è più complesso e usa una maschera ([[Mask Generation Function (MGF)]]1) simile a OAEP.
+Il processo è più complesso e usa una maschera ([[Mask Generation Function (MGF)|MGF]]1) simile a OAEP.
 
 Fase 1: Hashing e Salting
 
@@ -1362,11 +1365,12 @@ _(Dove PS sono byte di zeri)_
 
 Fase 3: Mascheramento (Masking)
 
-Si usa la [[Mask Generation Function (MGF)]]1 (Mask Generation Function) per nascondere il DB:
+Si usa la [[Mask Generation Function (MGF)|MGF]]1 (Mask Generation Function) per nascondere il DB:
 
 $$maskedDB = DB \oplus \text{MGF1}(H', \text{len}(DB))$$
+Dove la MGF1 prende in input H' come seed e produce un output della stessa lunghezza di DB.
 
-Fase 4: Encoding Finale (EM)
+Fase 4: Encoding Finale (EM) x
 
 Il messaggio codificato finale è composto da:
 
@@ -1374,7 +1378,7 @@ Il messaggio codificato finale è composto da:
 EM = maskedDB || H' || 0xbc
 ```
 
-_(Nota: `0xbc` è il byte finale fisso per PSS)_
+_(Nota: `0xbc` è il byte finale fisso per [[EMSA-PSS]])_
 
 **Fase 5: Firma**
 
@@ -1391,6 +1395,7 @@ $$S = EM^d \pmod N$$
 ---
 
 ## 6. Verifica RSA-PSS
+![[Pasted image 20251215185027.png]]
 
 La verifica in PSS è più rigorosa.
 
@@ -1421,6 +1426,8 @@ $$DB = maskedDB \oplus \text{MGF1}(H', \text{len}(DB))$$
 > 3. PSS ha una prova di sicurezza formale più forte.
 >
 
+### TUTTA LA PROCEDURA
+![[Pasted image 20251215185049.png]]
 
 vedi anche [[7 CS  Lower Level - Asymmetric encryption#RSA – the algorithm]]. 
 
