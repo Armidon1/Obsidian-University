@@ -8,7 +8,7 @@ A differenza delle semplici primitive matematiche (come $c = m^e \pmod n$), RSAE
 
 ## 2. Componenti Fondamentali
 Uno schema RSAES combina diverse primitive crittografiche per garantire la sicurezza:
-- **Schema di Padding:** Aggiunge casualità e struttura al messaggio (es. [[OAEP]]).
+- **Schema di Padding:** Aggiunge casualità e struttura al messaggio (es. [[RSA-OAEP]]).
 - **Primitive di Conversione:**
 * **[[OS2IP]]** (Octet-Stream to Integer Primitive): Converte il messaggio paddato in numero intero.
 * **[[I2OSP]]** (Integer to Octet-Stream Primitive): Converte il risultato numerico della cifratura in byte.

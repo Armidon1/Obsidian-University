@@ -16,13 +16,13 @@ Un algoritmo RSASSA non è solo l'operazione matematica RSA. È composto dalla c
 
 $$\text{RSASSA} = \text{RSA} + \text{EMSA}$$
 
-1. **RSA (Primitive):** Le operazioni matematiche di base.
+1. **[[RSA]] (Primitive):** Le operazioni matematiche di base.
     
-    - **RSASP1:** Primitive di generazione firma ($s = m^d \pmod n$).
+    - **[[RSASP1]]:** Primitive di generazione firma ($s = m^d \pmod n$).
         
-    - **RSAVP1:** Primitive di verifica firma ($m = s^e \pmod n$).
+    - **[[RSAVP1]]:** Primitive di verifica firma ($m = s^e \pmod n$).
         
-2. **EMSA (Encoding Method for Signature with Appendix):** Lo schema di codifica (padding e hashing) che prepara il messaggio prima di applicare la primitiva RSA. Questo è cruciale per la sicurezza.
+2. **[[EMSA (Encoding Method for Signature with Appendix)]]:** Lo schema di codifica (padding e hashing) che prepara il messaggio prima di applicare la primitiva RSA. Questo è cruciale per la sicurezza.
     
 
 ## 3. Varianti dello Standard
@@ -72,7 +72,7 @@ Esistono due principali implementazioni di RSASSA definite in PKCS#1:
 
 **Vedi anche:**
 
-- [[RSA-PSS]] (Dettagli sull'encoding PSS)
+- [[RSASSA-PSS]] (Dettagli sull'encoding PSS)
     
 - [[Digital Signature]]
     

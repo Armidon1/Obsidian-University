@@ -121,7 +121,7 @@ Definito in [[PKCS1]] v2.1 (RFC 8017), è lo standard raccomandato oggi.
 
 1. **Salt:** Si genera una stringa casuale.
     
-2. **[[MGF]] (Mask Generation Function):** Si usa una funzione maschera per "mescolare" l'hash e il salt.
+2. **[[Mask Generation Function (MGF)]] (Mask Generation Function):** Si usa una funzione maschera per "mescolare" l'hash e il salt.
     
 3. **XOR:** Si applica l'operazione XOR per legare crittograficamente i dati.
     

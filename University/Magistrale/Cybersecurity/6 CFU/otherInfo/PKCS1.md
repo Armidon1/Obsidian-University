@@ -61,9 +61,9 @@ Introduce schemi basati su **OAEP** e **PSS** per garantire sicurezza provabile.
         
     - Sicuro contro attacchi CCA2.
         
-- **Firma ([[RSA-PSS|RSASSA-PSS]]):**
+- **Firma ([[RSASSA-PSS|RSASSA-PSS]]):**
     
-    - Usa **[[RSA-PSS]]** (Probabilistic Signature Scheme).
+    - Usa **[[RSASSA-PSS]]** (Probabilistic Signature Scheme).
         
     - Probabilistico: la stessa firma generata due volte è diversa (grazie al salt).
         
@@ -94,6 +94,6 @@ PKCS#1 definisce anche la sintassi ASN.1 per salvare le chiavi RSA:
     
 - [[RSAES-OAEP]]
     
-- [[RSA-PSS]]
+- [[RSASSA-PSS]]
     
 - [[IETF]] (Internet Engineering Task Force)

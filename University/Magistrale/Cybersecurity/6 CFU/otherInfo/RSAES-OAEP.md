@@ -4,7 +4,7 @@
 
 ## 1. Definizione
 
-[[RSAES]]-[[OAEP]] è lo schema di cifratura completo definito nello standard PKCS#1 v2.2 (RFC 8017).
+[[RSAES]]-[[RSA-OAEP]] è lo schema di cifratura completo definito nello standard PKCS#1 v2.2 (RFC 8017).
 
 Combina le primitive crittografiche RSA con lo schema di padding OAEP per fornire un sistema di cifratura a chiave pubblica sicuro contro attacchi a testo cifrato scelto ([[IND-CCA2]]).
 
@@ -27,7 +27,7 @@ Prima di iniziare, mittente e destinatario devono concordare su:
 
 - $Hash$:- La funzione hash da usare.
     
-- $MGF$: La funzione di generazione della maschera ([[MGF]]).
+- $MGF$: La funzione di generazione della maschera ([[Mask Generation Function (MGF)]]).
     
 - $L$: Una etichetta (label) opzionale associata al messaggio (di default è una stringa vuota).
     
@@ -99,7 +99,7 @@ Dato un testo cifrato $C$ e la chiave privata $K$:
 
 **Vedi anche:**
 
-- [[OAEP]] (Dettagli sul padding)
+- [[RSA-OAEP]] (Dettagli sul padding)
     
 - [[RSAES]] (Concetto generale di schema RSA)
     

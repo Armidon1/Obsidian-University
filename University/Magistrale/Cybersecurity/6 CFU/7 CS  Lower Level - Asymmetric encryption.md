@@ -1579,7 +1579,7 @@ OAEP works by taking the message $m$ and a random seed $r$, and formatting them 
         
     - $m$ = plaintext message
         
-    - $G, H$ = cryptographic hash functions (or [[MGF]]s)
+    - $G, H$ = cryptographic hash functions (or [[Mask Generation Function (MGF)]]s)
         
 - **Encryption (Padding) Process:**
     

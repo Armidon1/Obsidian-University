@@ -1,3 +1,8 @@
+---
+aliases:
+  - OAEP
+---
+
 # OAEP (Optimal Asymmetric Encryption Padding)
 
 ## Introduzione a OAEP
@@ -16,7 +21,7 @@
     
     - **Previene l'[[Chosen-Ciphertext Attack (CCA)]]:** Questo è il suo vantaggio principale rispetto al vecchio padding PKCS#1 v1.5.
         
-    - **Cifratura Probabilistica:** Utilizza un **seed** casuale e una **Mask Generation Function (MGF1)**.
+    - **Cifratura Probabilistica:** Utilizza un **seed** casuale e una **Mask Generation Function ([[Mask Generation Function (MGF)]]1)**.
         
     - **Sicurezza Semantica:** A causa del seed casuale, cifrare lo _stesso messaggio_ più volte produrrà un _testo cifrato diverso_ ogni volta.
         
@@ -192,7 +197,7 @@ OAEP funziona prendendo il messaggio $m$ e un seed casuale $r$, e formattandoli 
         
     - $m$ = messaggio in chiaro
         
-    - $G, H$ = funzioni hash crittografiche (o [[MGF]])
+    - $G, H$ = funzioni hash crittografiche (o [[Mask Generation Function (MGF)]])
         
 - **Processo di Cifratura (Padding):**
     

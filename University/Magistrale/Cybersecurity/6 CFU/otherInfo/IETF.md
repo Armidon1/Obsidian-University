@@ -65,4 +65,4 @@ Molti standard crittografici nascono nel mondo accademico o aziendale (come RSA 
     
 - [[TLS]] (Transport Layer Security - Standard IETF)
     
-- [[RSA-PSS]] (Standardizzato in RFC 8017)
+- [[RSASSA-PSS]] (Standardizzato in RFC 8017)

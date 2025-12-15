@@ -889,7 +889,7 @@ La decifratura (**[[RSADP]]**) è l'inverso: $C \rightarrow c \rightarrow m \rig
 
 **PKCS#1 v1.5 è ora considerato insicuro e deprecato per la cifratura.** Sebbene il suo padding casuale prevenga semplici attacchi deterministici, è criticamente vulnerabile agli **[[Chosen-Ciphertext Attack (CCA)]]**, specificamente l'**attacco "padding oracle" di Bleichenbacher**. Un attaccante può decifrare messaggi inviando testi cifrati leggermente modificati e osservando se il server risponde con un "errore di padding".
 
-## Lo Standard Moderno: [[OAEP]]
+## Lo Standard Moderno: [[RSA-OAEP]]
 
 Per affrontare le gravi falle di sicurezza nella v1.5, è stato creato un nuovo schema di padding: **OAEP (Optimal Asymmetric Encryption Padding)**.
 
@@ -939,7 +939,7 @@ Per affrontare le gravi falle di sicurezza nella v1.5, è stato creato un nuovo 
 
 ## OAEP: Contesto e Obiettivi di Sicurezza
 
-[[OAEP]] è stato introdotto da Bellare e Rogaway nel 1994 per correggere le vulnerabilità note dell'RSA "textbook" (da manuale). Vedi la risorsa originale: "Optimal Asymmetric Encryption - How to Encrypt with RSA" 1994, 1995 ([https://cseweb.ucsd.edu/~mihir/papers/oaep.pdf](https://cseweb.ucsd.edu/~mihir/papers/oaep.pdf)).
+[[RSA-OAEP]] è stato introdotto da Bellare e Rogaway nel 1994 per correggere le vulnerabilità note dell'RSA "textbook" (da manuale). Vedi la risorsa originale: "Optimal Asymmetric Encryption - How to Encrypt with RSA" 1994, 1995 ([https://cseweb.ucsd.edu/~mihir/papers/oaep.pdf](https://cseweb.ucsd.edu/~mihir/papers/oaep.pdf)).
 
 - **Oracoli Casuali:** La prova originale di sicurezza per OAEP modella le funzioni hash interne, **G** e **H**, come "oracoli casuali" (funzioni hash perfette e idealizzate). In pratica, queste sono sostituite da specifiche funzioni hash crittografiche (come SHA-256) e una [[Mask Generation Function (MGF)]].
     
@@ -1089,13 +1089,13 @@ OAEP funziona prendendo il messaggio $m$ e un seed casuale $r$, e formattandoli 
     
     - $n$ = numero di bit nel modulo RSA (es. 2048)
         
-    - $k0$ = lunghezza del seed casuale $r$ (o [[MGF]])
+    - $k0$ = lunghezza del seed casuale $r$
         
     - $k1$ = lunghezza del blocco di padding (es. un blocco di zeri).
         
     - $m$ = messaggio in chiaro
         
-    - $G, H$ = funzioni hash crittografiche (es. 256 bit per [[SHA-256]])
+    - $G, H$ = funzioni hash crittografiche (es. 256 bit per [[SHA-256]], esse verranno usate per implementare le [[Mask Generation Function (MGF)]])
         
 - **Processo di Cifratura (Padding):**
     
@@ -1147,7 +1147,7 @@ Questa struttura di Feistel crea una proprietà "tutto-o-niente".
 
 # RSAES-OAEP: Il Processo Completo
 
-[[RSAES-OAEP]]  combina il padding [[OAEP]] con le primitive RSA.
+[[RSAES-OAEP]]  combina il padding [[RSA-OAEP]] con le primitive RSA.
 
 - **Cifratura:**
     
@@ -1161,7 +1161,7 @@ Questa struttura di Feistel crea una proprietà "tutto-o-niente".
         
 - Decifratura:
     
-    Questo è l'inverso simmetrico, che utilizza la Primitiva di Decifratura RSA (RSADP) e l'operazione di unpadding OAEP ($OAEP^{-1}$).
+    Questo è l'inverso simmetrico, che utilizza la Primitiva di Decifratura RSA ([[RSADP]]) e l'operazione di unpadding OAEP ($OAEP^{-1}$).
     
 
 Questo processo completo è lo standard moderno, **PKCS#1 v2.2**.
@@ -1235,7 +1235,7 @@ Nel contesto RSA, la firma si ottiene "invertendo" l'uso delle chiavi rispetto a
 
 ## 2. RSA Signature Scheme: PKCS#1 v1.5 (Legacy)
 
-Questo è lo schema "classico", ancora molto diffuso (es. TLS 1.2, email S/MIME), ma considerato **Legacy** per le nuove applicazioni.
+Questo è lo schema "classico", ancora molto diffuso (es. [[TLS]]1.2, email [[S-MIME|S/MIME]]), ma considerato **Legacy** per le nuove applicazioni.
 
 ### Il Paradigma "Hash-then-Sign"
 
@@ -1243,7 +1243,7 @@ Non firmiamo mai tutto il messaggio (sarebbe troppo lento). Firmiamo solo l'impr
 
 1. **Preprocessing:** Calcolo dell'Hash del messaggio $M$.
     
-2. **Encoding:** Formattazione secondo lo standard EMSA-PKCS1-v1_5.
+2. **Encoding:** Formattazione secondo lo standard [[EMSA-PKCS1-v1_5]].
     
 3. **Firma:** Cifratura RSA.
     
@@ -1253,8 +1253,6 @@ Non firmiamo mai tutto il messaggio (sarebbe troppo lento). Firmiamo solo l'impr
 Il blocco dati preparato per la firma ($EM$) ha una struttura fissa e **deterministica**:
 
 **Struttura visuale del blocco:**
-
-Plaintext
 
 ```
 EM = 0x00 || 0x01 || PS || 0x00 || T
@@ -1287,9 +1285,10 @@ Dove $d$ è l'esponente privato.
 > 
 > Meaning: Non stiamo firmando il messaggio "grezzo", ma una struttura complessa che dice "Questo è l'hash SHA-256 di questo messaggio".
 > 
-> Da notare anche che il metodo completo è chiamato [[RSASSA]]
+> Da notare anche che il metodo completo è chiamato [[RSASSA]] = [[RSA]] + [[EMSA (Encoding Method for Signature with Appendix)|EMSA]]
 
 ---
+
 
 ## 3. Verifica della Firma (v1.5)
 
@@ -1325,7 +1324,7 @@ Perché stiamo abbandonando la v1.5?
     
 - **Vulnerabilità:** Se implementato male, è vulnerabile ad attacchi di tipo **Padding Oracle** (simili a Bleichenbacher).
     
-- **Soluzione:** Passare a **RSA-PSS**.
+- **Soluzione:** Passare a **[[RSASSA-PSS]]** (detto anche RSA-PSS).
     
 
 ---
@@ -1343,7 +1342,7 @@ Introdotto in **PKCS#1 v2.1** (RFC 8017), è lo standard raccomandato oggi.
 
 ### Costruzione PSS (Generazione)
 
-Il processo è più complesso e usa una maschera (MGF1) simile a OAEP.
+Il processo è più complesso e usa una maschera ([[Mask Generation Function (MGF)]]1) simile a OAEP.
 
 Fase 1: Hashing e Salting
 
@@ -1355,8 +1354,6 @@ Fase 2: Costruzione Data Block (DB)
 
 Si crea un blocco dati contenente il padding e il salt:
 
-Plaintext
-
 ```
 DB = PS || 0x01 || salt
 ```
@@ -1365,15 +1362,13 @@ _(Dove PS sono byte di zeri)_
 
 Fase 3: Mascheramento (Masking)
 
-Si usa la MGF1 (Mask Generation Function) per nascondere il DB:
+Si usa la [[Mask Generation Function (MGF)]]1 (Mask Generation Function) per nascondere il DB:
 
 $$maskedDB = DB \oplus \text{MGF1}(H', \text{len}(DB))$$
 
 Fase 4: Encoding Finale (EM)
 
 Il messaggio codificato finale è composto da:
-
-Plaintext
 
 ```
 EM = maskedDB || H' || 0xbc
