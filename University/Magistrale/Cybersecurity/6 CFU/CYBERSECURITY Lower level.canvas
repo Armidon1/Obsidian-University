@@ -121,11 +121,11 @@
 		{"id":"5d8116550c300b36","type":"text","text":"Usando [[RSAES]] con [[RSA-OAEP]] come algoritmo di padding del messaggio, ottengo [[RSAES-OAEP]], l'implementazione moderna standard di [[RSA]] secondo [[PKCS1|PKCS#1]].","x":5127,"y":5560,"width":362,"height":140,"color":"4"},
 		{"id":"1f5357fb9d35ed6e","type":"text","text":"[[RSA-OAEP]] viene quindi usato in:","x":5216,"y":4616,"width":185,"height":84,"color":"4"},
 		{"id":"2319144acb63e841","type":"text","text":"[[EMSA-PSS]] usa le [[Mask Generation Function (MGF)]]","x":8027,"y":5822,"width":345,"height":98,"color":"4"},
-		{"id":"5869fa2859bf34dc","x":11244,"y":2880,"width":1076,"height":2560,"color":"4","type":"text","text":"![[Pasted image 20251215185143.png]]"},
+		{"id":"5869fa2859bf34dc","type":"text","text":"![[Pasted image 20251215185143.png]]","x":11244,"y":2880,"width":1076,"height":2560,"color":"4"},
 		{"id":"1358fd8e0237e910","type":"text","text":"[[RSA-OAEP]] usa le [[Mask Generation Function (MGF)]]","x":5360,"y":4220,"width":265,"height":91,"color":"4"},
 		{"id":"c54f4040c10feaab","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/Mask Generation Function (MGF).md","x":6160,"y":4958,"width":828,"height":720,"color":"4"},
-		{"id":"6699c5dd5599183f","x":6473,"y":3466,"width":400,"height":239,"type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/images/Pasted image 20251113160151.png"},
-		{"id":"86a8e4c0c1b2dc1d","x":5401,"y":3025,"width":1537,"height":882,"color":"4","type":"text","text":"![[Pasted image 20251113160151.png]]"}
+		{"id":"6699c5dd5599183f","type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/images/Pasted image 20251113160151.png","x":6473,"y":3466,"width":400,"height":239},
+		{"id":"86a8e4c0c1b2dc1d","type":"text","text":"![[Pasted image 20251113160151.png]]","x":5401,"y":3025,"width":1537,"height":882,"color":"4"}
 	],
 	"edges":[
 		{"id":"9402e0cfbca83f48","fromNode":"be97a52b492288cc","fromSide":"bottom","toNode":"8e2b250efc6a067c","toSide":"top"},
