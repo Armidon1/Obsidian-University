@@ -35,6 +35,7 @@ Prima di iniziare, si concordano i **Parametri Pubblici**: un numero primo grand
     
 - _La chiave pubblica è $(p, g, y)$. La chiave privata è $x$._
     
+Notiamo che questo è esattamente identico all'algoritmo di [[Diffie-Hellman Key Exchange]] per la creazione delle chiavi, solo che qui la chiave privata è $x \in \{1, \dots, p-2\}$, anziché un valore casuale molto grande. Nota che Diffie-Hellman viene usato prevalentemente per la key exchange e non è un algoritmo di cifratura. Qui invece vediamo che Elgamal sfrutta il [[Discrete Logarithm (DL) Problem]] per cifrare e decifrare un messaggio.
 
 ### B. Algoritmo di Cifratura
 
@@ -68,6 +69,8 @@ Bob riceve $(C_1, C_2)$ e usa la sua chiave privata $x$.
     $$m = C_2 \cdot (C_1^x)^{-1} \pmod p$$
     
 
+come in Diffie-Hellman, la difficoltà è quella del [[Discrete Logarithm (DL) Problem]], dove è computazionalmente impossibile dato $y = g^x \pmod p$, è computazionalmente impossibile ricavarsi $x$ partendo da $y$ e $p$ se i numeri sono molto grandi. 
+
 ---
 
 ## 3. ElGamal Signature Scheme (Firma)
@@ -88,12 +91,12 @@ Simile alla cifratura:
     
 - $y = g^x \pmod p$: Chiave pubblica.
     
-
+ricordiamo che (g,p,y) compongono la chiave pubblica.
 ### B. Algoritmo di Firma
 
-Per firmare un hash del messaggio $m = H(M)$:
+Per firmare **un hash del messaggio** (prima differenza dalla cifratura) $m = H(M)$:
 
-1. Scegli un numero casuale $k$ tale che $MCD(k, p-1) = 1$.
+1. Scegli un numero casuale $k$ tale che $MCD(k, p-1) = 1$ ($k$ e $p-1$ sono [[Coprime]]).
     
 2. Calcola $r$:
     
@@ -139,7 +142,7 @@ Se Alice usa lo stesso $k$ per firmare due messaggi diversi $m_1$ e $m_2$:
     
 2. Un attaccante può mettere a sistema le due equazioni della firma.
     
-3. **Risultato:** L'attaccante può calcolare facilmente la **chiave privata $x$**. Senza un [[RNG]] sicuro, il sistema crolla.
+3. **Risultato:** L'attaccante può calcolare facilmente la **chiave privata $x$**. Senza un [[PRNG (Pseudo-Random Number Generator)|PRNG]] sicuro, il sistema crolla.
     
 
 ### Confronto: ElGamal vs RSA
@@ -158,3 +161,101 @@ Se Alice usa lo stesso $k$ per firmare due messaggi diversi $m_1$ e $m_2$:
 > ![[Pasted image 20251216162823.png]]
 > 
 > Meaning: RSA è preferito per ambienti che richiedono verifica veloce (es. certificati SSL nei browser), mentre ElGamal (e la sua variante DSA) è utile quando si può sfruttare il pre-calcolo offline.
+
+# In che modo Diffie-Hellman è "integrato" in ElGamal?
+
+La risposta breve è: **ElGamal _È_ essenzialmente uno [[Diffie-Hellman Key Exchange|scambio Diffie-Hellman]] "congelato" e usato per nascondere un messaggio.**
+
+Ecco la spiegazione passo dopo passo di come ElGamal trasforma il meccanismo di Diffie-Hellman in un sistema di cifratura.
+
+---
+
+### Il concetto chiave: Da "Accordo" a "Cifratura"
+
+Nel Diffie-Hellman standard (interattivo), io e te siamo online e ci scambiamo valori in tempo reale per creare una chiave $S$.
+
+In ElGamal, vogliamo inviare un messaggio cifrato (come una email) senza che l'altro debba rispondere subito.
+
+Ecco come ElGamal "usa" Diffie-Hellman per farlo:
+
+#### 1. Alice pubblica la sua "metà" (Chiave Pubblica)
+
+Alice genera la sua coppia di chiavi esattamente come in Diffie-Hellman.
+
+- Sceglie un segreto $a$.
+    
+- Calcola $A = g^a$.
+    
+- Pubblica $A$. Questa è la sua **Chiave Pubblica**.
+    
+
+#### 2. Bob vuole mandare un messaggio (L'intervento di Diffie-Hellman)
+
+Bob vuole inviare un messaggio $M$ ad Alice. Per farlo, **esegue un lato di uno scambio Diffie-Hellman "effimero" (usa e getta) da solo.**
+
+1. Bob sceglie un numero casuale $k$ (come se fosse la sua chiave privata DH per questa sessione).
+    
+2. Calcola la sua parte pubblica DH: $C_1 = g^k$.
+    
+3. Ora Bob calcola il Segreto Condiviso ($S$) usando la chiave pubblica di Alice:
+    
+    $$S = (A)^k$$
+    
+    (Nota: Questo è esattamente $g^{ak}$, lo stesso segreto che avrebbero ottenuto con un Diffie-Hellman classico).
+    
+
+#### 3. L'uso del segreto (La Cifratura)
+
+Qui sta la differenza. Invece di usare $S$ per chattare dopo, Bob lo usa subito come una "maschera" per il messaggio.
+
+Moltiplica il suo messaggio $M$ per il segreto condiviso $S$:
+
+$$C_2 = M \times S$$
+
+#### 4. L'invio
+
+Bob invia ad Alice un pacchetto contenente due cose $(C_1, C_2)$:
+
+1. $C_1$: La sua "metà" Diffie-Hellman (serve ad Alice per ricalcolare il segreto).
+    
+2. $C_2$: Il messaggio mascherato.
+    
+
+#### 5. La Decifrazione (Alice chiude il cerchio)
+
+Alice riceve il pacchetto.
+
+1. Prende $C_1$ (la parte DH di Bob) e usa la sua chiave privata $a$ per ricostruire il segreto $S$:
+    
+    $$S = (C_1)^a$$
+    
+    (Matematicamente è sempre $g^{ka}$).
+    
+2. Ora che ha $S$, "divide" $C_2$ per $S$ e ritrova il messaggio originale $M$.
+    
+
+---
+
+### In sintesi: La differenza di ruolo
+
+- **Diffie-Hellman puro:** Serve a generare una chiave $S$ che useremo _dopo_ per cifrare con un altro algoritmo (es. AES).
+    
+- **ElGamal:** Usa la matematica di Diffie-Hellman per generare una chiave $S$ che viene usata **immediatamente e una volta sola** per "nascondere" matematicamente il messaggio all'interno della formula stessa.
+    
+
+### Perché usiamo RSA (o Curve Ellittiche) e non ElGamal oggi?
+
+Se ElGamal è così intelligente e basato sul logaritmo discreto (molto sicuro), perché sentiamo parlare sempre di RSA?
+
+Il difetto principale di ElGamal è l'espansione del testo cifrato.
+
+Come hai visto sopra, per inviare un messaggio $M$, Bob deve inviare sia la maschera ($C_2$) sia la sua componente Diffie-Hellman ($C_1$).
+
+Questo significa che il messaggio cifrato è grande il doppio del messaggio originale.
+
+- **RSA:** Se cifri 2048 bit, ottieni 2048 bit di output.
+    
+- **ElGamal:** Se cifri 2048 bit, ottieni 4096 bit di output (2048 per il messaggio mascherato + 2048 per la chiave effimera).
+    
+
+Oggi, però, una variante di ElGamal è onnipresente: **ECIES (Elliptic Curve Integrated Encryption Scheme)**. Funziona esattamente come ElGamal, ma usando le Curve Ellittiche invece dei numeri interi enormi, rendendo le chiavi così piccole che il "raddoppio" delle dimensioni non è più un problema grave.
