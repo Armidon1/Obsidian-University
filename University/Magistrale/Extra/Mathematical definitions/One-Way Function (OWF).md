@@ -60,7 +60,7 @@ Le one-way functions sono **fondamentali** perché sono alla base di molti mecca
     
 - **Password storage**
     
-- **[[KDF|Key derivation function]]**
+- **[[KDF (Key Derivation Function)|Key derivation function]]**
     
 - **[[Public-Key Encryption|Public key cryptography]]**
     

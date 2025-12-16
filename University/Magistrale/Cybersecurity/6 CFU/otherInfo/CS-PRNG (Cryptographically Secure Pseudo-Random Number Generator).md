@@ -100,6 +100,6 @@ Basato sulla difficoltà di fattorizzare grandi numeri (come [[RSA]]).
     
 - [[TRNG (True Random Number Generator)]]
     
-- [[AES (Advanced Encryption Standard)]]
+- [[AES]]
     
 - [[Hashing]]

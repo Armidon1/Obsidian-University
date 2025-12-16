@@ -97,3 +97,7 @@ Le PRF sono i "mattoni" (primitives) fondamentali per costruire sistemi compless
 4. **Protocolli Challenge-Response:**
     
     - Per l'autenticazione: Il server invia un numero casuale (Challenge $N$). Il client risponde con $R = PRF_k(N)$. Il server fa lo stesso calcolo e confronta. Nessuno trasmette la password, ma entrambi provano di conoscerla.
+
+## Vedi anche
+
+- [[Differenza tra PRF e PRNG]]
