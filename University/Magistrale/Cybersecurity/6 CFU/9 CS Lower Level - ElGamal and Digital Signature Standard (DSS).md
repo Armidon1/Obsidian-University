@@ -15,7 +15,7 @@ Both methods are inspired by the **Diffie-Hellman** key exchange and rely on the
 
 > [!abstract] Visual Analysis
 > 
-> ![[SCREEN_SLIDE_UNIFICATION_DIAGRAM]]
+> ![[Pasted image 20251216162930.png]]
 > 
 > What to look at: The diagram showing ElGamal and DSS as related concepts rooted in Modular Arithmetic and Prime numbers.
 > 
@@ -26,8 +26,6 @@ Both methods are inspired by the **Diffie-Hellman** key exchange and rely on the
 ## 2. ElGamal Encryption
 
 Although the main focus is often on signatures, ElGamal encryption is historically important. It is composed of three components: Key Generator, Encryption Algorithm, and Decryption Algorithm.
-
-### [Technical Logic / Math]
 
 **The mathematical definition for Key Generation is:**
 
@@ -97,16 +95,16 @@ $$\text{Accept if } (0 < r < p) \land (0 < s < p-1) \land (y^r \cdot r^s \equiv 
 
 A comparison of the two major public-key systems.
 
-|**Feature**|**ElGamal**|**RSA**|
-|---|---|---|
-|**Computation**|Multiple exponentiations (slower verify)|One exponentiation (faster verify)|
-|**Signature Size**|Larger (2 components: $r, s$)|Smaller (1 component)|
-|**Security**|Discrete Logarithm|Integer Factorization|
-|**Randomness**|**Required** for every signature|Not required for core algo (needs padding)|
+| **Feature**        | **ElGamal**                              | **RSA**                                    |
+| ------------------ | ---------------------------------------- | ------------------------------------------ |
+| **Computation**    | Multiple exponentiations (slower verify) | One exponentiation (faster verify)         |
+| **Signature Size** | Larger (2 components: $r, s$)            | Smaller (1 component)                      |
+| **Security**       | Discrete Logarithm                       | Integer Factorization                      |
+| **Randomness**     | **Required** for every signature         | Not required for core algo (needs padding) |
 
 > [!abstract] Visual Analysis
 > 
-> ![[SCREEN_SLIDE_ELGAMAL_VS_RSA]]
+>![[Pasted image 20251216162853.png]]
 > 
 > What to look at: The comparison table highlighting "Computation", "Signature Size", and "Security Level".
 > 

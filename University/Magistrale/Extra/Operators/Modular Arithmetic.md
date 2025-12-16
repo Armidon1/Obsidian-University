@@ -19,3 +19,5 @@ Significa: dividi ( M ) per ( n ) e prendi **solo il resto** della divisione.
 **In breve:**
 
 > `mod` = **resto della divisione** → fondamentale in crittografia per **aritmetica modulare** su numeri grandi.
+
+Guarda qui per entrare nel mondo del [[Modular Exponentiation]], fondamentale per il mondo della crittografia.
