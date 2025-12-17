@@ -109,4 +109,4 @@ In questo modo, abbiamo trasformato una funzione stateless (AES) in un generator
     
 - [[HMAC]]
     
-- [[CS-PRNG based by "Cipher of a Counter"]]
+- [[CS-PRNG based by Cipher of a Counter]]

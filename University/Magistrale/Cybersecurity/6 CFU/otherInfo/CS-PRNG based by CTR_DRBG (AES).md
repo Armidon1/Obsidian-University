@@ -10,7 +10,7 @@ Si basa sull'uso di un Cifrario a Blocchi (tipicamente [[AES]]) in modalità con
 
 > [!abstract] Evoluzione
 > 
-> È l'evoluzione moderna, formalizzata e sicura del concetto teorico di [[CS-PRNG based by "Cipher of a Counter"]].
+> È l'evoluzione moderna, formalizzata e sicura del concetto teorico di [[CS-PRNG based by Cipher of a Counter]].
 
 ## 2. Architettura Interna
 
@@ -102,6 +102,6 @@ Grazie alla robustezza di AES e al meccanismo di Update, CTR_DRBG garantisce:
     
 - [[AES]]
     
-- [[CS-PRNG based by "Cipher of a Counter"]]
+- [[CS-PRNG based by Cipher of a Counter]]
     
 - [[Seed]]

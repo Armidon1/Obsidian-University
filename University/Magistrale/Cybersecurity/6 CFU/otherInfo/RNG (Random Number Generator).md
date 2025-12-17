@@ -235,7 +235,7 @@ L'Ufficio Federale Tedesco per la Sicurezza Informatica (BSI) definisce 4 criter
 
 ## 7. Algoritmi e Soluzioni Pratiche
 
-### A.[[CS-PRNG based by "Cipher of a Counter"]]
+### A.[[CS-PRNG based by Cipher of a Counter]]
 
 ![[Pasted image 20251216122553.png]]
 
