@@ -24,7 +24,7 @@ L'attaccante prova ogni combinazione possibile (`aaaa`, `aaab`...) al momento de
 - **Contro:** Richiede un tempo di calcolo enorme (CPU/GPU) per ogni singola password.
     
 
-### Estremo B: Lookup Table (Memoria)
+### Estremo B: [[Lookup Table (LUT)]] (Memoria)
 
 L'attaccante pre-calcola _tutte_ le password possibili e salva le coppie `(Hash, Password)` in un file gigantesco.
 

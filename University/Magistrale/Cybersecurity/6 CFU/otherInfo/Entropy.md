@@ -95,4 +95,4 @@ I Sistemi Operativi moderni gestiscono un **Entropy Pool** (una "vasca" di bit c
     
 - [[TRNG (True Random Number Generator)]]
     
-- [[CS-PRNG (Cryptographically Secure Pseudo-Random Number Generator)]]
+- [[CS-PRNG (Cryptographically Secure PRNG)]]

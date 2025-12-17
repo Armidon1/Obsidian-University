@@ -47,7 +47,8 @@
 8. **Transport security:** TLS con session resumption sicuro e anti‑replay integrato; evitare protocolli in chiaro.
     
 9. **Protezione application‑level:** non fare affidamento solo sul trasporto: applicazioni critiche devono avere protezioni proprie (es. firma dei comandi con un contatore).
-    
+
+Guarda anche [[10 CS Lower Level - Authentication - Introduction and Attacker Models#3. Tecniche Fondamentali (Anti-Replay)]]
 
 ---
 

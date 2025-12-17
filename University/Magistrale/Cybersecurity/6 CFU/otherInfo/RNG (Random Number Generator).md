@@ -196,7 +196,7 @@ Non tutti i generatori sono adatti alla sicurezza. Dobbiamo distinguere tra PRNG
 
 ### Technical Logic / Math
 
-**Challenge: Is this a PRNG or [[CS-PRNG (Cryptographically Secure Pseudo-Random Number Generator)|CS-PRNG]]?**
+**Challenge: Is this a PRNG or [[CS-PRNG (Cryptographically Secure PRNG)|CS-PRNG]]?**
 
 ```C
 hash function H

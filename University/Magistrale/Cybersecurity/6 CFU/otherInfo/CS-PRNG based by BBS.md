@@ -101,7 +101,7 @@ Nonostante la sicurezza teorica perfetta, BBS ha un grande difetto: la **velocit
 
 **Vedi anche:**
 
-- [[CS-PRNG (Cryptographically Secure Pseudo-Random Number Generator)]]
+- [[CS-PRNG (Cryptographically Secure PRNG)]]
     
 - [[CS-PRNG based by RSA]]
     

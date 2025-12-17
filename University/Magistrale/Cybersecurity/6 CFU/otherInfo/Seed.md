@@ -62,7 +62,7 @@ Spesso confusi, hanno ruoli diversi:
 
 ## 5. Reseeding (Rinfrescare il Seme)
 
-Un [[CS-PRNG (Cryptographically Secure Pseudo-Random Number Generator)|CS-PRNG]] (Secure PRNG) non dovrebbe usare lo stesso seed per sempre. Se lo stato interno venisse compromesso, l'attaccante potrebbe prevedere i numeri futuri.
+Un [[CS-PRNG (Cryptographically Secure PRNG)|CS-PRNG]] (Secure PRNG) non dovrebbe usare lo stesso seed per sempre. Se lo stato interno venisse compromesso, l'attaccante potrebbe prevedere i numeri futuri.
 
 Il Reseeding è la procedura periodica in cui il generatore:
 

@@ -96,3 +96,5 @@ In cybersecurity, **l’autenticazione serve a garantire l’autenticità**.
 > 🧩 **Authentication** è il **processo** con cui la si verifica.
 
 In cybersecurity, **l’autenticazione serve a garantire l’autenticità**.
+
+Per saperne di più, guarda [[10 CS Lower Level - Authentication - Introduction and Attacker Models]]

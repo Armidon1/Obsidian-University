@@ -2,7 +2,7 @@
 
 ## 1. Definizione e Contesto
 
-**CTR_DRBG** (Counter Mode Deterministic Random Bit Generator) è un algoritmo **[[CS-PRNG (Cryptographically Secure Pseudo-Random Number Generator)|PRNG]]** standardizzato dal **[[NIST]]** (pubblicazione speciale **SP 800-90A**).
+**CTR_DRBG** (Counter Mode Deterministic Random Bit Generator) è un algoritmo **[[CS-PRNG (Cryptographically Secure PRNG)|PRNG]]** standardizzato dal **[[NIST]]** (pubblicazione speciale **SP 800-90A**).
 
 Attualmente è considerato la Best Practice industriale per generare numeri casuali in ambito crittografico (usato in [[SSL]]/[[TLS]], SSH, Kernel Linux moderni, Windows).
 
@@ -98,7 +98,7 @@ Grazie alla robustezza di AES e al meccanismo di Update, CTR_DRBG garantisce:
 
 **Vedi anche:**
 
-- [[CS-PRNG (Cryptographically Secure Pseudo-Random Number Generator)]]
+- [[CS-PRNG (Cryptographically Secure PRNG)]]
     
 - [[AES]]
     
