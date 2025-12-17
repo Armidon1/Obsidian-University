@@ -2,7 +2,7 @@
 
 ## 1. Definizione
 
-Il generatore **Cipher of a Counter** è un algoritmo per costruire un [[CS-PRNG]] (Generatore Pseudo-Casuale Crittograficamente Sicuro) utilizzando un **Cifrario a Blocchi** (come [[DES]] o [[AES]]) in modo ciclico.
+Il generatore **Cipher of a Counter** è un algoritmo per costruire un [[CS-PRNG (Cryptographically Secure PRNG)|CS-PRNG]] (Generatore Pseudo-Casuale Crittograficamente Sicuro) utilizzando un **Cifrario a Blocchi** (come [[DES]] o [[AES]]) in modo ciclico.
 
 È stato formalizzato da Meyer e Matyas nel 1982.
 
