@@ -42,6 +42,8 @@ In altre parole:
 - “Il software è autentico (firma digitale valida).”
     
 
+In particolare: l'autentication è un qualcosa che coinvolge gli estremi della connessione ("Alice, dimostrami che sei Alice"), mentre l'auntenticity è un qualcosa che riguarda prevalentemente il pacchetto in questione ("questo pacchetto A è stato inviato da Alice")
+
 ---
 
 ### ⚖️ **Riassumendo la differenza**
@@ -97,4 +99,4 @@ In cybersecurity, **l’autenticazione serve a garantire l’autenticità**.
 
 In cybersecurity, **l’autenticazione serve a garantire l’autenticità**.
 
-Per saperne di più, guarda [[10 CS Lower Level - Authentication - Introduction and Attacker Models]]
+Guarda ASSOLUTAMENTE [[10 CS Lower Level - Authentication - Introduction and Attacker Models]]

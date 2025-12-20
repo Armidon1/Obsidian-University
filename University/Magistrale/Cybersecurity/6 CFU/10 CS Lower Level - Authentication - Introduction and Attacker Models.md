@@ -59,14 +59,14 @@ L'autenticazione non è un evento isolato, ma un processo strutturato in 5 fasi 
 
 Nella progettazione dei sistemi di sicurezza, si opera secondo logiche precise che definiscono come il sistema deve comportarsi di fronte all'incertezza.
 
-Closed World Assumption (Ipotesi del Mondo Chiuso):
+### Closed World Assumption (Ipotesi del Mondo Chiuso):
 
 - Si presume che ciò che non è noto essere vero, sia falso.
 - In sicurezza, questo principio si traduce nella "Negation as failure": se il sistema non può provare che un utente è autorizzato (predicato vero), deve assumere che non lo sia (falso).
 
 $$\text{Unknown}(P) \implies \text{False}(P)$$
 
-Ambiente Chiuso (Aziende/Casa):
+### Ambiente Chiuso (Aziende/Casa):
 
 - In ambienti controllati, spesso si utilizza una Terza Parte Fidata (chiamata convenzionalmente Carole) per distribuire le informazioni necessarie all'autenticazione tra le parti (Alice e Bob), garantendo che entrambi possano fidarsi l'uno dell'altro.
 
