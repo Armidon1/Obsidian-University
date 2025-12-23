@@ -4,11 +4,11 @@
 
 ## 1. Definizione e Concetto Base
 
-Una Trusted Third Party (TTP) è un'entità intermediaria di cui entrambe le parti (Alice e Bob) si fidano ciecamente1.
+Una Trusted Third Party (TTP) è un'entità intermediaria di cui entrambe le parti (Alice e Bob) si fidano ciecamente.
 
 In ambito di autenticazione, la TTP agisce come un garante che emette credenziali crittografiche per provare l'identità degli utenti e permettere comunicazioni sicure tra soggetti che non hanno mai interagito prima2.
 
-Spesso assume il ruolo tecnico di **KDC (Key Distribution Center)** o **Authentication Server**3.
+Spesso assume il ruolo tecnico di **[[KDC (Key Distribution Center)]]** o **Authentication Server**3.
 
 ## 2. Perché serve? (Il Problema della Scalabilità)
 
@@ -76,3 +76,5 @@ Utilizza i Nonce ($N$) per prevenire i Replay Attack, costringendo la TTP a dimo
 $$\begin{align} 1. \ A &\rightarrow TTP : A, B, N_A \\ 2. \ TTP &\rightarrow A : K_{AC}(N_A, B, K, \text{Ticket}_B) \\ 3. \ A &\rightarrow B : \text{Ticket}_B \end{align}$$
 
 _(Dove $\text{Ticket}_B = K_{BC}(K, A)$)_
+
+vedi anche [[10 CS Lower Level - Authentication - Introduction and Attacker Models#Autenticazione con Terza Parte Fidata (TTP)]].

@@ -6,7 +6,7 @@
 Serve a **provare** o **stabilire** l’autenticità.
 
 **Esempi:**
-
+   
 - Login con password → autenticazione dell’utente.
     
 - Verifica di una firma digitale → autenticazione del mittente.
@@ -97,6 +97,6 @@ In cybersecurity, **l’autenticazione serve a garantire l’autenticità**.
 > 🔐 **Authenticity** è una **proprietà** di veridicità o genuinità.  
 > 🧩 **Authentication** è il **processo** con cui la si verifica.
 
-In cybersecurity, **l’autenticazione serve a garantire l’autenticità**.
+In cybersecurity, **l’autenticazione serve a garantire l’autenticità**,.
 
 Guarda ASSOLUTAMENTE [[10 CS Lower Level - Authentication - Introduction and Attacker Models]]

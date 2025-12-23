@@ -506,7 +506,7 @@ In questo scenario, l'autenticazione si basa su un segreto condiviso.
 
 1. **One-way (Unilaterale):** Una parte (Alice) prova la sua identità all'altra (Bob). Bob rimane anonimo/non verificato.
     
-2. **Two-way (Mutual Authentication):** Entrambe le parti si autenticano a vicenda. Alice prova di essere Alice, e Bob prova di essere Bob.
+2. **Two-way ([[Mutual Authentication]]):** Entrambe le parti si autenticano a vicenda. Alice prova di essere Alice, e Bob prova di essere Bob.
     
     - _Nota:_ L'autenticazione mutua è più robusta se avviene **quasi simultaneamente** piuttosto che come due autenticazioni unilaterali separate.
         
@@ -590,7 +590,7 @@ Un attaccante $T$ (Trudy) si posiziona tra Alice e Bob. $T$ non conosce la chiav
 > - Autenticazione Mutua (Alice deve verificare che sta parlando con il vero Bob prima di rispondere alla sfida).
 >     
 
-### B. Reflection Attack (Attacco di Riflessione)
+### B. [[Reflection Attack]] (Attacco di Riflessione)
 
 Questo attacco sfrutta i protocolli di Autenticazione Mutua Ottimizzata dove si cerca di risparmiare messaggi.
 
@@ -649,7 +649,7 @@ Quando il numero di utenti in una rete cresce, l'autenticazione a coppie (Alice-
 
 - **Problema della Scalabilità:** Se ogni utente dovesse condividere una chiave segreta con tutti gli altri, servirebbero $\frac{N(N-1)}{2}$ chiavi (complessità quadratica).
     
-- **Soluzione:** Introdurre una **Trusted Third Party (TTP)**, spesso chiamata **KDC (Key Distribution Center)** o Server di Autenticazione (Carole).
+- **Soluzione:** Introdurre una **[[Trusted Third Party (TTP)]]**, spesso chiamata **[[KDC (Key Distribution Center)]]** o Server di Autenticazione (Carole).
     
 
 ### Architettura a Stella
@@ -699,12 +699,31 @@ Alice chiede alla TTP una chiave per parlare con Bob.
     
 2. $TTP \rightarrow A: K_{AC}(K), \ K_{BC}(K)$
     
-3. Alice decifra la sua parte, ottiene $K$, e gira a Bob la parte cifrata per lui.
+3. A decrypts, computes K and sends to B: $(C,A,K_{BC}(K))$
+	
+4. B decrypts $K_{BC}(K)$, finds K and sends to A: K("Hello A","this is B")
     
 
 > [!failure] Vulnerabilità (MITM & Identity Misbinding)
 > 
-> Trudy può intercettare la richiesta. Se Trudy è un utente legittimo, può farsi passare per Bob o Alice in vari passaggi, poiché i messaggi cifrati non contengono l'identità del destinatario esplicita all'interno della cifratura.
+> Trudy può intercettare la richiesta. Se Trudy è un utente legittimo, può farsi passare per Bob o Alice in vari passaggi, poiché i messaggi cifrati non contengono l'identità del destinatario esplicita all'interno della cifratura. In particolare:
+> - Assume T can sniff, spoof and make MITM attack (T is in the middle of both A to C and A to B communication) 
+> 
+> - A sends to T (instead of A sends to C) : $(A,B)$
+>    
+>- Immediately T sends to C: $(A,T)$
+  >  
+>- C chooses K and sends to A: $(K_{AC}(K),K_{TC}(K))$
+  >  
+>- A sends to B: $(C,A,K_{TC}(K))$ - T intercepts
+  >  
+>- T sends to A: K("Hello A","this is B")
+  >  
+>- Possible modification of step 1 (previous slide):
+  >  
+>	- A sends to C: $(A,K_{AC}(B))$
+  >  
+>	- in this way C still knows that A wants to talk to B and Trudy cannot change the value in $(A, K_{AC}(T))$, because only Alice has the $K_{AC}$, also Trudy does not know that Alice wants to talk with Bob
 
 ### Tentativo 2: Protocollo Modificato (Identity Inclusion)
 
@@ -712,11 +731,24 @@ Per mitigare il problema precedente, la TTP include l'identità nel messaggio ci
 
 $$TTP \rightarrow A: K_{AC}(K, B), \ K_{BC}(K, A)$$
 
-Tuttavia, questo è ancora vulnerabile ai Replay Attack. Trudy può registrare un vecchio messaggio valido e reinviarlo in seguito per costringere Alice o Bob a usare una vecchia chiave compromessa.
+Tuttavia, questo è ancora vulnerabile ai Replay Attack. Trudy può registrare un vecchio messaggio valido e reinviarlo in seguito per costringere Alice o Bob a usare una vecchia chiave compromessa:
+
+- A sends to C : $(A,K_{AC}(B))$
+	- T gets A’s message and sends to C (as A): $(A,K_{AC}(T))$ 
+	  (**REPLAYS** part of some previously exchanged message)
+	- Note: T does not know whom A wants to talk to
+    
+- C chooses K, and sends to A: $(K_{AC}(K),K_{TC}(K))$
+    
+- A decrypts K and sends to B : $(C,A,K_{TC}(K))$
+    
+- T gets the message and finds that A wants to talk to B; T now acts in place of B and sends to A: K("Hello A","this is B")
+    
+- Note: T knows the identity the person A wants to talk to only at the end of the protocol
 
 ---
 
-## 4. Protocollo Needham-Schroeder (NS)
+## 4. Protocollo Needham-Schroeder (NS) (alla base di kerberos)
 
 Questo è il protocollo fondamentale che risolve i problemi precedenti introducendo i **Nonce** (numeri casuali usati una volta sola) per garantire la freschezza della sessione.
 
@@ -738,14 +770,16 @@ I Passaggi del Protocollo 1
     
     $$B \rightarrow A: K(N_B)$$
     
-5. Risposta di Alice: Alice decifra $N_B$, lo decrementa (o modifica in modo predicibile) e lo rimanda cifrato.
+5. Risposta di Alice: Alice decifra $N_B$ (Autenticazione di Bob avvenuta con successo), lo decrementa (o modifica in modo predicibile) e lo rimanda cifrato.
     
     $$A \rightarrow B: K(N_B - 1)$$
     
 
 > [!abstract] Concetto Chiave
 > 
-> Il Passaggio 5 prova a Bob che Alice possiede la chiave di sessione $K$ adesso. Nessun attaccante potrebbe generare $K(N_B-1)$ senza conoscere $K$.
+> Il Passaggio 5 prova a Bob che Alice possiede la chiave di sessione $K$ adesso (autenticazione di Alice avvenuta con successo). Nessun attaccante potrebbe generare $K(N_B-1)$ senza conoscere $K$.
+> 
+> Il motivo per cui si manda il nonce decrementato di uno, è perché ovviamente Trudy potrebbe semplicemente catturare il pacchetto $K(N_B)$ inviato da Bob e rinviarlo indietro ([[Reflection Attack]]) banalmente.
 
 ---
 
@@ -780,7 +814,7 @@ Causa: Bob non ha modo di verificare la freschezza del Ticket generato dalla TTP
 
 ## 6. Needham-Schroeder Espanso (o Variante)
 
-Per risolvere l'attacco di replay, bisogna garantire la freschezza anche verso Bob. Ci sono due approcci principali che hanno portato allo sviluppo di protocolli moderni come **Kerberos**.
+Per risolvere l'attacco di replay, bisogna garantire la freschezza anche verso Bob. Ci sono due approcci principali che hanno portato allo sviluppo di protocolli moderni come **[[Kerberos]]**.
 
 Variante con Timestamp 3
 
@@ -802,7 +836,8 @@ Bob deve contattare la TTP o inviare un nonce alla TTP prima di accettare la chi
     
 4. Quando Bob riceve il ticket e trova il suo $N_B$ all'interno, ha la prova matematica che il ticket è stato generato _dopo_ che lui ha inviato la richiesta.
     
-
+![[Pasted image 20251223191001.png]]
 > [!tip] Exam Focus
 > 
-> Il protocollo Needham-Schroeder è la base teorica di Kerberos, il sistema di autenticazione standard in Windows e Active Directory. Kerberos usa pesantemente i Timestamp per evitare i problemi di replay senza dover fare troppi scambi di messaggi (handshake).
+> Il protocollo Needham-Schroeder è la base teorica di [[Kerberos]], il sistema di autenticazione standard in Windows e Active Directory. Kerberos usa pesantemente i Timestamp per evitare i problemi di replay senza dover fare troppi scambi di messaggi (handshake).
+
