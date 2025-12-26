@@ -748,7 +748,7 @@ Tuttavia, questo è ancora vulnerabile ai Replay Attack. Trudy può registrare u
 
 ---
 
-## 4. Protocollo Needham-Schroeder (NS) (alla base di kerberos)
+## 4. Protocollo [[Needham-Schroeder (NS)]] (alla base di kerberos)
 
 Questo è il protocollo fondamentale che risolve i problemi precedenti introducendo i **Nonce** (numeri casuali usati una volta sola) per garantire la freschezza della sessione.
 

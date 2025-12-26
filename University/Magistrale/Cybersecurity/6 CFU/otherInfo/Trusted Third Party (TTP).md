@@ -12,7 +12,7 @@ Spesso assume il ruolo tecnico di **[[KDC (Key Distribution Center)]]** o **Auth
 
 ## 2. Perché serve? (Il Problema della Scalabilità)
 
-Senza una TTP, in una rete di $N$ utenti, ogni coppia dovrebbe scambiarsi una chiave segreta in anticipo.
+Senza una TTP, in una rete di $N$ utenti, ogni coppia dovrebbe scambiarsi una chiave segreta in anticipo ([[Symmetric Encryption]] per [[Authentication]]). 
 
 - **Complessità Quadratica:** Servirebbero $\frac{N(N-1)}{2}$ chiavi totali4.
     
