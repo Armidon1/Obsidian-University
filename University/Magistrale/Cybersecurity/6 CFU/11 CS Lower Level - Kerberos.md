@@ -29,7 +29,7 @@ Il sistema Kerberos ruota attorno al **[[KDC (Key Distribution Center)]]**, un'e
 
 Ogni entità registrata nel sistema è definita **Principal**.
 
-- **Master Key:** Ogni principal condivide una chiave segreta con il KDC.
+- **[[Master Key]]:** Ogni principal condivide una chiave segreta con il KDC.
     
 - **Utenti Umani:** La Master Key è derivata direttamente dalla **password** tramite una funzione di hashing.
     
@@ -179,7 +179,7 @@ In Kerberos, ogni entità (utente o servizio) è chiamata **Principal**. L'infra
     
 - **Ticket-Granting Server (TGS):** Rilascia i ticket per i servizi specifici (es. mail, file system).
     
-- **Database:** Il KDC conserva tutte le **Master Key** dei principal, cifrate con la chiave master del KDC stesso.
+- **Database:** Il KDC conserva tutte le **[[Master Key]]** dei principal, cifrate con la chiave master del KDC stesso.
     
 
 > [!important] Definizione di Master Key
@@ -216,9 +216,7 @@ Poiché un ticket può essere intercettato, Alice deve dimostrare di essere la v
 $$Authenticator = K_{AB} \{ \text{Alice}, \text{timestamp} \}$$
 
 > [!abstract] Visual Analysis
-> 
-> ![[SCREEN_SLIDE_TICKET_LOGIC]]
-> 
+>  
 > What to look at: Nota che il ticket è cifrato con la chiave del server, mentre l'authenticator è cifrato con la chiave di sessione appena creata.
 > 
 > Meaning: Il server decifra il ticket, ottiene $K_{AB}$, e la usa per decifrare l'authenticator. Se i dati (Alice) coincidono, l'identità è confermata.
@@ -231,11 +229,13 @@ Il protocollo si sviluppa in tre fasi principali, ognuna composta da una richies
 
 ### Fase 1: Richiesta TGT (Client ↔ AS)
 
+![[Pasted image 20251227183505.png]]
+
 L'utente Alice vuole loggarsi nel sistema.
 
 1. **AS_REQ:** Alice invia il suo nome all'AS.
     
-2. AS_REP: L'AS genera una chiave di sessione $S_A$ e un TGT (Ticket-Granting Ticket).
+2. AS_REP: L'AS genera una chiave di sessione $S_A$ e un [[TGT (Ticket-Granting Ticket)]].
     
     Il messaggio ricevuto da Alice è:
     
@@ -246,6 +246,7 @@ L'utente Alice vuole loggarsi nel sistema.
 
 ### Fase 2: Richiesta Servizio (Client ↔ TGS)
 
+![[Pasted image 20251227183447.png]]
 Alice vuole accedere a una stampante o a un server Bob.
 
 3. TGS_REQ: Alice invia il TGT e un Authenticator cifrato con $S_A$.
@@ -256,6 +257,8 @@ $$S_A \{ \text{Bob}, K_{AB}, \text{Ticket}_B \}$$
 
 ### Fase 3: Utilizzo del Servizio (Client ↔ Server Bob)
 
+![[Pasted image 20251227185219.png]]
+
 5. **AP_REQ:** Alice invia a Bob il $\text{Ticket}_B$ e un Authenticator cifrato con $K_{AB}$.
     
 6. AP_REP: Bob decifra tutto, verifica l'identità e risponde per confermare (Autenticazione Mutua):
@@ -263,11 +266,11 @@ $$S_A \{ \text{Bob}, K_{AB}, \text{Ticket}_B \}$$
     $$K_{AB} \{ \text{timestamp} + 1 \}$$
     
 
-|**Messaggio**|**Scopo**|
-|---|---|
-|**AS_REQ**|Richiede il TGT iniziale (Login).|
-|**TGS_REQ**|Chiede il permesso di parlare con un server specifico.|
-|**AP_REQ**|Presenta le credenziali al server finale.|
+| **Messaggio** | **Scopo**                                              |
+| ------------- | ------------------------------------------------------ |
+| **AS_REQ**    | Richiede il TGT iniziale (Login).                      |
+| **TGS_REQ**   | Chiede il permesso di parlare con un server specifico. |
+| **AP_REQ**    | Presenta le credenziali al server finale.              |
 
 ---
 
