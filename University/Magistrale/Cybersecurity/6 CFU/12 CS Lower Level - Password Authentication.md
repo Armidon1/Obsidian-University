@@ -137,18 +137,21 @@ _Dove $H$ è una One-Way Function (funzione di hash)._
 
 ### Il Problema delle Rainbow Tables
 
-Se un attaccante ruba il database contenente solo $H(\text{password})$, può usare le **Rainbow Tables**.
+Se un attaccante ruba il database contenente solo $H(\text{password})$, può usare le **[[Rainbow Table]]**.
 
 - **Cosa sono:** Tabelle pre-calcolate che associano `password` $\rightarrow$ `hash`.
     
 - **Effetto:** L'attacco diventa una semplice ricerca (lookup) istantanea, annullando la proprietà "monodirezionale" dell'hash per password comuni.
-    
+
+>[!Failure] Vulnerabilità
+>Se l'[[Adversary]] intercetta T e ruba il database, proverà l'**Attacco a Dizionario (Brute Force on-line)**. Prende una password "pippo", calcola $H(H("pippo")∣∣T_{intercettato}​)$ e vede se corrisponde.
+
 
 ---
 
 ## 5. La Soluzione: Il Salt
 
-Per rendere inutili le Rainbow Tables, introduciamo il **Salt**.
+Per rendere inutili le Rainbow Tables, introduciamo il **[[Salt (Cryptographic)]]**.
 
 > [!abstract] Definizione di Salt
 > 
@@ -170,8 +173,6 @@ $$\text{Server Store} = (\text{salt}, \; H(\text{password} \; || \; \text{salt})
     
 3. $$A \rightarrow B: H(H(\text{password} \; || \; \text{salt}) \; || \; T)$$
     
-
-![[SCREEN_SLIDE_PROTOCOL_SALT]]
 
 > [!abstract] Visual Analysis
 > 
@@ -215,7 +216,7 @@ Le password più comuni sono incredibilmente prevedibili:
 
 Per l'utente finale, l'unica difesa contro la propria memoria fallibile è la tecnologia:
 
-- **MFA (Multi-Factor Authentication):** Aggiunge un secondo livello di sicurezza (es. codice SMS, app, token hardware).
+- **[[MFA (Multi-Factor Authentication)]]:** Aggiunge un secondo livello di sicurezza (es. codice SMS, app, token hardware).
     
 - **Password Manager:** Software che genera e ricorda password casuali lunghe e uniche per ogni sito. L'utente deve ricordare solo la _Master Password_.
 
@@ -233,7 +234,7 @@ Quando Alice vuole autenticarsi presso Bob (il server), i metodi base presentano
 - **Challenge/Response:** Sebbene protegga dal _Replay Attack_, è vulnerabile agli **attacchi a dizionario** se la password è debole (l'attaccante registra lo scambio e prova offline a trovare la password che lo genera).
     
 
-Obiettivo dei Protocolli Avanzati:
+### Obiettivo dei Protocolli Avanzati:
 
 Garantire autenticazione crittografica forte permettendo all'utente di ricordare solo una password, senza dover memorizzare chiavi crittografiche o certificati sulla propria macchina (che potrebbe non essere sicura o configurata).
 
@@ -274,8 +275,6 @@ $$\text{Bob's DB} = \langle \text{username}, n, H^n(\text{password}) \rangle$$
 6. Se la verifica ha successo, Bob decrementa il contatore ($n-1$) e sostituisce il vecchio hash con $x$ nel database.
     
 
-![[SCREEN_SLIDE_LAMPORT_DIAGRAM]]
-
 > [!abstract] Visual Analysis
 > 
 > Meaning: La sicurezza risiede nel fatto che la sequenza di trasmissione è inversa rispetto alla generazione ($n-1, n-2, \dots$). Poiché l'hash è una funzione unidirezionale (One-Way), un attaccante che intercetta il token $H^{n-1}$ non può calcolare il token futuro $H^{n-2}$ necessario per il prossimo login.
@@ -295,15 +294,15 @@ $$\text{Bob's DB} = \langle \text{username}, n, H^n(\text{password}) \rangle$$
 
 ## 3. Protocollo EKE (Encrypted Key Exchange)
 
-Il protocollo EKE risolve un problema fondamentale: come usare uno scambio di chiavi sicuro (Diffie-Hellman) quando l'unico segreto condiviso è una password debole.
+Il protocollo [[EKE (Encrypted Key Exchange)]] risolve un problema fondamentale: come usare uno scambio di chiavi sicuro (Diffie-Hellman) quando l'unico segreto condiviso è una password debole.
 
 Concetto Chiave:
 
-Si esegue uno scambio Diffie-Hellman, ma i messaggi scambiati ($g^a$ e $g^b$) sono cifrati con la password dell'utente.
+Si esegue uno scambio [[Diffie-Hellman Key Exchange]], ma i messaggi scambiati ($g^a$ e $g^b$) sono cifrati con la password dell'utente.
 
 ### Definizione Matematica dello Scambio
 
-Sia $W$ il segreto debole derivato dalla password: $W = f(\text{password})$.
+Sia $W$ il segreto debole ("weak secret") derivato dalla password: $W = f(\text{password})$, in particolare la $f$ potrebbe essere una qualsiasi funzione di Hashing. La weak secret $W$ è usata come chiave simmetrica. Ecco il protocollo:
 
 1. **Alice $\rightarrow$ Bob:** Sceglie un numero casuale $a$ e invia:
     
@@ -327,8 +326,28 @@ Sia $W$ il segreto debole derivato dalla password: $W = f(\text{password})$.
     
 
 > [!tip] Exam Focus: Perché EKE è sicuro?
+Potresti chiederti: _"Se la password W è debole, un hacker non può intercettare il messaggio e provare tutte le password possibili finché non lo decifra?"_
+>
+La risposta è **NO**, ed è qui la genialità:
+>
+>1. L'hacker intercetta il blob cifrato.
+  >  
+>2. Prova a decifrarlo con la password "pippo". Ottiene un numero casuale X.
+ >   
+>3. Prova a decifrarlo con la password "password123". Ottiene un numero casuale Y.
+  >  
+>4. **Il problema per l'hacker:** Sia X che Y sembrano numeri casuali validi!
+  >  
+   > - Il contenuto cifrato (ga) è un numero casuale.
+   >     
+  >  - Se decifri con la password sbagliata, ottieni spazzatura (che sembra un numero >casuale).
+       > 
+    >- Se decifri con la password giusta, ottieni ga (che è un numero casuale).
+      >  
+>
+>L'hacker non ha alcun modo di distinguere se ha trovato la password giusta o no, perché non c'è una struttura riconoscibile (come un'intestazione di file o un testo leggibile) dentro il pacchetto cifrato. È solo matematica randomica nascosta da altra matematica.
 > 
-> Un attaccante che intercetta i messaggi non può eseguire un attacco a dizionario offline. Anche se provasse a decifrare "Msg 1" con una password ipotetica, otterrebbe un numero. Non ha modo di verificare se quel numero corrisponde davvero a $g^a$ senza risolvere il logaritmo discreto, che è matematicamente intrattabile.
+> Supponendo anche che il pacchetto decifrato risulti effettivamente uguale a $g^a$, l'attaccante che intercetta i messaggi non ha modo di verificare se quel numero corrisponde davvero a $g^a$ senza risolvere il logaritmo discreto, che è matematicamente intrattabile. Guarda [[Sicurezza del protocollo EXE|qui]] per vedere i dettagli.
 
 ---
 
@@ -373,14 +392,14 @@ Per contrastare il cracking offline (specialmente via GPU), gli algoritmi di has
 3. **Costo Configurabile:** Deve essere possibile aumentare il "fattore di lavoro" (iterazioni/memoria) man mano che l'hardware migliora negli anni.
     
 
-### Confronto Algoritmi
+### Confronto Algoritmi di [[KDF (Key Derivation Function)]]
 
-|**Algoritmo**|**Tipo**|**Resistenza GPU**|**Note**|
-|---|---|---|---|
-|**PBKDF2**|Iterativo (CPU)|❌ Bassa|Standard diffuso ma obsoleto per password critiche. Facilmente parallelizzabile su GPU.|
-|**bcrypt**|CPU-bound|⚠️ Media|Standard storico (>25 anni). Ha un fattore di costo regolabile.|
-|**scrypt**|Memory-hard|✅ Alta|Primo algoritmo progettato per richiedere memoria significativa.|
-|**Argon2**|**Memory & Time**|✅✅ Altissima|**Vincitore della Password Hashing Competition (PHC).** Permette di configurare separatamente memoria, tempo e parallelismo. È lo standard moderno raccomandato.|
+| **Algoritmo**  | **Tipo**          | **Resistenza GPU** | **Note**                                                                                                                                                         |
+| -------------- | ----------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PBKDF2**     | Iterativo (CPU)   | ❌ Bassa            | Standard diffuso ma obsoleto per password critiche. Facilmente parallelizzabile su GPU.                                                                          |
+| **[[bcrypt]]** | CPU-bound         | ⚠️ Media           | Standard storico (>25 anni). Ha un fattore di costo regolabile.                                                                                                  |
+| **scrypt**     | Memory-hard       | ✅ Alta             | Primo algoritmo progettato per richiedere memoria significativa.                                                                                                 |
+| **[[Argon2]]** | **Memory & Time** | ✅✅ Altissima       | **Vincitore della Password Hashing Competition (PHC).** Permette di configurare separatamente memoria, tempo e parallelismo. È lo standard moderno raccomandato. |
 
 > [!failure] Common Pitfall
 > 
@@ -461,8 +480,6 @@ $$W = H(u \parallel \text{"Alice"} \parallel \text{password})$$
 
 $$v = g^W \pmod p$$
 
-888888888
-
 ### Passaggi del Protocollo
 
 Alice vuole autenticarsi. Lei conosce la password (e quindi può calcolare $W$), Bob conosce solo $v$.
@@ -475,28 +492,20 @@ Alice vuole autenticarsi. Lei conosce la password (e quindi può calcolare $W$),
     
     $$B = (v^u \cdot g^b) \pmod p, \; u, \; C_B$$
     
-    _(Bob invia anche il salt $u$ e un challenge $C_B$)_9.
+    _(Bob invia anche il salt $u$ e un challenge $C_B$)_. Il **B** calcolato servirà per calcolarsi la chiave segreta **K**.
     
-3. Calcolo della Chiave $K$:
-    
-    Qui avviene la magia matematica che permette ad Alice di rimuovere il mascheramento.
-    
-    **Calcolo di Alice:**
-    
-    $$S = \left( \frac{B}{v^u} \right)^a \pmod p = (g^b)^a \pmod p$$
-    
-    _(Alice usa $W$ per calcolare $v$ e "pulire" il messaggio di Bob)_10.
-    
-    **Calcolo di Bob:**
-    
-    $$S = A^b \pmod p = (g^a)^b \pmod p$$
-    
-    .
-    
+3. **Alice $\rightarrow$ Bob** :  Alice invia a Bob la challenge $C_B$ criptata con la chiave K (per autenticarsi) e manda la challenge $C_A$ per autenticare Bob: $$E_K(C_B),\  C_A$$
+4. **Bob $\rightarrow$ Alice** :  Bob invia ad Alice la challenge $C_A$ criptata con la chiave K (per autenticarsi ad Alice) : $$E_K(C_B),\  C_A$$
+### **Calcolo della Chiave $K$:**
 
-![[SCREEN_SLIDE_AUGMENTED_PDM]]
-
+Qui avviene la magia matematica che permette ad Alice di rimuovere il mascheramento.
+- **Calcolo di Alice:**   $$S = \left( \frac{B}{v^u} \right)^a \pmod p = (g^b)^a \pmod p$$
+  _(Alice usa $W$ per calcolare $v$ e "pulire" il messaggio di Bob)_10.
+   
+- **Calcolo di Bob:**$$S = A^b \pmod p = (g^a)^b \pmod p$$
 > [!abstract] Visual Analysis (Augmented PDM)
+>
+![[Pasted image 20251228223733.png]]
 > 
 > What to look at: Lo schema mostra lo scambio per la variante PDM Augmentata.
 > 
