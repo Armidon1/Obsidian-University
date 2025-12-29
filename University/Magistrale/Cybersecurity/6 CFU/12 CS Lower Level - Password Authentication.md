@@ -426,7 +426,7 @@ $$\text{Scambio: } W^a \pmod p \quad \text{e} \quad W^b \pmod p$$
 
 $$\text{Chiave Sessione: } K = W^{ab} \pmod p$$
 
-2
+
 
 ### PDM (Password Derived Moduli)
 
@@ -440,9 +440,9 @@ Il protocollo EKE standard ha una vulnerabilità architetturale. Il server (Bob)
 
 **Le vulnerabilità:**
 
-- Se un attaccante (Trudy) compromette il server e ruba $W$, può impersonare Alice4.
+- Se un attaccante (Trudy) compromette il server e ruba $W$, può impersonare Alice.
     
-- Se Trudy ruba il file delle password, può eseguire un attacco a dizionario offline5.
+- Se Trudy ruba il file delle password, può eseguire un attacco a dizionario offline.
     
 
 > [!failure] Common Pitfall
@@ -519,7 +519,7 @@ SRP è un miglioramento di Augmented EKE ed è ampiamente utilizzato (standard i
 
 ### Setup SRP
 
-- **Globals:** Primo $p$, generatore $g$, moltiplicatore $k = H(p \parallel g)$12.
+- **Globals:** Primo $p$, generatore $g$, moltiplicatore $k = H(p \parallel g)$.
     
 - **Server Store:**
     
@@ -585,15 +585,15 @@ Il server esegue una verifica di firma RSA (molto veloce) invece di un'esponenzi
     
     - Alice inizia lo scambio EKE.
         
-    - Bob invia $Y$ ad Alice (oltre ai parametri DH).
+    - Bob invia $Y$ ad Alice (oltre ai parametri DH), ed una challenge $c$.
         
     - Alice decifra $Y$ usando la sua password per ottenere la sua **Chiave Privata**.
         
-    - Alice **firma** un hash della chiave di sessione e lo invia a Bob.
+    - Alice **firma** un hash della chiave di sessione con la challenge $c$ e lo invia a Bob.
         
     - Bob verifica la firma usando la chiave pubblica di Alice che ha in memoria.
-        
-
+    
+![[Pasted image 20251229113628.png]]
 > [!example] Professor's Logic
 > 
 > Bob agisce come una "cassaforte digitale". Custodisce la chiave privata di Alice, ma non può usarla perché è cifrata con la password di Alice (che Bob non conosce). Solo Alice può sbloccarla e usarla per firmare, provando così la sua identità.
@@ -601,7 +601,6 @@ Il server esegue una verifica di firma RSA (molto veloce) invece di un'esponenzi
 ---
 
 # Gestione Sicura delle Password (Modern Rules)
-
 
 ## 1. Il Contesto: Perché è importante?
 
@@ -693,7 +692,7 @@ $$\text{Hash} = \text{KDF}(\text{Password} \parallel \text{Pepper} \parallel \te
 > - **Risultato:** Nel database salvi la coppia `(Hash, Salt)`. Il `Pepper` rimane segreto altrove.
 >     
 
-![[SCREEN_SLIDE_SALT_VS_PEPPER]]
+![[Pasted image 20251229114624.png]]
 
 > [!tip] Exam Focus
 > 
@@ -849,14 +848,6 @@ Quando progettiamo un protocollo di autenticazione, ci troviamo di fronte a un b
         
     - **Non** viene generata alcuna nuova chiave. Il processo finisce lì.
         
-
-![[SCREEN_SLIDE_LOCK_AND_KEYS]]
-
-> [!abstract] Visual Analysis
-> 
-> What to look at: L'immagine a sinistra mostra una chiave inserita in un lucchetto (creazione del canale/chiave). L'immagine a destra mostra diverse chiavi (password, biometrico, token) che sbloccano solo l'accesso istantaneo.
-> 
-> Meaning: A sinistra c'è continuità sicura (canale cifrato). A destra c'è un evento singolo di verifica.
 
 ---
 
