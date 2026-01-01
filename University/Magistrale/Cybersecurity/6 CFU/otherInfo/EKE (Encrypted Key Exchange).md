@@ -8,7 +8,7 @@ Related: [[Diffie-Hellman Key Exchange]], [[Password Authentication]], [[Man-in-
 
 I protocolli di autenticazione classici soffrono di due grandi vulnerabilità quando si basano su password umane (che hanno bassa entropia):
 
-1. **Diffie-Hellman (DH) Semplice:** Se usato "nudo e crudo" per scambiare una chiave, è vulnerabile agli attacchi _Man-in-the-Middle_ (MitM), poiché non c'è autenticazione dell'identità.
+1. **Diffie-Hellman (DH) Semplice:** Se usato "nudo e crudo" per scambiare una chiave, è vulnerabile agli attacchi _[[Man-in-the-Middle (MITM)]], poiché non c'è autenticazione dell'identità.
     
 2. **Challenge/Response:** Se la password è debole, un attaccante che intercetta lo scambio può eseguire un **attacco a dizionario offline** per indovinarla.
     
