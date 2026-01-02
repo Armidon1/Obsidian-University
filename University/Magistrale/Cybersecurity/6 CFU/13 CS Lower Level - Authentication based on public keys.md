@@ -8,12 +8,12 @@ L'obiettivo fondamentale dell'autenticazione è verificare l'identità delle ent
 
 In un contesto di rete aperta, dobbiamo prevenire:
 
-- **Impersonificazione:** Qualcuno finge di essere un altro.
+- **[[Impersonification]]:** Qualcuno finge di essere un altro.
     
-- **MITM (Man-in-the-Middle):** Un attaccante intercetta e manipola il traffico.
+- **[[Man-in-the-Middle (MITM)]]:** Un attaccante intercetta e manipola il traffico.
     
 
-L'autenticazione permette di stabilire sessioni sicure e gestire le autorizzazioni. Esistono due approcci principali per farlo: l'approccio simmetrico (es. Kerberos) e quello a chiave pubblica.
+L'autenticazione permette di stabilire sessioni sicure e gestire le autorizzazioni. Esistono due approcci principali per farlo: l'approccio [[Symmetric Encryption#Autenticazione a Chiave Simmetrica|simmetrico]] (es. [[Kerberos]]) e quello a chiave pubblica.
 
 ---
 
@@ -25,7 +25,7 @@ Nel modello base simmetrico, l'autenticazione si basa sulla condivisione di un s
 
 - **Pro:** È un metodo veloce e semplice, utilizza primitive crittografiche efficienti (MAC, cifrari). Funziona bene in sistemi piccoli e chiusi.
     
-- **Contro (Senza KDC):** La distribuzione delle chiavi su larga scala è problematica. Se ogni utente deve parlare con ogni altro utente in modo sicuro, il numero di chiavi esplode.
+- **Contro (Senza [[KDC (Key Distribution Center)]]):** La distribuzione delle chiavi su larga scala è problematica. Se ogni utente deve parlare con ogni altro utente in modo sicuro, il numero di chiavi esplode.
     
 
 ### Analisi Matematica della Scalabilità
@@ -42,7 +42,7 @@ $$\text{Chiavi totali} \approx O(n^2)$$
 
 ## 3. Kerberos: La Soluzione Simmetrica Scalabile
 
-Kerberos risolve il problema dell'esplosione delle chiavi $O(n^2)$ introducendo una **Terza Parte Fidata (Trusted Third Party)** chiamata **KDC** (Key Distribution Center).
+Kerberos risolve il problema dell'esplosione delle chiavi $O(n^2)$ introducendo una **Terza Parte Fidata ([[Trusted Third Party (TTP)]])** chiamata **[[KDC (Key Distribution Center)]]**.
 
 ### Funzionamento Core
 
@@ -89,15 +89,9 @@ Questo approccio elimina la necessità di una terza parte online durante l'auten
 - **Principio:** L'autenticazione consiste nel _provare il possesso_ della chiave privata senza mai rivelarla.
     
 
-### Il Flusso Challenge-Response
-
-![[SCREEN_SLIDE_8_FLOW]]
-
-> [!abstract] Visual Analysis
+> [!abstract] Il Flusso Challenge-Response
 > 
-> What to look at: Lo schema mostra lo scambio tra Verifier e Prover.
-> 
-> Meaning:
+>  Ecco lo scambio tra Verifier e Prover:
 > 
 > 1. Il Verifier invia una **sfida casuale (nonce)**.
 >     
@@ -114,7 +108,7 @@ Questo approccio elimina la necessità di una terza parte online durante l'auten
     
 - **Scala Internet:** Funziona naturalmente tra organizzazioni diverse (Open Internet) senza amministrazione complessa.
     
-- **Non-repudiation:** Non essendoci "Key Escrow" (nessun server ha la tua privata), la prova è molto più forte.
+- **[[Non-Repudiation]]:** Non essendoci "Key Escrow" (nessun server ha la tua privata), la prova è molto più forte.
     
 
 ---
@@ -331,16 +325,6 @@ Senza una Public Key Infrastructure (PKI), non possiamo rispondere alla domanda:
 - **Trust Anchors:** Le Certification Authorities (CA) di cui ci fidiamo globalmente.
     
 
-### Passkeys
-
-![[SCREEN_SLIDE_36_PASSKEY]]
-
-> [!abstract] Visual Analysis
-> 
-> What to look at: L'immagine mostra un dispositivo hardware (token/chiavetta).
-> 
-> Meaning: È il nuovo paradigma. Invece di password complesse, si usa l'autenticazione biometrica (locale sul dispositivo) per sbloccare una chiave privata crittografica che esegue l'autenticazione remota. Unisce sicurezza fisica e crittografia a chiave pubblica.
-
 ---
 
 # Passkeys e Standard FIDO2: Il Nuovo Paradigma di Autenticazione
@@ -371,35 +355,86 @@ Le **Passkeys** sostituiscono questo modello utilizzando la **Crittografia Asimm
 
 Le Passkeys utilizzano moderne curve ellittiche. È fondamentale distinguere i due algoritmi principali per la gestione della firma digitale.
 
-### ECDSA (Elliptic Curve Digital Signature Algorithm)
+### [[ECDSA]] (Elliptic Curve Digital Signature Algorithm)
 
-È lo standard NIST classico. La sua sicurezza dipende fortemente dalla generazione di un numero casuale (nonce).
+#### Algoritmo di Firma (Signing)
+
+Il processo di firma serve a generare una prova crittografica legata a un messaggio specifico e alla chiave privata dell'utente. A differenza di EdDSA, questo processo richiede una componente di casualità forte.
 
 **The signing process is defined as:**
 
-$$\text{Private Key} \to \text{pick random nonce } k \to \text{compute } R \to h = H(m) \to (r, s)$$
-
-**The verification process is:**
-
-$$\text{Public Key } Q + \text{message } m + (r, s) \to \text{recompute } h = H(m) \to \text{check curve ops}$$
-
-> [!failure] Common Pitfall
-> 
-> Il rischio del Nonce $k$: In ECDSA, il nonce $k$ deve essere assolutamente casuale e mai riutilizzato. Se il generatore di numeri casuali (RNG) è debole o se $k$ si ripete, è possibile risalire alla chiave privata (Private Key Leakage).
-
-### EdDSA (Edwards-curve Digital Signature Algorithm)
-
-È un algoritmo più moderno e sicuro, progettato per evitare i problemi dell'ECDSA.
-
-**The deterministic signing process is:**
-
-$$\text{Private Key} \to \text{deterministic nonce} \to \text{compute } R \to h = H(R, A, m) \to (R, s)$$
-
-_Dove $A$ è la chiave pubblica._
+$$\begin{align} 1. & \ \text{Input: Private Key} \\ 2. & \ \text{Pick random nonce } k \\ 3. & \ \text{Compute Point } R \text{ (derived from } k) \\ 4. & \ \text{Compute challenge } h = H(m) \\ 5. & \ \text{Output Signature: } (r, s) \end{align}$$
 
 > [!abstract] Math Analysis
 > 
+> - **Passo 1-2:** Il firmatario deve generare un numero casuale $k$ (nonce) per ogni singola firma.
+>     
+> - **Passo 3-5:** Utilizzando la chiave privata e il nonce, calcola un punto sulla curva e produce la coppia $(r, s)$. Ma che cosa sono $r$ ed $s$? ecco [[Cos'è (r,s) in ECDSA|qui]].
+>     
+
+---
+
+#### Algoritmo di Verifica (Verification)
+
+Il verificatore controlla la validità della firma utilizzando solo dati pubblici, senza mai conoscere la chiave privata.
+
+**The verification logic is:**
+
+$$\begin{align} \text{Input} &: \text{Public Key } Q, \text{Message } m, \text{Signature } (r, s) \\ \text{Step 1} &: \text{Recompute challenge } h = H(m) \\ \text{Step 2} &: \text{Perform curve operations using } Q, m, (r, s) \\ \text{Result} &: \text{Check if result matches } r \to \text{Accept/Reject} \end{align}$$
+
+> [!abstract] Math Analysis
+> 
+> Il verificatore ricalcola l'hash del messaggio e combina la chiave pubblica con la firma. Se le operazioni sulla curva restituiscono il valore $r$ atteso, la firma è autentica.
+
+---
+
+#### La Vulnerabilità Critica: Il Random Nonce
+
+La sicurezza di ECDSA dipende interamente dalla qualità del generatore di numeri casuali (RNG). Questo è il suo punto debole rispetto a EdDSA.
+
+> [!failure] Common Pitfall: Randomness Failure
+> 
+> ECDSA si basa sul nonce casuale $k$.
+> 
+> - **Se l'RNG è debole:** Il nonce diventa prevedibile.
+>     
+> - **Se il nonce viene riutilizzato:** Se si firmano due messaggi diversi usando lo stesso $k$, un attaccante può calcolare matematicamente la **chiave privata** (Private Key Leakage).
+>     
+> 
+> Questo rende ECDSA fragile in ambienti dove è difficile generare numeri veramente casuali (es. sistemi embedded poveri).
+
+### EdDSA (Edwards-curve Digital Signature Algorithm)
+[[EdDSA (Edwards-curve Digital Signature Algorithm)]]
+
+È un algoritmo più moderno e sicuro, progettato per evitare i problemi dell'ECDSA.
+
+**The signing algorithm is formally defined as:**
+
+$$\begin{align} 1. \ \text{Nonce} &= \text{Deterministico (da Private Key)} \\ 2. \ R &= \text{Compute Point (dal Nonce)} \\ 3. \ h &= H(R, A, m) \\ 4. \ \text{Signature} &= (R, s) \end{align}$$
+
+> [!abstract] Math Analysis
+> 
+> - $A$: è la chiave pubblica del firmatario.
+>     
+> - $m$: è il messaggio da firmare.
+>     
+> - $H$: è una funzione di hash crittografica.
+>     
+> - $R$: è un punto sulla curva ellittica calcolato dal nonce.
+>     
+> - La firma finale è la coppia $(R, s)$.
+>     
+_
 > Perché è migliore? EdDSA calcola il nonce in modo deterministico (basandosi sul messaggio e sulla chiave) invece di usare un generatore casuale. Questo elimina il rischio di fallimenti del RNG e rende l'algoritmo più veloce e sicuro contro attacchi side-channel.
+
+
+**The verification steps are:**
+
+$$\begin{align} 1. \ \text{Input} &: \text{Chiave Pubblica } A, \text{Messaggio } m, \text{Firma } (R, s) \\ 2. \ h &= H(R, A, m) \quad (\text{Ricalcolo del challenge}) \\ 3. \ \text{Check} &: \text{Verifica equazione della curva} \end{align}$$
+
+> [!abstract] Math Analysis
+> 
+> Il verificatore ricalcola l'hash $h$ usando i dati pubblici ($R, A, m$). Se l'equazione della curva ellittica è soddisfatta usando questo $h$, la firma è valida; altrimenti viene rifiutata.
 
 ---
 
@@ -514,8 +549,6 @@ FIDO2 permette di usare le credenziali salvate sullo smartphone per fare login s
 6. Login effettuato.
     
 
-![[SCREEN_SLIDE_CROSS_DEVICE]]
-
 > [!abstract] Visual Analysis
 > 
 > What to look at: La connessione tra telefono e laptop.
@@ -533,3 +566,87 @@ FIDO2 permette di usare le credenziali salvate sullo smartphone per fare login s
 |**Phishing**|Alta suscettibilità|Impossibile (Origin Binding)|
 |**Attacco Offline**|Cracking possibile sugli hash|Nessun segreto da crackare|
 |**Riutilizzo**|Spesso riutilizzate (pericoloso)|Chiave unica per ogni dominio|
+
+---
+
+# Integrazione: Passkeys Gestite vs Hardware-Bound
+
+**Tags:** #ingegneria #security #passkeys #bitwarden #fido2 #real_world_implementation
+
+## 1. Il "Non Detto" delle Slide: Platform vs Roaming
+
+Le slide del corso descrivono principalmente le Passkeys nel contesto dei **Platform Authenticators** (o _Single-Device Passkeys_).
+
+- **Modello Slide:** La chiave è generata nel chip TPM o nella Secure Enclave del dispositivo (es. iPhone, PC Windows Hello).
+    
+- **Vincolo:** La chiave privata non lascia mai il dispositivo. Se perdi il telefono o il computer, perdi l'accesso a quella specifica credenziale.
+    
+
+La Realtà (Bitwarden, 1Password, Apple Keychain):
+
+Questi servizi agiscono come Cross-Platform Authenticators. Implementano lo standard FIDO2 ma introducono la sincronizzazione delle chiavi private.
+
+---
+
+## 2. Come funziona tecnicamente con Bitwarden?
+
+Quando usi un gestore di password come Bitwarden per una Passkey, il "Vault" cifrato sostituisce funzionalmente il TPM fisico descritto nella teoria classica.
+
+### Differenze nel flusso operativo
+
+1. **Generazione:** Invece di chiedere al chip TPM di creare la coppia $(Pk, Sk)$, è il software di Bitwarden a generarla localmente nella memoria sicura del dispositivo.
+    
+2. **Archiviazione:**
+    
+    - _Modello Hardware (Slide):_ La chiave privata $Sk$ resta isolata nel silicio del chip.
+        
+    - _Modello Bitwarden (Synced):_ La chiave privata $Sk$ viene cifrata con la chiave maestra dell'utente (es. AES-256) e salvata nel cloud.
+        
+3. **Sincronizzazione:** Questo "blob" cifrato viene scaricato sugli altri tuoi dispositivi, permettendoti di fare login da qualsiasi postazione.
+    
+
+> [!abstract] Visual Analysis
+> 
+> Il concetto di "Authenticator" nello standard WebAuthn è un'entità logica, non per forza fisica. Bitwarden agisce come un Software Authenticator che emula il comportamento sicuro richiesto dal protocollo, garantendo però la portabilità.
+
+---
+
+## 3. Analisi dei Trade-off: Sicurezza vs Comodità
+
+> [!tip] Exam Focus
+> 
+> Se all'esame viene chiesto se le passkey sono sempre vincolate all'hardware, la risposta teorica basata sulle slide è "sì" (per garantire la non-esportabilità), ma la risposta ingegneristica completa è che esistono le Synced Passkeys (o Multi-Device Credentials).
+
+|**Caratteristica**|**Hardware-Bound (Modello Slide)**|**Synced (Modello Bitwarden)**|
+|---|---|---|
+|**Dove vive la chiave**|Chip fisico (TPM/Enclave)|Vault cifrato (Cloud + Cache locale)|
+|**Portabilità**|Nulla (Vincolata al singolo device)|Totale (Sync su tutti i device)|
+|**Recovery**|Difficile (Se perdi il device, perdi la chiave)|Facile (Basta la Master Password)|
+|**Vettore di Attacco**|Furto fisico del dispositivo + Biometria|Compromissione della Master Password|
+|**Attinenza alle Slide**|Totale (descrizione fedele)|Parziale (estensione pratica dello standard)|
+
+---
+
+## 4. Perché le slide non ne parlano?
+
+Le slide si concentrano sulle **garanzie crittografiche forti** che sono alla base della teoria:
+
+- **Attestation:** Molti servizi ad alta sicurezza (es. banking o corporate access) richiedono l'**Attestazione**, ovvero la prova crittografica che la chiave risiede in un hardware sicuro e non modificabile. Le chiavi software come quelle di Bitwarden spesso non possono fornire questo livello di garanzia (o forniscono un'attestazione "software").
+    
+- **Non-Exportability:** Il focus didattico è sulla sicurezza assoluta: la chiave non deve mai poter essere copiata. I password manager, per definizione, devono esportare la chiave (in modo sicuro e cifrato) per poterla sincronizzare, violando il principio purista della "non-esportabilità" a favore dell'usabilità.
+    
+
+### Conclusione Tecnica
+
+Bitwarden rispetta comunque i flussi matematici di **Registrazione** e **Autenticazione**:
+
+1. Riceve il Challenge dal server.
+    
+2. Verifica l'utente (tramite PIN/Biometria dell'app o Master Password).
+    
+3. Firma il challenge con la chiave privata (che possiede decifrata temporaneamente in RAM).
+    
+4. Invia la firma al server.
+    
+
+La matematica sottostante è identica; cambia solo l'architettura di fiducia (fiducia nel chip fisico vs fiducia nella crittografia del vault software).

@@ -110,7 +110,13 @@ int main() { ... }
 (```)//rimuovi queste parentesi intorno agli apici
 > [!abstract] Code Analysis
 > [Spiegazione del codice]
+
+
+tutto questo senza inserire le fonti numeriche (esempio "3333333333")
+
 ```
+
+
 
 ### in inglese
 ```
@@ -199,6 +205,8 @@ int main() { ... }
 (```)//rimuovi queste parentesi intorno agli apici
 > [!abstract] Code Analysis
 > [Spiegazione del codice]
+
+tutto questo senza inserire le fonti numeriche (esempio "3333333333")
 ```
 
 Spesso Gemini potrebbe ficcarci dentro delle fonti. Usare questo per rimuoverle:

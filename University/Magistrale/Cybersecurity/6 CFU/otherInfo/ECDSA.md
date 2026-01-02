@@ -15,48 +15,54 @@ Come tutte le firme digitali, ECDSA garantisce:
 
 La sua sicurezza si basa sulla difficoltà computazionale del **Problema del Logaritmo Discreto su Curve Ellittiche ([[ECDLP]])**.
 
-### Come Funziona (Concettualmente)
+Ecco la Nota Master per Obsidian dedicata all'algoritmo **ECDSA**, basata sulle slide del corso.
 
-L'algoritmo utilizza una chiave privata (un numero) e una chiave pubblica (un punto sulla curva) per creare e verificare una firma (una coppia di numeri).
+---
+## 2. Algoritmo di Firma (Signing)
 
-#### 1. Generazione Chiavi
+Il processo di firma serve a generare una prova crittografica legata a un messaggio specifico e alla chiave privata dell'utente. A differenza di EdDSA, questo processo richiede una componente di casualità forte.
 
-- **Chiave Privata ($d$):** Un numero intero segreto scelto casualmente.
-    
-- **Chiave Pubblica ($Q$):** Un punto sulla curva calcolato come $Q = d \times G$ (dove $G$ è il punto base pubblico della curva).
-    
+**The signing process is defined as:**
 
-#### 2. Processo di Firma (Mittente)
+$$\begin{align} 1. & \ \text{Input: Private Key} \\ 2. & \ \text{Pick random nonce } k \\ 3. & \ \text{Compute Point } R \text{ (derived from } k) \\ 4. & \ \text{Compute challenge } h = H(m) \\ 5. & \ \text{Output Signature: } (r, s) \end{align}$$
 
-Per firmare un messaggio $m$:
+> [!abstract] Math Analysis
+> 
+> - **Passo 1-2:** Il firmatario deve generare un numero casuale $k$ (nonce) per ogni singola firma.
+>     
+> - **Passo 3-5:** Utilizzando la chiave privata e il nonce, calcola un punto sulla curva e produce la coppia $(r, s)$. Ma che cosa sono $r$ ed $s$? ecco [[Cos'è (r,s) in ECDSA|qui]].
+>     
 
-1. Calcola un **hash** del messaggio: $h = \text{hash}(m)$.
-    
-2. **CRITICO:** Genera un **nonce segreto e casuale $k$** (un numero usato una sola volta).
-    
-3. Calcola un punto sulla curva $P = k \times G$.
-    
-4. La firma è una coppia di numeri $(r, s)$:
-    
-    - $r$ = la coordinata x del punto $P$.
-        
-    - $s = k^{-1} \cdot (h + r \cdot d) \pmod n$ (dove $n$ è l'ordine della curva).
-        
-5. Il mittente invia il messaggio $m$ e la firma $(r, s)$.
-    
+---
 
-#### 3. Processo di Verifica (Destinatario)
+## 3. Algoritmo di Verifica (Verification)
 
-Per verificare la firma $(r, s)$ sul messaggio $m$:
+Il verificatore controlla la validità della firma utilizzando solo dati pubblici, senza mai conoscere la chiave privata.
 
-1. Calcola l'hash $h = \text{hash}(m)$.
-    
-2. Calcola due valori $u_1$ e $u_2$ usando la firma.
-    
-3. Calcola un punto di verifica $P' = (u_1 \times G) + (u_2 \times Q)$.
-    
-4. **Verifica:** Se la coordinata x del punto $P'$ è uguale a $r$, la firma è **valida**. Altrimenti, è invalida.
-    
+**The verification logic is:**
+
+$$\begin{align} \text{Input} &: \text{Public Key } Q, \text{Message } m, \text{Signature } (r, s) \\ \text{Step 1} &: \text{Recompute challenge } h = H(m) \\ \text{Step 2} &: \text{Perform curve operations using } Q, m, (r, s) \\ \text{Result} &: \text{Check if result matches } r \to \text{Accept/Reject} \end{align}$$
+
+> [!abstract] Math Analysis
+> 
+> Il verificatore ricalcola l'hash del messaggio e combina la chiave pubblica con la firma. Se le operazioni sulla curva restituiscono il valore $r$ atteso, la firma è autentica.
+
+---
+
+## 4. La Vulnerabilità Critica: Il Random Nonce
+
+La sicurezza di ECDSA dipende interamente dalla qualità del generatore di numeri casuali (RNG). Questo è il suo punto debole rispetto a EdDSA.
+
+> [!failure] Common Pitfall: Randomness Failure
+> 
+> ECDSA si basa sul nonce casuale $k$.
+> 
+> - **Se l'RNG è debole:** Il nonce diventa prevedibile.
+>     
+> - **Se il nonce viene riutilizzato:** Se si firmano due messaggi diversi usando lo stesso $k$, un attaccante può calcolare matematicamente la **chiave privata** (Private Key Leakage).
+>     
+> 
+> Questo rende ECDSA fragile in ambienti dove è difficile generare numeri veramente casuali (es. sistemi embedded poveri).
 
 ### Dettagli Tecnici e Implicazioni per Ingegneri
 
