@@ -1,0 +1,13 @@
+{
+	"nodes":[
+		{"id":"da6a1ab68ad18696","x":-120,"y":-155,"width":340,"height":215,"color":"1","type":"text","text":"Il corso è stato strutturato in due parti:\n- Lower level security (6 CFU) che tratta di crittografia prevalentemente\n- Application level security (3 CFU) che tratta di sicurezza nel modo più superficiale possibile"},
+		{"id":"eb61ee3450ad8c08","x":527,"y":-268,"width":953,"height":708,"type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/CYBERSECURITY Lower level.canvas"},
+		{"id":"42bd7dd7b7ef89f4","x":-1160,"y":-268,"width":790,"height":708,"type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/3 CFU/CYBERSECURITY  application level.canvas"},
+		{"id":"f180e72e09818ade","x":-240,"y":459,"width":560,"height":501,"type":"file","file":"Obsidian-University/University/Magistrale/Cybersecurity/Fun CS stuff.canvas"}
+	],
+	"edges":[
+		{"id":"718892b0a15282cf","fromNode":"da6a1ab68ad18696","fromSide":"right","toNode":"eb61ee3450ad8c08","toSide":"left"},
+		{"id":"64245fa27596a41b","fromNode":"da6a1ab68ad18696","fromSide":"left","toNode":"42bd7dd7b7ef89f4","toSide":"right"},
+		{"id":"36029ba7d4247702","fromNode":"da6a1ab68ad18696","fromSide":"bottom","toNode":"f180e72e09818ade","toSide":"top"}
+	]
+}

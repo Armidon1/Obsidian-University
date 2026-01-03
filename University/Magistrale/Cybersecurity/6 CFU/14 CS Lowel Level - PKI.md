@@ -4,13 +4,13 @@
 
 ## 1. Motivazione e Problema Fondamentale
 
-La crittografia moderna (RSA, ECC, EdDSA) è matematicamente solida. Gli attacchi odierni raramente rompono la matematica sottostante.
+La crittografia moderna ([[RSA]], ECC, [[EdDSA (Edwards-curve Digital Signature Algorithm)]]) è matematicamente solida. Gli attacchi odierni raramente rompono la matematica sottostante.
 
 Il vero problema è la distribuzione delle chiavi.
 
 Se Alice vuole parlare con Bob usando la crittografia a chiave pubblica, deve ottenere la chiave pubblica di Bob.
 
-- **Il rischio:** Se l'attaccante sostituisce la chiave di Bob con la propria, può intercettare tutto (Man-in-the-Middle).
+- **Il rischio:** Se l'attaccante sostituisce la chiave di Bob con la propria, può intercettare tutto ([[Man-in-the-Middle (MITM)]]).
     
 - **La soluzione:** Serve un sistema per garantire che una certa chiave pubblica appartenga davvero a una specifica identità.
     
@@ -26,8 +26,9 @@ Se Alice vuole parlare con Bob usando la crittografia a chiave pubblica, deve ot
 Esistono diversi modi per stabilire se fidarsi di una chiave pubblica.
 
 ### A. Web of Trust (WoT)
+[[Web of Trust (WoT)]]
 
-Nato con PGP. È un modello **decentralizzato**.
+Nato con [[PGP]]. È un modello **decentralizzato**.
 
 - **Funzionamento:** Gli utenti firmano le chiavi degli altri utenti.
     
@@ -39,8 +40,9 @@ Nato con PGP. È un modello **decentralizzato**.
     
 
 ### B. TOFU (Trust On First Use)
+[[Trust On First Use (TOFU)]]
 
-Usato da SSH.
+Usato da [[SSH]].
 
 - **Funzionamento:** La prima volta che ti colleghi, accetti la chiave presentata. Il sistema la memorizza.
     
@@ -49,11 +51,11 @@ Usato da SSH.
 - **Contro:** Sei vulnerabile al primo collegamento (First-contact MITM).
     
 
-### C. PKI (X.509)
+### C. [[PKI]] (X.509)
 
-Il modello standard per il web (HTTPS). È un modello **gerarchico centralizzato**.
+Il modello standard per il web ([[HTTPS]]). È un modello **gerarchico centralizzato**.
 
-- **Funzionamento:** Ci sono autorità centrali (CA) che garantiscono per gli altri.
+- **Funzionamento:** Ci sono [[Certification Authority (CA)]] che garantiscono per gli altri.
     
 - **Pro:** Scalabile globalmente, validazione automatica.
     
@@ -66,7 +68,7 @@ Il modello standard per il web (HTTPS). È un modello **gerarchico centralizzato
 
 La PKI è un sistema composto da hardware, software, policy e procedure. Ecco i tre pilastri fondamentali:
 
-![[SCREEN_SLIDE_16_COMPONENTS]]
+![[Pasted image 20260103130003.png]]
 
 > [!abstract] Visual Analysis
 > 
@@ -124,6 +126,7 @@ Per sicurezza e scalabilità, le CA non usano la loro chiave principale per tutt
 Un certificato può diventare non valido prima della scadenza (es. furto della chiave privata). Esistono due metodi per controllare lo stato:
 
 ### CRL (Certificate Revocation List)
+[[CRL (Certificate Revocation List)]]
 
 - Una "lista nera" di certificati revocati, firmata dalla CA.
     
@@ -131,6 +134,7 @@ Un certificato può diventare non valido prima della scadenza (es. furto della c
     
 
 ### OCSP (Online Certificate Status Protocol)
+[[OCSP (Online Certificate Status Protocol)]]
 
 - Verifica in tempo reale.
     
@@ -180,7 +184,7 @@ I certificati digitali sono contenitori di identità digitale. Affinché la sicu
 
 L'**encoding rigoroso** serve a garantire:
 
-- **Compatibilità:** Funzionamento su piattaforme diverse (Little Endian vs Big Endian).
+- **Compatibilità:** Funzionamento su piattaforme diverse ([[Little-Endian]] vs [[Big-Endian]]).
     
 - **Interpretazione Univoca:** Non ci devono essere dubbi su dove finisce un campo e inizia l'altro.
     
@@ -243,11 +247,9 @@ Certificate ::= SEQUENCE {
 
 Per capire come funziona un certificato, immagina una struttura a cipolla o a livelli gerarchici.
 
-![[SCREEN_SLIDE_37_LAYERS]]
-
 > [!abstract] Visual Analysis
 > 
-> What to look at: La distinzione tra Concetto, Sintassi e Rappresentazione.
+> La distinzione tra Concetto, Sintassi e Rappresentazione.
 > 
 > Meaning:
 > 
