@@ -355,11 +355,9 @@ Il cuore di un certificato digitale è la struttura dati chiamata **TBSCertifica
 3. **Validità** (Per quanto tempo ci fidiamo).
     
 
-![[SCREEN_SLIDE_43_CORE_FIELDS]]
-
 > [!abstract] Visual Analysis
 > 
-> What to look at: L'immagine mostra i 6 campi "Core" che circondano il certificato.
+> Ci sono 6 campi "Core" che circondano il certificato.
 > 
 > Meaning: Questi sono i pilastri della fiducia digitale: Versione, Serial Number, Issuer (Emittente), Validità, Subject (Soggetto), Public Key.
 
@@ -402,8 +400,6 @@ Dichiara quale algoritmo crittografico è stato usato per firmare il certificato
 Questo campo appare due volte (dentro il TBSCertificate e fuori) e devono combaciare.
 
 **Esempi tipici:**
-
-Plaintext
 
 ```
 sha256WithRSAEncryption
@@ -542,9 +538,6 @@ Introdotte con X.509 v3, le estensioni servono a:
 Ogni estensione segue un modello standard definito nella RFC 5280 composto da tre elementi:
 
 **Here is the exact structure logic:**
-
-Plaintext
-
 ```
 Extension ::= SEQUENCE {
     extnID      OBJECT IDENTIFIER, -- OID univoco (es. KeyUsage)
@@ -634,13 +627,13 @@ Definisce le operazioni crittografiche di basso livello permesse.
 
 Raffina il KU definendo lo scopo applicativo specifico (tramite OID).
 
-- **Server Auth:** Autenticazione Server Web (HTTPS).
+- **Server Auth:** Autenticazione Server Web ([[HTTPS]].
     
 - **Client Auth:** Autenticazione Client (es. Smart Card).
     
 - **Code Signing:** Firma di software.
     
-- **Email Protection:** S/MIME.
+- **Email Protection:** [[S-MIME|S/MIME]].
     
 
 > [!tip] Exam Focus
@@ -763,14 +756,6 @@ Per motivi di sicurezza e scalabilità, la Root CA non emette direttamente i cer
     
 3. **Flessibilità Operativa:** Si possono creare Intermediate specializzate per scopi diversi (Policy Separation).
     
-
-![[SCREEN_SLIDE_74_HIERARCHY]]
-
-> [!abstract] Visual Analysis
-> 
-> What to look at: L'immagine mostra la struttura ad albero: una singola Root si dirama in molteplici Intermediate.
-> 
-> Meaning: La Root è il "tronco" statico e sicuro, le Intermediate sono i "rami" operativi che crescono e gestiscono le foglie (End-Entities).
 
 ### Intermediate Specializzate
 
