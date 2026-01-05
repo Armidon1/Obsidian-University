@@ -863,7 +863,7 @@ Sono le "ancore" della sicurezza.
 
 La validazione non è magica, è un processo algoritmico preciso che collega i certificati padre-figlio.
 
-![[SCREEN_SLIDE_88_CHAIN]]
+![[Pasted image 20260105163452.png]]
 
 > [!abstract] Visual Analysis
 > 
@@ -922,8 +922,6 @@ Le catene possono essere lunghe, ma la complessità introduce rischi.
 Per evitare che una CA intermedia deleghi potere all'infinito (o che un'entità finale si finga CA), si usano vincoli stretti.
 
 **Logic for Basic Constraints:**
-
-Plaintext
 
 ```
 BasicConstraints ::= SEQUENCE {
@@ -1079,14 +1077,6 @@ $$\text{Client} \xrightarrow{\text{Serial Number}} \text{OCSP Responder (CA)} \x
 3. **Unknown:** La CA non ha record di questo certificato (spesso trattato come errore).
     
 
-![[SCREEN_SLIDE_105_OCSP_STRUCTURE]]
-
-> [!abstract] Visual Analysis
-> 
-> What to look at: La struttura della risposta.
-> 
-> Meaning: La risposta OCSP è piccola, veloce e firmata digitalmente dal Responder per garantirne l'autenticità.
-
 ---
 
 ## 5. OCSP Stapling (La Soluzione Moderna)
@@ -1132,13 +1122,9 @@ Le tre garanzie fondamentali fornite sono:
 - **Integrità:** Previene la manomissione.
     
 
-![[SCREEN_SLIDE_107_TYPES]]
-
-> [!abstract] Visual Analysis
+> [!abstract] Nota che
 > 
-> What to look at: L'immagine mostra l'ecosistema dei certificati come una raggiera.
-> 
-> Meaning: Al centro c'è la tecnologia PKI, da cui si diramano usi diversi: Server (SSL/TLS), Client, Email (S/MIME), Code Signing, ecc.
+>  La tecnologia PKI, è il cuore che permette il funzionamento di: Server ([[SSL]]/[[TLS]]), Client, Email ([[S-MIME|S/MIME]]), Code Signing, ecc.
 
 ---
 
@@ -1202,7 +1188,7 @@ Questi certificati sono destinati a identificare **utenti** o **dispositivi**, n
 
 ### Certificati Client
 
-Usati per l'autenticazione forte (spesso in contesti Zero Trust o VPN).
+Usati per l'autenticazione forte (spesso in contesti [[Zero Trust Architecture]] o VPN).
 
 - **Mutual TLS (mTLS):** Il server autentica il client tramite certificato (invece di user/password).
     
