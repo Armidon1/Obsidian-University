@@ -1,3 +1,4 @@
+# ECDHE (Elliptic Curve Diffie-Hellman Ephemeral)
 L'**ECDHE (Elliptic Curve Diffie-Hellman Ephemeral)** è una variante specifica del protocollo di scambio chiavi ECDH, progettata per fornire **[[Perfect Forward Secrecy (PFS)]]**.
 
 La parola chiave è **"Ephemeral" (Effimero)**. Significa che, per _ogni singola sessione_ (ad esempio, ogni volta che ti connetti a un sito [[HTTPS]]), sia il client che il server **generano una coppia di chiavi [[ECDH]] completamente nuova** (una privata effimera e una pubblica effimera).

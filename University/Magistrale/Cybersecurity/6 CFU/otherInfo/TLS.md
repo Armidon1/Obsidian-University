@@ -1,6 +1,9 @@
-# **TLS (Transport Layer Security)**
+# TLS (Transport Layer Security)
 
-> È un **protocollo crittografico** che fornisce **sicurezza nelle comunicazioni su rete**, garantendo **[[Confidentiality]]**, **[[Integrity]]** e **[[Authenticity]]** dei dati scambiati tra due entità (es. client e server).
+>[!Definizione]
+È un **protocollo crittografico** che fornisce **sicurezza nelle comunicazioni su rete**, garantendo **[[Confidentiality]]**, **[[Integrity]]** e **[[Authenticity]]** dei dati scambiati tra due entità (es. client e server).
+
+Per saperne di più, è obbligatoria la nota [[15 CS Lower Level - TLS and IPSec]]
 
 **Come funziona (in sintesi):**
 

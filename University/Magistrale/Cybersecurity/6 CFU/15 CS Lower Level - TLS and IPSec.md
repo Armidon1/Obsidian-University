@@ -8,31 +8,31 @@ Il **TLS (Transport Layer Security)**, successore di SSL (Secure Sockets Layer),
 
 Il suo scopo è garantire tre proprietà fondamentali tra le applicazioni comunicanti:
 
-- **Confidenzialità:** Nessuno può leggere i dati in transito (Cifratura).
+- **[[Confidentiality]]:** Nessuno può leggere i dati in transito (Cifratura).
     
-- **Integrità:** Nessuno può modificare i dati senza essere scoperto.
+- **[[Integrity]]:** Nessuno può modificare i dati senza essere scoperto.
     
-- **Autenticazione:** Verifica dell'identità delle parti (solitamente il server, opzionalmente il client).
+- **[[Authentication]]:** Verifica dell'identità delle parti (solitamente il server, opzionalmente il client).
     
 
 ### Minacce Mitigate
 
 Il protocollo è progettato per contrastare specifici attacchi:
 
-- **Eavesdropping (Intercettazione):** Ascolto passivo del traffico.
+- **[[Eavesdropping]] (Intercettazione):** Ascolto passivo del traffico.
     
-- **Tampering (Manomissione):** Modifica attiva dei pacchetti.
+- **[[Tampering]] (Manomissione):** Modifica attiva dei pacchetti.
     
-- **Spoofing (Impersonificazione):** Falsificazione dell'identità (es. sito fake).
+- **[[Spoofing]] (Impersonificazione):** Falsificazione dell'identità (es. sito fake).
     
-- **Replay Attacks:** Riutilizzo di messaggi vecchi per ingannare il destinatario.
+- **[[Replay attack]]:** Riutilizzo di messaggi vecchi per ingannare il destinatario.
     
 
 ---
 
 ## 2. Contesto Web e Fasi del Protocollo
 
-Nel web moderno (HTTPS), l'autenticazione è tipicamente **unilaterale**: solo il server presenta un certificato X.509 per provare la sua identità. Il client rimane anonimo a livello TLS.
+Nel web moderno ([[HTTPS]]), l'autenticazione è tipicamente **unilaterale**: solo il server presenta un certificato X.509 per provare la sua identità. Il client rimane anonimo a livello TLS.
 
 > [!tip] Exam Focus
 > 
@@ -55,7 +55,7 @@ Ogni connessione TLS attraversa una sequenza logica:
 
 TLS 1.3 ha rivoluzionato il processo di handshake rendendolo più veloce (1-RTT) e sicuro rispetto a TLS 1.2.
 
-![[SCREEN_SLIDE_HANDSHAKE_FLOW]]
+![[Pasted image 20260106111050.png]]
 
 > [!abstract] Visual Analysis
 > 
@@ -72,13 +72,13 @@ TLS 1.3 ha rivoluzionato il processo di handshake rendendolo più veloce (1-RTT)
 
 **The sequence of messages is:**
 
-1. **Client:** Invia `ClientHello` + `KeyShare` (la sua parte di chiave ECDHE).
+1. **Client:** Invia `ClientHello` + `KeyShare` (la sua parte di chiave [[ECDHE]]).
     
 2. **Server:** Risponde con `ServerHello` + `KeyShare` + `EncryptedExtensions`.
     
 3. **Server:** Invia `Certificate` (Identità) + `CertificateVerify` (Firma).
     
-4. **Server:** Invia `Finished` (MAC per integrità).
+4. **Server:** Invia `Finished` ([[MAC]] per integrità).
     
 5. **Client:** Risponde con `Finished`.
     
@@ -95,11 +95,11 @@ Questi sono i messaggi critici per la negoziazione iniziale.
 
 È il messaggio di "presentazione" del client. Contiene:
 
-- **Protocol Version:** TLS 1.3.
+- **Protocol Version:** [[TLS]] 1.3.
     
 - **Random:** 32 byte casuali (usati poi per derivare le chiavi).
     
-- **Cipher Suites:** Lista degli algoritmi supportati (solo AEAD in TLS 1.3).
+- **Cipher Suites:** Lista degli algoritmi supportati (solo [[AEAD]] in TLS 1.3).
     
 - **Extensions:** Il cuore della flessibilità di TLS.
     
@@ -108,13 +108,14 @@ Questi sono i messaggi critici per la negoziazione iniziale.
 
 - `supported_versions`: Elenca le versioni TLS (es. 1.3, 1.2).
     
-- `key_share`: Contiene i parametri pubblici per lo scambio chiavi (es. la chiave pubblica ECDHE su curva x25519).
+- `key_share`: Contiene i parametri pubblici per lo scambio chiavi (es. la chiave pubblica [[ECDHE]] su curva x25519).
     
 - `server_name` (SNI): Indica quale hostname il client vuole contattare (essenziale per virtual hosting).
     
 - `signature_algorithms`: Quali algoritmi di firma il client accetta.
-    
 
+![[Pasted image 20260106114759.png]]
+![[Pasted image 20260106113007.png]]
 ### ServerHello
 
 È la risposta del server. Contiene:
@@ -126,17 +127,32 @@ Questi sono i messaggi critici per la negoziazione iniziale.
 - **Cipher Suite:** L'algoritmo scelto dalla lista del client.
     
 - **Key Share:** La controparte della chiave pubblica del server per completare lo scambio Diffie-Hellman.
-    
+
+![[Pasted image 20260106114817.png]]
+![[Pasted image 20260106113021.png]]
 
 > [!failure] Common Pitfall
 > 
 > HelloRetryRequest (HRR): Se il server non supporta il gruppo crittografico proposto dal client nel key_share iniziale, risponde con un HRR. Il client deve ricominciare l'handshake inviando un nuovo ClientHello con i parametri corretti. Questo costa 1 RTT aggiuntivo.
 
+## Core Properties of TLS 1.3
+
+- Forward secrecy. Mandatory (via ephemeral Diffie-Hellman)
+    
+- 1-RTT handshake. Faster connection setup
+    
+- Simplified ciphersuites: AEAD-only (AES-GCM, ChaCha20-Poly1305), legacy modes removed
+    
+- HKDF-based key derivation (standardized, robust KDF)
+    
+- Replay protection: handshake protected; 0-RTT data limited/vulnerable
+
+![[Pasted image 20260106113036.png]]
 ---
 
 ## 5. Derivazione delle Chiavi (HKDF)
 
-TLS 1.3 usa **HKDF (HMAC-based Key Derivation Function)** per generare tutto il materiale crittografico in modo robusto.
+TLS 1.3 usa **[[HKDF (HMAC-based Key Derivation Function)]]** per generare tutto il materiale crittografico in modo robusto.
 
 ### Logica Matematica
 
@@ -153,37 +169,112 @@ $$\text{PRK} = \text{HMAC}(\text{salt}, \text{IKM})$$
 > - **PRK (Pseudorandom Key):** Una chiave maestra uniforme ad alta entropia.
 >     
 
-**The expansion step (per generating specific keys):**
+**The expansion step (generata per ogni chiave i-esima:**
 
 $$\text{OKM}_i = \text{HKDF-Expand}(\text{PRK}, \text{info}_i, L_i)$$
 
 > [!abstract] Math Analysis
 > 
 > - **info:** Una stringa di contesto che cambia per ogni chiave (es. "tls13 client handshake traffic secret").
+> - **$L_i$**:  lunghezza dell'$OKM_i$
 >     
 > - **Garantisce la separazione:** Anche se derivano dalla stessa PRK, le chiavi per scopi diversi sono crittograficamente indipendenti.
 >     
 
 ---
 
-## 6. Transcript Hash e Integrità
+## 6. Il Cuore dell'Integrità: Transcript Hash
 
-TLS mantiene un "registro" hash di tutti i messaggi scambiati.
+Il **Transcript Hash** è molto più di un semplice log. È il meccanismo crittografico che "incolla" insieme ogni singolo bit scambiato durante la negoziazione, garantendo che nessuno abbia modificato i messaggi in transito.
 
-- **Funzionamento:** Ogni messaggio inviato o ricevuto viene aggiunto a un hash incrementale (Rolling Hash).
+### Come Funziona (The Rolling Hash)
+
+Tutti i messaggi dell'handshake vengono inseriti sequenzialmente in un hash incrementale.
+
+- **Binding:** Ogni nuovo messaggio viene "assorbito" nello stato corrente dell'hash.
     
-- **Scopo:**
+- **Risultato:** L'hash finale rappresenta l'impronta digitale unica di _quella specifica_ conversazione.
     
-    1. **Input per HKDF:** Le chiavi dipendono da _tutto_ ciò che è stato detto.
+
+> [!abstract] Visual Analysis
+> 
+> Meaning: Il Transcript Hash lega crittograficamente i parametri negoziati (Cipher Suite, Versione) e i valori casuali (Randoms). Se un attaccante modifica anche solo un bit (es. cercando di forzare una cifratura debole), l'hash finale cambierà completamente.
+
+### I Quattro Usi del Transcript Hash
+
+Le slide identificano quattro funzioni critiche per la sicurezza:
+
+1. **Key Derivation (Derivazione Chiavi):**
+    
+    - L'hash del transcript è un input diretto per le fasi finali di **HKDF-Expand**.
         
-    2. **Anti-Downgrade:** Un attaccante non può modificare la lista delle Cipher Suites (es. rimuovendo quelle forti) senza alterare l'hash finale.
+    - _Conseguenza:_ Le chiavi di sessione dipendono matematicamente dall'intera storia dell'handshake. Se la storia cambia, le chiavi cambiano.
         
-    3. **Messaggio Finished:** È un MAC calcolato sul Transcript Hash. Se la verifica fallisce, significa che qualcuno ha manomesso l'handshake.
+2. **Messaggio Finished:**
+    
+    - Sia il client che il server calcolano un **MAC** (Message Authentication Code) sopra il Transcript Hash.
         
+    - È la prova finale: "Ecco la firma di tutto ciò che ho visto finora".
+        
+3. **Downgrade Protection (Anti-Downgrade):**
+    
+    - Poiché il transcript include la versione del protocollo e la Cipher Suite negoziata, un attaccante non può modificare la scelta (es. forzando TLS 1.2) senza alterare l'hash e far fallire la verifica del MAC.
+        
+4. **Replay Protection:**
+    
+    - Legando i "Random" del client e del server, ogni handshake diventa unico.
+        
+
+### Quando avviene la Verifica?
+
+La verifica è implicita nello scambio dei messaggi `Finished`.
+
+> [!abstract] Visual Analysis
+> 
+> Flow:
+> 
+> 1. **Server Finished:** Il server calcola il MAC sul Transcript Hash _corrente_.
+>     
+> 2. **Client Check:** Il client ricalcola il MAC localmente. Se i valori coincidono, il client sa che il server ha visto esattamente gli stessi messaggi.
+>     
+> 3. **Client Finished:** Il client aggiorna l'hash con il messaggio del server e invia il suo MAC.
+>     
+> 4. Server Check: Il server verifica. Se c'è un match, l'integrità è garantita al 100%.
+>     
+>     Regola: Al primo mismatch, l'handshake viene abortito immediatamente.
+>     
 
 ---
 
-## 7. 0-RTT (Zero Round Trip Time) e Session Resumption
+## 7. Flusso Dettagliato: Server Authentication Only
+
+Questo è lo scenario standard per la navigazione Web (HTTPS), dove solo il server prova la sua identità.
+
+> [!abstract] Visual Analysis
+> ![[Pasted image 20260106125131.png]]
+> 
+> What to look at: La sequenza esatta dei messaggi e il momento in cui la crittografia si attiva.
+> 
+> Key Steps:
+> 
+> 1. **ClientHello:** Propone versioni, suite e chiavi (`KeyShare`).
+>     
+> 2. **ServerHello:** Sceglie i parametri e completa lo scambio chiavi (`KeyShare`). _Da qui in poi tutto è cifrato._
+>     
+> 3. **EncryptedExtensions:** Estensioni sensibili (come ALPN).
+>     
+> 4. **Certificate:** Il certificato X.509 del server.
+>     
+> 5. **CertificateVerify:** Il server firma digitalmente il Transcript Hash con la sua chiave privata (prova di possesso).
+>     
+> 6. **Finished (Server):** MAC sul transcript.
+>     
+> 7. **Finished (Client):** Il client conferma che tutto è integro.
+>     
+
+---
+
+## 8. 0-RTT (Zero Round Trip Time) e Session Resumption
 
 TLS 1.3 introduce una modalità ultra-veloce per i client che ritornano su un sito già visitato.
 
@@ -209,9 +300,27 @@ I dati 0-RTT sono meno sicuri.
 > 
 > Mitigazione: I server dovrebbero accettare dati 0-RTT solo per richieste idempotenti (es. HTTP GET), che non cambiano lo stato del server se ripetute. Molte implementazioni disabilitano 0-RTT di default per sicurezza.
 
+### Struttura della NewSessionTicket
+
+- **ticket_lifetime** (4 bytes)
+	- Validity of the ticket in seconds
+    
+- **ticket_age_add** (4 bytes, random)
+	- Random offset used by client to calculate ticket age
+	- Mitigates timing-based replay
+    
+- **ticket_nonce** (variable length)
+	- Unique nonce for deriving the PSK
+    
+- **ticket** (opaque blob)
+	- Token opque to client, identifies or encodes PSK
+	- Can be stateful (ID) or stateless (encrypted PSK)
+    
+- **extensions** (optional)
+	- e.g., _early_data_ with max_early_data_size
 ---
 
-## 8. Riepilogo Novità TLS 1.3 vs 1.2
+## 9. Riepilogo Novità TLS 1.3 vs 1.2
 
 |**Caratteristica**|**TLS 1.2**|**TLS 1.3**|
 |---|---|---|
@@ -223,388 +332,608 @@ I dati 0-RTT sono meno sicuri.
 
 ---
 
-# IPsec: Architettura e Protocolli di Sicurezza di Rete
 
-**Tags:** #ingegneria #reti #sicurezza #ipsec #vpn #tunneling #network_security
+# IPsec: Architettura, Security Associations e Database (SAD/SPD)
 
-## 1. Introduzione e Obiettivi
+**Tags:** #ingegneria #reti #sicurezza #ipsec #sa #sad #spd #architettura
 
-IPsec è una suite di protocolli progettata per proteggere i pacchetti IP durante il transito su reti non fidate (come Internet).
+## 1. Il Problema della Sicurezza IP
 
-L'obiettivo è fornire sicurezza "End-to-End" o "Site-to-Site" agendo direttamente al Livello di Rete (Layer 3).
+Il protocollo IP originale non è stato progettato con la sicurezza in mente. Per proteggere i pacchetti (datagrammi) durante il transito su reti non sicure, esistono due approcci teorici.
 
-### Perché IPsec?
+### Approccio 1: Hop-by-Hop (Scartato)
 
-A differenza di TLS (che protegge le applicazioni) o WPA (che protegge il link Wi-Fi), IPsec protegge tutto il traffico IP tra due host o gateway, rendendo la sicurezza **trasparente** alle applicazioni.
+Ogni router lungo il percorso decifra il pacchetto, lo controlla e lo ricifra per il router successivo.
 
-**Approcci alla sicurezza IP:**
-
-- **Hop-by-hop (Fallimentare):** Decifrare e ricifrare su ogni router. Troppo costoso e insicuro (i router vedono i dati in chiaro).
+- **Pro:** Protezione totale, inclusi gli header di instradamento.
     
-- **End-to-end / Tunneling (IPsec):** I router intermedi inoltrano solo il testo cifrato. La sicurezza è gestita solo agli estremi.
+- **Contro:** Carico di lavoro insostenibile per i router; gestione chiavi impossibile su scala globale; i dati sono in chiaro dentro ogni router (rischio sicurezza).
     
 
----
+### Approccio 2: End-to-End / IPsec (Adottato)
 
-## 2. Architettura e Protocolli Fondamentali
+La sicurezza è applicata solo agli estremi della comunicazione (Host o Gateway). I router intermedi vedono solo pacchetti cifrati e li inoltrano senza dover elaborare la crittografia.
 
-IPsec non è un singolo protocollo, ma un framework che utilizza due header specifici per incapsulare e proteggere il payload IP.
-
-### Authentication Header (AH)
-
-- **Funzione:** Fornisce autenticazione dell'origine e integrità dei dati.
-    
-- **Limitazione:** **NON** fornisce confidenzialità (niente crittografia, i dati viaggiano in chiaro).
-    
-- **Copertura:** Protegge il payload e parte dell'header IP originale (quelli immutabili).
+- **Standardizzazione:** Inizialmente obbligatorio in IPv6, oggi opzionale (RFC 6434).
     
 
-### Encapsulating Security Payload (ESP)
-
-- **Funzione:** Fornisce confidenzialità (crittografia), autenticazione, integrità e protezione anti-replay.
-    
-- **Funzionamento:** Incapsula l'intero pacchetto (o il payload) e lo cifra.
-    
-- **Nota:** È il protocollo più usato oggi.
-    
-
-![[SCREEN_SLIDE_31_ARCHITECTURE]]
+![[Pasted image 20260106140707.png]]
 
 > [!abstract] Visual Analysis
 > 
-> What to look at: La differenza tra la modalità "Host-to-Host" (Transport Mode) e "Gateway-to-Gateway" (Tunnel Mode).
+> What to look at: Lo schema mostra due scenari. In alto "Host-to-Host", in basso "Gateway-to-Gateway" (Tunnel).
 > 
-> Meaning:
-> 
-> - Nel **Tunnel Mode** (Gateway), l'intero pacchetto IP originale viene messo dentro un _nuovo_ pacchetto IPsec.
->     
-> - Nel **Transport Mode** (Host), viene aggiunto solo l'header IPsec tra l'header IP originale e il payload.
->     
+> Meaning: IPsec è flessibile: può proteggere la comunicazione tra due singoli PC o creare un tunnel sicuro tra due intere reti aziendali attraverso Internet.
 
 ---
 
-## 3. Servizi di Sicurezza: Confronto AH vs ESP
+## 2. Pro e Contro di IPsec
 
-> [!tip] Exam Focus
-> 
-> Ricorda che solo ESP offre la confidenzialità. AH è usato raramente oggi a causa di problemi con il NAT.
+Analisi ingegneristica dell'adozione di IPsec rispetto ad altre soluzioni (come TLS).
 
-|**Servizio**|**AH**|**ESP (solo cifratura)**|**ESP (cifratura + auth)**|
-|---|---|---|---|
-|**Confidenzialità**|❌ No|✅ Sì|✅ Sì|
-|**Integrità Dati**|✅ Sì|❌ No|✅ Sì|
-|**Autenticazione Origine**|✅ Sì|❌ No|✅ Sì|
-|**Anti-Replay**|✅ Sì|✅ Sì|✅ Sì|
+### Vantaggi (Benefits)
+
+- **Trasparenza:** Agendo al Livello 3 (Network), è invisibile alle applicazioni. Non serve modificare il software (browser, email, database) per usarlo.
+    
+- **Sicurezza Perimetrale:** Un firewall/gateway IPsec protegge tutto il traffico che entra/esce dall'azienda, anche se l'utente interno è negligente.
+    
+- **Anti-Bypass:** Essendo nel layer di rete, è difficile per un utente o un malware aggirare i controlli se la policy impone la cifratura.
+    
+
+### Svantaggi (Drawbacks)
+
+- **Complessità:** La configurazione è notoriamente difficile e prona a errori.
+    
+- **Problemi con NAT:** Il NAT modifica gli header IP e le porte; questo rompe i controlli di integrità di IPsec (richiede "NAT-Traversal" over UDP).
+    
+- **Overhead:** L'aggiunta di header crittografici aumenta la dimensione del pacchetto, causando spesso frammentazione (problemi di [[MTU]]).
+    
 
 ---
 
-## 4. Il Concetto di Security Association (SA)
+## 3. Il Concetto di Security Association (SA)
 
-La **Security Association (SA)** è il concetto chiave di IPsec. È un "contratto" logico unidirezionale tra mittente e destinatario che definisce _come_ proteggere il traffico.
+La **Security Association (SA)** è il mattone fondamentale di IPsec. È una relazione logica "contrattuale" tra mittente e destinatario.
 
-**The logical definition of an SA is:**
+> [!failure] Common Pitfall
+> 
+> Direzionalità: Una SA è rigorosamente unidirezionale.
+> 
+> Per una chat bidirezionale tra Alice e Bob servono due SA: una per $Alice \rightarrow Bob$ e una per $Bob \rightarrow Alice$.
 
-$$\text{SA} = \text{Unidirectional Relationship} \ (\text{Sender} \to \text{Receiver})$$
+### Identificazione Univoca
+
+Come fa il router a sapere quale chiave usare per un pacchetto in arrivo? Usa una tripla univoca:
+$$\text{SA ID} = \langle \text{SPI}, \ \text{IP}_{dst}, \ \text{ProtocolID} \rangle$$
 
 > [!abstract] Math Analysis
 > 
-> Poiché è unidirezionale, per una comunicazione bidirezionale (A $\leftrightarrow$ B) servono due SA distinte: una per A $\to$ B e una per B $\to$ A.
-
-### Identificazione Univoca della SA
-
-Ogni SA è identificata univocamente da una tripla di valori:
-
-1. **SPI (Security Parameters Index):** Un'etichetta numerica a 32 bit presente nell'header IPsec.
-    
-2. **IP Destination Address:** L'indirizzo dell'endpoint della SA.
-    
-3. **Security Protocol ID:** AH o ESP.
-    
-
+> - **SPI (Security Parameters Index):** Un'etichetta numerica a 32 bit inserita nell'header del pacchetto per "taggare" la connessione.
+>     
+> - **IP Destination:** L'indirizzo di chi riceve.
+>     
+> - **Protocol ID:** Indica se stiamo usando AH o ESP.
+>     
+![[Pasted image 20260107162252.png]]
 ### Parametri della SA
 
-La SA contiene tutti i segreti e le configurazioni:
+La SA non è solo una chiave, è un container di stato che include:
 
-- **Chiavi crittografiche:** Per cifratura e autenticazione.
+- **Sequence Number Counter:** Contatore a 32 bit per ordinare i pacchetti.
     
-- **Algoritmi:** Es. AES-GCM per cifratura, SHA-256 per integrità.
+- **Anti-Replay Window:** Finestra scorrevole per scartare pacchetti duplicati o vecchi (protezione contro attacchi di replay).
     
-- **Sequence Number Counter:** Un contatore a 32 bit per prevenire attacchi di Replay.
+- **Algoritmi e Chiavi:** Quale algoritmo usare (es. AES-GCM) e la relativa chiave segreta.
     
-- **Lifetime:** Quanto dura la chiave (tempo o volume dati).
+- **Lifetime:** Tempo di vita della SA (in secondi o Kbyte trasferiti), dopo il quale la SA muore o deve essere rinnovata.
     
 
 ---
 
-## 5. Database di Gestione: SAD e SPD
+## 4. I Database di Gestione: SPD e SAD
 
-Il funzionamento di IPsec si basa su due database presenti nel kernel del sistema operativo o nel router.
+IPsec non cifra "tutto a caso". Decide cosa proteggere basandosi su regole precise gestite dal kernel del sistema operativo. Queste regole risiedono in due database fondamentali.
 
 ### A. Security Policy Database (SPD)
 
-È il "Cervello". Decide cosa fare con il traffico.
+L'SPD è il "Legislatore". Definisce le regole di alto livello per classificare il traffico IP in tre categorie di azione:
 
-Contiene le regole di alto livello (Policy) che classificano i pacchetti in tre azioni:
-
-1. **Protect:** Applica IPsec (crea o usa una SA).
+1. **Protect:** Il traffico deve essere protetto con IPsec (creando o usando una SA).
     
-2. **Bypass:** Lascia passare in chiaro (es. traffico DNS locale).
+2. **Bypass:** Il traffico passa in chiaro (es. traffico locale fidato).
     
-3. **Discard:** Scarta il pacchetto (Firewalling).
+3. **Discard:** Il traffico viene bloccato (funzione firewall).
     
 
-Logic for Traffic Selector (TS):
+I Selettori (Selectors):
 
-Il traffico viene selezionato basandosi su campi come:
+Per decidere quale regola applicare, l'SPD guarda specifici campi del pacchetto, chiamati selettori:
 
-- IP Sorgente / Destinazione (o subnet).
+- **Indirizzi IP:** Sorgente e Destinazione (singoli, range, wildcard).
     
-- Porta TCP/UDP Sorgente / Destinazione.
+- **Porte:** TCP/UDP (per distinguere servizi, es. proteggi Telnet ma non Web).
     
-- Protocollo (TCP, UDP, ICMP).
+- **Protocollo:** TCP, UDP, ICMP, etc.
+    
+- **User ID:** Identificativo dell'utente (se disponibile nel sistema host).
+    
+- **Data Sensitivity:** Livello di classificazione (es. Top Secret vs Unclassified).
     
 
 ### B. Security Association Database (SAD)
 
-È il "Braccio". Contiene le SA attive.
+Il SAD è l'"Esecutore". Contiene i parametri tecnici delle connessioni sicure (Security Associations - SA) attualmente attive.
 
-Quando un pacchetto deve essere protetto, il sistema consulta il SAD per trovare le chiavi e gli algoritmi da usare.
+- Include: Chiavi crittografiche, Algoritmi scelti, Sequence Numbers, Lifetime della connessione.
+    
 
-**Packet Processing Flow (Outbound):**
+### Logica di Elaborazione (Outbound Processing)
 
-$$\text{Packet} \xrightarrow{\text{Check SPD}} \text{Action: Protect} \xrightarrow{\text{Find SA in SAD}} \xrightarrow{\text{Encrypt/Encap}} \to \text{Network}$$
+Quando un pacchetto deve essere inviato, il sistema segue questo algoritmo:
+
+**Here is the exact processing logic described:**
+
+Plaintext
+
+```
+1. COMPARE packet fields against SPD selectors
+2. IF Match Found THEN
+      CASE Action OF
+         Discard: DROP packet
+         Bypass:  SEND packet (Plaintext)
+         Protect:
+            LOOKUP in SAD for active SA
+            IF SA exists THEN
+               GET SPI (Security Parameters Index)
+               APPLY IPsec (AH or ESP)
+            ELSE
+               TRIGGER IKE (Key Exchange) to create new SA
+            ENDIF
+      ENDCASE
+3. SEND processed packet
+```
+
+> [!abstract] Code Analysis
+> 
+> L'SPD viene sempre consultato prima del SAD. L'SPD dice "Cosa fare", il SAD dice "Come farlo" (con quali chiavi).
 
 ---
 
-## 6. Pro e Contro di IPsec
+## 5. Modalità Operative: Transport vs Tunnel
 
-### Vantaggi
+IPsec può incapsulare i pacchetti in due modi, a seconda dell'architettura di rete (Host-to-Host o Gateway-to-Gateway).
 
-- **Trasparenza:** Le applicazioni non sanno che IPsec esiste; non devono essere modificate.
+### Transport Mode (Host-to-Host)
+
+Protegge solo il **payload** del pacchetto IP originale (es. il segmento TCP/UDP). L'header IP originale rimane intatto e visibile per il routing.
+
+- **Uso:** Comunicazione End-to-End tra due server.
     
-- **Sicurezza Perimetrale:** Eccellente per creare VPN Site-to-Site, garantendo che tutto il traffico tra due filiali sia cifrato.
-    
-- **Robustezza:** Algoritmi forti e resistenza agli attacchi di replay.
+- **Struttura:** `[IP Header Orig] [IPsec Header] [Payload]`
     
 
-### Svantaggi
+### Tunnel Mode (Gateway-to-Gateway)
 
-- **Complessità:** Configurare IPsec (specialmente IKE, il protocollo di scambio chiavi) è difficile.
+Protegge l'**intero pacchetto IP originale** (Header + Payload). Il pacchetto originale viene cifrato/autenticato e inserito dentro un _nuovo_ pacchetto IP esterno.
+
+- **Uso:** VPN tra firewall o router (Site-to-Site).
     
-- **Problemi con NAT:** IPsec (specialmente AH, ma anche ESP) rompe il principio del NAT (Network Address Translation). Richiede meccanismi extra come "NAT-Traversal" (incapsulamento in UDP).
+- **Struttura:** `[New IP Header] [IPsec Header] [Old IP Header] [Payload]`
     
-- **Overhead:** L'aggiunta di header aumenta la dimensione del pacchetto, causando frammentazione (MTU issues).
+
+![[Pasted image 20260107163219.png]]
+
+> [!abstract] Visual Analysis
+> 
+> What to look at: La posizione degli header rossi (IPsec).
+> 
+> Meaning:
+> 
+> - **Transport:** L'header IPsec si inserisce _dentro_ il pacchetto originale.
+>     
+> - **Tunnel:** L'intero pacchetto originale diventa il _contenuto_ di un nuovo pacchetto.
+>     
+
+---
+
+## 6. Authentication Header (AH)
+
+Il protocollo **AH** (RFC 4302) fornisce integrità e autenticazione dell'origine, ma **NON** confidenzialità (niente cifratura).
+
+### Caratteristiche Chiave
+
+- **Integrità:** Garantisce che il pacchetto non sia stato modificato.
     
-- **Nessuna Autenticazione Utente:** IPsec autentica la macchina (IP), non l'utente umano (a differenza di TLS o SSH).
+- **Autenticazione:** Garantisce l'identità del mittente.
+    
+- **Anti-Replay:** Protegge contro la reiniezione di pacchetti vecchi tramite numeri di sequenza.
+    
+- **No Encryption:** Chiunque intercetti il traffico può leggere i dati.
+    
+
+### Struttura dell'Header AH
+
+L'header AH è identificato dal protocol number 51.
+ 
+![[Pasted image 20260107164801.png]]
+
+> [!abstract] Visual Analysis
+> 
+> What to look at: I campi interni dell'header.
+> 
+> Meaning:
+> 
+> - **Next Header:** Indica cosa c'è dopo (TCP, UDP, etc.).
+>     
+> - **SPI (Security Parameters Index):** Un numero a 32 bit che identifica univocamente la SA (insieme all'IP destinazione e al protocollo).
+>     
+> - **Sequence Number:** Contatore incrementale per prevenire attacchi Replay.
+>     
+> - **Authentication Data (ICV):** Il valore [[HMAC]] (Hash-based Message Authentication Code) che firma il pacchetto.
+>     
+
+### Copertura dell'Autenticazione (Il problema dei campi mutabili)
+
+AH cerca di autenticare "tutto il pacchetto", incluso l'header IP. Tuttavia, alcuni campi dell'[[IP protocol (IPv4)|IP header]] (come TTL e Checksum) cambiano ad ogni salto (hop) del router.
+
+Se AH li firmasse, la firma si romperebbe al primo router.
+
+Soluzione Tecnica:
+
+AH considera questi campi come Mutabili. Prima di calcolare l'HMAC:
+
+1. I campi mutabili (es. TTL, TOS) vengono azzerati.
+    
+2. Si calcola l'hash.
+    
+3. I campi vengono ripristinati per la trasmissione.
     
 
 > [!failure] Common Pitfall
 > 
-> NAT vs IPsec: Il NAT modifica l'header IP (cambia l'indirizzo sorgente) e i checksum TCP/UDP.
-> 
-> - **AH:** Autentica l'header IP. Se il NAT lo cambia, la verifica di integrità **fallisce sempre**. AH è incompatibile con il NAT.
->     
-> - **ESP:** Cifra i dati. Se il NAT cambia le porte (PAT) che sono cifrate, il NAT non può funzionare. Serve incapsulare ESP dentro UDP port 4500.
+> AH e NAT: Il [[NAT (Network Address Translation)]] cambia l'indirizzo IP sorgente/destinazione nell'header. Poiché AH autentica gli indirizzi IP (considerandoli immutabili), il NAT rompe irreversibilmente AH. Se c'è NAT, AH fallisce sempre.
 
+## 7. Modalità Operative AH: Transport vs Tunnel
 
----
+AH cambia comportamento in base alla topologia.
 
-## 1. Le Modalità Operative: Transport vs Tunnel
+### A. Transport Mode (Host-to-Host)
 
-IPsec può proteggere i pacchetti in due modi distinti, a seconda di dove viene applicato (sugli host finali o sui gateway).
+Usato per comunicazioni end-to-end tra due server. Protegge solo il payload del livello trasporto.
 
-### A. Transport Mode (End-to-End)
-
-- **Utilizzo:** Comunicazione diretta tra due host (es. Server-to-Server).
-    
-- **Funzionamento:** L'header IP originale viene mantenuto. L'header IPsec (AH o ESP) viene inserito **tra** l'header IP originale e il payload (TCP/UDP).
-    
-- **Limitazione:** L'indirizzo IP sorgente/destinazione è visibile in chiaro. Non nasconde la topologia della rete.
-    
-
-### B. Tunnel Mode (Site-to-Site)
-
-- **Utilizzo:** VPN tra due Gateway (Router/Firewall) o tra Host e Gateway.
-    
-- **Funzionamento:** L'intero pacchetto IP originale (header + dati) viene cifrato/autenticato e incapsulato dentro un **nuovo pacchetto IP**.
-    
-- **Vantaggio:** Nasconde gli indirizzi IP interni (quelli originali). Chi intercetta vede solo gli IP dei due Gateway esterni.
-    
-
-![[SCREEN_SLIDE_45_MODES]]
-
-> [!abstract] Visual Analysis
-> 
-> What to look at: La posizione degli header.
-> 
-> Meaning:
-> 
-> - **Transport:** `[IP Orig] [IPsec] [Payload]`
->     
-> - Tunnel: [IP Nuovo] [IPsec] [IP Orig] [Payload]
->     
->     Nel modo Tunnel, il pacchetto originale diventa il payload del nuovo pacchetto.
->     
-
----
-
-## 2. Authentication Header (AH)
-
-Il protocollo **AH** fornisce integrità e autenticazione, ma **NON** confidenzialità (i dati sono leggibili).
-
-### Struttura dell'Header
-
-L'header AH è posizionato dopo l'header IP e prima del protocollo di livello superiore (o ESP).
-
-**Struttura dei Campi:**
-
-- **Next Header:** Indica il protocollo successivo (TCP, UDP, etc.).
-    
-- **Payload Length:** Lunghezza dell'header AH.
-    
-- **SPI (Security Parameters Index):** Identifica la Security Association (SA).
-    
-- **Sequence Number:** Contatore anti-replay.
-    
-- **Authentication Data (ICV):** Il valore HMAC calcolato sul pacchetto.
-    
-
-### Il Problema dei "Mutable Fields"
-
-AH autentica l'intero pacchetto, incluso l'header IP. Tuttavia, alcuni campi dell'header IP cambiano durante il transito (es. **TTL** - Time To Live, **Checksum**).
-
-- **Logica:** Se AH autenticasse il TTL, ogni router che lo decrementa invaliderebbe la firma.
-    
-- **Soluzione:** AH considera questi campi come "mutabili" e li pone a zero durante il calcolo dell'HMAC.
-    
+**Struttura del pacchetto:**
+![[Pasted image 20260107171957.png]]
 
 > [!failure] Common Pitfall
 > 
-> AH e NAT: Il NAT (Network Address Translation) modifica l'indirizzo IP e il checksum. Poiché AH autentica questi campi (che sono considerati immutabili), il NAT rompe inevitabilmente AH. Se c'è un NAT, AH non funzionerà mai.
+> In Transport Mode, l'header IP originale è autenticato eccetto i cambi mutabili.
+
+### B. Tunnel Mode (Gateway-to-Gateway)
+
+Usato nelle VPN:
+![[Pasted image 20260107172143.png]]
+> [!failure] Common Pitfall
+> 
+> In Tunnel Mode, è tutto autenticato eccetto per i campi mutabili del NUOVO IP Header .
 
 ---
 
-## 3. Encapsulating Security Payload (ESP)
+## 7. Tabella Comparativa: AH vs ESP
 
-**ESP** è il protocollo principale oggi, poiché offre **confidenzialità** (cifratura) oltre all'autenticazione.
-
-### Struttura e Incapsulamento
-
-ESP avvolge il payload come un guscio. Ha un header (prima dei dati) e un trailer (dopo i dati).
-
-**Struttura Logica:**
-
-1. **ESP Header:**
-    
-    - `SPI`: Identifica la SA.
-        
-    - `Sequence Number`: Anti-replay.
-        
-2. **Payload (Cifrato):** I dati veri e propri (TCP/UDP/IP originale).
-    
-3. **ESP Trailer (Cifrato):**
-    
-    - `Padding`: Riempitivo per allineare i dati alla lunghezza del blocco (es. per AES-CBC).
-        
-    - `Pad Length`: Quanto padding è stato aggiunto.
-        
-    - `Next Header`: Tipo di protocollo contenuto.
-        
-4. **ESP Auth (In chiaro):** L'HMAC che autentica tutto il pacchetto ESP (tranne l'IP esterno).
-    
-
-![[SCREEN_SLIDE_52_ESP_STRUCTURE]]
-
-> [!abstract] Visual Analysis
-> 
-> What to look at: Le frecce che indicano "Confidentiality Coverage" vs "Authentication Coverage".
-> 
-> Meaning:
-> 
-> - La cifratura copre dal Payload fino al Next Header.
->     
-> - L'autenticazione copre dall'Header ESP fino al Next Header.
->     
-> - L'Auth Data stesso non è cifrato né autenticato (è il risultato dell'autenticazione).
->     
-
----
-
-## 4. IKEv2: Internet Key Exchange
-
-Configurare manualmente le chiavi IPsec (Manual Keying) non scala. **IKE** è il protocollo che automatizza la negoziazione delle Security Association (SA) e la generazione delle chiavi.
-
-### Architettura IKE
-
-IKE funziona separando il piano di controllo dal piano dati.
-
-1. **IKE SA (Control Plane):** Un canale sicuro per gestire il protocollo IKE stesso.
-    
-2. **Child SA (Data Plane):** Le SA IPsec (ESP/AH) usate per proteggere il traffico utente.
-    
-
-### Le Fasi di IKEv2
-
-IKEv2 semplifica il processo rispetto a v1, riducendo lo scambio a 4 messaggi principali per stabilire la connessione.
-
-#### Fase 1: IKE_SA_INIT
-
-Negoziazione dei parametri crittografici di base.
-
-Message Exchange:
-
-$$\text{Initiator} \xrightarrow{\text{HDR, SA, KE, Nonce}} \text{Responder}$$
-
-$$\text{Responder} \xrightarrow{\text{HDR, SA, KE, Nonce, [CertReq]}} \text{Initiator}$$
-
-> [!abstract] Technical Logic
-> 
-> - **SA:** Proposte di algoritmi (es. "Uso AES-256 e SHA-256").
->     
-> - **KE (Key Exchange):** Scambio delle chiavi pubbliche Diffie-Hellman per generare il segreto condiviso.
->     
-> - **Nonce:** Numeri casuali per garantire freschezza e unicità.
->     
-
-#### Fase 2: IKE_AUTH
-
-Autenticazione delle identità e creazione della prima Child SA (tunnel IPsec).
-
-Message Exchange (Encrypted):
-
-$$\text{Initiator} \xrightarrow{\text{HDR, Encrypted \{ IDi, Auth, SA2, TSi, TSr \}}} \text{Responder}$$
-
-> [!abstract] Technical Logic
-> 
-> - **IDi:** Identità dell'iniziatore (es. IP o FQDN).
->     
-> - **Auth:** Prova dell'identità (Firma digitale o Pre-Shared Key).
->     
-> - **TS (Traffic Selectors):** Regole per il traffico da proteggere (es. "Tutto il traffico dalla subnet 10.0.1.0/24").
->     
-
-#### Fase 3: CREATE_CHILD_SA (Opzionale/Successiva)
-
-Usata per:
-
-- Creare ulteriori tunnel IPsec con parametri diversi.
-    
-- **Rekeying:** Ruotare le chiavi crittografiche per mantenere la sicurezza nel tempo (PFS - Perfect Forward Secrecy).
-    
-
----
-
-## 5. Riepilogo IKE vs IPsec
-
-È fondamentale distinguere i ruoli:
-
-|**Caratteristica**|**IKE (Porta UDP 500)**|**IPsec (Protocollo IP 50/51)**|
+|**Funzionalità**|**AH (Transport/Tunnel)**|**ESP (Transport/Tunnel)**|
 |---|---|---|
-|**Ruolo**|Negoziatore ("Avvocato")|Trasportatore ("Corriere Blindato")|
-|**Scopo**|Autenticare i peer e generare chiavi|Cifrare e autenticare i pacchetti dati|
-|**Sicurezza**|Protegge se stesso (IKE SA)|Protegge il traffico utente (Child SA)|
-|**Durata**|Lunga (Gestione sessione)|Breve/Media (Rinnovata spesso)|
+|**Confidenzialità (Cifratura)**|❌ NO|✅ SI|
+|**Integrità Dati**|✅ SI (tutto il pacchetto*)|✅ SI (solo payload + header ESP)|
+|**Autenticazione Origine**|✅ SI|✅ SI|
+|**Anti-Replay**|✅ SI|✅ SI|
+|**Compatibilità NAT**|❌ Bassa (rompe l'hash)|⚠️ Media (richiede NAT-T)|
 
 > [!tip] Exam Focus
 > 
-> Traffic Selectors (TS): In IKEv2, i TS negoziano quali pacchetti devono finire nel tunnel. Se il TS dell'Initiator non combacia con quello del Responder (es. uno vuole proteggere solo HTTP, l'altro tutto il traffico), la negoziazione fallisce.
+> Nota che AH autentica anche parti dell'header IP esterno, mentre ESP autentica solo ciò che viene incapsulato dopo l'header ESP. Questo rende AH teoricamente più sicuro per l'integrità dell'indirizzamento, ma praticamente inutilizzabile su Internet moderno a causa del NAT.
+
+
+## 8. Encapsulating Security Payload (ESP)
+
+Mentre AH fornisce solo integrità ed autenticazione dell'origine, **ESP** (Protocollo 50) è il protocollo IPsec più completo perché offre **Confidenzialità** (Cifratura) oltre all'autenticazione e all'integrità.
+
+### Struttura del Pacchetto ESP
+
+ESP incapsula i dati avvolgendoli con un Header (prima dei dati) e un Trailer (dopo i dati).
+
+**Struttura Logica dei Campi:**
+
+1. **ESP Header (In chiaro):**
+    
+    - `SPI`: Identifica la Security Association.
+        
+    - `Sequence Number`: Contatore anti-replay.
+        
+2. **Payload (Cifrato):** I dati trasportati (es. segmento TCP).
+    
+3. **ESP Trailer (Cifrato):**
+    
+    - `Padding`: Bit di riempimento per allineare la cifratura a blocchi (es. AES-CBC richiede blocchi di 128 bit).
+        
+    - `Pad Length`: Lunghezza del padding.
+        
+    - `Next Header`: Identifica il protocollo contenuto nel payload.
+        
+4. **ESP Auth Data (In chiaro):** L'ICV (Integrity Check Value) calcolato sul pacchetto.
+    
+
+![[Pasted image 20260107170305.png]]
+
+> [!abstract] Visual Analysis
+> 
+> What to look at: Le due frecce laterali "Confidentiality Coverage" e "Authentication Coverage".
+> 
+> Meaning:
+> 
+> - **Cifratura:** Copre dal _Payload_ fino al _Next Header_. L'Header ESP iniziale rimane leggibile.
+>     
+> - **Autenticazione:** Copre dall'_Header ESP_ fino al _Next Header_.
+>     
+> - **Nota:** L'Auth Data stesso non è né cifrato né autenticato (è il risultato dell'operazione).
+>     
+
+---
+
+## 9. Modalità Operative ESP: Transport vs Tunnel
+
+Come per AH, anche ESP cambia comportamento in base alla topologia.
+
+### A. Transport Mode (Host-to-Host)
+
+Usato per comunicazioni end-to-end tra due server. Protegge solo il payload del livello trasporto.
+
+**Struttura del pacchetto:**
+![[Pasted image 20260107171709.png]]
+
+```
+[Orig IP Hdr] [ESP Hdr] [Encrypt: TCP/UDP + Data + ESP Trlr] [ESP Auth]
+```
+
+> [!failure] Common Pitfall
+> 
+> In Transport Mode, l'header IP originale non è cifrato. Un attaccante può vedere chi sta parlando con chi (Traffic Analysis), ma non il contenuto.
+
+### B. Tunnel Mode (Gateway-to-Gateway)
+
+Usato per le VPN. Cifra l'intero pacchetto IP originale.
+
+**Struttura del pacchetto:**
+![[Pasted image 20260107171717.png]]
+
+```
+[New IP Hdr] [ESP Hdr] [Encrypt: Orig IP Hdr + TCP/UDP + Data + ESP Trlr] [ESP Auth]
+```
+
+> [!abstract] Visual Analysis
+> 
+> Il pacchetto originale diventa il payload del nuovo pacchetto. L'indirizzo IP esterno (New IP Hdr) mostra solo i gateway della VPN, nascondendo la topologia interna.
+
+---
+
+## 10. Internet Key Exchange (IKE)
+
+Gestire manualmente le chiavi (Manual Keying) è impossibile su larga scala. **IKE** è il protocollo che automatizza la negoziazione delle Security Association (SA).
+
+### Funzioni Chiave di IKE
+
+- **Autenticazione Mutua:** Verifica l'identità dei peer (tramite Pre-Shared Key o Certificati).
+    
+- **Negoziazione:** Concorda algoritmi di cifratura/hash (es. "Usiamo [[AES]]-256 e [[SHA-256]]?").
+    
+- **Generazione Chiavi:** Usa [[Diffie-Hellman Key Exchange]] per creare chiavi segrete condivise su un canale insicuro.
+    
+- **Rekeying:** Ruota periodicamente le chiavi per garantire la sicurezza ([[Perfect Forward Secrecy (PFS)]]).
+    
+
+---
+
+## 11. Architettura e Fasi di IKEv2
+
+IKEv2 semplifica il processo rispetto alla versione 1, riducendo lo scambio a 4 messaggi principali per stabilire la connessione.
+    
+- **IKE_SA_INIT**: negotiation of algorithms, Diffie–Hellman exchange, provisional IKE SA
+    
+- **IKE_AUTH**: peer authentication, consolidation of the IKE SA, creation of the first Child SA
+    
+- **CREATE_CHILD_SA**: additional Child SAs or rekeying of existing ones
+    
+- **INFORMATIONAL**: error reporting, SA deletion, keep-alive messages
+    
+Each exchange usually involves 2 messages (request/response), except EAP-based authentication which may require more
+
+### IKE SA vs Child SA
+
+- **IKE SA (Control Plane):** Un canale sicuro bidirezionale usato _solo_ per scambiare messaggi di controllo IKE.
+    
+- **Child SA (Data Plane):** Le vere SA IPsec (ESP/AH) usate per proteggere il traffico utente.
+    
+
+### Fase 1: IKE_SA_INIT (Negoziazione Iniziale)
+
+1. **Initiator → Responder**
+	    
+	- HDR: IKE header with Initiator SPI, Responder SPI = 0, exchange type, flags
+	    
+	- SAi1: Initiator’s proposals (encryption, integrity, PRF, DH group)
+	    
+	- KEi: Diffie–Hellman value from the Initiator
+	    
+	- Ni: Initiator nonce (random value)
+	    
+2. **Responder → Initiator**
+	    
+	- HDR: IKE header with both SPIs set
+	    
+	- SAr1: Responder’s chosen algorithms from the proposals
+	    
+	- KEr: Diffie–Hellman value from the Responder
+	    
+	- Nr: Responder nonce (random value)
+	    
+	- [CERTREQ] (optional): certificate request
+    
+- **Purpose**
+	    
+	- Negotiate cryptographic algorithms
+	    
+	- Exchange DH values and nonces
+	    
+	- Derive the shared secret and create a provisional IKE SA
+
+> [!abstract] Math Analysis
+> 
+> - **SA:** Proposte di algoritmi (Cipher Suite).
+>     
+> - **KE (Key Exchange):** I valori pubblici Diffie-Hellman ($g^a \mod p$).
+>     
+> - **N (Nonce):** Numeri casuali per prevenire attacchi di replay e aggiungere entropia.
+>     
+> - **Risultato:** Dopo questo scambio, i peer calcolano una chiave segreta condivisa $K = g^{ab}$. Tutto il traffico successivo è cifrato.
+>     
+
+### Fase 2: IKE_AUTH (Autenticazione)
+
+1.  Initiator → Responder
+	    
+	- HDR: IKE header with both SPIs set
+	    
+	- IDi: Initiator Identity (IP address, FQDN, or other identifier)
+	    
+	- AUTH: Authentication payload (PSK, certificate-based signature, or EAP method)
+	    
+	- [CERT, CERTREQ] (optional): certificates and certificate requests
+	    
+	- SAi2: Proposal for the first Child SA (ESP or AH parameters)
+	    
+	- TSi: Traffic Selectors (initiator’s view of protected traffic)
+	    
+	- TSr: Traffic Selectors (responder’s view of protected traffic)
+    
+2. Responder → Initiator
+	    
+	- HDR: IKE header with both SPIs
+	    
+	- IDr: Responder Identity
+	    
+	- AUTH: Authentication payload of the responder
+	    
+	- [CERT] (optional): responder’s certificate(s)
+	    
+	- SAr2: Accepted Child SA proposal
+	    
+	- TSi/TSr: Final traffic selectors agreed for the Child SA
+	    
+- Purpose
+	    
+	- Authenticate both peers (initiator and responder)
+	    
+	- Consolidate the IKE SA (it becomes fully established)
+	    
+	- Negotiate and create the first Child SA for IPsec traffic
+
+> [!abstract] Technical Logic
+> 
+> - **ID:** L'identità (es. IP o FQDN).
+>     
+> - **AUTH:** La prova dell'identità (Firma digitale sul messaggio precedente).
+>     
+> - **TS (Traffic Selectors):** Definiscono quale traffico deve entrare nel tunnel (es. "Tutta la subnet 192.168.1.0/24").
+>     
+
+### Fase 3: CREATE_CHILD_SA (Gestione)
+
+1. Initiator → Responder
+	    
+	- HDR: IKE header with existing IKE SA SPIs
+	    
+	- SA: Proposal for the new Child SA (algorithms, mode, lifetimes)
+	    
+	- Ni: Nonce generated by the initiator
+	    
+	- [KEi] (optional): Diffie–Hellman value, if a new DH exchange is required (for Perfect Forward Secrecy)
+	    
+	- TSi: Traffic Selectors proposed by initiator
+	    
+	- TSr: Traffic Selectors proposed for responder
+	    
+2. Responder → Initiator
+	    
+	- HDR: IKE header with same SPIs
+	    
+	- SA: Accepted proposal for the Child SA
+	    
+	- Nr: Nonce generated by the responder
+	    
+	- [KEr] (optional): Responder’s Diffie–Hellman value
+	    
+	- TSi/TSr: Final traffic selectors chosen by responder
+    
+- Purpose
+	    
+	- Create additional Child SAs under the same IKE SA
+	    
+	- Perform rekeying of an existing Child SA or the IKE SA itself
+	    
+	- Allow traffic with new parameters, selectors, or lifetimes without renegotiating the IKE SA
+
+---
+## 12. SA attraverso IKE
+- IKE SA (Control Plane)
+	    
+	- Secures IKE signaling and negotiation
+    
+- Child SA(s) (Data Plane)
+	    
+	- Protect data traffic using ESP or AH
+	    
+	- All Child SAs are created, updated, and deleted by a single IKE SA
+    
+- SAD (Security Association Database)
+	    
+	- Stores IKE SA and all Child SAs
+	    
+	- Contains
+		    
+		- keys
+		    
+		- algorithms
+		    
+		- lifetimes
+		    
+		- sequence numbers
+
+## 13. IPsec con IKE
+
+1. Complementary roles
+	    
+	- IPsec (AH/ESP) provides packet security
+	    
+	- IKE manages negotiation and keys
+	    
+2. Transparency
+	    
+	- Works below transport and application layers
+    
+3. Deployment flexibility
+	    
+	- Host-to-host, gateway-to-gateway, host-to-gateway
+
+## 14. Riepilogo: Ruoli e Differenze
+
+|**Caratteristica**|**IKE (Control Plane)**|**IPsec ESP/AH (Data Plane)**|
+|---|---|---|
+|**Protocollo**|UDP Porta 500|Protocollo IP 50 (ESP) o 51 (AH)|
+|**Funzione**|"L'Avvocato": Negozia il contratto|"Il Corriere Blindato": Trasporta i dati|
+|**Sicurezza**|Protegge se stesso (IKE SA)|Protegge il traffico utente (Child SA)|
+|**Durata**|Lunga (Sessione di gestione)|Breve (Rinnovata spesso per sicurezza)|
+
+> [!tip] Exam Focus
+> 
+> Traffic Selectors (TS): Sono cruciali in IKEv2. Se l'Initiator propone un TS (es. "voglio parlare con tutti") e il Responder ha una policy diversa (es. "puoi parlare solo col server web"), la negoziazione del TS permette di restringere il tunnel alla sola intersezione permessa (Narrowing).
+
+![[Pasted image 20260107174725.png]]
