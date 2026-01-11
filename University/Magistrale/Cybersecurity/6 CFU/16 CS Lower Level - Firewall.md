@@ -1173,6 +1173,7 @@ Dove posizionare il firewall è cruciale per definire il **Security Perimeter**.
 ---
 
 ## 8. Bastion Host (Slide 49-50)
+[[Bastion Host]]
 
 Per mitigare i rischi sopra descritti, si introduce il concetto di **Bastion Host**.
 
@@ -1305,7 +1306,7 @@ Questa configurazione prevede un Bastion host con due interfacce di rete, posizi
 
 ### Screened Subnet
 
-Questa è l'architettura che implementa una vera DMZ isolata tramite due router.
+Questa è l'architettura che implementa una vera [[DMZ]] isolata tramite due router.
 
 ![[Pasted image 20260110210159.png]]
 
@@ -1324,6 +1325,65 @@ Questa è l'architettura che implementa una vera DMZ isolata tramite due router.
 >     
 > - La rete interna è invisibile (**internal network is invisible**).
 >     
+
+### Dual-Homed Bastion Host vs Screened Subnet
+#### considering a DMZ like that, isn't actually better to, also, be sure that there is only una link to router1-bastion and another link to bastion-router2? (nell'atto pratico è identico al Dual-Homed [[Bastion Host]])
+
+Hai avuto un'intuizione di sicurezza molto acuta. La risposta breve è: **Sì, sarebbe più sicuro, ma molto meno efficiente e scalabile.**
+
+Quello che tu proponi (un collegamento fisico unico `Router1 -> Bastion -> Router2`) trasforma il Bastion Host in un collo di bottiglia fisico.
+
+Analizziamo perché l'architettura nell'immagine (**Screened Subnet**) è spesso preferita rispetto alla tua idea (che somiglia più a un **Dual-Homed Gateway** in serie), e come bilanciare i due aspetti.
+
+### 1. La tua idea: Il "Collo di Bottiglia" Sicuro
+
+Se costringi fisicamente tutto il traffico a passare _dentro_ il Bastion Host (un cavo entra, uno esce verso il Router 2), ottieni:
+
+- **Vantaggio (Sicurezza Assoluta):** Nessun pacchetto può raggiungere il Router interno (Inside router) senza essere processato dal Bastion. È impossibile "aggirarlo".
+    
+- **Svantaggio 1 (Performance):** Il Bastion Host (che è un server, non un router hardware) deve analizzare e instradare _tutto_ il traffico. Se la rete interna deve scaricare un backup da 100GB, il Bastion si satura e si blocca, interrompendo anche i servizi critici (es. Web Server).
+    
+- **Svantaggio 2 (Single Point of Failure):** Se il Bastion Host va in crash per un aggiornamento o un errore software, **tutta** l'azienda è isolata da Internet. I router funzionano, ma il "ponte" è crollato.
+    
+
+### 2. L'immagine: La "Screened Subnet" (DMZ)
+
+Nell'immagine, i dispositivi (Bastion, Info Server, Modem) sono collegati a uno switch comune tra i due router.
+
+- **Vantaggio (Scalabilità):** Puoi aggiungere 10 server nella DMZ (Web, Mail, DNS) senza dover aggiungere 10 schede di rete al Router.
+    
+- **Vantaggio (Resilienza):** Se il Bastion Host (usato magari solo come Proxy Web) si rompe, il server di Posta (Information Server) continua a funzionare perché ha il suo percorso verso i router.
+    
+- **Vantaggio (Velocità):** I Router fanno i Router (veloci), i Server fanno i Server. Non chiedi a un Server di fare il lavoro pesante di routing per tutta l'azienda.
+    
+
+### 3. Come ottenere la sicurezza che chiedi tu nell'architettura dell'immagine?
+
+La tua preoccupazione è: _"Se sono tutti collegati insieme, un hacker non può saltare dal Router Esterno direttamente al Router Interno bypassando il Bastion?"_
+
+La risposta sta nelle **Regole (ACL)** del **Router Interno (Inside router)**.
+
+Per replicare la sicurezza della tua idea senza i problemi di performance, si configura l'Inside Router così:
+
+1. **DROP ALL:** Di default, scarta tutto ciò che arriva dalla DMZ.
+    
+2. **ACCEPT ONLY FROM BASTION:** Accetta connessioni _solo_ se l'IP sorgente è quello del Bastion Host (e solo sulle porte necessarie, es. Proxy o SSH).
+    
+
+In questo modo ottieni una **costrizione logica** invece che fisica:
+
+- Fisicamente i cavi permetterebbero il passaggio diretto.
+    
+- Logicamente, il Router Interno dice: _"Non mi interessa se sei nella DMZ, io parlo solo con il Bastion Host"_.
+    
+
+### In Sintesi
+
+La tua idea crea un Dual-Homed Gateway (massima sicurezza, basse prestazioni, alto rischio guasto).
+
+L'immagine mostra una Screened Subnet (ottimo bilanciamento, sicurezza gestita dalle regole dei router, alta scalabilità).
+
+Nelle aziende reali si usa quasi sempre l'approccio dell'immagine.
 
 ## 3. Protezione degli Indirizzi e Instradamento
 

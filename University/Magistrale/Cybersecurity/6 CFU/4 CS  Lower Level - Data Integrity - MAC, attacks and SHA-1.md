@@ -1,5 +1,6 @@
 last lesson [[3 CS  Lower Level - Block Ciphers]]
 # DATA INTEGRITY
+## Introduction
 ### What is data integrity?
 - [[Integrity]] = trust in the unaltered state of information
 - Goal: prevent undetected or unauthorised changes
