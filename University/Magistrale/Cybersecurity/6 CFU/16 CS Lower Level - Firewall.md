@@ -1043,6 +1043,7 @@ Oltre al packet filtering, esistono approcci più sofisticati basati sul livello
 ---
 
 ## 3. Circuit-Level Gateway (Slide 43)
+[[Circuit-Level Gateway]]
 
 Questo tipo di firewall opera creando un circuito virtuale tra la rete interna ed esterna.
 
@@ -1050,7 +1051,7 @@ Questo tipo di firewall opera creando un circuito virtuale tra la rete interna e
 
 > [!abstract] Visual Analysis
 > 
-> **What to look at:** Lo schema mostra un "Gateway" che interpone due connessioni separate: "Outside connection" (tra host esterno e gateway) e "Inside connection" (tra gateway e host interno). All'interno del gateway ci sono moduli "Out" e "In" collegati tra loro.
+> **What to look at:** Lo schema mostra un "[[Gateway]]" che interpone due connessioni separate: "Outside connection" (tra host esterno e gateway) e "Inside connection" (tra gateway e host interno). All'interno del gateway ci sono moduli "Out" e "In" collegati tra loro.
 > 
 > **Meaning:** Il gateway unisce ("splices") e rilancia ("relays") due connessioni TCP distinte, agendo come intermediario trasparente.
 
@@ -1080,6 +1081,7 @@ Questo tipo di firewall opera creando un circuito virtuale tra la rete interna e
 ---
 
 ## 4. Application-Level Gateway (Slide 44)
+[[Application-Level Gateway]]
 
 Conosciuto anche come Proxy, opera a livello applicativo esaminando il contenuto del traffico.
 
