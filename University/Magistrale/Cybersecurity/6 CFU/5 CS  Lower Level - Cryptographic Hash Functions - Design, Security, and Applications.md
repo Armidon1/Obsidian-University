@@ -22,7 +22,7 @@ A hash function _h: $D \Rightarrow R$_ is called _**weakly collision resistant**
 “Dato _questo_ messaggio $m_1$, non riesco a trovarne un altro messaggio $m_2$ con lo stesso hash.”
 
 >[!Strongly collision resistant]
->A function _h: $D \Rightarrow R$ is called **strongly collision resistant** if it is **hard** to find $x$, $x’$ such that $x’!=x$ but $h(x)=h(x’)$
+>A function _h_: $D \Rightarrow R$ is called **strongly collision resistant** if it is **hard** to find $x$, $x’$ such that $x’!=x$ but $h(x)=h(x’)$
 
 “Non riesco a trovare _nessuna_ coppia di messaggi diversi che produca lo stesso hash."
 
@@ -265,7 +265,7 @@ Hash(block data || nonce) < Target
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Use case**                      | **How hashing supports privacy**                                                                                                                                                                                               |
 | **Data anonymization**            | Hashes can obscure identifiers (e.g. names, emails) before data sharing. In some cases i don't want to share personal information.                                                                                             |
-| **Password storage**              | Stores only a hashed version of the password, not the password itself. **NEVER STORE THE PASSWORD IN CLEAR**. If you want to do it, you must store them by encrypting them first                                               |
+| **Password storage**              | Stores only a hashed version of the password, not the password itself. **NEVER STORE THE PASSWORD IN CLEAR**. If you want to do it, you must store them by hashing them first                                                  |
 | **Zero-Knowledge Proofs (*ZKP*)** | Hashes are used to commit to a value without revealing it. Used by the adversary that created a Ransomware: How to prove to the victim that the adversary has the key, without sharing the key itself? It is possible somehow. |
 | **Private blockchains**           | Transactions may include hashed identifiers to pseudonymize users                                                                                                                                                              |
 
@@ -295,7 +295,7 @@ Until now we considered the Unkeyed one
 ## Cryptographic Hashing Functions
 
 - Normally unkeyed (anyone can compute)
-- Based on Kerckhoffs’s principle
+- Based on [[Kerckhoffs’s principle]]
 - Unkeyed hashing cannot ensure authenticity
 
 ### Need for Keyed Hashing
