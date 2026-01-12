@@ -30,6 +30,8 @@ A hash function _h: $D \Rightarrow R$_ is called _**weakly collision resistant**
 - Birthday bound shows that short fingerprints (≤160 bits) are feasible today
 	- [[SHA-1]]  (we saw it in [[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1#SHA-1 basics]]) was a cryptographic function until 2014
 
+Non riesci a vedere la differenza? guarda [[Differenza strong e weak collision resistant|qui]]
+
 **Note:** in SHA we consider not only the original message m, but also the padding. different padding creates different hashes. so we care, not only the message's bits but also how we pad. For instance, OpenSSL use a padding with a standard called PKCS#7 (the standard number 7), which says that the padding, for example, we want to add 6 padding bytes, each byte contains the number 6.   
 
 ### Weak vs. Strong Form
@@ -395,6 +397,8 @@ it provides Authenticity, better then the Unkeyed One
 	**If `h(M) = h(M')`, then `h(M||k) = h(M'||k)`.**
 
 The prefix method is more insecure. In this method, is requiring more stuff. It is still insecure 
+
+guarda nel dettaglio [[naive metodi per keyed hashing| qui]]
 
 ### Other Techniques
 
