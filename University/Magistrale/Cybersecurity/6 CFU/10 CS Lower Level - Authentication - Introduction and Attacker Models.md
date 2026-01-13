@@ -1,3 +1,4 @@
+lezione precedente [[9 CS Lower Level - ElGamal and Digital Signature Standard (DSS)]]
 # Autenticazione: Un'Introduzione
 
 **Tags:** #engineering #cybersecurity #authentication #sicurezza_informatica #biometria
@@ -841,3 +842,6 @@ Bob deve contattare la TTP o inviare un nonce alla TTP prima di accettare la chi
 > 
 > Il protocollo Needham-Schroeder è la base teorica di [[Kerberos]], il sistema di autenticazione standard in Windows e Active Directory. Kerberos usa pesantemente i Timestamp per evitare i problemi di replay senza dover fare troppi scambi di messaggi (handshake).
 
+---
+domande esame [[domande esame autenticazione]]
+prossima lezione [[11 CS Lower Level - Kerberos]]

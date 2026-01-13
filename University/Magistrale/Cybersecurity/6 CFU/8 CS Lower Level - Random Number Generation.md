@@ -1,3 +1,4 @@
+last lesson [[7 CS  Lower Level - Asymmetric encryption]]
 # Random Number Generation: An Introduction
 
 **Tags:** #engineering #cryptography #cybersecurity #RNG #PRNG #CSPRNG
@@ -288,3 +289,7 @@ Security: Forward & backward secure (if reseeded periodically)
 3. **Use OS APIs:** `/dev/urandom` (Linux) or `CryptGenRandom` (Windows). These libraries handle entropy collection and hashing securely.
     
 4. **Reference:** RFC 1750 13.
+
+---
+domande esame [[domande esame PRNG|qui]]
+next lesson [[9 CS Lower Level - ElGamal and Digital Signature Standard (DSS)]]

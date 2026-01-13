@@ -1,3 +1,4 @@
+last lesson [[11 CS Lower Level - Kerberos]]
 # Autenticazione basata su Password
 
 **Tags:** #engineering #cybersecurity #authentication #passwords #security_protocols
@@ -993,3 +994,7 @@ Se decidi di generare chiavi, segui queste regole d'oro:
 > Errore grave: Usare la stessa chiave sia per cifrare i dati (Confidentiality) sia per calcolare il MAC (Integrity).
 > 
 > Soluzione: Dalla chiave di sessione "master", deriva due sotto-chiavi indipendenti: $K_{enc}$ e $K_{mac}$.
+
+---
+domande esame [[domande esame Password Auth|qui]]
+next lesson [[13 CS Lower Level - Authentication based on public keys]]

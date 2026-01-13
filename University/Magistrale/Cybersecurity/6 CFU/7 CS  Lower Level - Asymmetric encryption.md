@@ -1874,3 +1874,7 @@ PSS is the superior standard in every practical way.
 |**Security Proof**|**None.** Has known vulnerabilities.|**Yes.** Provably secure in the random oracle model.|
 |**Salt**|No|**Yes** (a random value is added to each signature)|
 |**Standard Use**|Legacy systems (TLS 1.2, S/MIME)|Modern standards (TLS 1.3, FIPS 186-5)|
+
+---
+domande esame [[domande esame asymmetric encryption RSA|qui]]
+next lesson [[8 CS Lower Level - Random Number Generation]]

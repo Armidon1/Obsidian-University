@@ -1,3 +1,100 @@
+
+Ecco la **Guida Definitiva** basata sull'analisi di tutti i file inviati.
+
+---
+
+### 1. La "Bibbia" di Iptables (Cheat Sheet)
+
+Le domande su Iptables sono presenti in quasi tutti gli esami recenti. La chiave è distinguere **cosa** stai proteggendo.
+
+#### A. Regola d'Oro: Personal vs Network Firewall
+
+- **Se proteggi l'host stesso (Personal Firewall):** Usa le chain `INPUT` (traffico in entrata) e `OUTPUT` (traffico in uscita). **Mai** usare `FORWARD`.
+    
+- **Se proteggi una LAN/Subnet (Network Firewall/Gateway):** Usa la chain `FORWARD`. Il traffico passa _attraverso_ il firewall, non è diretto a lui.
+    
+
+#### B. Comandi "Salva-Esame" (Copia-incolla mentale)
+
+|**Obiettivo**|**Comando/Regola Chiave**|
+|---|---|
+|**Blocco Totale (Panic Mode)**|`iptables -P INPUT DROP` (Policy di default)<br><br>  <br><br>`iptables -P FORWARD DROP`<br><br>  <br><br>`iptables -P OUTPUT DROP`|
+|**Consentire SSH (Admin)**|**Personal:** `iptables -A INPUT -p tcp -s <IP_ADMIN> --dport 22 -j ACCEPT`<br><br>  <br><br>**Network:** `iptables -A FORWARD -p tcp -s <IP_ADMIN> -d <IP_DEST> --dport 22 -j ACCEPT`|
+|**Web Server (Anti-DoS)**|`iptables -A INPUT -p tcp --dport 80 -m limit --limit 2/s -j ACCEPT` (Limita le connessioni a 2 al secondo)|
+|**Stateful (Traffico di ritorno)**|`iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT` (Essenziale: permette alle risposte di tornare indietro senza dover aprire porte a caso)|
+|**Mail (SMTP + IMAP)**|`iptables -A FORWARD -i eth0 -o eth1 -p tcp -m multiport --dports 465,993 -j ACCEPT`|
+|**Bloccare IP specifico**|`iptables -A INPUT -s <IP_NEMICO> -j DROP`|
+
+**Nota sulla Whitelist:** Se il testo chiede "Whitelist policy" o "Default DENY", devi prima impostare le policy su DROP (`-P ... DROP`) e poi aggiungere _solo_ le regole `ACCEPT` specifiche.
+
+---
+
+### 2. Protocol Master Class: "Alice, Bob e i Giochi"
+
+Molti esami chiedono di analizzare o correggere protocolli di gioco (Pari/Dispari, Morra Cinese, Dadi).
+
+Il Problema: Se Alice invia la sua mossa in chiaro, Bob può "barare" leggendola prima di giocare la sua.
+
+La Soluzione Universale: Schema di Commitment
+
+Se devi "fixare" un protocollo di gioco, usa sempre questi 3 passaggi:
+
+1. **Commitment:** Alice sceglie la mossa $x$ e un numero casuale $r$ (nonce). Invia a Bob l'hash $H(x, r)$. (Bob ora non conosce la mossa, ma Alice non può cambiarla perché l'hash la vincola).
+    
+2. **Gioco:** Bob invia la sua mossa $y$ in chiaro.
+    
+3. **Rivelazione (Decommitment):** Alice invia $x$ e $r$ in chiaro. Bob calcola $H(x, r)$ e verifica che corrisponda all'hash ricevuto al passo 1.
+    
+
+_Attenzione:_ Senza il nonce $r$, Bob potrebbe pre-calcolare gli hash di "Sasso", "Carta", "Forbice" e scoprire la mossa di Alice (Attacco a dizionario/Rainbow table).
+
+---
+
+### 3. OpenSSL & Command Line (Trend 2023-2025)
+
+Negli ultimi esami è richiesto di spiegare riga per riga comandi come questi:
+
+- `openssl enc -d -aes-256-cbc -in file.enc -out file.txt`
+    
+    - **Spiegazione:** Decifra (`-d`) il file `file.enc` usando l'algoritmo AES a 256 bit in modalità CBC e salva il risultato in `file.txt`.
+        
+- `openssl rsa -in key.pem -pubout -out pub.pem`
+    
+    - **Spiegazione:** Legge una chiave privata RSA da `key.pem` ed estrae la corrispondente chiave pubblica (`-pubout`), salvandola in `pub.pem`.
+        
+- `openssl x509 -in cert.pem -text -noout`
+    
+    - **Spiegazione:** Legge un certificato X.509 (`cert.pem`) e lo stampa in formato leggibile (`-text`), sopprimendo l'output del blocco codificato in base64 (`-noout`).
+        
+
+---
+
+### 4. Simulazione "Incubo" (Le domande più insidiose)
+
+Queste sono le domande che fanno la differenza tra il 25 e il 30L:
+
+1. **Bit-Flipping in AES-CBC:**
+    
+    - _Se inverto un bit nel blocco cifrato $C_1$, cosa succede al testo in chiaro?_
+        
+    - **R:** Il blocco $P_1$ viene distrutto (garbage). Nel blocco $P_2$, si inverte il bit nella _stessa posizione_ del bit modificato in $C_1$.
+        
+2. **Integrità vs Autenticità:**
+    
+    - _I MAC garantiscono integrità? E autenticità?_
+        
+    - **R:** Sì a entrambe. L'hash garantisce integrità (non modificato), la chiave segreta condivisa garantisce autenticità (proviene da chi ha la chiave). Un semplice Hash (senza chiave) garantisce solo integrità, ma non autenticità (chiunque può ricalcolarlo).
+        
+3. **Collisioni Hash:**
+    
+    - _Perché le funzioni Hash Strongly Collision Resistant sono anche Weakly Resistant?_
+        
+    - **R:** Perché "Strong" significa che è difficile trovare _qualsiasi_ coppia $(x, y)$ che collide. "Weak" significa che, dato un $x$ specifico, è difficile trovare un $y$ che collide. Se non riesco a trovare _nessuna_ coppia (Strong), a maggior ragione non riesco a trovarne una fissato un elemento (Weak).
+        
+
+Hai tutto il materiale per prepararti al meglio. In bocca al lupo per l'esame!
+
+# Lista di domande (non completa)
 ### 1. Concetti Base, Confidenzialità e Integrità
 
 - Spiegare i termini confidenzialità ed integrità.
@@ -126,7 +223,10 @@
 
 ---
 
-### 7. Autenticazione e Protocolli
+### 7. AutenticaziRicevuto! Con l'ultimo esame del ￼￼Giugno 2025￼￼, abbiamo completato il dataset.
+
+Questo esame conferma definitivamente la direzione "sistemistica" del corso: ci sono domande precise sull'analisi di comandi ￼￼openssl￼￼ (decifratura, verifica firma, analisi certificati) e sull'uso avanzato di ￼￼iptables￼￼ con il modulo ￼￼conntrack￼￼.
+one e Protocolli
 
 - Mostrare un protocollo che usi un nonce per la mutua autenticazione fra due utenti che condividono una password segreta.
     

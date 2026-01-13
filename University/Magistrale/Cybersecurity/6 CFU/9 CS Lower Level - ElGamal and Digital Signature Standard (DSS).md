@@ -1,3 +1,4 @@
+last lesson [[8 CS Lower Level - Random Number Generation]]
 # ElGamal and Digital Signature Standard (DSS)
 
 **Tags:** #engineering #cryptography #digital_signature #ElGamal #DSS #NIST
@@ -493,3 +494,7 @@ Verified OK
 ```
 
 il professore ha detto che in futuro ci chiederà (in un altro contesto) di applicare questa roba ed inoltre ha sottolineato anche il fatto che openssl è un po' rompiscatole con la sintassi.
+
+---
+domande esame [[domande esame elgamal and dss|qui]]
+next lesson [[10 CS Lower Level - Authentication - Introduction and Attacker Models]]

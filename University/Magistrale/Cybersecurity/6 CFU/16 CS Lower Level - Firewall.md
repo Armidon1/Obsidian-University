@@ -1,3 +1,4 @@
+last lesson [[15 CS Lower Level - TLS and IPSec]]
 In questa sezione potrebbe essere comodo consultare la tabella [[Common Ports and Protocols]]
 # Firewalls
 
@@ -1431,3 +1432,6 @@ I firewall non sono una soluzione perfetta e presentano limitazioni intrinseche.
     - Hanno una prevenzione limitata contro gli attacchi interni (**insider attacks**).
         
 - **Gestione:** Aumentano la complessità e il potenziale di errata configurazione (**misconfiguration**).
+
+---
+domande esame [[domande esame firewall|qui]]

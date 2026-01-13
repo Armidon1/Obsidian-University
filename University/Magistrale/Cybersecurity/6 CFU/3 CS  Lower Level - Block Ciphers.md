@@ -413,4 +413,5 @@ The modern standard for many applications (uses in [[TLS]] 1.3, [[AES-GCM]] stan
 |**Security**|**Insecure** (leaks patterns)|Secure (if IV random)|Secure (if IV unique)|Secure (if IV unique)|
 
 ---
+vedi domande esame [[domande esame block cipher|qui]]
 next lesson [[4 CS  Lower Level - Data Integrity - MAC, attacks and SHA-1]]

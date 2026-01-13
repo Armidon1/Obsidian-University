@@ -388,5 +388,7 @@ After all blocks are processed: p(r) = acc
     - Present the results through clear, labeled graphs, highlighting performance differences among the algorithms
     - Specify in your report which tool (OpenSSL or age) was used in each case and how
 
+---
 
+per l'esame [[domande esame AEDA|qui]]
 next lesson [[7 CS  Lower Level - Asymmetric encryption]]

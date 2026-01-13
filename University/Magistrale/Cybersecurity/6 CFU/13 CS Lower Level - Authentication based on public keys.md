@@ -1,3 +1,4 @@
+last lesson [[12 CS Lower Level - Password Authentication]]
 # Autenticazione a Chiave Pubblica e Confronto con Kerberos
 
 **Tags:** #ingegneria #security #autenticazione #crittografia #kerberos
@@ -650,3 +651,7 @@ Bitwarden rispetta comunque i flussi matematici di **Registrazione** e **Autenti
     
 
 La matematica sottostante è identica; cambia solo l'architettura di fiducia (fiducia nel chip fisico vs fiducia nella crittografia del vault software).
+
+---
+domande esame [[domande esame auth pk|qui]]
+next lesson [[14 CS Lowel Level - PKI]]

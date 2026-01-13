@@ -1,3 +1,4 @@
+last lesson [[10 CS Lower Level - Authentication - Introduction and Attacker Models]]
 # Kerberos: Protocollo di Autenticazione per Sistemi Distribuiti
 
 **Tags:** #engineering #cybersecurity #kerberos #SSO #network-security
@@ -325,3 +326,6 @@ Sebbene la filosofia sia identica, la **Versione 5** ha introdotto miglioramenti
 > 
 > Risposta: Serve a evitare che l'utente debba digitare la password ogni volta che vuole accedere a un nuovo servizio. Il TGT funge da "credenziale temporanea" che scade solitamente dopo 8-10 ore.
 
+---
+domande esame [[domande esame Kerberos|qui]]
+next lesson [[12 CS Lower Level - Password Authentication]]

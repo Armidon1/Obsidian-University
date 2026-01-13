@@ -1,3 +1,4 @@
+last lesson [[14 CS Lowel Level - PKI]]
 # Transport Layer Security (TLS): Architettura e Protocollo 1.3
 
 **Tags:** #ingegneria #reti #sicurezza #tls #crittografia #protocolli
@@ -937,3 +938,7 @@ Each exchange usually involves 2 messages (request/response), except EAP-based a
 > Traffic Selectors (TS): Sono cruciali in IKEv2. Se l'Initiator propone un TS (es. "voglio parlare con tutti") e il Responder ha una policy diversa (es. "puoi parlare solo col server web"), la negoziazione del TS permette di restringere il tunnel alla sola intersezione permessa (Narrowing).
 
 ![[Pasted image 20260107174725.png]]
+
+---
+next lesson [[16 CS Lower Level - Firewall]]
+domadne esame [[domande esame TLS e IPSEC|qui]]

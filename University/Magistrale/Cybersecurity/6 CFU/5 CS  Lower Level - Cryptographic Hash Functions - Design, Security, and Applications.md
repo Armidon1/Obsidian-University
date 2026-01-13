@@ -733,4 +733,7 @@ Regola pratica: se la finalità è sicurezza/integrità/autenticità usa una cry
 	
 we can encrypt the disk for Confidentiality and can get a hash of the disk for optimisation
 
+---
+
+domande esame [[domande esame data integrity e hashing|qui]]
 next lesson [[6 CS  Lower Level - Authenticated Encryption]]

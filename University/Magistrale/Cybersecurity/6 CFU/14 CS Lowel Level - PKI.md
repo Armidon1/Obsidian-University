@@ -1,3 +1,4 @@
+last lesson [[13 CS Lower Level - Authentication based on public keys]]
 # Infrastruttura a Chiave Pubblica (PKI)
 
 **Tags:** #ingegneria #security #pki #crittografia #trust_models
@@ -1281,3 +1282,7 @@ Certificati firmati con la loro stessa chiave privata (non da una CA fidata).
 > [!example] Professor's Example
 > 
 > Usare un certificato Self-Signed in produzione è accettabile SOLO se si ha il controllo completo di tutti i client (es. una rete interna chiusa dove si installa manualmente il certificato su ogni macchina). Sul web pubblico è un errore grave.
+
+---
+next lesson [[15 CS Lower Level - TLS and IPSec]]
+domande esame [[domande esame PKI|qui]]

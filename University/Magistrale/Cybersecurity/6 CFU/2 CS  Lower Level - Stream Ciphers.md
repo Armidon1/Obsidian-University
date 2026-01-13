@@ -283,5 +283,5 @@ OpenSSH: option for encrypted shell sessions, now less used
 
 
 ---
-
+guarda le possibili domande [[domande esame stream cipher|qui]]
 next lesson [[3 CS  Lower Level - Block Ciphers]]
