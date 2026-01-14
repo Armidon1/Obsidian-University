@@ -224,6 +224,8 @@ Se ti chiedono "Come risolve OAEP i problemi di RSA?", la risposta è:
 
 ### 2. Lo Schema (Da saper disegnare)
 
+![[Pasted image 20251113160151.png]]
+
 OAEP è una **Rete di Feistel a 2 round** che usa due funzioni hash ($G$ e $H$) e operazioni XOR.
 
 **Input:**
