@@ -67,6 +67,182 @@ Negli ultimi esami è richiesto di spiegare riga per riga comandi come questi:
     - **Spiegazione:** Legge un certificato X.509 (`cert.pem`) e lo stampa in formato leggibile (`-text`), sopprimendo l'output del blocco codificato in base64 (`-noout`).
         
 
+Ecco dei **"Pattern Mentali"** da memorizzare.
+
+L'idea è imparare lo scheletro fisso del comando e sapere dove inserire le "variabili" (i nomi dei file che il prof ti darà nel testo dell'esercizio).
+
+Usa questa legenda per i segnaposto:
+
+- `[ALGO]` = Algoritmo (es. `aes-256-cbc`, `sha256`)
+    
+- `[PRIV]` = File Chiave Privata
+    
+- `[PUB]` = File Chiave Pubblica
+    
+- `[IN]` = File di Input
+    
+- `[OUT]` = File di Output
+    
+
+---
+
+#### 1. Pattern Gestione Chiavi (Comando `rsa`)
+
+Questo comando serve per **creare**, **proteggere** o **estrarre** parti di chiavi.
+
+Scheletro:
+```
+openssl rsa -in [INPUT_KEY] [AZIONE] -out [OUTPUT_KEY]
+```
+- **Se devi estrarre la pubblica:**
+    
+    - Azione: `-pubout`
+        
+    - _Esempio:_ `openssl rsa -in priv.pem -pubout -out pub.pem`
+        
+- **Se devi cifrare la privata (mettere password):**
+    
+    - Azione: `-[ALGO]` (es. `-aes256`)
+        
+    - _Esempio:_ `openssl rsa -in priv.pem -aes256 -out priv_secure.pem`
+        
+- **Se devi togliere la password:**
+    
+    - Azione: (nessuna flag particolare, basta non mettere l'algo)
+        
+    - _Esempio:_ `openssl rsa -in priv_secure.pem -out priv_plain.pem`
+        
+
+> **Regola d'oro:** Se leggi "estrai pubblica", scrivi subito **`-pubout`**.
+
+---
+
+#### 2. Pattern Crittografia Asimmetrica (Comando `pkeyutl`)
+
+Usa questo per cifrare/decifrare file piccoli o chiavi AES usando RSA.
+
+Scheletro:
+```
+openssl pkeyutl -[OPERAZIONE] -inkey [CHIAVE] [OPZIONI_CHIAVE] -in [IN] -out [OUT]
+```
+- **Se Cifri (Confidenzialità):**
+    
+    - Operazione: `-encrypt`
+        
+    - Chiave: `[PUB]`
+        
+    - Opzione Chiave: `-pubin` (Obbligatorio!)
+        
+- **Se Decifri:**
+    
+    - Operazione: `-decrypt`
+        
+    - Chiave: `[PRIV]`
+        
+    - Opzione Chiave: (Nessuna, la privata è default)
+        
+
+> Regola d'oro:
+> 
+> Cifrare = Pubblica in input (-pubin).
+> 
+> Decifrare = Privata in input.
+
+---
+
+#### 3. Pattern Firma Digitale (Comando `dgst`)
+
+Usa questo per firmare documenti e verificare firme.
+
+Scheletro:
+```
+openssl dgst -[HASH] -[AZIONE] [CHIAVE] [OPZIONI_EXTRA] [FILE_ORIGINALE]
+```
+- **Se Firmi (Crei la firma):**
+    
+    - Azione: `-sign`
+        
+    - Chiave: `[PRIV]`
+        
+    - Opzioni Extra: `-out [FILE_FIRMA]`
+        
+    - _Comando:_ `openssl dgst -sha256 -sign priv.pem -out firma.bin doc.pdf`
+        
+- **Se Verifichi (Controlli la firma):**
+    
+    - Azione: `-verify`
+        
+    - Chiave: `[PUB]`
+        
+    - Opzioni Extra: `-signature [FILE_FIRMA]`
+        
+    - _Comando:_ `openssl dgst -sha256 -verify pub.pem -signature firma.bin doc.pdf`
+        
+
+> Regola d'oro:
+> 
+> L'ordine nella verifica è sacro: Chiave -> Firma -> File Originale.
+
+---
+
+#### 4. Pattern Cifratura Simmetrica (Comando `enc`)
+
+Usa questo per cifrare file grossi con password.
+
+Scheletro:
+```
+openssl enc -[ALGO] -[AZIONE] -in [IN] -out [OUT]
+```
+- **Se Cifri:**
+    
+    - Azione: `-e` (spesso opzionale perché è default, ma meglio metterlo)
+        
+    - Consiglio: Aggiungi `-p` per vedere sale/chiave/IV a video.
+        
+- **Se Decifri:**
+    
+    - Azione: `-d` (Obbligatorio!)
+        
+
+> **Regola d'oro:** Se devi decifrare e dimentichi **`-d`**, stai cifrando il file cifrato una seconda volta!
+
+---
+
+#### 5. Pattern Ispezione (Comandi `x509` o `rsa`)
+
+Usa questo per "leggere" il contenuto di file codificati in base64.
+
+Scheletro:
+```
+openssl [TIPO] -in [FILE] -text -noout
+```
+- **Se è un Certificato:** TIPO = `x509`
+    
+- **Se è una Chiave:** TIPO = `rsa` (o `pkey`)
+    
+- **Se è una richiesta (CSR):** TIPO = `req`
+    
+
+> **Regola d'oro:** La coppia **`-text -noout`** va sempre insieme. `-text` traduce, `-noout` pulisce la spazzatura.
+
+---
+
+#### Tabella Riassuntiva "Salva-Esame"
+
+Impara a memoria solo le associazioni di questa tabella:
+
+|**Obiettivo**|**Comando**|**Chiave da usare**|**Flag Critica da non scordare**|
+|---|---|---|---|
+|**Estrarre Pubblica**|`rsa`|Privata|`-pubout`|
+|**Cifrare (RSA)**|`pkeyutl`|Pubblica|`-encrypt -pubin`|
+|**Decifrare (RSA)**|`pkeyutl`|Privata|`-decrypt`|
+|**Firmare**|`dgst`|Privata|`-sign`|
+|**Verificare**|`dgst`|Pubblica|`-verify ... -signature`|
+|**Decifrare (AES)**|`enc`|(Password)|`-d`|
+|**Leggere Cert.**|`x509`|-|`-text -noout`|
+
+Con questi schemi dovresti riuscire a costruire il 90% dei comandi che il prof chiederebbe all'esame. Guarda [[Openssl comandi#6. Pattern Generazione Casualità (Comando `rand`)|qui]] per vedere TUTTI i comandi (anche quelli più difficili usati dal prof negli esami più vecchi)
+
 ---
 
 ### 4. Simulazione "Incubo" (Le domande più insidiose)

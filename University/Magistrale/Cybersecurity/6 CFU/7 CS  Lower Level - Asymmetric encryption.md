@@ -1158,7 +1158,7 @@ Here is an overview of several key standards from the collection.
 
 
 ---
-DA SCHEMATIZZARE ANCORA NEL CANVAS
+
 # RSA Implementation
 
 This section covers the practical steps required to implement the RSA algorithm, from key generation to the secure encryption and decryption process.

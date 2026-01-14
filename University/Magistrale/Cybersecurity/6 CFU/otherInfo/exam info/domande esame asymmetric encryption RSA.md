@@ -27,6 +27,8 @@ Il prof non chiede quasi mai di cifrare un numero a mano (troppo lungo), ma chie
     - **Malleabilità (Homomorphic Property):** Se ho $C_1 = Enc(M_1)$ e $C_2 = Enc(M_2)$, allora $C_1 \cdot C_2 = Enc(M_1 \cdot M_2)$. Un attaccante può modificare il cifrato per creare un nuovo messaggio valido senza conoscere la chiave.
         
     - **Determinismo:** Senza padding, lo stesso messaggio produce sempre lo stesso cifrato (attacco dizionario possibile).
+	- guarda [[[domande esame asymmetric encryption RSA#approfondimento vulnerabilità|qui]] per saperne di più
+		
         
 - OAEP (La Soluzione):
     
@@ -79,27 +81,6 @@ Attenzione alla distinzione tra HMAC e Firma.
     - **PSS (Probabilistic Signature Scheme):** Introduce un **Salt** casuale. Stesso msg $\to$ Firma Diversa ogni volta. È lo standard moderno.
         
 
-### 4. AEAD: GCM e Poly1305 (Il Moderno)
-
-Come detto nell'analisi precedente, questo è il trend "pratico".
-
-- **Architettura:** Encrypt-then-MAC è l'unica sicura dimostrabilmente.
-    
-- **AES-GCM:**
-    
-    - Velocissimo su Hardware (AES-NI).
-        
-    - Usa CTR mode + GHASH.
-        
-    - **Pericolo:** Riuso del Nonce (IV) distrugge la sicurezza.
-        
-- **ChaCha20-Poly1305:**
-    
-    - Velocissimo su Software (Mobile/IoT).
-        
-    - Usa stream cipher + One-Time MAC.
-        
-
 ### 5. Comandi OpenSSL (Analisi Pratica)
 
 Negli esami 2023-2025 c'è quasi sempre una riga di comando da spiegare.
@@ -125,3 +106,101 @@ Esempi da sapere:
 |**AEAD**|Encrypt-then-MAC. GCM o ChaCha20-Poly1305.|
 
 Se ti capita la domanda **"Perché HMAC non fornisce non-ripudio?"**, è un rigore a porta vuota: rispondi "Perché la chiave è simmetrica e condivisa, quindi il ricevente potrebbe aver falsificato il messaggio".
+
+# approfondimento vulnerabilità
+
+Questa è un'ottima domanda strategica. Hai in mano degli appunti molto dettagliati e completi, ma per l'esame non tutto ha lo stesso "peso".
+
+In base all'analisi degli esami passati (2012-2025), ecco la **gerarchia di importanza** di ciò che devi studiare. Non devi imparare a memoria ogni singola dimostrazione matematica complessa (come Coppersmith), ma ci sono concetti che devi saper spiegare **e dimostrare** sul foglio.
+
+Ecco cosa è **Obbligatorio** (Must Know) e cosa è **Opzionale** (Nice to Know).
+
+---
+
+### 🚨 1. I "Must Know" (Da sapere a memoria)
+
+Questi concetti escono spessissimo. Se non li sai, perdi punti pesanti.
+
+#### **A. La Malleabilità (Proprietà Moltiplicativa)**
+
+Devi saper **scrivere la formula** che dimostra perché RSA è malleabile. È la prova regina del perché serve il padding.
+
+- **Concetto:** "Se moltiplico i cifrati, ottengo il cifrato del prodotto dei messaggi."
+    
+- Cosa scrivere all'esame:
+    
+    $$C_{new} = C_1 \cdot C_2 = (M_1^e) \cdot (M_2^e) = (M_1 \cdot M_2)^e \pmod N$$
+    
+    Implicazione: Un attaccante può modificare il messaggio cifrato senza decifrarlo.
+    
+
+#### **B. Attacco a Testo Cifrato Scelto (CCA - Chosen Ciphertext)**
+
+Questo è l'esempio pratico della malleabilità. Negli appunti hai l'esempio del "$2M$". **Imparalo.**
+
+- **Lo scenario:** L'attaccante vuole decifrare $C$. Crea $C' = C \cdot 2^e$. Fa decifrare $C'$ alla vittima (che ottiene $2M$). L'attaccante divide per 2 e ottiene $M$.
+    
+- **Perché è importante:** Dimostra che senza padding, RSA è totalmente insicuro contro un attaccante attivo.
+    
+
+#### **C. Determinismo**
+
+- **Concetto:** RSA puro non usa numeri casuali. $Enc(M)$ è sempre uguale.
+    
+- **L'Attacco:** Se indovino che il messaggio è "Sì" o "No", cifro "Sì" e "No" con la pubblica e confronto il risultato con quello intercettato.
+    
+- **Soluzione Universale:** **OAEP** (Padding). Aggiunge casualità, rendendo il cifrato sempre diverso.
+    
+
+---
+
+### 🟠 2. I "Should Know" (Concettuali)
+
+Qui devi capire il _perché_, ma raramente ti chiederanno di scrivere le formule complesse.
+
+#### **A. Low Exponent Attack ($e=3$) - Broadcast**
+
+- **Concetto:** Se mando lo stesso messaggio a 3 persone diverse usando $e=3$, un attaccante usa il **Teorema Cinese del Resto (CRT)** per recuperare il messaggio.
+    
+- **Livello di dettaglio:** Non devi risolvere il sistema CRT all'esame. Devi solo dire: _"Con $e=3$ e 3 destinatari, si applica CRT per ottenere $M^3$ reale (senza modulo) e si fa la radice cubica."_
+    
+
+#### **B. Fattorizzazione**
+
+- **Concetto:** La sicurezza dipende dalla difficoltà di fattorizzare $N$.
+    
+- **Dettaglio:** Sapere che se $p$ e $q$ sono troppo vicini o troppo piccoli, $N$ si fattorizza facilmente. Non ti chiederanno di fattorizzare numeri a mano.
+    
+
+#### **C. Side-Channel Attacks (Timing)**
+
+- **Concetto:** Misurando il tempo di decifratura, capisco se i bit della chiave privata sono 0 o 1.
+    
+- **Soluzione:** **Blinding**. (Moltiplicare per un numero casuale prima di decifrare, per mascherare il tempo reale).
+    
+
+---
+
+### 🟢 3. I "Nice to Know" (Meno probabili)
+
+Questi sono argomenti di nicchia o troppo complessi per un esercizio scritto standard.
+
+- **Coppersmith Attack:** È matematica avanzata sui reticoli. Ti basta sapere che _"Messaggi piccoli con esponente piccolo sono vulnerabili"_. Non imparare la dimostrazione.
+    
+- **Common Modulus Attack:** È uno scenario di configurazione errata (stesso $N$ per tutti). È utile saperlo come esempio di "cosa non fare", ma è meno critico della Malleabilità.
+    
+
+---
+
+### Sintesi Strategica
+
+Se hai poco tempo, concentrati su questo schema **Problema $\to$ Dimostrazione $\to$ Soluzione**:
+
+|**Vulnerabilità**|**Dimostrazione (Da sapere)**|**Soluzione (La Parola Magica)**|
+|---|---|---|
+|**Malleabilità**|$C_1 \cdot C_2 = (M_1 M_2)^e$|**Padding (OAEP)**|
+|**Determinismo**|Guessing Attack (Dizionario)|**Padding (OAEP)**|
+|**Low Exponent ($e=3$)**|Broadcast Attack con CRT|Usare $e=65537$ + Padding|
+|**Timing Attack**|Analisi tempi esecuzione|**Blinding**|
+
+**Vuoi che proviamo a simulare una domanda d'esame sulla Malleabilità per vedere se riesci a scriverla correttamente?**
