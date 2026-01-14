@@ -203,4 +203,169 @@ Se hai poco tempo, concentrati su questo schema **Problema $\to$ Dimostrazione $
 |**Low Exponent ($e=3$)**|Broadcast Attack con CRT|Usare $e=65537$ + Padding|
 |**Timing Attack**|Analisi tempi esecuzione|**Blinding**|
 
-**Vuoi che proviamo a simulare una domanda d'esame sulla Malleabilità per vedere se riesci a scriverla correttamente?**
+# OAEP
+
+Ecco la guida mirata su **OAEP (Optimal Asymmetric Encryption Padding)** per l'esame.
+
+Non devi ricordare i dettagli sui bit esatti (es. quanti bit sono $k_0$ o $k_1$), ma devi saper **disegnare lo schema a blocchi** e spiegare il **meccanismo di sicurezza**.
+
+---
+
+### 1. A cosa serve (La "Reason Why")
+
+Se ti chiedono "Come risolve OAEP i problemi di RSA?", la risposta è:
+
+1. **Introduce Casualità:** Usa un numero casuale $r$ (nonce/seed). Questo rende RSA **probabilistico**. Se cifri due volte lo stesso messaggio $M$, ottieni due cifrati diversi. (Risolve il Determinismo).
+    
+2. **Distrugge la Malleabilità:** OAEP è una trasformazione "All-or-Nothing" (Tutto o Niente). Grazie alle funzioni Hash, se un attaccante tocca anche solo 1 bit del cifrato, la decifratura produce un risultato completamente diverso (spazzatura) e il controllo del padding fallisce. (Risolve gli attacchi CCA).
+    
+
+---
+
+### 2. Lo Schema (Da saper disegnare)
+
+OAEP è una **Rete di Feistel a 2 round** che usa due funzioni hash ($G$ e $H$) e operazioni XOR.
+
+**Input:**
+
+- **$M$:** Il messaggio.
+    
+- **$00..0$:** Una stringa di zeri (padding fisso per controllo integrità).
+    
+- **$r$:** Un numero casuale (seed).
+    
+
+**Il Processo (Encoding):**
+
+1. Si espande $r$ con la funzione $G$ e si fa XOR con il messaggio:
+    
+    $$s = (M || 00..0) \oplus G(r)$$
+    
+2. Si "comprime" il risultato $s$ con la funzione $H$ e si fa XOR con $r$:
+    
+    $$t = r \oplus H(s)$$
+    
+3. Input per RSA: Si concatenano $s$ e $t$.
+    
+    $$M_{encoded} = s || t$$
+    
+4. **Cifratura:** Infine si applica RSA: $C = (M_{encoded})^e \pmod N$.
+    
+
+---
+
+### 3. La Decifratura e Verifica (Cruciale)
+
+Quando il destinatario riceve $C$:
+
+1. Applica RSA inverso: $M_{encoded} = C^d \pmod N$.
+    
+2. Separa $s$ e $t$.
+    
+3. Inverte la rete di Feistel (rifà gli XOR al contrario) per recuperare $M$, gli Zeri e $r$.
+    
+
+Il Controllo di Sicurezza (The Trap):
+
+Il destinatario controlla se la parte che dovrebbe essere $00..0$ è veramente composta da zeri.
+
+- **Se Sì:** Accetta il messaggio $M$.
+    
+- **Se No:** Rifiuta tutto e dà errore.
+    
+
+Perché è geniale?
+
+Se l'attaccante modifica il cifrato, le funzioni hash $G$ e $H$ (che hanno l'effetto valanga) spargono l'errore ovunque. La stringa di zeri diventerà spazzatura (es. 10110...) e il messaggio verrà rifiutato immediatamente.
+
+---
+
+### Sintesi "Cheat Sheet" per l'Esame
+
+|**Concetto**|**Spiegazione**|
+|---|---|
+|**Struttura**|Rete di Feistel a 2 round + XOR.|
+|**Componenti**|Messaggio, Padding di Zeri, Random Seed ($r$).|
+|**Funzioni**|Due oracoli random (Hash Functions $G$ e $H$).|
+|**Sicurezza**|Trasformazione "All-or-Nothing". Modifiche parziali distruggono tutto.|
+|**Obiettivo**|Raggiungere la sicurezza **IND-CCA2** (Indistinguishability under Adaptive Chosen Ciphertext Attack).|
+
+Frase da 30:
+
+"OAEP trasforma RSA da un sistema deterministico e malleabile in uno schema probabilistico e integro, garantendo che qualsiasi modifica al testo cifrato risulti in un padding invalido durante la decifratura, prevenendo attacchi a testo cifrato scelto."
+
+# PSS
+
+Ecco la guida definitiva su **RSA-PSS (Probabilistic Signature Scheme)** per l'esame.
+
+Come per OAEP, non serve la matematica bit-per-bit, ma devi capire **perché** esiste e **come funziona** lo schema a blocchi (molto simile a OAEP).
+
+---
+
+### 1. A cosa serve (La "Reason Why")
+
+Se il prof chiede "Perché non firmare semplicemente facendo $S = Hash(M)^d$?", la risposta è:
+
+1. **Sicurezza Probabilistica:** I vecchi schemi (PKCS#1 v1.5) erano deterministici (stesso documento = stessa firma). PSS introduce un **Salt** casuale. Se firmi lo stesso PDF due volte, ottieni due firme diverse (ma entrambe valide).
+    
+2. **Sicurezza "Tight":** PSS ha una dimostrazione di sicurezza molto forte (riduzione "tight" al problema RSA). Significa che rompere PSS è matematicamente difficile quasi quanto invertire RSA.
+    
+
+---
+
+### 2. Lo Schema (Da saper descrivere)
+
+Immagina PSS come un "cugino" di OAEP, ma ottimizzato per la firma.
+
+**Input:**
+
+- **$M$:** Il messaggio da firmare.
+    
+- **Salt:** Una stringa casuale (fondamentale!).
+    
+
+**Il Processo (Encoding):**
+
+1. **Hashing:** Si calcola l'hash del messaggio: $mHash = Hash(M)$.
+    
+2. **Concatenazione:** Si crea un blocco $M'$ unendo del padding fisso, $mHash$ e il **Salt**.
+    
+3. **Hashing del blocco:** Si calcola $H = Hash(M')$.
+    
+4. **Mascheramento (MGF):** Si usa una funzione generatrice di maschera (simile a un hash espandibile) su $H$ per mascherare il Salt e il padding originale (DB).
+    
+5. **Risultato:** Si concatenano il blocco mascherato (MaskedDB) e l'hash $H$.
+    
+6. **Firma:** Si applica la chiave privata RSA al risultato finale: $S = (EncodedMessage)^d \pmod N$.
+    
+
+---
+
+### 3. La Verifica (Come controlla Bob?)
+
+Quando Bob riceve il messaggio $M$ e la firma $S$:
+
+1. Decifra la firma con la pubblica: $S^e \pmod N$ per ottenere il blocco codificato.
+    
+2. Smaschera il blocco (usando l'hash $H$ che trova in fondo) per recuperare il **Salt** originale.
+    
+3. Ricalcola tutto il processo con il messaggio $M$ che ha ricevuto e il Salt appena trovato.
+    
+4. **Check:** Se l'hash finale calcolato da Bob è identico all'hash $H$ contenuto nella firma, allora la firma è valida.
+    
+
+---
+
+### Sintesi "Cheat Sheet" per l'Esame
+
+|**Concetto**|**Spiegazione**|
+|---|---|
+|**Obiettivo**|Schema di firma sicuro e robusto (non deterministico).|
+|**Differenza Chiave**|Introduce un **Salt** casuale nella firma.|
+|**Standard**|PKCS#1 v2.1 (è l'evoluzione sicura di v1.5).|
+|**Sicurezza**|Probabilistica (stesso $M$ $\to$ firme diverse). Riduzione di sicurezza "Tight".|
+|**OAEP vs PSS**|OAEP è per **Cifrare**. PSS è per **Firmare**.|
+
+Frase da 30:
+
+"RSA-PSS è uno schema di firma probabilistico che utilizza un salt casuale e una funzione di mascheramento (MGF) per garantire che la sicurezza della firma sia strettamente legata alla difficoltà del problema RSA, superando le debolezze deterministiche degli standard precedenti come PKCS#1 v1.5."
