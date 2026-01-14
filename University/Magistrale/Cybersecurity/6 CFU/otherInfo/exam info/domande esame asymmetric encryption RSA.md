@@ -340,6 +340,7 @@ Immagina PSS come un "cugino" di OAEP, ma ottimizzato per la firma.
     
 6. **Firma:** Si applica la chiave privata RSA al risultato finale: $S = (EncodedMessage)^d \pmod N$.
     
+![[Pasted image 20260114143613.png]]
 
 ---
 

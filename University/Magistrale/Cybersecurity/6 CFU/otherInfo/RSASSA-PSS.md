@@ -94,7 +94,7 @@ EM = maskedDB || H' || 0xbc
 Infine, si applica la chiave privata RSA ($d$) al blocco $EM$ (interpretato come numero).
 
 $$S = EM^d \pmod n$$
-
+![[Pasted image 20260114143607.png]]
 ---
 
 ## 3. Verifica della Firma
