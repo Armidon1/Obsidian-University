@@ -2,7 +2,7 @@ last lesson [[8 CS Lower Level - Random Number Generation]]
 # ElGamal and Digital Signature Standard (DSS)
 
 **Tags:** #engineering #cryptography #digital_signature #ElGamal #DSS #NIST
-
+# ElGamal
 ## 1. Introduction and Historical Context
 
 **ElGamal** is a cryptosystem designed by **Taher Elgamal** (often called the "father of SSL"). It is significant because it defines **two distinct methods**:
@@ -112,12 +112,11 @@ A comparison of the two major public-key systems.
 > **Meaning:** RSA is generally preferred for environments prioritizing fast verification (like SSL certs in browsers), while ElGamal/DSS is useful if pre-processing can be leveraged 7.
 
 ---
-
+# DSS & DSA
 ## 5. Digital Signature Standard (DSS) & DSA
 
 **DSS** (FIPS 186) is the NIST standard that uses the **DSA** (Digital Signature Algorithm). It is essentially an optimized version of ElGamal designed specifically for signatures.
 
-### [Technical Logic / Math]
 
 **The mathematical definition for Preparation is:**
 
@@ -173,6 +172,8 @@ If $k$ is reused for two messages ($M, M'$):
 We have two equations with two unknowns ($s$ and $k$), which can be solved linearly to find $s$.
 
 ---
+# Professor's note in class
+
 nella parte in cui fa accept if (..)  And (..) and (QUI) dice che è la parte più importante perché dipende dal messaggio (il digest)
 
 nelle slide del signature (verification) mancano dei Mod p
