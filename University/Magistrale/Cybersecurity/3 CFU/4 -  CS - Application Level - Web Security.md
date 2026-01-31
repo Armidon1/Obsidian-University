@@ -590,6 +590,7 @@ Fornendo un payload creato ad hoc, un attaccante può alterare la logica della q
 - Eseguire attacchi distruttivi (es. eliminare tabelle) (Disponibilità).
     
 
+![[Pasted image 20260128230600.png]]
 _La celebre vignetta di XKCD che illustra un attacco distruttivo SQLi dove il nome dello studente viene sanitizzato male, portando alla cancellazione dei record scolastici._
 
 ### Esempio Base: Bypass dell'Autenticazione
@@ -728,6 +729,8 @@ Questo è il tipo più distruttivo di attacco stacked query, in cui l'attaccante
 
 Questa famosa vignetta di xkcd è l'illustrazione più nota di un attacco SQL injection di tipo stacked query.
 
+![[Pasted image 20260128231443.png]]
+
 [Immagine della vignetta xkcd "Little Bobby Tables"](https://xkcd.com/327/)
 
 Nella vignetta, una madre chiama suo figlio `Robert'); DROP TABLE Students;--`, nome che, una volta inserito nel database scolastico non protetto, provoca la cancellazione di tutti i record degli studenti.
@@ -808,7 +811,7 @@ Come fa un attaccante a sapere che la tabella si chiama `users` o che le colonne
 
 La maggior parte dei database SQL mantiene un database speciale e integrato che descrive tutti gli altri database, tabelle e colonne.
 
-- information_schema (per MySQL, PostgreSQL, ecc.)
+- **information_schema** (per MySQL, PostgreSQL, ecc.)
     
     Questo è un database standard che può essere interrogato come qualsiasi altro.
     
@@ -820,7 +823,7 @@ La maggior parte dei database SQL mantiene un database speciale e integrato che 
         
         ...UNION SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'users' -- -
         
-- sqlite_master (per SQLite)
+- **sqlite_master** (per SQLite)
     
     SQLite usa una tabella master speciale.
     
@@ -942,12 +945,58 @@ $sth->execute();
 $user = $sth->fetch();
 ```
 
+Anche se visivamente nel codice PHP sembrano operazioni simili (invio una query e invio dei dati), ciò che avviene "sotto il cofano" a livello di comunicazione col Database è profondamente diverso.
+
+Ecco la differenza tecnica spiegata passo dopo passo, basata sulle slide del corso.
+
+#### 1. Concatenazione di stringhe (Il metodo Vulnerabile)
+
+Quando usi la concatenazione (es. Slide 33), il tuo codice PHP costruisce una **singola lunga stringa** che contiene sia i comandi SQL che i dati dell'utente, e poi la spedisce al database.
+
+- **Cosa riceve il Database:** Una frase unica.
+- **Il problema:** Il Database deve analizzare (fare il _parsing_) di quella frase da zero. Non ha modo di distinguere quali caratteri sono stati scritti dal programmatore (codice sicuro) e quali sono stati inseriti dall'utente.
+- **Risultato:** Se l'utente inserisce caratteri speciali SQL (come `' OR '1'='1`), il parser del database li interpreta come **comandi**, modificando la logica della query originale (ad esempio, aggirando il login).
+
+#### 2. Prepared Statements (Il metodo Sicuro)
+
+Con i Prepared Statements (es. Slide 47), la comunicazione avviene in **due fasi separate**. Non si invia mai una stringa unica mescolata.
+
+##### Fase 1: Preparazione (Prepare)
+
+Tu invii al database solo la struttura della query con i placeholder (`?`):
+
+```
+SELECT * FROM users WHERE user = ? AND password = ?
+```
+
+- Il Database riceve questa struttura, la analizza, la compila e la ottimizza **prima** che arrivi qualsiasi dato.
+- In questo momento, il Database decide che la query ha una struttura fissa: _"Seleziona dalla tabella utenti dove l'utente è [qualcosa] e la password è [qualcosa]"_. La struttura logica è ormai "congelata".
+
+##### Fase 2: Associazione ed Esecuzione (Bind & Execute)
+
+Successivamente, invii i valori (es. `$_POST["user"]`).
+
+- Il Database prende questi valori e li inserisce nei "buchi" (`?`) che aveva preparato.
+- **Il punto cruciale:** Poiché la query è già stata compilata nella Fase 1, il Database tratterà **qualsiasi cosa** tu invii nella Fase 2 esclusivamente come un **dato letterale** (una stringa di testo), mai come codice eseguibile.
+
+#### Esempio Pratico della Differenza
+
+Immagina che un attaccante inserisca come nome utente: `' OR '1'='1`.
+
+- **Con Concatenazione:** Il DB legge: `SELECT ... WHERE user = '' OR '1'='1'`. La logica cambia: l'istruzione `OR` diventa attiva e il login viene bypassato.
+- **Con Prepared Statements:** Il DB ha già deciso che il primo `?` è un contenitore di dati. Quindi cercherà nel database un utente che si chiami _letteralmente_ così:
+    
+    > "Cercami un tizio il cui nome sia la stringa `' OR '1'='1`". Ovviamente non lo troverà, e l'attacco fallisce.
+    
+
+
 ### Difese Secondarie (Defense in Depth)
 
 - **Input Validation (Whitelisting):** Se non puoi usare prepared statements (es. se l'input utente deve scegliere il nome di una tabella per un `ORDER BY`), usa una whitelist rigorosa di valori consentiti (es. solo caratteri alfanumerici).
     
 - **Principio del Minimo Privilegio:** L'utente del database usato dall'applicazione web dovrebbe avere solo i permessi strettamente necessari (es. solo `SELECT`, `INSERT`, `UPDATE` sulle tabelle specifiche, mai `DROP` o permessi amministrativi).
-    
+
+
 
 ---
 
@@ -1034,6 +1083,46 @@ Esempi comuni di funzionalità legittime che usano richieste lato server:
     
 
 _Arricchimento:_ Il problema nasce perché il server ha spesso una posizione di rete privilegiata. Può accedere a risorse che un utente esterno non potrebbe raggiungere direttamente, come servizi in `localhost` (127.0.0.1), server nella rete locale (LAN) o servizi di metadati cloud.
+
+L'utilizzo di richieste lato server (**Server-Side Requests**) non è di per sé una vulnerabilità, ma una funzionalità essenziale e legittima per il funzionamento di molte applicazioni moderne.
+
+Ecco nel dettaglio cosa succede in uno scenario di utilizzo corretto, quali sono gli esempi pratici e come si differenzia da un attacco.
+
+### 1. Il Meccanismo: Cosa succede nel dettaglio
+
+In un utilizzo corretto, il server agisce come un "intermediario" o un client per conto dell'utente per recuperare dati necessari che l'utente non può o non deve recuperare direttamente.
+
+Il flusso corretto (Happy Path) è il seguente:
+
+1. **Richiesta dell'Utente:** L'utente invia un input al server (es. un token di login o una richiesta di caricamento dati).
+2. **Elaborazione Server:** Il server riceve la richiesta e determina che ha bisogno di dati esterni per completarla.
+3. **Connessione Interna/Esterna:** Il server web avvia una **nuova richiesta HTTP** (o altro protocollo) verso una destinazione specifica (API di terze parti, database interno, identity provider).
+4. **Ricezione e Risposta:** Il servizio esterno risponde al server. Il server elabora questi dati e restituisce il risultato finale all'utente.
+
+### 2. Esempi di Utilizzo Legittimo
+
+Le slide elencano esplicitamente scenari comuni in cui le richieste lato server sono necessarie e corrette:
+
+- **Autenticazione SSO (Single Sign-On):** Quando fai il login con Google o Facebook, il tuo server deve contattare direttamente i server del provider (Identity Provider) per verificare che il token fornito sia valido. L'utente non partecipa a questa chiamata diretta server-to-server.
+- **Verifica CAPTCHA:** Quando risolvi un captcha, il tuo server invia la tua risposta ai server del fornitore (es. Google reCAPTCHA) per chiedere: "L'utente ha risolto correttamente il puzzle?".
+- **API REST e Microservizi:** Il backend potrebbe dover chiamare altri servizi interni o API esterne (es. per processare un pagamento o recuperare il meteo) per costruire la pagina da mostrarti.
+- **Webhooks:** Il server deve inviare notifiche a un altro server quando accade un evento specifico.
+
+### 3. Cosa rende l'utilizzo "Corretto" (vs SSRF)
+
+La differenza tra una funzionalità legittima e una vulnerabilità **SSRF** (Server-Side Request Forgery) sta nel **controllo della destinazione**.
+
+- **Utilizzo Corretto (Sicuro):** La destinazione della richiesta è **predefinita** dal programmatore o strettamente validata.
+    - _Esempio:_ Il server è programmato per contattare _solo_ `https://api.google.com/recaptcha`. L'utente non può cambiare questo indirizzo.
+- **Utilizzo Vulnerabile (SSRF):** L'utente può manipolare l'input per cambiare la destinazione della richiesta del server.
+    - _Esempio:_ L'utente cambia l'URL di destinazione da `api.google.com` a `localhost` o `192.168.1.1` (rete interna), costringendo il server ad attaccare se stesso o la rete aziendale,.
+
+### 4. Come garantire la correttezza (Difesa)
+
+Per mantenere l'utilizzo corretto e prevenire che diventi un exploit, le slide suggeriscono misure difensive specifiche:
+
+- **Whitelist (Allowlist):** Il server dovrebbe permettere richieste solo verso una lista esplicita di domini o indirizzi IP fidati.
+- **Isolamento:** Il server che esegue queste richieste esterne dovrebbe essere isolato dal resto della rete sensibile interna, per minimizzare i danni se venisse compromesso.
 
 ---
 

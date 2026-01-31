@@ -141,7 +141,7 @@ Each field = _Name_ + _Value_, separated by a colon (`:`).
 
 ### Identifiers
 
-- **Message-ID:** Globally unique identifier (`<1234@example.com>`). The message-id is insert in the MTA of the sender. Chiedere a chat qualche problematica dovuta alla risposta
+- **Message-ID:** Globally unique identifier (`<1234@example.com>`). The message-id is insert in the MTA of the sender. Ecco dei [[Email Message-ID problems]]
     
 - **ENVID:** Envelope identifier for message tracking (RFC 3885, RFC 3464)
     
@@ -202,6 +202,66 @@ The headers can contain a chain of Received if the email jumps between servers. 
 - **Examples:** Microsoft Exchange, Lotus Notes use proprietary protocols
 
 IMAP is used fot online mail reading. Nowadays is used only IMAP.
+
+my example:
+```
+Received: by 2002:a05:612c:2b08:b0:55c:24a:3053 with SMTP id io8csp254794vqb; Thu, 22 Jan 2026 00:28:21 -0800 (PST) 
+
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [209.85.220.41]) by mx.google.com with SMTPS id 00721157ae682-7940af1b83asor34286497b3.14.2026.01.22.00.28.20 for [nole.1940213@studenti.uniroma1.it](https://www.google.com/url?sa=E&q=mailto%3Anole.1940213%40studenti.uniroma1.it) (Google Transport Security); 
+Thu, 22 Jan 2026 00:28:20 -0800 (PST) 
+
+Received: from smtpclient.apple ([2a0d:3341:ccb5:0:5816:96fe:539a:6495]) by smtp.gmail.com with ESMTPSA id 956f58d0204a3-64916ffb951sm9188721d50.2.2026.01.22.00.28.19 
+for [nole.1940213@studenti.uniroma1.it](https://www.google.com/url?sa=E&q=mailto%3Anole.1940213%40studenti.uniroma1.it) (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128); 
+Thu, 22 Jan 2026 00:28:20 -0800 (PST)
+```
+
+Ecco l'analisi dettagliata di cosa sta accadendo in questi header.
+
+Per comprendere il percorso dell'email, dobbiamo leggere i blocchi `Received` **dal basso verso l'alto**. Come indicato nelle slide, ogni server che tocca il messaggio aggiunge il proprio header in cima a quelli esistenti.
+
+Ecco la ricostruzione passo dopo passo del viaggio di questa email:
+
+### Passo 1: L'Invio (Il blocco in basso)
+
+> **Header:** `Received: from smtpclient.apple [...] by smtp.gmail.com with ESMTPSA ...`
+
+- **Cosa succede:** Questo è il momento in cui l'email lascia il computer/telefono dell'utente ed entra nel sistema postale.
+- **Attori coinvolti:**
+    - **MUA (Message User Agent):** È il client di posta utilizzato. Qui vediamo `smtpclient.apple`, il che indica che l'email è stata inviata da un dispositivo Apple (iPhone, Mac o app Mail).
+    - **MSA (Mail Submission Agent):** È il server che accetta la posta in uscita. Qui è `smtp.gmail.com`.
+- **Dettagli tecnici:**
+    - `ESMTPSA`: Indica che è stato usato il protocollo SMTP esteso (E) sicuro (S) e **autenticato** (A). Questo significa che l'utente ha fatto il login con username e password per inviare la mail.
+    - L'indirizzo IP `2a0d:3341...` è l'indirizzo IPv6 del dispositivo dell'utente.
+
+### Passo 2: Il Trasferimento Interno/Controllo (Il blocco centrale)
+
+> **Header:** `Received: from mail-sor-f41.google.com [...] by mx.google.com with SMTPS ...`
+
+- **Cosa succede:** L'email si sta spostando all'interno dell'infrastruttura di Google. Poiché il destinatario è `@studenti.uniroma1.it` (gestito da Google), il messaggio non deve viaggiare sull'internet pubblico "aperto", ma viene gestito dai server di Google.
+- **Attori coinvolti:**
+    - **MTA (Mail Transfer Agent):** Il messaggio passa da un server interno di smistamento (`mail-sor`, che spesso sta per _Smart Outbound Relay_) al server che gestisce la posta in arrivo, `mx.google.com`.
+- **Dettagli tecnici:**
+    - `Google Transport Security`: Indica che il passaggio è avvenuto su un canale cifrato proprietario o gestito internamente da Google.
+    - Questo passaggio è simile a quanto mostrato nelle slide, dove i server di Google si passano il messaggio tra loro prima della consegna finale.
+
+### Passo 3: La Consegna Finale (Il blocco in alto)
+
+> **Header:** `Received: by 2002:a05:612c:2b08:b0:55c:24a:3053 with SMTP id ...`
+
+- **Cosa succede:** Questo è l'ultimo passaggio. Il server MX di Google ha passato il messaggio al server che gestisce la casella di posta specifica dell'utente.
+- **Attori coinvolti:**
+    - **MDA (Mail Delivery Agent) / Message Store:** Il server identificato dall'IP interno `2002:a05...` prende il messaggio e lo deposita nella casella dell'utente, rendendolo disponibile per la lettura via POP/IMAP o Webmail.
+- **Nota sul "From":** Come avevamo notato nella conversazione precedente e come confermato dall'esempio nella slide 30, qui manca il campo `from`. È normale: siamo profondamente all'interno della rete sicura di Google (routing interno), quindi il server ricevente si fida ciecamente del server che glielo passa, non dovendo più eseguire controlli pubblici come SPF.
+
+### Sintesi per lo studio
+
+In questo esempio vediamo perfettamente applicata l'architettura descritta nelle slide:
+
+1. **MUA** (Client Apple) -> invia a -> **MSA** (smtp.gmail.com)
+2. **MTA** (infrastruttura Google) -> trasferisce a -> **MTA/MX** (mx.google.com)
+3. **MDA** (2002:a05...) -> consegna nella casella.
+
+Inoltre, il fatto che tutto avvenga su server Google (visto che mittente e destinatario sono nello stesso ecosistema) garantisce che la mail non sia uscita sull'internet "non sicuro", mantenendo l'integrità del percorso.
 
 ---
 
