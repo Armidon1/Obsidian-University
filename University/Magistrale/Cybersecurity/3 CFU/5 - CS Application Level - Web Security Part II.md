@@ -101,9 +101,7 @@ Gli script possono essere incorporati in una pagina in modi diversi. È fondamen
 
 **Here is the exact implementation shown in the slides:**
 
-HTML
-
-```
+```HTML
 // Inlined in the page:
 <script>alert("Hello World!");</script>
 
@@ -202,9 +200,7 @@ JavaScript fornisce metodi per accedere e modificare l'albero DOM.
 
 Considerando il seguente snippet HTML:
 
-HTML
-
-```
+```HTML
 <UL id="t1">
   <LI>Item 1</LI>
 </UL>
@@ -212,9 +208,7 @@ HTML
 
 **Here is the exact implementation shown in the slides:**
 
-JavaScript
-
-```
+```JavaScript
 document.getElementById('t1').nodeName
 // -> returns 'UL'
 
