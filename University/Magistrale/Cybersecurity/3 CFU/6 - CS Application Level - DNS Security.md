@@ -344,11 +344,11 @@ Spiegazione più chaira [[DNS Tunneling|qui]]
 
 ## 1. Domain Generation Algorithm (DGA)
 
-Un **Domain Generation Algorithm (DGA)** è un algoritmo deterministico utilizzato dai malware per calcolare periodicamente grandi insiemi di nomi di dominio pseudo-casuali (**pseudo-random domain names**).
+Un **[[Domain Generation Algorithm (DGA)]]** è un algoritmo deterministico utilizzato dai malware per calcolare periodicamente grandi insiemi di nomi di dominio pseudo-casuali (**pseudo-random domain names**).
 
 ### Obiettivo Principale
 
-L'obiettivo è identificare dinamicamente gli endpoint di **Command-and-Control (C2)**, evadendo al contempo le firme statiche (**static signatures**) e gli sforzi di rimozione (**takedown efforts**).
+L'obiettivo è identificare dinamicamente gli endpoint di **[[Command-and-Control (C2)]]**, evadendo al contempo le firme statiche (**static signatures**) e gli sforzi di rimozione (**takedown efforts**).
 
 ### Perché i malware usano i DGA?
 
@@ -447,7 +447,7 @@ Le slide classificano i DGA in quattro categorie principali basate sulla tecnica
 
 ## 4. DNS Fast-Fluxing
 
-Il **DNS Fast-Fluxing** è una tecnica di evasione e resilienza usata da botnet e infrastrutture cybercriminali.
+Il **[[DNS Fast-Fluxing]]** è una tecnica di evasione e resilienza usata da [[Botnet]] e infrastrutture cybercriminali.
 
 **Scopo:** Nascondere e proteggere servizi malevoli (es. server C2) dietro indirizzi IP che cambiano rapidamente (**rapidly changing IP addresses**).
 
@@ -530,7 +530,7 @@ Le slide distinguono due varianti principali di questa tecnica.
 
 ## 6. DNSSEC: Design Goals
 
-**DNSSEC (DNS Security Extensions)** è un insieme di estensioni del protocollo che aggiungono integrità crittografica e autenticità al DNS.
+**[[DNSSEC]] (DNS Security Extensions)** è un insieme di estensioni del protocollo che aggiungono integrità crittografica e autenticità al DNS.
 
 **Riferimenti normativi:** RFCs 4033/4/5, 5155, 6781, 8145.
 
