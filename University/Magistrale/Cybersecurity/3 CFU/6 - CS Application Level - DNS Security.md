@@ -1,3 +1,4 @@
+[[5 - CS Application Level - Web Security Part II|Previous Lesson]]
 # DNS Security
 
 **Tags:** #ingegneria #cybersecurity #DNS #sicurezza_reti #sapienza
@@ -133,11 +134,11 @@ Lo stato della sicurezza DNS viene analizzato secondo la triade CIA:
     
 - **Threat (Minaccia):**
     
-    - **DDoS Amplification**.
+    - **[[DDoS Amplification]]**.
         
-    - NXDOMAIN floods.
+    - [[NXDOMAIN floods]].
         
-    - Phantom Domain attacks.
+    - [[Phantom Domain attacks]].
         
 
 ---
@@ -197,14 +198,14 @@ $$\sim 2^{16} \times 2^{16} \approx 4 \text{ miliardi di combinazioni}$$
 
 Le slide illustrano passo dopo passo come avviene l'attacco di **Cache Poisoning**.
 
-**Fase 1: Preparazione**
+### **Fase 1: Preparazione**
 
 - L'attaccante forza il **Recursive Name Server** a interrogare un dominio (query per sottodomini casuali per causare "Cache miss").
     
 - Il Resolver è costretto a interrogare il Nameserver Autoritativo.
     
 
-**Fase 2: L'Attacco (Flooding)**
+### **Fase 2: L'Attacco (Flooding)**
 
 - Mentre il Resolver attende la risposta dal server legittimo (es. Bank of America), l'attaccante invia migliaia di risposte DNS false.
     
@@ -224,14 +225,12 @@ Le risposte false contengono:
 
 Ecco come appare il record malevolo iniettato:
 
-Plaintext
-
 ```
 bank.com NS ns.evil.com
 ns.evil.com A <attacker-IP>
 ```
 
-**Fase 3: Avvelenamento e Hijack**
+### **Fase 3: Avvelenamento e Hijack**
 
 - Se una risposta falsificata corrisponde ai criteri, il resolver **memorizza nella cache** il record NS malevolo.
     
@@ -286,6 +285,8 @@ $$\text{Amplification Factor}: \sim 50x - 70x$$
 > 
 > **Meaning:** Una piccola richiesta (Small spoofed DNS Request) genera molteplici risposte enormi (Amplified DNS Response) che convergono tutte sulla vittima, saturandola.
 
+spiegazione più chiara [[Spigeazione  DDoS Amplification DNS|qui]]
+
 ---
 
 ## 9. DNS Tunneling
@@ -332,7 +333,8 @@ Il **DNS Tunneling** è una tecnica che codifica dati (comandi, informazioni esf
 - **A/AAAA records:** Per codificare dati come indirizzi IP.
     
 - **CNAME/MX:** Occasionalmente usati per offuscamento.
-    
+
+Spiegazione più chaira [[DNS Tunneling|qui]]
 
 # DNS Security: DGA, Fast-Fluxing e DNSSEC
 

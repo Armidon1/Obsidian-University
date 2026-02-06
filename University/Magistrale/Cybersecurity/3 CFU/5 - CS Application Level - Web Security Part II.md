@@ -3112,3 +3112,5 @@ max-age=6307200; includeSubDomains; preload
 - **L'Attacco:** L'attaccante intercetta il traffico NTP e invia risposte con un orario spostato molto avanti nel **futuro**.
     
 - **Risultato:** Le policy HSTS memorizzate dal browser (che hanno un `max-age`) risultano **scadute**. Il browser torna ad accettare connessioni HTTP vulnerabili.
+---
+[[6 - CS Application Level - DNS Security|Next Lesson]]
