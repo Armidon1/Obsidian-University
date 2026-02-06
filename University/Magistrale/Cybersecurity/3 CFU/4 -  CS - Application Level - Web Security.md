@@ -1,3 +1,5 @@
+[[3 - CS - Application Level - Web Technologies|previous lesson]]
+Sintesi [[4 - CS Applitcation Level - Sintesi Web Security Part I]]
 # Sicurezza Web: Parte I
 
 Docente: Leonardo Querzoni (Sapienza Università di Roma)
@@ -1290,3 +1292,5 @@ Chiamiamo /De1ta con i parametri che, una volta concatenati, produrranno lo stes
         
 
 Quando `/De1ta` verifica la firma, calcolerà `MD5(secret_key + "flag.txt" + "readscan")`, che corrisponde esattamente alla firma che abbiamo generato. L'SSRF verrà eseguito, il file `flag.txt` verrà letto localmente e il suo contenuto restituito.
+
+[[5 - CS Application Level - Web Security Part II| next lesson]]
