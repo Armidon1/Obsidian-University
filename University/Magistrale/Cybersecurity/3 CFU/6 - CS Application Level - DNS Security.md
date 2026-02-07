@@ -414,7 +414,7 @@ Le slide classificano i DGA in quattro categorie principali basate sulla tecnica
 
 ### PRNG-based DGAs
 
-- **Meccanismo:** Uso di generatori di numeri pseudo-casuali (**pseudo-random number generators**).
+- **Meccanismo:** Uso di generatori di numeri pseudo-casuali (**[[PRNG (Pseudo-Random Number Generator)]]**).
     
 - **Algoritmi citati:** LCG, Mersenne Twister, xorshift.
     
@@ -427,7 +427,7 @@ Le slide classificano i DGA in quattro categorie principali basate sulla tecnica
 
 - **Meccanismo:** Integrano funzioni crittografiche per generare domini.
     
-- **Funzioni:** HMAC, SHA-2, AES o CRC.
+- **Funzioni:** [[HMAC]], [[SHA-2]], [[AES]] o CRC.
     
 - **Caratteristiche:** Alta entropia, difficili da prevedere senza la chiave.
     
@@ -442,6 +442,8 @@ Le slide classificano i DGA in quattro categorie principali basate sulla tecnica
     
 - **Esempi:** Matsnu, Suppobox.
     
+
+spiegazione più chiara [[Spiegazione DGA|qui]]
 
 ---
 
@@ -525,6 +527,8 @@ Le slide distinguono due varianti principali di questa tecnica.
 > **What to look at:** La distinzione testuale tra Single e Double Flux.
 > 
 > **Meaning:** Nel Single-Flux cambia la destinazione (IP), nel Double-Flux cambia anche chi fornisce l'informazione (NS), creando un doppio livello di indirezione dinamica.
+
+Spiegazione più chiara [[Spiegazione Fast Fluxing|qui]]
 
 ---
 
