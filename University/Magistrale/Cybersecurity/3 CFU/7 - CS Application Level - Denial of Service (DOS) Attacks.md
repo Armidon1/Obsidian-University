@@ -21,7 +21,7 @@ Il corso inizia definendo il concetto fondamentale di **Denial of Service (DoS)*
 
 La **Disponibilità** (Availability) è uno dei componenti fondamentali della triade CIA (Confidentiality, Integrity, Availability).
 
-![[CIA_TRIAD_DIAGRAM]]
+![[Pasted image 20260207175537.png]]
 
 > [!abstract] Visual Analysis
 > 
