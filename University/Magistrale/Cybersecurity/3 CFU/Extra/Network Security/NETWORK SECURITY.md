@@ -669,6 +669,9 @@ funziona semplicemente andando a modificare a livello software gli accessi.
 - **Contro:** Può essere vulnerabile a bug software che rompono le garanzie di sicurezza.
     
 
+Esempio: VLAN, VLAN + Firewall, Micro-segmentazione
+per saperne di più, vedi [[Spiegazione Segmentazione Logica|qui]]
+
 ### Micro-segmentazione
 
 - Un approccio molto granulare che applica la segmentazione a livello della **singola applicazione o workload**.
@@ -715,6 +718,7 @@ Notiamo che siamo a Livello 3, non possiamo lavorare solamente a Livello 2 (di c
 
 Per comunicare _tra_ VLAN (es. per far accedere l'impiegato HR al DB HR), il traffico deve passare attraverso un **dispositivo di Livello 3 (un router, ricordiamo il livello di rete)**. Questo router funge da checkpoint dove vengono applicate le Access Control List (ACL) per imporre le regole di sicurezza. 
 
+[[spiegazione VLAN| qui la spiegazione dettagliata sulle VLAN]]
 
 ---
 
@@ -785,8 +789,10 @@ Sembra proprio quello che fa un [[IDS]], però ricorda sempre cosa produce un [[
         
 - **Risultato (Actionable Intelligence):** Questa è un'attività aziendale valida, non un attacco. (Vero Negativo).
     
-
+**In sintesi:** Mentre un report unificato è un _output_ del SIEM, il suo _motore_ serve a trasformare **dati grezzi** e scollegati in **informazioni contestualizzate (Contestualizzate, è la parola chiave)** che permettono agli amministratori di capire _se_ e _dove_ c'è un attacco complesso in corso
 Senza il SIEM, questo sarebbe solo un log criptico. Con il SIEM, ha contesto e significato.
+
+
 
 ---
 

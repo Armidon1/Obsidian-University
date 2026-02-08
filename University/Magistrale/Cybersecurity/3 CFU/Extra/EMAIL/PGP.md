@@ -164,3 +164,70 @@ Puoi fidarti di una nuova chiave pubblica se:
     
 
 Il portachiavi PGP include indicatori di "livello di fiducia" per gestire questo sistema. Questa "rete di fiducia tollerante ai guasti" consente a PGP di funzionare senza alcuna terza parte fidata centrale. Gli utenti possono anche emettere "certificati di revoca" per invalidare le proprie chiavi se vengono compromesse.
+
+
+# Come funziona nel dettaglio questa Web of Trust?
+
+Questa è un'ottima domanda che tocca il cuore della filosofia di PGP. Hai ragione a essere scettico: il semplice fatto che una chiave sia nel tuo "portafoglio" (il _public-key ring_) non garantisce matematicamente che sia autentica.
+
+In PGP, la fiducia non si basa su un'autorità centrale (come avviene per S/MIME o per i siti web HTTPS), ma su un modello decentralizzato chiamato **Web of Trust** (Rete di Fiducia).
+
+Ecco come funziona e come fai a sapere che una chiave non appartiene a un avversario, basandoci sulle dispense:
+
+### 1. Sei tu l'Autorità (You are the CA)
+
+A differenza dei sistemi centralizzati dove ti fidi di una terza parte (es. Verisign o il governo), in PGP **ogni utente è la propria Certificate Authority (CA)**. Questo significa che sei tu a dover decidere di chi fidarti. Non scarichi la fiducia dall'alto, la costruisci dal basso.
+
+### 2. Come si esclude un Avversario? (La Verifica)
+
+Per essere certo che la chiave pubblica di "Mario" non sia stata generata da un attaccante, PGP prevede due metodi di verifica:
+
+- **Fiducia Diretta (Direct Trust):** Incontri Mario di persona (fisicamente), lui ti dà la sua chiave (o il "fingerprint" della chiave) e tu verifichi la sua identità (es. controllando i documenti). A quel punto, nel tuo software PGP, **firmi digitalmente** la sua chiave pubblica. La tua firma funge da certificato: _"Io certifico che questa chiave appartiene davvero a Mario"_.
+- **Fiducia Indiretta (The Chain of Trust):** Qui entra in gioco la "Rete". Se non conosci "Luca", ma vedi che la chiave di Luca è stata firmata da Mario (di cui ti fidi), puoi decidere di fidarti di Luca per transitività.
+    - Il sistema si basa sull'accumulo di firme: _"everyone will gradually accumulate... a collection of certifying signatures from other people"_.
+    - Se una chiave ha molte firme di persone che reputi affidabili (**Trusted Introducers**), la probabilità che sia di un avversario diminuisce drasticamente.
+
+### 3. Il Ruolo del Key Ring
+
+Il tuo portafoglio (Public Key Ring) è solo un contenitore. Contiene tutte le chiavi pubbliche che hai raccolto, indicizzate tramite un **Key ID** (gli ultimi 64 bit della chiave),. Tuttavia, il portafoglio include anche degli **indicatori di fiducia (Trust Indicators)**. PGP ti permette di marcare ogni chiave con un livello di fiducia:
+
+- _Validità della chiave:_ Appartiene davvero a Tizio?
+- _Fiducia nel proprietario:_ Tizio è bravo a verificare le chiavi degli altri prima di firmarle?
+
+### In sintesi
+
+Come fai a sapere che non è un _adversary_?
+
+1. Se la chiave nel tuo portafoglio **non ha firme** (o ha solo firme di sconosciuti), **non puoi saperlo**. PGP ti avvertirà che la chiave è "untrusted".
+2. Ti fidi solo se verifichi l'impronta (fingerprint) attraverso un canale sicuro alternativo (telefono, di persona) o se la chiave è validata dalla tua rete di contatti fidati.
+
+Questo modello richiede più lavoro da parte dell'utente rispetto a S/MIME (che usa certificati gestiti centralmente), ma offre un controllo totale e decentralizzato sulla propria sicurezza.
+
+## Quindi tutto si basa su un incontro fisico con Mario?
+
+Sì, **esatto**: nel modello PGP "puro", la fiducia ideale parte proprio da un incontro fisico (o comunque da una verifica diretta e inequivocabile) con "Mario".
+
+Poiché in PGP **non esiste un'autorità centrale** (come una Certification Authority) che garantisce per gli utenti, la responsabilità di verificare l'identità ricade interamente su di te.
+
+Ecco come si sviluppa questo concetto basandosi sulle dispense:
+
+### 1. Tu sei la "Certification Authority"
+
+Come spiegano le slide, in PGP **"every user is his own CA"** (ogni utente è la propria Autorità di Certificazione). Questo significa che quando decidi di fidarti della chiave di Mario, non stai scaricando un certificato garantito da terzi (come avviene in S/MIME o HTTPS), ma sei tu che devi dire al tuo software: _"Ho verificato che questa chiave appartiene a Mario, mi fido"_. Per farlo con certezza assoluta, l'incontro fisico per scambiarsi il **"fingerprint"** (l'impronta digitale della chiave) è il metodo più sicuro per evitare che un attaccante (Man-in-the-Middle) ti dia una chiave falsa a nome di Mario.
+
+### 2. Il concetto di "Trusted Introducer"
+
+Tuttavia, non devi incontrare fisicamente _tutto il mondo_ per inviare email sicure. Qui entra in gioco la **Web of Trust** descritta da Phil Zimmermann. Se tu ti fidi di Mario (perché lo hai incontrato), e Mario ha firmato la chiave di Luca (perché lo ha incontrato), tu puoi decidere di fidarti di Luca per **transitività**.
+
+Le slide descrivono questo meccanismo così:
+
+> _"Everyone... will trust at least one or two of the signatures. This will cause the emergence of a decentralized fault-tolerant web of confidence"_.
+
+### 3. La differenza con S/MIME
+
+Per capire meglio perché PGP richiede questo sforzo "fisico", le slide lo mettono a confronto con **S/MIME**:
+
+- **S/MIME:** Usa un modello centralizzato (PKI). Ti fidi di un ente terzo (es. un'azienda o un governo) che ha verificato Mario al posto tuo. È più comodo ma hai **"Less user control"** (meno controllo utente).
+- **PGP:** Usa un modello decentralizzato. Sei tu a costruire la tua rete di fiducia partendo dai tuoi contatti diretti. È più faticoso ma offre un controllo totale.
+
+In sintesi: sì, tutto inizia con la tua cerchia di contatti diretti ("users they know directly"). Senza quel primo livello di fiducia verificata personalmente, l'intera catena della Web of Trust non avrebbe basi solide.
