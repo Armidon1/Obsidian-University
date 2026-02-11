@@ -15,9 +15,32 @@
 - style settings
 	- vai in images e disabilita il "image zoom"
 ## Prompt per Gemini
-per trascrivere delle slide usa Gemini Pro con il seguente prompt:
+per trascrivere delle slide usa Gemini Pro con il seguente prompt  da pdf a obisidian:
 ```
-questo è un pdf di un blocco di slide. trascrivi il suo contenuto in makdown (di modo che lo posso copiare in Obsidian) senza citare le fonti e, oltre a trascriverlo, arricchisci i contenuti con le tue conoscenze (senza quindi perdere informazioni presenti nel file), mantenendo però la sua struttura ed anche eventuali link a immagini o altri link a file. inoltre scrivilo in italiano 
+Agisci come un convertitore esperto da PDF a Markdown ottimizzato per Obsidian.
+Ecco il file PDF di origine (derivato da LaTeX). Il tuo compito è trascrivere il contenuto seguendo rigorosamente queste regole:
+
+1. FORMATO MATEMATICO (Cruciale):
+   - Converti tutte le formule matematiche in sintassi compatibile con MathJax.
+   - Usa il simbolo singolo `$` per le formule in linea (es: $E=mc^2$).
+   - Usa il doppio simbolo `$$` per i blocchi di equazioni su nuove righe.
+   - Non usare mai `\( ... \)` o `\[ ... \]`.
+
+2. PULIZIA DEL TESTO:
+   - Ignora intestazioni (header), piè di pagina (footer) e numeri di pagina. Trascrivi solo il corpo del testo.
+   - Correggi le parole spezzate a fine riga (es: se nel PDF leggi "pro- babilmente", scrivi "probabilmente").
+   - Unisci i paragrafi che sono stati spezzati impropriamente dalle interruzioni di pagina.
+
+3. STRUTTURA:
+   - Mappa i titoli del PDF (Capitoli, Sezioni) usando gli header di Markdown (`#`, `##`, `###`).
+   - Mantieni grassetti e corsivi (`**grassetto**`, `*corsivo*`).
+   - Trasforma gli elenchi puntati o numerati usando la sintassi Markdown (`-` o `1.`).
+
+4. TABELLE E FIGURE:
+   - Se ci sono tabelle, convertile in tabelle Markdown standard.
+   - Per le immagini/grafici, inserisci un placeholder descrittivo in questo formato: `> [INSERIRE IMMAGINE QUI: descrizione breve]`.
+
+L'output deve essere codice Markdown pulito, pronto per essere incollato direttamente in una nota di Obsidian.
 ```
 
 Esempio per creare delle definizioni di argomenti specifici:
