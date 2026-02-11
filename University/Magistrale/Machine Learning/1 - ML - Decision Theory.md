@@ -43,10 +43,9 @@ It is then natural to conclude that the best predictor given a fixed distributio
 
 Exploiting the rules of conditional expectation, it is fairly easy to derive a closed formula for the optimal predictor: it maps features to the label that minimizes the loss, given the realized feature.
 
+>[!Definition] 
 **Theorem 1.6.** The optimal predictor $f^{*}$ is defined as follows:
-$$f^{*}(x) = \arg \min_{z} \mathbb{E}[l(z, Y) | X = x] \quad \forall x \in \mathcal{X}$$
-
-*Note:* the expectation in the definition is only with respect to $Y$, and it is conditioned with respect to $X=x$. Furthermore, the optimal predictor may not be unique, as the arg min could contain more than one element for some $x$.
+$$f^{*}(x) = \arg \min_{z} \mathbb{E}[l(z, Y) | X = x] \quad \forall x \in \mathcal{X}$$\*Note:* the expectation in the definition is only with respect to $Y$, and it is conditioned with respect to $X=x$. Furthermore, the optimal predictor may not be unique, as the arg min could contain more than one element for some $x$.
 
 **Proof.** We start by writing down explicitly the expected risk for a generic predictor $f$:
 $$R(f) = \mathbb{E}_X \left[ \mathbb{E}_{Y|X} [ l(f(X), Y) \mid X ] \right]$$
@@ -67,23 +66,25 @@ $$f^{*}(x)=\arg \min_{z\in\mathcal{Y}}\int_{\mathcal{Y}}l(z,y)p_{Y|X=x}(y)dy$$
 * There is an inherent risk that is unavoidable! There is generally no perfect predictor.
 
 ---
-
+>[!question]
 **Exercise 1.8.** Consider a regression problem on $\mathcal{X}\times\mathcal{Y}$, with $\mathcal{Y}=\mathbb{R}$ and the quadratic loss defined as $l(a,b)=(a-b)^{2}$. Compute the optimal predictor. [[Soluzione Exercise 1.8 ML|Solution here]]
-
+>
 **Exercise 1.9.** Consider a regression problem on $\mathcal{X}\times\mathcal{Y}$, with $\mathcal{Y}=\mathbb{R}$, and the absolute loss defined as $l(a,b)=|a-b|$. Compute the optimal predictor. *Hint: Assume that $Y$ conditioned on $X=x$ always admits a density function. [[Soluzione Exercise 1.9 ML|Solution here]]*
-
+>
 **Exercise 1.10.** Consider a classification task on $k$ classes with the 0-1 loss. Compute the expected risk of the randomized predictor that outputs a class uniformly at random, independently of the $x$ observed. [[Soluzione Exercise 1.10 ML|Solution here]]
-
+>
 **Exercise 1.11.** Consider the binary classification problem with $\mathcal{Y}=\{-1,1\}$ and the 0-1 loss. Relate the risk of a predictor $f$ to that of its opposite $-f$. [[Soluzione Exercise 1.11 ML|Solution here]]
-
+>
 **Exercise 1.12 (Multi-Variate Independent Gaussians).** Consider a multi-class classification problem where $\mathcal{X}=\mathbb{R}^{d}$, $\mathcal{Y}=\{1,2,...,k\}$, and the loss is the 0-1 loss. We make an assumption on the random variable $X=(X_{1},...,X_{d})$: conditioning on any $Y=j$, $X_{i}$ is an independent gaussian distribution with mean $\mu_{i}^{j}$ and standard deviation $\sigma_{i}^{j}$. Compute the optimal predictor. [[Soluzione Exercise 1.12 ML|Solution here]]
 
 ---
 
 ## 1.2 Binary Classification
 
-In binary classification, the label set $\mathcal{Y}$ comprises only two outcomes: true/false, accept/reject, positive/negative. We use $\mathcal{Y}=\{0,1\}$ for simplicity. Any loss function for a binary classification problem is thus characterized by four numbers, corresponding to the elements of $\{0,1\}^{2}$.
+In binary classification, the label set $\mathcal{Y}$ comprises only two outcomes: true/false, accept/reject, positive/negative. We use $\mathcal{Y}=\{0,1\}$ for simplicity. Any loss function for a binary classification problem is thus characterised by four numbers, corresponding to the elements of $\{0,1\}^{2}$.
 
+>[!Proposition]
+> 
 **Proposition 2.1.** In binary classification with loss $l$, the optimal predictor is given by:
 $$f^{*}(x)=\mathbb{I}\left\{\mathbb{P}(Y=1|X=x)\ge\frac{l(0,1)-l(0,0)}{l(1,0)-l(1,1)}\mathbb{P}(Y=0|X=x)\right\}$$
 
@@ -94,43 +95,44 @@ l(1,1)\mathbb{P}(Y=1|X=x)+l(1,0)\mathbb{P}(Y=0|X=x) & \text{if we predict 1} \\
 l(0,1)\mathbb{P}(Y=1|X=x)+l(0,0)\mathbb{P}(Y=0|X=x) & \text{if we predict 0}
 \end{cases}
 $$
-Therefore, it is optimal to predict 1 if the first equation is smaller than or equal to the second one, and 0 otherwise. The statement of the Proposition follows by rearranging terms. $\square$
+	Therefore, it is optimal to predict 1 if the first equation is smaller than or equal to the second one, and 0 otherwise. The statement of the Proposition follows by rearranging terms. $\square$. Guarda la spiegazione [[Spiegazione Binary Classification 2.1|qui]]
 
-Since there are only two possible outcomes for $Y$, it is easier to write the optimal predictor as follows, applying the definition of conditional probability:
+Since there are only two possible outcomes for $Y$, it is easier to write the optimal predictor as follows, applying the definition of conditional probability (o meglio, non proprio la definizione di probabilità condizionata ma il [[Conditional Probability#3. Teorema di Bayes|Teorema di Bayes]]):
 
 $$f^{*}(x)=\mathbb{I}\left\{\frac{\mathbb{P}(X=x|Y=1)}{\mathbb{P}(X=x|Y=0)}\ge\frac{[l(1,0)-l(0,0)]\mathbb{P}(Y=0)}{[l(0,1)-l(1,1)]\mathbb{P}(Y=1)}\right\}$$
+Vedi la spiegazione [[Spiegazione Decision Teory 2.1.2|Qui]]
+
 
 Note, the right-hand-side term appearing in this rewriting of the optimal predictor is independent from $x$, while the left-hand-side term is important enough to get its own name.
 
-**Definition 2.2 (Likelihood Ratio and Test).** The likelihood ratio is the ratio of the likelihood functions:
+>[!Definition 2.2] (Likelihood Ratio and Test). 
+>The likelihood ratio is the ratio of the likelihood functions:
 $$\mathcal{L}(x)=\frac{\mathbb{P}(X=x|Y=1)}{\mathbb{P}(X=x|Y=0)}$$
 A likelihood ratio test is a predictor of the form $\mathbb{I}\{\mathcal{L}(x)\ge\eta\}$, for some scalar $\eta>0$.
 
-It is often useful not to focus directly on the likelihood function but to apply some monotone function to simplify the calculations. In fact, $\mathbb{I}\{\mathcal{L}(x)\ge\eta\} = \mathbb{I}\{h(\mathcal{L}(x))\ge h(\eta)\}$, for any monotonically increasing function.
+In the previous expression the $\eta$ was:$$\eta = \frac{[l(1,0)-l(0,0)]\mathbb{P}(Y=0)}{[l(0,1)-l(1,1)]\mathbb{P}(Y=1)}$$
+It is often useful not to focus directly on the likelihood function but to apply some monotone function to simplify the calculations. In fact, $\mathbb{I}\{\mathcal{L}(x)\ge\eta\} = \mathbb{I}\{h(\mathcal{L}(x))\ge h(\eta)\}$, for any monotonically increasing function. [[ML 1 2.1.3|Spiegazione]]
 
-**Exercise 2.3.** Compute the optimal predictor for the binary classification problem, where the loss is $l(a,b)=\mathbb{I}\{a\ne b\}$ and the two labels are equally likely, i.e., $\mathbb{P}(Y=1)=\mathbb{P}(Y=0)$.
-
-**Exercise 2.4.** Compute the optimal predictor for the following binary classification problem. The labels are such that $\mathbb{P}(Y=1)=10^{-6}$, while $X$ behaves according to $\mathcal{N}(0,1)$ if $Y=0$ or according to $\mathcal{N}(s,1)$ otherwise, for some $s\in\mathbb{R}$. The loss function is:
-$$
-\begin{cases}
-l(0,0)=0 \\
-l(1,1)=-10^{6}
+>[!question]
+**Exercise 2.3.** Compute the optimal predictor for the binary classification problem, where the loss is $l(a,b)=\mathbb{I}\{a\ne b\}$ and the two labels are equally likely, i.e., $\mathbb{P}(Y=1)=\mathbb{P}(Y=0)$. [[Spiegazione Exercise 2.3 ML]]
+>
+>**Exercise 2.4.** Compute the optimal predictor for the following binary classification problem. The labels are such that $\mathbb{P}(Y=1)=10^{-6}$, while $X$ behaves according to $\mathcal{N}(0,1)$ if $Y=0$ or according to $\mathcal{N}(s,1)$ otherwise, for some $s\in\mathbb{R}$. The loss function is ([[Spiegazione Exercise 2.4 ML]]):
+>$$\begin{cases} l(0,0)=0 \\l(1,1)=-10^{6}
 \end{cases}
 \quad
 \begin{cases}
 l(1,0)=100 \\
 l(0,1)=0
 \end{cases}
-$$
-
-**Exercise 2.5.** Compute the optimal predictor for the following binary classification problem with 0-1 loss. The two labels have the same probability, i.e., $\mathbb{P}(Y=1)=\mathbb{P}(Y=0)=1/2$. $X$ conditioned on $Y=0$ is a standard 2-dimensional gaussian, while conditioning on $Y=1$ is a gaussian centered in $(1,1)$ with covariance matrix $1/2\cdot I$ (where $I$ is the two dimensional identity matrix).
+>$$
+**Exercise 2.5.** Compute the optimal predictor for the following binary classification problem with 0-1 loss. The two labels have the same probability, i.e., $\mathbb{P}(Y=1)=\mathbb{P}(Y=0)=1/2$. $X$ conditioned on $Y=0$ is a standard 2-dimensional gaussian, while conditioning on $Y=1$ is a gaussian centered in $(1,1)$ with covariance matrix $1/2\cdot I$ (where $I$ is the two dimensional identity matrix). [[Spiegazione Exercise 2.5 ML]]
 
 There are only four possible outcomes for a binary classifier $f$. The following table:
 
-| | $Y=0$ | $Y=1$ |
-|---|---|---|
-| **$f(X)=0$** | true negative | false negative |
-| **$f(X)=1$** | false positive | true positive |
+|              | $Y=0$          | $Y=1$          |
+| ------------ | -------------- | -------------- |
+| **$f(X)=0$** | true negative  | false negative |
+| **$f(X)=1$** | false positive | true positive  |
 
 If we normalize with respect to the corresponding populations, we get the following rates that characterize a predictor:
 
