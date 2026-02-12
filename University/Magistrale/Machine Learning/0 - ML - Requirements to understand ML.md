@@ -1,3 +1,171 @@
+# Machine Learning: Introduction & Fundamentals
+
+**Tags:** #engineering #machine_learning #probability #decision_theory #lecture_1
+
+---
+
+## 1. Course Introduction & Logistics
+
+**Instructors:** Federico Fusco & Fabio Patrizi
+
+This course focuses on the theoretical and practical foundations of Machine Learning (ML). Unlike standard computer science courses that focus on deterministic algorithms, ML sits at the intersection of three major fields.
+
+### Exam Structure
+
+- **Written Exam:** 8 points (approx).
+    
+- **Optional Assignments:** 2 assignments worth 2+2 extra points.
+    
+
+---
+
+## 2. What is Machine Learning?
+
+To understand ML, we must contrast it with **Classical Algorithm Design**.
+
+### The Classical Approach
+
+In classical programming, the designer has a full understanding of the problem. We write specific rules to manipulate data. We have theoretical guarantees (e.g., correctness, complexity).
+
+**Example: Insertion Sort**
+
+Here, every step is explicitly defined by the programmer.
+
+```
+INSERTION_SORT(arr)
+  for i = 1 to length of arr
+    key = arr[i]
+    j = i - 1
+    while j >= 0 AND arr[j] > key
+      arr[j+1] = arr[j]
+      j = j - 1
+    arr[j+1] = key
+```
+
+> [!abstract] Code Analysis
+> 
+> This is a deterministic algorithm. For a given input `arr`, the output is always the exact sorted array. The designer can explain every single step.
+
+### The Machine Learning Approach
+
+In ML, we often do not know how to solve the problem explicitly (e.g., "Recognize a face in this photo"). Instead, we build a program that **learns** from data.
+
+**Formal Definition (Tom Mitchell, 1997):**
+
+> "A computer program is said to learn from experience $E$ with respect to some class of tasks $T$ and performance measure $P$, if its performance at tasks in $T$, as measured by $P$, improves with experience $E$."
+
+- **Task ($T$):** What we want to do (e.g., drive a car).
+    
+- **Experience ($E$):** The data we have (e.g., past driving logs).
+    
+- **Performance ($P$):** How we measure success (e.g., distance without crashing).
+    
+
+---
+
+## 3. Taxonomy of Learning Tasks
+
+We categorize ML problems based on the type of data and the goal.
+
+### Mathematical Notation
+
+- Let $x \in \mathcal{X}$ be the **input** (features, context, data point). Usually $\mathcal{X} \subseteq \mathbb{R}^d$.
+    
+- Let $y \in \mathcal{Y}$ be the **output** (label, target).
+    
+
+### Types of Supervised Learning
+
+In supervised learning, we are given pairs of $(x, y)$.
+
+1. **Binary Classification:**
+    
+    $$y \in \{0, 1\}$$
+    
+    - Example: Spam vs. Not Spam.
+        
+2. **Multi-class Classification:**
+    
+    $$y \in \{1, 2, \dots, K\}$$
+    
+    - Example: Recognizing handwritten digits (0-9).
+        
+3. **Regression:**
+    
+    $$y \in \mathbb{R}$$
+    
+    - Example: Predicting house prices.
+        
+
+---
+
+## 4. The Core Challenge: Generalization
+
+The fundamental goal of ML is not to memorize the data we have, but to perform well on **new, unseen data**.
+
+> [!abstract] Visual Analysis
+> 
+> **What to look at:** The difference between fitting points within the known range (Interpolation) and predicting outside the known range (Extrapolation).
+> 
+> **Meaning:**
+> 
+> - **Training Data:** The data we use to build the model.
+>     
+> - **Testing Data:** New data used to evaluate the model.
+>     
+> - **Assumption:** We assume past data (Training) and future data (Testing) are sampled from the same underlying **Distribution** $\mathcal{D}$ on $\mathcal{X} \times \mathcal{Y}$.
+>     
+
+### The ML Pipeline
+
+![[Pasted image 20260212181636.png]]
+
+To ensure we are generalizing and not just memorizing ("overfitting"), we split our available data:
+
+1. **Training Set:** Used to train the model parameters.
+    
+2. **Validation Set:** Used to compare different models and tune hyperparameters (e.g., choosing the degree of a polynomial).
+    
+3. **Test Set:** Used **only** for the final evaluation.
+    
+
+> [!tip] Exam Focus
+> 
+> Never use the Test Set to train your model or tune parameters. It must remain "unseen" until the very end to give an honest evaluation.
+
+---
+
+## 5. Probability Review
+
+Since ML deals with uncertainty and data distributions, we need a solid grasp of probability.
+
+### Random Variables & Expectations
+
+If $X$ is a discrete random variable:
+
+$$E[X] = \sum_{x \in \mathcal{X}} x \cdot P(X=x)$$
+
+If $X$ is a continuous random variable with density function $f(x)$:
+
+$$E[X] = \int x \cdot f(x) dx$$
+
+### Conditional Probability
+
+This is crucial for ML (predicting $y$ given $x$).
+
+$$P(A | B) = \frac{P(A \cap B)}{P(B)}$$
+
+> [!example] Professor's Example: Rolling a Die
+> 
+> If we roll a die ($X \in \{1..6\}$) and define Event B as "the result is even" ($X \in \{2, 4, 6\}$).
+> 
+> What is the probability that $X=2$ given the result is even?
+> 
+> $$P(X=2 | X \text{ is even}) = \frac{P(X=2)}{P(\text{even})} = \frac{1/6}{3/6} = \frac{1}{3}$$
+
+---
+# Ripasso roba di statistica che servirà per ML
+
 Ottima idea. È l'approccio migliore. Il Machine Learning _è_ statistica applicata e calcolo delle probabilità. Se le fondamenta scricchiolano, i "palazzi" che ci costruiamo sopra (come le Reti Neurali o le SVM) crollano.
 
 Mettiamo da parte per un attimo la corsa a finire gli esercizi del Week 1 e 2. Indosso il camice da professore. Useremo il file `Sintesi statistica.pdf` come nostro libro di testo sacro e le note del corso `ML_Fusco.pdf` come obiettivo finale.
