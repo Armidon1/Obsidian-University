@@ -10,6 +10,9 @@ Il **Valore Atteso** (o media, speranza matematica), indicato solitamente con $\
 Per una variabile casuale discreta $X$ che assume valori $x_1, x_2, \dots, x_n$ con probabilità $P(X=x_i)$:
 
 $$ \mathbb{E}[X] = \sum_{i} x_i \cdot P(X=x_i) $$
+### Formula (Caso Continuo)
+**Caso Continuo (Integrale):** $$ \mathbb{E}[X] = \int x \cdot f(x) , dx $$ _(Moltiplichi il valore per la sua densità e integri su tutto lo spazio)_.
+
 
 > [!NOTE] Interpretazione
 > Non è necessariamente un valore che la variabile assumerà davvero (es. la media di un dado è 3.5), ma è il valore verso cui tende la media campionaria per un numero elevato di prove (Legge dei Grandi Numeri).
