@@ -27,7 +27,8 @@ Puoi inserire questo blocco all'inizio della tua nota su Obsidian, subito prima 
 
 ## 2.1 Warm-Up: Linear Regression in 1-Dimension
 
-To understand linear regression, we start with the simplest possible scenario: working with data in a single dimension. Imagine you are given a dataset containing $n$ pairs of numbers: $$ (x_1, y_1), (x_2, y_2), \dots, (x_n, y_n) $$ Your goal is to find a relationship between the inputs ($x$) and the outputs ($y$). specifically, we want to find the best straight line defined by the equation $y = mx + q$ that fits this data.
+To understand linear regression, we start with the simplest possible scenario: working with data in a single dimension. Imagine you are given a dataset containing $n$ pairs of numbers: $$ (x_1, y_1), (x_2, y_2), \dots, (x_n, y_n) $$Remember: this is our Set of data, but we do not have full control of the Distribution **D**, that's why we won't work with the [[Obsidian-University/University/Magistrale/Machine Learning/Extra/Expected Risk|Expected Risk]] but with the [[Empirical Risk]].
+Your goal is to find a relationship between the inputs ($x$) and the outputs ($y$). specifically, we want to find the best straight line defined by the equation $y = mx + q$ that fits this data.
 
 ### Defining "Best Fit": The Empirical Mean Square Error
 
@@ -36,9 +37,14 @@ How do we mathematically define what the "best" line is? We define it as the lin
 The cost function (or risk function) $\hat{R}$ depends on our two parameters, the slope $m$ and the intercept $q$: $$ \hat{R}(m, q) = \frac{1}{n} \sum_{i=1}^{n} (mx_i + q - y_i)^2 $$
 Note that, in compare to the Expected Risk, it is a a simply mean of the loss function, which in this scenario is a quadratic loss, while the Expected Risk is a weighted mean. 
 
-But why aren't we using the Expected Risk and we had to define the Empirical Risk? See [[The Empirical vs Expected Dilemma ML|here]] 
+But why aren't we using the Expected Risk and we had to define the Empirical Risk? See [[The Empirical vs Expected Dilemma ML|here]], but in general because we do not have actually a complete control over the distribution $D$ but we have only a Set of labelled $x_i$ of n-elements.
 
 This function is a polynomial in terms of $m$ and $q$. Crucially, it is a convex function (imagine a 3D bowl shape), and as $m$ and $q$ grow very large, the error grows to infinity. This guarantees that the minimum error exists and can be found exactly where the gradient (the slope of the error bowl) is zero. 
+
+>[!Abstract] Visual Analysis
+>![[Pasted image 20260213124625.png]]
+>
+>**NOTE.** that's an example of bowl shape
 
 **Basically:** It is possible to calculate the gradient, so calculate the partials derivates to slope and interception, and equal them to 0 to find the critical point, which, because of the fact that the Empirical Risk is a convex function, for sure is the minimum point. See [[Convexity and Optimization ML|here]] why
 ### Step 1: Finding the Intercept ($q$)
@@ -137,7 +143,7 @@ $$ \hat{m} = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n}
 - **Numerator:** This is proportional to the **Covariance** between $x$ and $y$.
 - **Denominator:** This is proportional to the **Variance** of $x$.
 
-In plain English: the optimal slope $\hat{m}$ is the ratio of the covariance between $x$ and $y$ to the variance of $x$.
+In plain English: the optimal slope $\hat{m}$ is the ratio of the [[Covariance]] between $x$ and $y$ to the [[Variance]] of $x$.
 
 ---
 
@@ -152,9 +158,43 @@ We assume we have $n$ data points $(x_1, y_1), \dots, (x_n, y_n)$. Here, the inp
 
 ### Feature Maps and the Prediction Function
 
-To bridge the gap between complex inputs and linear models, we introduce the concept of **Feature Maps**. We define $d$ different functions $\phi_j : \mathcal{X} \rightarrow \mathbb{R}$. These maps transform our raw input $x$ into a vector of features.
+To bridge the gap between complex inputs and linear models, we introduce the concept of **[[Feature Maps]]**. We define $d$ different functions $\phi_j : \mathcal{X} \rightarrow \mathbb{R}$. These maps transform our raw input $x$ into a vector of features.
 
-Our prediction function $f_\theta(x)$ is defined as a weighted sum of these features: $$ f_\theta(x) = \sum_{j=1}^{d} \phi_j(x) \cdot \theta_j = \phi(x)^T \theta $$ Here, $\theta$ is a vector of parameters (weights) that we want to learn. $\phi(x)$ is a vector where the $j$-th entry is the result of the feature map $\phi_j(x)$.
+Our prediction function $f_\theta(x)$ is defined as a weighted sum of these features: $$ f_\theta(x) = \sum_{j=1}^{d} \phi_j(x) \cdot \theta_j = \phi(x)^T \theta $$ Here, $\theta$ is a vector of parameters (weights) that we want to learn. $\phi(x)$ is a vector where the $j$-th entry is the result of the feature map $\phi_j(x)$. 
+
+#### But what actually is the $\phi(x)$? 
+
+The function $\phi$ (Phi) acts as a **translator** or an **expander**. Its job is to take your raw input $x$ (which might be simple) and transform it into a richer set of features that the Linear Regression algorithm can actually use to model complex curves.
+Linear Regression, by itself, is "stupid": it can only draw straight lines. It cannot draw curves. The $\phi$ function solves this by pre-calculating the curves for the model.
+
+- **Imagine this:** You have data that looks like a parabola (a U-shape). You want to fit it, but your model only knows how to do $y = \theta \cdot x$.
+- **What $\phi$ does:** You define $\phi(x) = [x, x^2]$.
+- **The Result:** If your input is $x=3$:
+    1. $\phi$ calculates $3^2 = 9$.
+    2. It creates a vector $\phi=[3,9]$.
+    3. The model now sees two simple numbers: 3 and 9. It finds a weight ($\theta_1$) for the 3 and a weight ($\theta_2$) for the 9.
+    4. Mathematically, it thinks it's doing a linear sum: $\theta_1(3) + \theta_2(9)$.
+    5. Visually, it creates a curve: $\theta_1 x + \theta_2 x^2$.
+
+so basically It changes the "Space"
+
+- **In the $x$ space:** The relationship is a curve.
+- **In the $\phi(x)$ space:** The relationship is a flat plane (subspace).
+
+$\phi$ maps the data from a space where it is hard to model (curved) to a higher-dimensional space where it is easy to model (linear/flat).
+
+##### 3. Concrete Examples (from Source)
+
+The sources give specific examples of what $\phi$ calculates depending on what you need:
+
+- **Polynomial Regression:** If you think the data curves like a polynomial, $\phi$ calculates powers: $$ \phi(x) = [1, x, x^2, x^3, \dots] $$
+- **Fourier Regression:** If you think the data repeats (like a wave or seasonal sales), $\phi$ calculates sines and cosines: $$ \phi(x) = [\sin(x), \cos(x)] $$
+
+##### Summary
+
+The $\phi$ function allows you to say: _"I know the relationship isn't a straight line. I will manually calculate the squared terms (or sines, or logs) myself using $\phi$, so the Linear Regression algorithm can just find the weights for them."_
+
+It keeps the math **linear in the parameters** ($\theta$), even though the result is **non-linear in the input** ($x$).
 
 **Crucial Concept:** Why is this still called _Linear_ Regression? You might notice that the feature maps $\phi(x)$ can be non-linear (like $x^2$ or $\sin(x)$). However, the function $f_\theta(x)$ is **linear in the parameters $\theta$**. This linearity in $\theta$ is what allows us to use linear algebra to solve the problem efficiently, regardless of how complex the features are.
 
