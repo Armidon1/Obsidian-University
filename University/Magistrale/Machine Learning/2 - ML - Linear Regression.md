@@ -205,9 +205,9 @@ Our goal remains the same: find the parameter vector $\theta \in \mathbb{R}^d$ t
 To make the math cleaner and easier to implement, we switch to **Matrix Notation**.
 
 1. Let $y$ be the column vector containing all target values $y_1, \dots, y_n$.
-2. Let $\Phi$ be the $n \times d$ matrix (often called the Design Matrix). We create this by stacking the feature vectors of all our data points. The element at row $i$ and column $j$ is simply the $j$-th feature of the $i$-th data point: $\Phi_{i,j} = \phi_j(x_i)$.
+2. Let $\Phi$ be the $n \times d$ matrix (often called the [[Design Matrix]], note the n possible elements of the data set and the d dimensions of the feature vector.). We create this by stacking the feature vectors of all our data points. The element at row $i$ and column $j$ is simply the $j$-th feature of the $i$-th data point: $\Phi_{i,j} = \phi_j(x_i)$.
 
-Using this notation, the sum of squared errors becomes the squared norm of a vector difference: $$ \hat{R}(\theta) = \frac{1}{n} |y - \Phi\theta|_2^2 $$ This compact formula says: "Calculate the vector of predictions $\Phi\theta$, subtract it from the true vector $y$, find the length (norm) of the resulting error vector, and square it."
+Using this notation, the sum of squared errors becomes the [[Squared Euclidean Norm]] of a vector difference: $$ \hat{R}(\theta) = \frac{1}{n} |y - \Phi\theta|_2^2 $$ This compact formula says: "Calculate the vector of predictions $\Phi\theta$, subtract it from the true vector $y$, find the length (norm) of the resulting error vector, and square it."
 
 ### Examples of Flexibility
 
@@ -255,14 +255,14 @@ Finally, to isolate $\theta$, we multiply both sides by the inverse of the matri
 
 ### A Note on Invertibility
 
-For this solution to exist, the matrix $\Phi^T\Phi$ must be invertible. A necessary condition for this is that $d \le n$. In simple terms, we must have **at least as many data points as we have features**. If we have more features than data points ($d > n$), the system is underdetermined, and there isn't a single unique solution.
+For this solution to exist, the matrix $\Phi^T\Phi$ must be [[Invertible Matrix]]. A necessary condition for this is that $d \le n$. In simple terms, we must have **at least as many data points as we have features**. If we have more features than data points ($d > n$), the system is underdetermined, and there isn't a single unique solution.
 
 
 ---
 
 ## 2.4 A Geometric Interpretation
 
-The algebraic formula for the OLS estimator, $\hat{\theta} = (\Phi^T\Phi)^{-1}\Phi^T y$, is correct, but it doesn't give us much intuition about _what_ is actually happening. To understand the mechanism deeply, we turn to geometry.
+The algebraic formula for the [[OLS estimator]], $\hat{\theta} = (\Phi^T\Phi)^{-1}\Phi^T y$, is correct, but it doesn't give us much intuition about _what_ is actually happening. To understand the mechanism deeply, we turn to geometry.
 
 ### The Setup: Subspaces and Projections
 
@@ -327,13 +327,7 @@ We can split this into two parts:
 
 $$ = \phi(x)^T \theta^* + 0 = \phi(x)^T \theta^* $$
 
-**The Takeaway:** This proposition tells us something crucial: If we lived in a perfect world and knew the true parameters $\theta^_$, we would have the optimal model. However, **we do not know $\theta^*_$**. Therefore, our goal in Machine Learning is to use our data to find an estimate $\hat{\theta}$ that is as close as possible to the true $\theta^*$.
-
----
-
-Certamente. Questa sezione è fondamentale perché valuta la _qualità_ del nostro stimatore. Non ci basta sapere che abbiamo trovato una linea; vogliamo sapere quanto è probabile che questa linea sia vicina alla "verità" nascosta ($\theta^*$) e quanto stabile sia questa stima se cambiassimo i dati di training.
-
-Ecco il testo formattato per **Obsidian** relativo alla sezione 2.6.
+**The Takeaway:** This proposition tells us something crucial: If we lived in a perfect world and knew the true parameters $\theta^*$, we would have the optimal model. However, **we do not know $\theta^*$**. Therefore, our goal in Machine Learning is to use our data to find an estimate $\hat{\theta}$ that is as close as possible to the true $\theta^*$.
 
 ---
 
@@ -351,7 +345,7 @@ The first question is: If we could repeat this experiment infinite times—colle
 
 We distribute the terms. Notice what happens to the first part: $(\Phi^T\Phi)^{-1}\Phi^T \Phi$ cancels out to become the Identity matrix $I$. $$ \hat{\theta} = I\theta^* + (\Phi^T\Phi)^{-1}\Phi^T \epsilon $$ $$ \hat{\theta} = \theta^* + (\Phi^T\Phi)^{-1}\Phi^T \epsilon $$
 
-This equation is profound. It says our estimate $\hat{\theta}$ is equal to the **truth** $\theta^_$ plus some **linear transformation of the noise** $\epsilon$. When we take the expectation (average) of both sides, the deterministic part $\theta^_$ stays the same. The noise part depends on $\mathbb{E}[\epsilon]$. Since we assumed the noise has a mean of zero, that entire second term vanishes. $$ \mathbb{E}[\hat{\theta}] = \theta^* + 0 = \theta^* $$
+This equation is profound (profondo). It says our estimate $\hat{\theta}$ is equal to the **truth** $\theta^*$ plus some **linear transformation of the noise** $\epsilon$. When we take the expectation (average) of both sides, the deterministic part $\theta^*$ stays the same. The noise part depends on $\mathbb{E}[\epsilon]$. Since we assumed the noise has a mean of zero, that entire second term vanishes. $$ \mathbb{E}[\hat{\theta}] = \theta^* + 0 = \theta^* $$
 
 ### 2. Covariance: How precise is our estimate?
 
@@ -392,7 +386,7 @@ $$ R(\theta) = (\theta^* - \theta)^T \Sigma (\theta^* - \theta) + R(\theta^*) $$
 Here:
 
 - **$\Sigma$** is the covariance matrix of the features: $\mathbb{E}[\phi(X)\phi(X)^T]$. It describes the shape of the data distribution.
-- __$R(\theta^_) = \sigma^2$_* is the **Irreducible Error**. Even if we knew the perfect weights $\theta^*$, we would still have an error of $\sigma^2$ because of the random noise $\epsilon$.
+- $R(\theta^*) = \sigma^2$ is the **Irreducible Error**. Even if we knew the perfect weights $\theta^*$, we would still have an error of $\sigma^2$ because of the random noise $\epsilon$.
 
 ### Step 2: Risk of the Estimator (Proposition 3.6)
 
@@ -411,17 +405,12 @@ The formula for the expected risk of the OLS estimator is: $$ \mathbb{E}[R(\hat{
 
 This final formula tells us that our total error comes from two sources:
 
-1. __The Noise Floor ($R(\theta^_) = \sigma^2$):_* We can never beat this. It is the noise inherent in the universe (or the data).
+1. **The Noise Floor ($R(\theta^*) = \sigma^2$):** We can never beat this. It is the noise inherent in the universe (or the data).
 2. **The Estimation Cost ($\frac{\sigma^2}{n} \dots$):** This is the extra error we pay because we don't know the true $\theta^*$.
     - It increases with noise $\sigma^2$.
     - It **decreases** as $n$ (sample size) gets larger.
     - It depends on the ratio between the true data distribution $\Sigma$ and our empirical sample distribution $\hat{\Sigma}$.
 
-Ecco la conclusione perfetta per le tue note della **Week 2**.
-
-Questo blocco finale tira le somme di tutto ciò che abbiamo visto: unisce la visione geometrica a quella statistica e prepara il terreno per gli argomenti della settimana successiva (come la complessità computazionale e l'overfitting), basandosi sulla parte finale dell'analisi del rischio.
-
-Ecco il testo formattato per **Obsidian**.
 
 ---
 
@@ -462,3 +451,60 @@ While we have a beautiful closed-form solution $\hat{\theta} = (\Phi^T\Phi)^{-1}
 - If we have millions of features ($d$) or huge datasets ($n$), calculating this exact formula becomes too slow or numerically unstable.
 
 This limitation sets the stage for **Week 3**, where we will explore methods to approximate this solution more efficiently (like Gradient Descent) and deal with situations where our model becomes "too complex" (Overfitting).
+
+# Spiegami in modo semplice cosa abbiamo fatto dal 2.2 fino al 2.7
+
+Certamente. Immagina i capitoli dal 2.2 al 2.7 come un viaggio che parte dal "Come si fa?" e arriva al "Perché funziona?".
+
+Ecco il senso logico di ogni passaggio, spiegato in modo semplice:
+
+### 1. Potenziamo il Modello (2.2: Feature Maps & Generalizzazione)
+
+Nel "Warm-Up" (2.1) abbiamo tracciato una retta semplice. Ma il mondo reale è fatto di curve, onde e relazioni complesse.
+
+- **Il problema:** Una retta non basta per descrivere dati complessi.
+- **La soluzione:** Non cambiamo l'algoritmo, cambiamo i **dati**. Usiamo le **Feature Maps** ($\phi$) per trasformare i dati (es. elevando al quadrato $x \to x^2$).
+- **Il senso:** Rendiamo il modello capace di disegnare curve complesse pur continuando a usare la matematica semplice delle linee rette (Linearità nei parametri $\theta$).
+
+### 2. Troviamo la Soluzione (2.3: OLS Estimator)
+
+Ora che abbiamo il modello potente, come troviamo i pesi migliori ($\theta$)?
+
+- **Il senso:** Non andiamo per tentativi. La matematica ci regala una formula "magica" (chiusa ed esatta), chiamata **OLS Estimator**: $\hat{\theta} = (\Phi^T\Phi)^{-1}\Phi^T y$. Questa formula ci dà immediatamente la soluzione che minimizza l'errore sui dati che abbiamo.
+
+### 3. Visualizziamo cosa accade (2.4: Interpretazione Geometrica)
+
+Cosa sta facendo quella formula nello spazio?
+
+- **Il senso:** Immagina che il tuo obiettivo (il vettore $y$) sia un punto irraggiungibile che fluttua nello spazio (perché contiene rumore che il tuo modello non può prevedere). L'OLS trova la **proiezione ortogonale** (l'ombra) di quel punto sul piano del tuo modello. È il punto più vicino possibile alla verità che il tuo modello può toccare.
+
+### 4. Definiamo le Regole del Gioco (2.5: Linear Assumption)
+
+Qui passiamo dalla geometria alla statistica.
+
+- **Il senso:** Per capire se il nostro metodo è valido, dobbiamo fare un'ipotesi su come funziona il mondo. Assumiamo che esista una "verità nascosta" ($\theta^*$) che genera i dati, sporcata solo da un po' di rumore casuale ($\epsilon$). Senza questa assunzione, non potremmo valutare quanto siamo bravi.
+
+### 5. La Garanzia di Qualità (2.6: Estimating $\theta^*$)
+
+Ora ci chiediamo: la nostra formula OLS riesce a scoprire quella verità nascosta ($\theta^*$)?
+
+- **Il senso:** Sì, abbiamo due garanzie statistiche:
+    1. **Non siamo prevenuti (Unbiased):** In media, colpiamo il centro del bersaglio ($\mathbb{E}[\hat{\theta}] = \theta^*$).
+    2. **Miglioriamo con l'esperienza (Variance):** Più dati raccogliamo ($n$), più la nostra mira diventa stabile e precisa (la varianza scende come $1/n$).
+
+### 6. Il Conto Finale (2.7: Risk of OLS)
+
+Alla fine, quanto errore faremo su dati nuovi (futuri) che non abbiamo mai visto?
+
+- **Il senso:** L'errore totale è la somma di due cose:
+    1. **Rumore Irriducibile ($\sigma^2$):** L'imprevedibilità del mondo. Nessuno può eliminarlo.
+    2. **Costo dell'Apprendimento:** Un errore extra dovuto al fatto che abbiamo usato un numero limitato di dati per imparare. Questo capitolo ci dice che l'errore cala man mano che $n$ aumenta, ma non scenderà mai sotto la soglia del rumore intrinseco.
+
+**In sintesi estrema:**
+
+1. Prepariamo i dati per gestire le curve (2.2).
+2. Calcoliamo la soluzione perfetta sui dati che abbiamo (2.3).
+3. Capiamo che è una proiezione geometrica (2.4).
+4. Assumiamo che ci sia una verità da scoprire (2.5).
+5. Dimostriamo che il nostro metodo scopre la verità in media (2.6).
+6. Calcoliamo quanto errore ci costerà l'incertezza sui nuovi dati (2.7).

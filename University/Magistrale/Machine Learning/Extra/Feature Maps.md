@@ -66,7 +66,7 @@ The "idea" is:
 
 ---
 
-## 3. The Design Matrix ($\Phi$)
+## 3. The [[Design Matrix]] ($\Phi$)
 
 When we have a dataset of $n$ points, we apply the feature maps to every single input $x_i$. We stack these vectors to create the **Design Matrix** $\Phi$ ($n \times d$).
 
