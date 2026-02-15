@@ -1,4 +1,4 @@
-Note that this is a simplified version of the week 3: it doesn't contains proofs, so consider the case of seeing both materials 
+Note that this is a simplified version of the week 3: it doesn't contains proofs, so consider the case about seeing both materials 
 # 3.1 & 3.2: From Linear to Polynomial Regression
 
 ### 1. Recap: The "Linear" Setup

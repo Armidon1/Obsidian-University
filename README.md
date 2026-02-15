@@ -273,5 +273,10 @@ int main() { ... }
 tutto questo senza inserire le fonti numeriche (esempio "3333333333")
 ```
 
+## per notebookLM
+```
+considera il week 5. Non ho una grande comprensione del testo in inglese ed inoltre è troppo sintetico e tralascia troppe cose al caso, potresti rendermi più discorsivo (sempre in inglese) questo testo? Il tuo output deve essere in formato giusto per obsidian ed inoltre ti direi di fare un paragrafo per prompt (in questo modo lo rendi il più discorsivo possibile ed inoltre NON TRALASCI ALCUN DETTAGLIO). Non voglio che mi scrivi tutto il contenuto con un singolo prompt, fammi un paragrafo per volta.
+```
+
 Spesso Gemini potrebbe ficcarci dentro delle fonti. Usare questo per rimuoverle:
 https://bpetrynski.github.io/gemini-citation-remover/
