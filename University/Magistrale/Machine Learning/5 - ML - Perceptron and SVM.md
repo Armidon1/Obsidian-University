@@ -1,8 +1,10 @@
 For the original source (important for the prof's theorem's proofs, see [[Original 5 ML|here]])
 
+![[5_-_ML_-_Dal_Perceptron_alle_SVM.mp4]]
 ---
-
 ## Part 1: The Setup and the Hyperplane
+
+![[Pasted image 20260216174530.png]]
 
 In this section, we set the stage for the **Perceptron**. Instead of jumping straight into the algorithm, we first need to understand the geometry of the problem we are trying to solve.
 
@@ -20,20 +22,27 @@ Let's formalize the inputs:
 - $x_i$ is a vector in $\mathbb{R}^d$ (the features of your data).
 - $y_i$ is the label, which can only be **-1** or **1**.
 
-Our objective is to find a **hyperplane**, denoted as $H_\theta$. You can think of a hyperplane as the decision boundary. If a point falls on one side, we classify it as positive; if it falls on the other, it is negative.
+Our objective is to find a **hyperplane**, denoted as $H_\theta$. You can think of a hyperplane as the decision boundary (una superficie o una linea che suddivide lo spazio delle caratteristiche (features) in regioni distinte dove ogni regione corrisponde a una specifica etichetta di classe (nel tuo caso, **-1** o **1**)). If a point falls on one side, we classify it as positive; if it falls on the other, it is negative.
 
 #### How the Hyperplane Works
+
+![[Pasted image 20260216181238.png]]
 
 A generic hyperplane is defined by a vector $\theta$ (theta). This vector $\theta$ is important because it is **orthogonal** (perpendicular) to the hyperplane itself. It points in the direction of the "positive" side.
 
 Mathematically, the hyperplane $H_\theta$ is the set of all points $x$ where the dot product with $\theta$ is zero: $$H_\theta = {x \in \mathcal{X} \mid x^T \theta = 0}$$
+[[5 ML more about the hyperplane|see here more about the hyperplane]]
 
 To classify a new point $x$, we simply check the angle between the point $x$ and our vector $\theta$ by calculating $x^T \theta$:
 
 1. If $x^T \theta \geq 0$, the angle is less than 90 degrees, so the point is on the "positive" side. We predict **+1**.
 2. If $x^T \theta < 0$, the point is on the "opposite" side. We predict **-1**. The prediction formula is simply: $\text{sign}(x^T \theta)$.
 
+![[Pasted image 20260216184129.png]]
+
 #### A Note on Simplified Geometry (Homogeneous Coordinates)
+
+![[Pasted image 20260216184712.png]]
 
 You might wonder: "Don't lines usually have an intercept (or bias), like $y = mx + q$?" Yes, usually a hyperplane needs a bias term to move away from the origin. However, to make our math cleaner, we use a trick called **homogeneous coordinates**. We assume our hyperplane passes through the origin. If our data requires a bias, we simply add an extra dimension (an extra coordinate set to 1) to all our data points. This allows us to treat everything as a simple dot product without worrying about a separate bias term.
 
@@ -41,8 +50,12 @@ You might wonder: "Don't lines usually have an intercept (or bias), like $y = mx
 
 Before looking at how the algorithm learns, we must define what constitutes a mistake:
 
+![[Pasted image 20260216184650.png]]
+
 - **Classification Error:** This happens when our prediction disagrees with the true label $y$. Since $y$ is either 1 or -1, if the product $y \cdot x^T \theta$ is negative, it means the signs disagreed. This is an error.
 - **Margin Error:** This is a stricter condition. Even if we classify the point correctly, we might barely scrape by. We say there is a "margin error" if $y \cdot x^T \theta < 1$. This means the point is too close to the boundary for comfort, or it is on the wrong side.
+
+	but what it is actually the differences between the [[Perceptron]] and the [[Logistic Regression]]? see [[Perceptron vs Logistic Regression|here]]
 
 ---
 
@@ -61,9 +74,14 @@ The process works as follows:
 
 #### The Update Rule
 
-If there is no error, we do nothing. We keep $\theta_t$ exactly as it is. However, if there **is** a margin error, we must update our vector. The update rule is elegant: $$ \theta_{t+1} \leftarrow \theta_t + y_{i_t} x_{i_t} $$
+![[Pasted image 20260216180251.png]]
+
+- If there is no error, we do nothing. We keep $\theta_t$ exactly as it is. 
+- if there **is** a margin error, we must update our vector. The update rule is elegant: $$ \theta_{t+1} \leftarrow \theta_t + y_{i_t} x_{i_t} $$
 
 **Why does this work?** Think about the geometry. If the point was positive ($y=1$) but we predicted negative (or had a low score), adding $x$ to $\theta$ makes the new $\theta$ point more in the direction of $x$. This increases the dot product $x^T\theta$, fixing the error. Conversely, if $y=-1$, we subtract $x$, making $\theta$ point away from $x$, lowering the score.
+
+Do you remember about $\theta$? see [[5 ML theta cazzè|here]]
 
 #### Will it ever stop? (Novikoff’s Theorem)
 
@@ -74,13 +92,40 @@ A major question in machine learning is "Convergence." If we let this run, will 
 Here is how to interpret the components of this formula:
 
 - $D$ is the **diameter** of the data (the length of the longest vector $x$). If your data points are spread very far out, it might take longer to converge.
-- $\gamma^_$ is the **optimal margin**. This represents how "easy" the problem is. If the gap between positive and negative points is wide (large $\gamma^_$), the algorithm converges quickly. If the gap is tiny, the algorithm struggles to squeeze the line in between.
+- $\gamma^*$ is the **optimal margin**. This represents how "easy" the problem is. If the gap between positive and negative points is wide (large $\gamma^*$), the algorithm converges quickly. If the gap is tiny, the algorithm struggles to squeeze the line in between.
+
+#### More about the optimal margin
+
+![[Pasted image 20260216191253.png]]
+
+Sì, **esattamente**. Hai colto il concetto fondamentale, ma per essere rigorosi dobbiamo distinguere tra il margine di un iperpiano qualsiasi e il "margine ottimo".
+
+Ecco la distinzione precisa basata sulle tue fonti:
+
+##### 1. Il Margine di un Iperpiano ($\gamma(\theta)$)
+
+Hai ragione: dato un iperpiano $H_\theta$ che separa correttamente i dati, il suo margine è definito come la **distanza tra l'iperpiano stesso e il punto del dataset più vicino** a esso.
+
+- Formula: $\gamma(\theta) = \min_{i} \text{dist}(x_i, H_\theta)$.
+- Visivamente: È lo spazio libero tra il "muro" e il giocatore più vicino al muro.
+
+##### 2. L'Optimal Margin ($\gamma^\star$)
+
+L'**Optimal Margin** è il **massimo possibile** di questa distanza minima. Tra tutti gli infiniti muri (iperpiani) che potresti costruire per separare i dati, l'_optimal margin_ appartiene a quello specifico muro che riesce a stare più lontano possibile dai punti di entrambe le classi.
+
+##### In sintesi
+
+- **Distanza:** Quanto è lontano un punto dal muro.
+- **Margine:** Quanto è lontano il punto _più vicino_ (il caso peggiore) dal muro.
+- **Optimal Margin:** La "strada" più larga che puoi costruire massimizzando quella distanza minima.
+
+> **Nota tecnica:** I punti che si trovano esattamente a questa distanza minima (sul bordo della strada) sono chiamati **Support Vectors**, perché sono quelli che "reggono" il margine.
 
 #### Intuition behind the Proof
 
 The proof of this theorem relies on two competing forces:
 
-1. **The Growth of Alignment:** Every time we update $\theta$, it gets "closer" to the perfect solution $\theta^_$. We can prove mathematically that the dot product between our current $\theta$ and the perfect $\theta^_$ grows steadily.
+1. **The Growth of Alignment:** Every time we update $\theta$, it gets "closer" to the perfect solution $\theta^*$. We can prove mathematically that the dot product between our current $\theta$ and the perfect $\theta^*$ grows steadily.
 2. **The Growth of Length:** However, we also check how fast the _length_ (norm) of our vector $\theta$ grows. It turns out the length grows quite slowly (at a rate related to the diameter $D$).
 
 By comparing these two rates using the **Cauchy-Schwarz inequality** (which basically says the overlap between two vectors can't exceed their lengths multiplied), we reach a contradiction if the number of mistakes gets too high. Therefore, the mistakes _must_ stop growing eventually.
@@ -93,9 +138,13 @@ Ecco la terza parte. Qui facciamo il salto concettuale dal Perceptron (che trova
 
 ## Part 3: Support Vector Machines (Hard and Soft Margins)
 
-While the Perceptron is a fantastic starting point, it has a significant flaw. It stops as soon as it finds _any_ hyperplane that separates the data. But not all separating lines are created equal. Imagine a line that barely scrapes past your data points versus a line that sits perfectly in the middle of the gap. We clearly prefer the latter. This preference leads us to the **Support Vector Machine (SVM)**.
+![[Pasted image 20260216175249.png]]
+
+While the Perceptron is a fantastic starting point, it has a significant flaw. It stops as soon as it finds _any_ hyperplane that separates the data. But not all separating lines are created equal. Imagine a line that barely scrapes past your data points versus a line that sits perfectly in the middle of the gap. We clearly prefer the latter. This preference leads us to the **[[Support Vector Machine (SVM)]]**.
 
 #### The Hard-Margin SVM (The Search for the "Best" Line)
+
+![[Pasted image 20260216200253.png]]
 
 If our data is perfectly separable, we don't just want a solution; we want the solution with the **largest margin** ($\gamma^*$). The margin is the distance between the hyperplane and the closest data point. A larger margin implies our model is more robust and "safer" against noise.
 
@@ -175,6 +224,8 @@ Ecco l'ultima parte fondamentale: il **Kernel Trick**. Questo è il concetto che
 ## Part 5: The Kernel Trick (Going Beyond Linearity)
 
 Up to this point, we have assumed that our decision boundary is a straight line (or a flat hyperplane). But real-world data is often complex; imagine data points arranged in a circle or a spiral. A straight line simply cannot separate them.
+
+![[Pasted image 20260216175904.png]]
 
 #### The Intuition: Mapping to Higher Dimensions
 
