@@ -291,7 +291,7 @@ We calculate the matrix $\Phi^T\Phi$ once at the beginning (Cost: $O(nd^2)$). Th
 ### Strategy B: Computing "From Scratch"
 
 We do **not** pre-calculate the matrix. Instead, in every step, we compute the gradient directly from the raw data.
-
+	
 - **Cost per step:** $O(nd)$ (Scanning the data once).
 - **Total Time:** $O(nd \cdot \kappa \log(1/\epsilon))$
 - **Verdict:** This is the winner for high-dimensional data!
