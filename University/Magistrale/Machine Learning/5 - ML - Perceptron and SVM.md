@@ -1,6 +1,7 @@
 For the original source (important for the prof's theorem's proofs, see [[Original 5 ML|here]])
 
 ![[5_-_ML_-_Dal_Perceptron_alle_SVM.mp4]]
+
 ---
 ## Part 1: The Setup and the Hyperplane
 
