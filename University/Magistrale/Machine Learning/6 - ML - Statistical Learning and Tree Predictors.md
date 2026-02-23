@@ -22,7 +22,7 @@ Before we can prove that a model learns effectively, we need to recall two funda
 
 ### The Union Bound
 
-![[Pasted image 20260221170728.png]]
+<![[Pasted image 20260221170728.png]]
 
 The first tool is the **Union Bound** (also known as Boole's inequality). This theorem allows us to bound the probability that _at least one_ of a set of events occurs. Suppose we have a collection of events $A_1, A_2, \dots, A_k$. We want to know the probability of the union of these events, denoted as $P(A_1 \cup \dots \cup A_k)$. The Union Bound states that this probability is less than or equal to the sum of the probabilities of the individual events: $$ P\left(\bigcup_{i=1}^k A_i\right) \le \sum_{i=1}^k P(A_i) $$ In the context of machine learning, this is crucial when dealing with a finite hypothesis class. If "event $A_i$" represents a specific classifier $h_i$ failing to generalize well, the Union Bound helps us calculate the worst-case probability that _any_ classifier in our set fails.
 
@@ -43,14 +43,17 @@ Now that we have established the mathematical groundwork with the Union Bound an
 ### The Problem of Selection
 
 ![[Pasted image 20260221171715.png]]
-
+	
 When we train a model, we typically select the classifier $\hat{h}$ that minimizes the empirical risk (training error) $\hat{R}(h)$. However, there is a danger here. Even if a classifier is terrible on the true distribution (high $R(h)$), it might—by pure chance—perform well on the specific random sample of data we collected. To trust our chosen model, we need to ensure that the training error is a good proxy for the test error for _all_ classifiers in our set simultaneously. If the empirical risk is close to the true risk for every $h \in \mathcal{H}$, then the classifier that minimizes the training error is guaranteed to be nearly optimal for the true distribution as well. This concept is known as **uniform convergence**.
 
+In the language of a normal human being: **If every classifier has the empirical risk near to its own expected risk**, we are choosing the classifier that has the minimum empirical risk. If there is even **one** classifier in your hypothesis class H where the expected risk is distant from the empirical risk (specifically, if the empirical risk is low but the true risk is high), you run the risk of **overfitting**. In this scenario, we have to restrict the complexity of our classifier and accept a possible bias of the predictor.
 ### Applying the Bounds
 
 ![[Pasted image 20260221171738.png]]
 
 To quantify this, we look for the probability that _at least one_ classifier in our set has a deceptive training error (deviating from its true error by more than $\epsilon$). Using the Union Bound, we can sum the probabilities of this bad event happening for each individual classifier. Since Hoeffding's inequality tells us the probability for a single classifier is at most $2e^{-2n\epsilon^2}$, the probability for _any_ of the $|\mathcal{H}|$ classifiers failing is bounded by: $$ P\left(\max_{h \in \mathcal{H}} |\hat{R}(h) - R(h)| > \epsilon\right) \le \sum_{h \in \mathcal{H}} 2e^{-2n\epsilon^2} = 2|\mathcal{H}|e^{-2n\epsilon^2} $$ This is a powerful result. It tells us that as long as the number of samples $n$ is large enough, the probability of _any_ model fooling us drops exponentially.
+
+[[spiegazione ML 6.3.1|spiegotto]]
 
 ### Sample Complexity
 
@@ -61,6 +64,8 @@ We can invert this relationship to answer a practical question: **How much data 
 1. **Complexity cost:** The number of samples needed grows logarithmically with the size of the hypothesis class ($\ln |\mathcal{H}|$). This implies that adding more complexity to our model (increasing $|\mathcal{H}|$) requires more data, but the cost grows slowly.
 2. **Precision cost:** The number of samples grows quadratically with the inverse of the precision ($1/\epsilon^2$). This means that if you want to halve your margin of error, you need four times as much data.
 
+[[spiegazione H che cos'è ML 6.3.2|spiegazione che cos'è H]]
+
 
 ---
 
@@ -70,9 +75,28 @@ The results we derived for finite hypothesis classes are mathematically sound bu
 
 ### The Concept of Shattering
 
+![[Pasted image 20260223165639.png]]
+
 To understand VC dimension, we first need to define the concept of **shattering**. Imagine a set of data points $S = {x_1, \dots, x_m}$. We say that a hypothesis class $\mathcal{H}$ **shatters** this set $S$ if $\mathcal{H}$ is capable of realizing _every possible_ labeling of these points. Since each of the $m$ points can be labeled either $0$ or $1$, there are $2^m$ possible combinations of labels. If, for every one of these $2^m$ combinations, you can find a classifier $h \in \mathcal{H}$ that assigns exactly those labels to the points in $S$, then $S$ is shattered by $\mathcal{H}$. Essentially, shattering means the model is powerful enough to "memorize" any pattern on that specific set of points.
 
+
+>[!Abstract] Definizione Shattering
+Dato un insieme finito di punti $S = {x_1, \dots, x_m}$ appartenenti allo spazio degli input $\mathcal{X}$, si dice che una famiglia di classificatori (o classe di ipotesi) $\mathcal{H}$ **shatter** (frantuma) l'insieme $S$ se $\mathcal{H}$ è in grado di realizzare **qualsiasi possibile etichettatura** di $S$.
+>
+In termini matematici, ciò significa che per ogni possibile sequenza di etichette binarie $(y_1, \dots, y_m) \in {0, 1}^m$ (ci sono $2^m$ combinazioni possibili), esiste almeno un classificatore $h$ all'interno della famiglia $\mathcal{H}$ tale che: $$ h(x_i) = y_i \quad \text{per tutti i punti } i = 1, \dots, m $$
+
+#### Perché è importante?
+
+Il concetto di shattering è il blocco costruttivo per definire la **Dimensione VC** (Vapnik-Chervonenkis), che è una misura della complessità (o capacità) di un modello:
+
+- La **Dimensione VC** di $\mathcal{H}$ è definita come la dimensione del **più grande** insieme finito $S$ che $\mathcal{H}$ riesce a frantumare.
+- Se una famiglia $\mathcal{H}$ può fare shattering di insiemi arbitrariamente grandi, allora la sua dimensione VC è infinita.
+
+**Esempio pratico citato nelle fonti:** La famiglia di tutti gli **alberi decisionali** (senza restrizioni di profondità) ha una dimensione VC infinita. Questo perché, dato un qualsiasi insieme di punti distinti, è sempre possibile costruire un albero abbastanza profondo da isolare ogni singolo punto in una propria foglia, assegnandogli l'etichetta desiderata. Di conseguenza, questa famiglia può fare _shattering_ di qualsiasi dataset.
+
 ### Defining VC Dimension
+
+![[Pasted image 20260223165703.png]]
 
 The **VC dimension** of a hypothesis class, denoted as $\text{VC}(\mathcal{H})$, is defined as the **size of the largest finite set $S$ that $\mathcal{H}$ can shatter**.
 
@@ -81,11 +105,66 @@ The **VC dimension** of a hypothesis class, denoted as $\text{VC}(\mathcal{H})$,
 
 It is crucial to note the precise logic here: to have a VC dimension of $d$, you only need to find _one_ specific configuration of $d$ points that can be shattered. You do not need to prove that _all_ sets of size $d$ are shatterable. Conversely, to show the dimension is _not_ $d+1$, you must prove that _no_ set of size $d+1$ exists that can be shattered.
 
+Capisco perfettamente la tua difficoltà. Le definizioni formali di VC Dimension e "shattering" (frantumazione) sono spesso molto astratte.
+
+Per chiarire i concetti, dimentichiamo per un attimo la matematica complessa e proviamo a **visualizzare concretamente** chi sono i protagonisti di questa storia: $\mathcal{H}$ e $S$.
+
+#### 1. Chi è $S$? (I Punti sul Foglio)
+
+Immagina $S$ non come un insieme astratto, ma come **un gruppo di punti disegnati su un foglio di carta**.
+
+- Se $S$ ha dimensione 3 ($|S|=3$), hai disegnato **3 puntini** sul foglio in posizioni fisse.
+- Questi punti non hanno ancora un colore (un'etichetta). Sono solo lì, fermi.
+
+#### 2. Chi è $\mathcal{H}$? (Il Tuo Strumento di Disegno)
+
+Immagina $\mathcal{H}$ come lo **strumento** o la **regola** che ti è permesso usare per separare questi punti.
+
+- **Esempio 1: Linee Rette.** Se $\mathcal{H}$ è l'insieme dei classificatori lineari, il tuo strumento è un righello. Puoi tracciare una linea retta ovunque sul foglio. Tutto ciò che sta da una parte della linea diventa "Blu" (classe 1), tutto ciò che sta dall'altra diventa "Rosso" (classe 0).
+- **Esempio 2: Rettangoli.** Se $\mathcal{H}$ è l'insieme dei rettangoli allineati agli assi, il tuo strumento è una cornice rettangolare. Ciò che è dentro è "Blu", ciò che è fuori è "Rosso".
+
+#### 3. Cosa significa "Shattering" (Frantumare)?
+
+Ora arriva il gioco. Hai i tuoi 3 punti fissi sul foglio ($S$). Io (il "diavolo" o l'avversario) decido come colorarli. Posso scegliere qualsiasi combinazione:
+
+- Tutti rossi.
+- Tutti blu.
+- Il primo rosso, gli altri due blu.
+- Eccetera. (Con 3 punti ci sono $2^3 = 8$ combinazioni possibili).
+
+Dire che il tuo strumento $\mathcal{H}$ **"shattera"** (frantuma) questi 3 punti significa: **"Non importa come io colori questi 3 punti, tu riesci SEMPRE a trovare un modo per separarli correttamente usando il tuo strumento."**
+
+- Se coloro il punto in alto Rosso e quello in basso Blu, riesci a mettere il righello in mezzo? Sì.
+- Se li coloro tutti Blu, riesci a mettere il righello in modo che siano tutti dalla stessa parte? Sì.
+
+Se riesci a farlo per **tutte** le 8 combinazioni possibili, allora hai "shatterato" quel set di 3 punti.
+
+#### 4. La Dimensione VC (Il Punteggio Massimo)
+
+La Dimensione VC è semplicemente il **record massimo** di punti che il tuo strumento riesce a gestire in questo modo.
+
+- **Il caso delle Linee Rette (in 2D):**
+    - Riesci a shatterare **3 punti**? Sì (purché non siano allineati, ma a noi basta trovarne _un_ gruppo posizionato bene).
+    - Riesci a shatterare **4 punti**? Proviamo. Mettiamo 4 punti a forma di quadrato. Se io coloro quelli sulla diagonale (es. in alto a destra e in basso a sinistra) di Blu, e gli altri due di Rosso... **puoi separarli con UNA sola linea retta?**
+    - **No.** È impossibile.
+    - Risultato: Il tuo strumento "Linea Retta" vince con 3 punti, ma perde con 4. Quindi la sua **Dimensione VC è 3**.
+
+#### Riepilogo Visuale
+
+- **$S$**: I punti che mettiamo sul tavolo per sfidare il modello.
+- **$\mathcal{H}$**: Le forme geometriche (linee, cerchi, rettangoli) che possiamo usare per dividere i punti.
+- **Shattering**: La capacità di adattare la forma geometrica a _qualsiasi_ colorazione arbitraria dei punti.
+- **VC Dimension**: Il numero massimo di punti per cui questo gioco riesce sempre. Se il gioco riesce con infiniti punti (come per gli alberi decisionali molto profondi), la dimensione è infinita e il modello rischia di imparare a memoria (overfitting) qualsiasi rumore.
+
 ### The Fundamental Theorem of Learning
+
+![[Pasted image 20260223171921.png]]
 
 This combinatorial measure connects directly to learnability. A famous theorem in statistical learning states that if a hypothesis class has a finite VC dimension $d$, it is learnable. The sample complexity—the number of samples $n$ required to guarantee that the empirical risk is within $\epsilon$ of the true risk with high probability ($1-\delta$)—scales linearly with $d$. Specifically, the bound is roughly: $$ n \ge C \frac{d \log(1/\epsilon) + \log(1/\delta)}{\epsilon^2} $$ where $C$ is a constant. This is the "infinite" analog to our previous finite bound. It tells us that the difficulty of learning a model depends not on the number of parameters or the number of classifiers, but on its "effective" complexity as measured by the VC dimension.
 
 ### Examples of VC Dimension
+
+![[Pasted image 20260223165723.png]]
 
 To make this concrete, consider these standard geometric examples:
 
