@@ -22,7 +22,7 @@ Before we can prove that a model learns effectively, we need to recall two funda
 
 ### The Union Bound
 
-<![[Pasted image 20260221170728.png]]
+![[Pasted image 20260221170728.png]]
 
 The first tool is the **Union Bound** (also known as Boole's inequality). This theorem allows us to bound the probability that _at least one_ of a set of events occurs. Suppose we have a collection of events $A_1, A_2, \dots, A_k$. We want to know the probability of the union of these events, denoted as $P(A_1 \cup \dots \cup A_k)$. The Union Bound states that this probability is less than or equal to the sum of the probabilities of the individual events: $$ P\left(\bigcup_{i=1}^k A_i\right) \le \sum_{i=1}^k P(A_i) $$ In the context of machine learning, this is crucial when dealing with a finite hypothesis class. If "event $A_i$" represents a specific classifier $h_i$ failing to generalize well, the Union Bound helps us calculate the worst-case probability that _any_ classifier in our set fails.
 
@@ -199,6 +199,8 @@ Our goal is to choose a family $\mathcal{H}$ that balances these two competing e
 
 ## Part 6: Tree Predictors: Structure and Overfitting
 
+![[Pasted image 20260224165115.png]]
+
 We now shift our focus from abstract generalization bounds to a concrete algorithm: **Tree Predictors**. You can visualize a decision tree not just as a data structure, but as a method for recursively partitioning the input space $\mathcal{X}$ into smaller rectangular regions. Mathematically, we assume the input space decomposes into dimensions, such as $\mathcal{X} = \mathcal{X}_1 \times \dots \times \mathcal{X}_d$. A tree predictor is represented by a **rooted binary tree** where:
 
 - **Internal nodes** represent logical **tests** on a specific coordinate of the input data (e.g., "Is $x^{(1)} \ge 0.5$?").
@@ -214,6 +216,10 @@ A fundamental property of decision trees is their extreme flexibility. A key the
 
 ## Part 7: Greedy Training and Impurity Measures
 
+![[Alberi__Paradosso_Overfitting.mp4]]
+
+![[Pasted image 20260224182739.png]]
+
 Since finding the globally optimal decision tree of a fixed size $N$ is a computationally difficult problem, we rely on a **Greedy Algorithm** to approximate the best solution. The approach is "greedy" because at every step, it makes the locally optimal decision to reduce error without worrying about future consequences. The standard algorithm (similar to CART) operates as follows:
 
 1. **Initialization:** Start with a trivial tree consisting of a single leaf that contains the entire training dataset.
@@ -225,7 +231,7 @@ Since finding the globally optimal decision tree of a fixed size $N$ is a comput
 
 ### The Splitting Criterion
 
-The core decision in this algorithm is choosing _which_ leaf to split and _what_ test to apply. We make this choice by minimizing a cost function. If we let $N_\ell$ be the total number of points in a leaf and $N_\ell^+$ be the count of positive samples, the empirical error of that leaf is $N_\ell \cdot \psi(N_\ell^+ / N_\ell)$, where $\psi(z) = \min(z, 1-z)$. When we split a leaf $\ell$ into left ($\ell_L$) and right ($\ell_R$) children, the total error will effectively decrease (or stay the same) if the impurity function $\psi$ is **concave**. Mathematically, this guarantees that: $$ N_\ell \psi\left(\frac{N_\ell^+}{N_\ell}\right) \ge N_{\ell_L} \psi\left(\frac{N_{\ell_L}^+}{N_{\ell_L}}\right) + N_{\ell_R} \psi\left(\frac{N_{\ell_R}^+}{N_{\ell_R}}\right) $$
+The core decision in this algorithm is choosing _which_ leaf to split and _what_ test to apply. We make this choice by minimizing a cost function. If we let $N_\ell$ be the total number of points in a leaf and $N_\ell^+$ be the count of positive samples (the label of that specific $x$ feature vector is $+1$), the empirical error of that leaf is $N_\ell \cdot \psi(N_\ell^+ / N_\ell)$, where $\psi(z) = \min(z, 1-z)$. When we split a leaf $\ell$ into left ($\ell_L$) and right ($\ell_R$) children, the total error will effectively decrease (or stay the same) if the impurity function $\psi$ is **concave**. Mathematically, this guarantees that: $$ N_\ell \psi\left(\frac{N_\ell^+}{N_\ell}\right) \ge N_{\ell_L} \psi\left(\frac{N_{\ell_L}^+}{N_{\ell_L}}\right) + N_{\ell_R} \psi\left(\frac{N_{\ell_R}^+}{N_{\ell_R}}\right) $$
 
 ### Surrogate Impurity Functions
 
@@ -238,7 +244,7 @@ While the standard misclassification error ($\min(z, 1-z)$) seems intuitive, it 
 
 ## Part 8: VC Dimension of Trees and Random Forests
 
-We conclude our analysis by applying the VC dimension framework directly to decision trees. This allows us to understand theoretically why "pruning" or limiting the size of a tree is necessary for generalization, and leads us to one of the most popular machine learning algorithms: Random Forests.
+We conclude our analysis by applying the VC dimension framework directly to decision trees. This allows us to understand theoretically why "pruning" (potatura) or limiting the size of a tree is necessary for generalization, and leads us to one of the most popular machine learning algorithms: Random Forests.
 
 ### The Complexity of Unrestricted Trees
 
