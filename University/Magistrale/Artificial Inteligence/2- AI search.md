@@ -3,6 +3,8 @@
 **Tags:** #uni #AI #engineering #search #algorithms
 **Source:** Prof. Patrizi Slides (02-AI-Search) + Ch 3 "AI A Modern Approach"
 
+This part is just a guide of the search problems but we must complete that on the book
+
 ---
 
 ## 1. Problem-Solving Agents
@@ -15,7 +17,7 @@ The standard operating process follows 4 phases :
 3. **Search:** The agent simulates sequences of actions until it finds a **solution** (a sequence of actions leading from the initial state to the goal).
 4. **Execution:** The agent executes the actions in the real world.
 
-> **Note:** In fully observable, deterministic, known environments, the solution is a fixed sequence. The agent can operate in an **Open-loop** (ignoring percepts during execution because it knows the solution will work) .
+> **Note:** In fully observable, deterministic, known environments, the solution is a fixed sequence (the simplest scenario). The agent can operate in an **Open-loop** (ignoring percepts during execution because it knows the solution will work) .
 
 ---
 
@@ -38,14 +40,15 @@ A search problem is formally defined by the following 5 components :
 - **Actions:** Drive from one city to another.
 - **Cost:** Distance in miles.
 
-![[Insert Image Figure 3.1 from PDF here]]
+![[Pasted image 20260304162931.png]]
 > *Figure 3.1: A simplified road map of part of Romania. The numbers on the edges indicate distance.*
+![[Pasted image 20260304163723.png]]
 
 #### The Vacuum World
 - **States:** Agent location and dirt presence. With $n$ cells, there are $n \cdot 2^n$ states.
 - **Actions:** Left, Right, Suck.
 
-![[Insert Image Figure 3.2 from PDF here]]
+![[Pasted image 20260304163733.png]]
 > *Figure 3.2: State space graph for the two-cell vacuum world .*
 
 #### The 8-Puzzle
@@ -53,7 +56,7 @@ A search problem is formally defined by the following 5 components :
 - **Actions:** Move the blank space (Up, Down, Left, Right).
 - **Goal:** Order the numbers.
 
-![[Insert Image Figure 3.3 from PDF here]]
+![[Pasted image 20260304163853.png]]
 > *Figure 3.3: Start State and Goal State of the 8-puzzle.*
 
 ---
@@ -69,6 +72,8 @@ A search problem is formally defined by the following 5 components :
 ## 4. Algorithms and Search Trees
 
 A **Search Algorithm** takes a problem as input and returns a solution or failure. Most algorithms work by superimposing a **[[Search Tree]]** over the state space graph.
+
+![[Pasted image 20260304195641.png]]
 
 ### Fundamental Distinction: State vs Node
 - **State:** A physical configuration of the world (e.g., "Being in Arad").
@@ -86,10 +91,10 @@ The algorithm proceeds via **Node Expansion**:
 
 The **Frontier** separates the "explored" region (expanded nodes) from the "unexplored" region (states not yet reached).
 
-![[Insert Image Figure 3.4 from PDF here]]
+![[Pasted image 20260304164807.png]]
 > *Figure 3.4: Three partial stages of the search tree. Green nodes represent the frontier .*
 
-![[Insert Image Figure 3.5 from PDF here]]
+![[Pasted image 20260304164830.png]]
 > *Figure 3.5: How the search tree covers the state space graph.*
 
 ---
@@ -103,7 +108,7 @@ Algorithms are divided into two categories:
 1. **Graph Search:** Keeps track of visited states (using a `reached` set or *Closed List*). If an explored state is encountered with a lower or equal cost, it is ignored. Necessary for spaces with many loops (e.g., grids).
 2. **Tree-like Search:** Does not keep track of past states. Saves memory but can end up in infinite loops or explore the same states exponentially via different paths.
 
-![[Insert Image Figure 3.6 from PDF here]]
+![[Pasted image 20260304172504.png]]
 > *Figure 3.6: The separation property. The frontier (green) separates the interior (visited) from the exterior (not reached) .*
 
 ---
@@ -115,31 +120,9 @@ The idea is to select the node to expand based on an **evaluation function $f(n)
 * Always expand the node with the **minimum $f(n)$**.
 * The Frontier is implemented as a **Priority Queue** ordered by $f$.
 
-```python
-function BEST-FIRST-SEARCH(problem, f) returns a solution node or failure
-node <- NODE(STATE=problem.INITIAL)
-frontier <- priority queue ordered by f, with node as element
-reached <- lookup table {problem.INITIAL: node}
+![[Pasted image 20260304172532.png]]
+> Figure 3.7: Best-First Search Algorithm (adapted pseudocode).
 
-while not IS-EMPTY(frontier) do
-node <- POP(frontier)
-if problem.IS-GOAL(node.STATE) then return node
-for each child in EXPAND(problem, node) do
-s <- child.STATE
-if s is not in reached or child.PATH-COST < reached[s].PATH-COST then
-reached[s] <- child
-add child to frontier
-return failure
-
-function EXPAND(problem, node) yields nodes 
-s ← node.STATE 
-for each action in problem.ACTIONS(s) do 
-	s′ ← problem.RESULT(s, action) 
-	cost ← node.PATH-COST + problem.ACTION-COST(s, action, s′) 
-	yield NODE(STATE=s′, PARENT=node, ACTION=action, PATH-COST=cost)
-````
-
-> Figure 3.7: Best-First Search Algorithm (adapted pseudocode)1.
 
 ---
 
@@ -188,11 +171,11 @@ Explores all nodes at depth $d$ before moving to $d+1$.
 
 ![[Pasted image 20251125194516.png]]
 
-> Figure 3.8: Progress of BFS8.
+> Figure 3.8: Progress of BFS.
 
 ### 8.2 Uniform-Cost Search ([[Dijkstra Algorithm]])
 
-Expands the node with the lowest path cost $g(n)$9.
+Expands the node with the lowest path cost $g(n)$.
 
 - **Strategy:** Priority Queue. $f(n) = g(n)$ (accumulated cost).
 
@@ -263,6 +246,7 @@ These strategies use domain-specific hints about the location of goals to find s
 ### 9.1 Greedy Best-First Search
 
 This algorithm expands first the node with the lowest $h(n)$ value—the node that appears to be closest to the goal—on the grounds that this is likely to lead to a solution quickly3.
+![[Pasted image 20260304195129.png]]
 
 - **Strategy:** $f(n) = h(n)$.
     
@@ -279,6 +263,7 @@ This algorithm expands first the node with the lowest $h(n)$ value—the node th
 
 ### 9.2 A* Search
 
+![[Pasted image 20260304195144.png]]
 
 The most common informed search algorithm, A* (pronounced "A-star"), combines the cost of the path already traveled ($g(n)$) with the estimated remaining cost ($h(n)$).
 
@@ -312,6 +297,10 @@ $$h(n) \le c(n, a, n') + h(n')$$
 
 This is a form of the **triangle inequality**.
 
+![[Pasted image 20260304195235.png]]
+
 - Every consistent heuristic is admissible.
     
 - With a consistent heuristic, the first time a state is reached, it is on an optimal path, meaning the algorithm never has to re-add a state to the frontier.
+
+![[Pasted image 20260304195306.png]]
