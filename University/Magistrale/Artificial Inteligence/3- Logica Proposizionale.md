@@ -45,7 +45,7 @@ Any formal logical system must provide three fundamental components:
 The connection between logical reasoning processes and the real environment is called *grounding*, meaning that while inference operates on "syntax" (internal representations), it corresponds to real-world relationships.
 
 ---
-
+ 
 ## Syntax of Propositional Logic
 Propositional logic is a formalism for representing the state of the world and reasoning about it. The syntax defines the allowable sentences.
 
