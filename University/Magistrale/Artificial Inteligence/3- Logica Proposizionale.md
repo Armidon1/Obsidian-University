@@ -1,795 +1,212 @@
-# Artificial Intelligence
+# 01 - Introduction to Knowledge-Based Agents and The Wumpus World
 
-## A.Y. 2025/
+## Knowledge-Based Agents
+Before diving into the syntax of logic, it is important to understand how logic is used within an Artificial Intelligence system. Intelligent agents need knowledge about the world in order to reach good decisions. A **knowledge-based agent** uses a process of reasoning over an internal representation of knowledge to decide what actions to take.
 
-## Prof. Fabio Patrizi
+*   **Knowledge Base (KB):** The central component of this agent is its knowledge base, which is a set of "sentences" expressed in a knowledge representation language.
+*   **Axioms:** When a sentence is taken as given without being derived from other sentences, it is called an axiom.
+*   **TELL and ASK Operations:** The agent interacts with the KB through two main operations. It uses `TELL` to add new sentences (or percepts) to the KB, and `ASK` to query what is known in order to choose an action. Both operations may involve **inference**, which is the process of deriving new sentences from old ones.
+*   **Declarative vs. Procedural Approach:** Building an agent by `TELL`ing it what it needs to know step-by-step is known as the *declarative* approach, which contrasts with the *procedural* approach where behaviors are hard-coded into the program.
 
+## Motivating Example: The Wumpus World
 
-# Propositional Logic
+![[Pasted image 20260305144402.png]]
 
+To illustrate how a knowledge-based agent operates, we use a classic environment called the **Wumpus World**. The wumpus world is a cave consisting of rooms connected by passageways, hiding a wumpus that eats anyone who enters its room, and bottomless pits that trap the agent.
 
-### Motivating Example: the Wumpus World
+![[Pasted image 20260305144501.png]]![[Pasted image 20260305144510.png]]
 
+The task environment is defined by its **PEAS** (Performance, Environment, Actuators, Sensors) description:
+*   **Performance Measure:** +1000 points for climbing out of the cave with the gold, -1000 for falling into a pit or being eaten by the wumpus, -1 for each action taken, and -10 for using up the arrow. The game ends when the agent dies or climbs out.
+*   **Environment:** A $4 \times 4$ grid of rooms surrounded by walls. The agent always starts in square facing east. The gold and the wumpus are placed randomly (uniform distribution) in squares other than the start, and every other square has a 0.2 probability of containing a pit.
+*   **Actuators:** The agent can move *Forward*, *TurnLeft* (90°), or *TurnRight* (90°). It can use *Grab* to pick up the gold, *Shoot* to fire its single arrow in a straight line to kill the wumpus, and *Climb* to exit the cave from. Moving forward into a wall results in no movement.
+*   **Sensors:** The agent receives a percept vector with five bits of information:
+    1.  **Stench:** Perceived in squares directly adjacent (not diagonally) to the wumpus.
+    2.  **Breeze:** Perceived in squares directly adjacent to a pit.
+    3.  **Glitter:** Perceived in the square containing the gold.
+    4.  **Bump:** Perceived when the agent walks into a wall.
+    5.  **Scream:** Perceived anywhere in the cave when the wumpus is killed.
 
-### Wumpus World
+## The Need for Logical Inference
+In the Wumpus World, the agent cannot directly see the pits or the wumpus. It can only perceive breezes and stenches locally. However, a cautious agent will move only into a square that it definitively knows to be safe ("OK").
 
-initial state (^) [1,1] -> [2,1]
+By combining the percepts it gathers over time with its initial knowledge of the rules of the environment, the agent is able to indirectly infer the position of hidden dangers. For instance, if an agent is in and feels a stench, but felt no stench previously in or, it can systematize this information to logically deduce the exact location of the wumpus.
 
+This guarantees that conclusions are correct if the available information is correct, which is a fundamental property of logical reasoning. To systematize this inference procedure, we use **Propositional Logic**.
 
-### Wumpus World
+# 02 - Syntax and Semantics of Propositional Logic
 
-#### [1,1] -> [2,1] -> [1,1] -> [1,2] [1,1] -> [2,1] -> [2,2] -> [2,3]
+## Building Blocks of Logical Systems
+Any formal logical system must provide three fundamental components:
+1.  **Syntax:** Defines which strings of characters constitute a well-formed formula in the logic. It is the structural representation.
+2.  **Semantics:** Defines the *meaning* of each formula. Specifically, it defines the truth of each sentence with respect to each possible world (or model).
+3.  **Inference System:** Specifies the rules and processes to infer new knowledge from existing knowledge.
 
+The connection between logical reasoning processes and the real environment is called *grounding*, meaning that while inference operates on "syntax" (internal representations), it corresponds to real-world relationships.
 
-### Wumpus World
+---
 
-- Agent cannot see pits or Wumpus
-- Can only perceive breeze and stench
-- Yet, it is able to infer position of pits and Wumpus indirectly
-- How can the agent do so?
-- Can we systematize the inference procedure?
-- Yes, with logic!
+## Syntax of Propositional Logic
+Propositional logic is a formalism for representing the state of the world and reasoning about it. The syntax defines the allowable sentences.
 
+### Propositional Alphabet
+*   **Atomic Sentences (Propositions):** A countable set $P$ of atomic propositions (or atoms or variables). Each symbol stands for a proposition that can be either *true* or *false* (e.g., $S_{1,2}$ for "there is a stench in cell"). The symbols `True` (always true) and `False` (always false) are also fixed atomic sentences.
+*   **Logical Connectives:**
+    *   $\neg$ **(NOT / Negation):** A sentence such as $\neg W_{1,3}$ is the negation of $W_{1,3}$.
+    *   $\land$ **(AND / Conjunction):** A sentence whose main connective is $\land$ is a conjunction; its parts are the *conjuncts*.
+    *   $\lor$ **(OR / Disjunction):** A sentence whose main connective is $\lor$ is a disjunction; its parts are the *disjuncts*.
+    *   $\Rightarrow$ or $\supset$ **(Implies / Implication):** Also known as rules or if-then statements. The left side is the *premise* (or antecedent) and the right side is the *conclusion* (or consequent).
+    *   $\Leftrightarrow$ or $\leftrightarrow$ **(If and only if / Biconditional):** Represents material equivalence.
 
-### Propositional Logic
-
-- Formalism for _representing_ the state of the world and _reasoning_ about it
-- Based on _Propositions:_
-    - Statements about the world which can be either _true_ or _false_
-    - E.g.:
-       - Proposition s1,2: "there is stench in cell [1,2]"
-       - Proposition p3,3: "there is a pit in cell [3,3]"
-       - Proposition b3,1: "there is breeze in cell [3,1]"
-       - ...
-
-
-### Building Blocks of Logical (Formal) Systems
-
-Any Logical System must provide:
-
-- Syntax: when does a string of characters is a _formula_ in the logic?
-- Semantics: what is the _meaning_ of each formula?
-- Inference system: how can we _infer_ new knowledge?
-    - E.g.:
-       - We know that: stench in [1,2], no Wumpus in [1,1], no Wumpus in[2,2]
-       - Then we can infer: Wumpus in [1,3]
-
-
-### Syntax of Propositional Logic
-
-Propositional Alphabet:
-
-- A (countable) set _P_ of _atomic propositions_ (or _atoms or variables_ )
-    - s1,2, p3,3, wumpus_in_1_3,...
-    - This is typically defined by the user (and is usually, but not always, finite)
-- Logical _connectives_ :
-    - ¬ negation (not)
-    - ∧ conjunction (and)
-    - ∨ disjunction (or)
-    - ⊃ implication, also written as → (if then)
-    - ↔ (material) equivalence (if and and only if, iff)
-- Parenthesis symbols:
-    - "(" and ")"
-
-
-### Syntax of Propositional Logic
-
-_Formulas_ of Propositional Logic are sequences of symbols from alphabet
-
-Not all sequences are Propositional Logic formulas
-
-The set of formulas is defined _inductively_
-
+> **Note on Terminology:** A **literal** is either an atomic sentence (a *positive literal*, e.g., $P$) or a negated atomic sentence (a *negative literal*, e.g., $\neg P$).
 
 ### Formulas of Propositional Logic
+Not all sequences of symbols are valid formulas. The set of well-formed formulas is defined inductively:
+1. Every atomic proposition $p \in P$ is a formula.
+2. If $\phi$ and $\psi$ are formulas, then $\neg\psi$, $\phi \land \psi$, $\phi \lor \psi$, $\phi \supset \psi$, $\phi \leftrightarrow \psi$, and $(\phi)$ are also formulas.
+3. Nothing else is a formula.
 
-- Every proposition p∈ _P_ is a propositional formula (called _atomic formula_ )
-- If φ and ψ are propositional formulas then the following are propositional
-    formulas:
-       - ¬ψ
-       - φ ∧ ψ
-       - φ ∨ ψ
-       - φ ⊃ ψ
-       - φ ↔ ψ
-       - (φ)
-- Nothing else is a propositional formula*
-
-*can be omitted by saying that the set of formulas is define inductively
-
-
-### Formulas of Propositional Logic
-
-These are (propositional) formulas:
-
-- s1,2 - _there is stench in [1,2]_ (^)
-
-- s1,2∧p3,3 - _there is stench in [1,2] and a pit in [3,3]_
-- s1,2∨p3,3 - _there is stench in [1,2] or a pit in [3,3]_
-- b2,1⊃p1,1∨p2,2∨p3,2 - _if breeze in [2,1] then pit in [1,1] or [2,2] or [3,2]_
--
-
-These are not formulas (just sequences of propositional symbols):
-
-- ∧p
-- (qp∧¬r∨∧(pp
-
+*(The book formalizes this using a strict Backus-Naur Form (BNF) grammar).*
 
 ### Operator Precedence
+To resolve ambiguities in reading formulas without explicit parentheses (e.g., $\phi \land \psi \supset \gamma$), propositional logic relies on operator precedence. From highest to lowest precedence:
+1. $\neg$
+2. $\land$
+3. $\lor$
+4. $\supset$ (or $\Rightarrow$)
+5. $\leftrightarrow$ (or $\Leftrightarrow$)
 
-How do we read formula φ ∧ ψ ⊃ γ?
+Thus, $\phi \land \psi \supset \gamma$ is correctly read as $(\phi \land \psi) \supset \gamma$.
 
-- (φ ∧ ψ) ⊃ γ (φ and ψ (together) imply γ)?
-- φ ∧ (ψ ⊃ γ) (φ and ψ implies γ)?
+---
 
-Solved using operator precedence:
+## Semantics of Propositional Logic
+Semantics defines the rules for determining the truth of a sentence with respect to a particular mathematical abstraction called a **model** (or interpretation).
 
-1. ¬
-2. ∧
-3. ∨
-4. ⊃
-5. ↔
+### Propositional Interpretations (Models)
+A propositional interpretation $I$ is a function assigning a truth value, $T$ (true) or $F$ (false), to every propositional symbol: $I: P \rightarrow \{T,F\}$.
+Alternatively, an interpretation can be represented as a set $I \subseteq P$, under the convention that $I(p) = T$ if and only if $p \in I$.
 
-Thus φ ∧ ψ ⊃ γ is to be read as: (φ ∧ ψ) ⊃ γ, because ∧ has higher precedence than ⊃
+If a sentence $\phi$ is true in a model $m$, we say that **$m$ satisfies $\phi$**, or $m$ is a model of $\phi$ (written as $m \models \phi$). The set of all models of $\phi$ is denoted as $M(\phi)$.
 
+### Truth Evaluation and Truth Tables
 
-### Semantics of Propositional Logic
+![[Pasted image 20260305144722.png]]
 
-Semantics defines when a formula is true or false, depending on _whether the_
+In order to assign a truth value to a complex formula, we compute it recursively based on the truth values of its atomic symbols.
+*   $I \models p$ iff $p \in I$
+*   $I \models \neg\psi$ iff $I \not\models \psi$
+*   $I \models \psi \land \gamma$ iff $I \models \psi$ and $I \models \gamma$
+*   $I \models \psi \lor \gamma$ iff $I \models \psi$ or $I \models \gamma$
+*   $I \models \psi \supset \gamma$ iff $I \not\models \psi$ or $I \models \gamma$
+*   $I \models \psi \leftrightarrow \gamma$ iff $I \models \psi \supset \gamma$ and $I \models \gamma \supset \psi$
 
-_propositional symbols it contains are true or false_
+This inductive evaluation can be represented using **Truth Tables**.
 
-In order to assign a truth value to a formula, we need to know the truth value of its
+> **Important note on Implication ($\Rightarrow$):** The truth table for implication can be counter-intuitive. Propositional logic does not require any relation of causation between the premise and the conclusion. Any implication is true whenever its antecedent is false. For example, "5 is even $\Rightarrow$ Sam is smart" is a true sentence in propositional logic simply because the premise is false.
 
-symbols
+### Algorithm for Checking $I \models \phi$
+This recursive evaluation translates perfectly into a simple checking algorithm:
 
-E.g., whether formula P∧Q is true depends on truth value of P and Q
-
-
-### Propositional Interpretations
-
-A (propositional) _interpretation_ is a function _I_ assigning T (true) or F (false) to every
-propositional symbol, i.e., _I_ : _P_ →{T,F}
-
-Example: _I_ (s1,2)=; _I_ (b2,2)=F; _I_ (b1,2)=T
-
-We represent an interpretation _I_ as a set _I_ ⊆ _P_ under the convention that:
-
-```
-I (p)=T if and only if p∈ I
-```
-Example:
-
-I={s1,2,b1,2} represents interpretation I above
-
-Propositional interpretations are sometimes called _propositional models_
-
-
-### Semantics of Propositional Logic
-
-We define when a formula φ is true under an interpretation _I_ (written _I_ ⊧ φ)
-inductively as follows:
-
-- if φ is an atom, then _I_ ⊨ φ iff φ∈ _I_
-- if φ=¬ψ then iff _I_ ⊭φ
-- if φ=ψ∧γ then _I_ ⊨ φ iff _I_ ⊨ ψ and _I_ ⊨ γ
-- if φ=ψ∨γ then _I_ ⊨ φ iff _I_ ⊨ ψ or _I_ ⊨ γ
-- if φ=ψ⊃γ then _I_ ⊨ φ iff _I_ ⊭ ψ or _I_ ⊨ γ
-- if φ=ψ↔γ then _I_ ⊨ φ iff _I_ ⊨ ψ⊃γ and _I_ ⊨ γ⊃ψ
-- if φ=(ψ) then _I_ ⊨ φ iff _I_ ⊨ ψ
-
-When _I_ ⊨ φ we also say that _I satisfies_ φ and call _I_ a _model_ of φ
-
-
-### Truth Tables
-
-The semantics of propositional formulas can also be defined using truth tables
-
-```
-ψ γ ¬ψ ψ∧γ ψ∨γ ψ⊃γ ψ↔γ (ψ)
-```
-```
-F F T F F T T F
-F T T F T T F F
-T F F F T F F T
-T T F T T T T T
-```
-
-### Semantics of Propositional Logic
-
-For _I_ ={p}, does _I_ ⊨ (p∧q)∨(r⊃s)?
-
-Let's apply the rules above:
-
-- _I_ ⊨ (p∧q)∨(r⊃s) iff _I_ ⊨ (p∧q) or _I_ ⊨ (r⊃s)
-- _I_ ⊨(p∧q) iff _I_ ⊨ p and _I_ ⊨ q
-- _I_ ⊨ p iff p∈ _I_ , thus **_I_** ⊨ **p**
-- _I_ ⊨ q iff q∈ _I_ , thus **_I_** ⊭ **q**
-- since _I_ ⊭q, we have that **_I_** ⊭ **(p** ∧ **q)**
-- _I_ ⊨ (r⊃s) iff _I_ ⊭ r or _I_ ⊨ s
-- _I_ ⊭r iff r∉I, thus **_I_** ⊭ **r** and hence **_I_** ⊨ **(r** ⊃ **s)**
-- since _I_ ⊨ (r⊃s) we have that **_I_** ⊨ **(p** ∧ **q)** ∨ **(r** ⊃ **s)**
-
-
-### Algorithm for Checking I ⊨ φ
-
-Boolean check( _I,_ φ){ // Returns true iff _I_ ⊨ φ
-
-```
-if φ is an atom then return true if φ∈ I, false otherwise
-if φ=¬ψ then return (!check( I, ψ))
-if φ=ψ∧γ then return (check( I, ψ) && check( I, γ))
-if φ=ψ∨γ then return (check( I, ψ) || check( I, γ))
-if φ=ψ⊃γ then return ((not check( I, ψ)) || check( I, γ))
-if φ=ψ↔γ then return (check( I, ψ⊃γ) && check( I, γ⊃ψ))
-if φ=(ψ) then return check( I, ψ)
-```
+``` javascript
+Boolean check(I, φ) { // Returns true iff I ⊨ φ
+    if φ is an atom then return true if φ ∈ I, false otherwise
+    if φ = ¬ψ then return (!check(I, ψ))
+    if φ = ψ ∧ γ then return (check(I, ψ) && check(I, γ))
+    if φ = ψ ∨ γ then return (check(I, ψ) || check(I, γ))
+    if φ = ψ ⊃ γ then return ((!check(I, ψ)) || check(I, γ))
+    if φ = ψ ↔ γ then return (check(I, ψ ⊃ γ) && check(I, γ ⊃ ψ))
+    if φ = (ψ) then return check(I, ψ)
 }
-
-
-### Useful Equivalences
-
-The following semantic equivalences are easy to verify:
-
-- ψ⊃γ has the same meaning as ¬ψ∨γ
-- ψ⊃γ has the same meaning as ¬γ⊃¬ψ
-- ¬(ψ∨γ) has the same meaning as ¬ψ∧¬γ
-- ¬(ψ∧γ) has the same meaning as ¬ψ∨¬γ
-- ψ⊃¬γ has the same meaning as ψ⊃¬γ
-
-
-### Knowledge Bases
-
-A set 𝚪 of propositional formulas is also called a _Knowledge Base_ (because it
-
-provides an agent with knowledge about some world)
-
-A KB 𝚪 can be used to reason about the world
-
-
-### Wumpus World Knowledge Base
-
-Let's build a simple Knowledge Base 𝚪 formalizing valid maps in Wumpus World
-
-Start with Atomic Propositions (omit gold for simplicity):
-
-px,y - pit in x,y
-
-wx,y- Wumpus in x,y
-
-bx,y - breeze in x,y
-
-sx,y - stench in x,y
-
-lx,y - agent in in x,y
-
-for x,y ∈ {1,2,3,4}
-
-
-### Wumpus World Knowledge Base
-
-Then, add formulas describing constraints on maps
-
-1. Wumpus is in **exactly** one square:
-
-## ∨wx,y for x,y ∈ {1,2,3,4} (this says in at least one square )
-
-```
-¬(wx,y∧wx',y') for (x,y)≠(x',y') (all these together say in at most one square )
-```
-Observe:
-
-## ∨wx,y for x,y ∈ {1,2,3,4} shortcut for:
-
-```
-w1,1∨w1,2∨w1,3∨w1,4∨w2,1∨...∨w2,4∨w3,1∨...∨w3,4∨w4,1∨...∨w4,4 (same for
-```
-## ∧)
-
-
-### Wumpus World Knowledge Base
-
-2. Square [x,y] has stench iff Wumpus in [x+1,y] or [x,y+1] or [x-1,y] or [x,y-1]
-
-(for squares out of bounds proposition is dropped):
-
-```
-sx,y ↔ wx+1,y∨wx,y+1∨wx-1,y∨wx,y-1
 ```
 
-### Wumpus World Knowledge Base
+# 03 - Knowledge Bases, Entailment, and Satisfiability
 
-3. Square (x,y) has breeze iff pit in [x+1,y] or [x,y+1] or [x-1,y] or [x,y-1]
+## Knowledge Bases (KBs)
+A set $\Gamma$ of propositional formulas is called a **Knowledge Base** (KB). It provides an agent with knowledge about some world, and it can be used to reason about that world.
 
-(for squares out of bounds proposition is dropped):
+### Example: The Wumpus World KB
+To formalize the Wumpus World, we can build a KB starting with atomic propositions:
+*   $p_{x,y}$: pit in $[x,y]$
+*   $w_{x,y}$: Wumpus in $[x,y]$
+*   $b_{x,y}$: breeze in $[x,y]$
+*   $s_{x,y}$: stench in $[x,y]$
+*   $l_{x,y}$: agent is in $[x,y]$
 
-```
-bx,y ↔ px+1,y∨px,y+1∨px-1,y∨px,y-1
-```
-4. No pit in [1,1]: ¬p1,1
+We then add formulas describing the constraints of the map:
+1.  **Wumpus is in exactly one square:** $\bigvee w_{x,y}$ (at least one) and $\neg(w_{x,y} \land w_{x',y'})$ for all $(x,y) \neq (x',y')$ (at most one).![[Pasted image 20260305152701.png]]
+2.  **Stench Rules:** A square has a stench if and only if there is a Wumpus in an adjacent square. E.g., $s_{x,y} \leftrightarrow w_{x+1,y} \lor w_{x,y+1} \lor w_{x-1,y} \lor w_{x,y-1}$.![[Pasted image 20260305152719.png]]
+3.  **Breeze Rules:** A square has a breeze iff there is a pit in an adjacent square. E.g., $b_{x,y} \leftrightarrow p_{x+1,y} \lor p_{x,y+1} \lor p_{x-1,y} \lor p_{x,y-1}$.![[Pasted image 20260305152735.png]]
+4.  **Initial Safe Square:** No pit in $[1, 1]$: $\neg p_{1,1}$.
 
+Only the interpretations (models) that satisfy **all** the formulas in the KB are relevant and represent physically possible map configurations.
 
-### Logical Inference in Wumpus World
+# Logical Inference in the Wumpus World
 
-Every interpretation corresponds to a map
+**Tags:** #ArtificialIntelligence #PropositionalLogic #WumpusWorld #LogicalInference #ModelChecking
 
-configuration (and viceversa). For map in figure:
+## Interpretations and Map Configurations
+In Propositional Logic applied to the Wumpus World, every interpretation corresponds to a specific map configuration, and vice versa. An interpretation is essentially an assignment of truth values to all propositional symbols (e.g., $\{l_{1,1}, b_{2,1}, p_{3,1}, \dots\}$).
 
-{l1,1,b2,1,p3,1,b4,1,s1,2,b3,2,b2,3,s2,3,p3,3,b4,3,s1,4,b3,4,p4,4}
+However, interpretations can model maps that are inconsistent with the agent's Knowledge Base (KB). For the agent's reasoning process, **only the interpretations that satisfy *all* formulas in the KB are relevant**. If an interpretation fails to satisfy even a single formula—such as $b_{2,2} \leftrightarrow p_{3,2} \vee p_{2,3} \vee p_{1,2} \vee p_{2,1}$—it is not a valid model of the KB.
 
-But interpretations model also maps inconsistent
+## Ruling Out Inconsistent Models via Entailment
+As the agent navigates the environment and perceives features (like breeze or stench), some or possibly all previously considered maps are ruled out. The KB becomes false in any models that contradict what the agent knows through its percepts.
 
-with KB
+This reasoning relies on the core logical concept of **entailment** ($\alpha \models \beta$). Entailment means that a sentence logically follows from another: if $\alpha$ entails $\beta$, then in every model where $\alpha$ is true, $\beta$ must also be true. Mathematically, this is expressed as $M(\alpha) \subseteq M(\beta)$, where $M$ denotes the set of models.
+*   **Example:** If the KB entails $\alpha_1$ ("There is no pit in"), it means that in all models where the KB is true, $\alpha_1$ is also true, making it safe for the agent to move.
+*   If the KB does not entail $\alpha_2$ ("There is no pit in"), the agent cannot conclude that the square is safe, as there are models where the KB is true but $\alpha_2$ is false.
 
-Only the interpretations that satisfy **all** formulas in
+## The Model Checking Algorithm
+Before making a move, the agent must systematically check if a danger (like a pit) can exist in an adjacent square. To find out if a pit could be in, the agent considers the observations collected so far ($Obs$) and checks whether there is a model that satisfies all formulas in the set $\Gamma \cup Obs \cup \{p_{1,2}\}$ (where $\Gamma$ is the Wumpus World KB). If such a model exists, it means there is a valid map where the breeze and pit align, making the move to unsafe.
 
-KB are relevant!
+This systematic evaluation is known as **model checking**. It works by enumerating all possible models to check if a query $\alpha$ is true in all models where the KB is true.
 
+### Inference Properties
+While entailment is like knowing the needle is in the haystack, **inference** is the actual algorithm used to find it. If an inference algorithm $i$ can derive $\alpha$ from the KB, it is denoted as $KB \vdash_i \alpha$. For an inference algorithm to be reliable, it must possess two key properties:
+1.  **Soundness (Truth-preserving):** The algorithm only derives sentences that are actually entailed by the KB. An unsound procedure would make things up, discovering "nonexistent needles". Model checking is a sound procedure.
+2.  **Completeness:** The algorithm can derive *any* sentence that is entailed by the KB.
 
-### Logical Inference in Wumpus World
+![[Pasted image 20260305152828.png]]![[Pasted image 20260305152809.png]]![[Pasted image 20260305152841.png]]![[Pasted image 20260305152848.png]]![[Pasted image 20260305152857.png]]
 
-The interpretation associated with this map
+# Propositional Satisfiability, Validity, and Implication
 
-satisfies all formulas in KB
+**Tags:** #ArtificialIntelligence #PropositionalLogic #SAT #TheoremProving #LogicalImplication
 
-{l1,1,b2,1,p3,1,b4,1,s1,2,b3,2,b2,3,s2,3,p3,3,b4,3,s1,4,b3,4,p4,4}
+## Propositional Satisfiability (SAT)
+The problem of checking whether there exists an interpretation $I$ (or model) that satisfies a propositional formula $\varphi$ is called the **Propositional Satisfiability Problem (SAT)**.
+*   **Satisfiable:** A formula $\varphi$ is satisfiable if there exists *at least one* interpretation $I$ such that $I \models \varphi$. For example, $\neg(a \lor b) \to c$ is satisfiable because it is true in the interpretation $I=\{c\}$.
+*   **Unsatisfiable:** If a formula has absolutely no models, it is unsatisfiable (e.g., $a \land (a \to b) \land (b \to \neg a)$).
 
+The SAT problem is one of the most studied problems in Computer Science and was the very first problem proven to be **NP-complete**. A naive way to check satisfiability is by constructing a **Truth Table**. However, this requires listing all $2^{|P|}$ possible interpretations (where $P$ is the set of propositional variables), which leads to exponential time complexity and is highly inefficient for large systems.
 
-### Logical Inference in Wumpus World
+## Valid Formulas (Tautologies)
+A propositional formula $\varphi$ is **valid** if $I \models \varphi$ for *all* possible interpretations $I$. Valid sentences are also known as **tautologies**—they are necessarily true regardless of the state of the world (e.g., $P \lor \neg P$).
 
-The interpretation associated with this map
+Because the sentence `True` is true in all models, every valid sentence is logically equivalent to `True`.
 
-**does not** satisfy all formulas in KB
+## The Connection: Satisfiability, Unsatisfiability, and Validity
+Validity and satisfiability are deeply connected through negation. Understanding these relationships is fundamental for logical theorem proving:
+*   If $\varphi$ is valid, then it is inherently satisfiable.
+*   $\varphi$ is **satisfiable** if and only if $\neg\varphi$ is **not valid**.
+*   $\varphi$ is **valid** if and only if $\neg\varphi$ is **unsatisfiable**.
+*   $\varphi$ is **unsatisfiable** if and only if $\neg\varphi$ is **valid**.
 
-{l1,1,b2,1,p3,1,b4,1,s1,2,b3,2, **b2,2** ,b2,3,s2,3,p3,3,b4,3,s1,4,b3,4,p4,4}
+These definitions apply equally to finite Knowledge Bases (KBs), where $I \models \Gamma$ is equivalent to checking if $I \models \varphi_1 \land \varphi_2 \land \dots \land \varphi_n$.
 
-The following formula is not satisfied:
+## Using Satisfiability in the Wumpus World
+Whenever we want to check if a specific property is *possible* in our environment (e.g., "Can there be a pit in?"), we must check for satisfiability.
+To check if a pit can be in, the agent assumes the observations collected so far ($Obs$) and checks if there exists a model for all formulas in $\Gamma \cup Obs \cup \{p_{1,2}\}$.
+*   If such a model exists, the configuration is possible.
+*   If a logical contradiction occurs (e.g., the rules dictate that a breeze must be present, but the percepts show no breeze), no interpretation can satisfy all formulas. Thus, the scenario is **unsatisfiable**, proving that no pit can exist in.
 
-```
-b2,2 ↔ p3,2∨p2,3∨p1,2∨p2,1
-```
+## Logical Implication and Equivalence
+*   **Logical Implication ($\varphi \models \psi$):** A formula $\varphi$ logically implies $\psi$ if, for every interpretation $I$ where $I \models \varphi$, it is also the case that $I \models \psi$. This means the set of models of $\psi$ completely includes the models of $\varphi$.
+*   **Logical Equivalence ($\varphi \equiv \psi$):** Two formulas have the exact same meaning if they are true in the same set of models. This is equivalent to saying $\varphi \models \psi$ AND $\psi \models \varphi$.
 
-### Logical Inference in Wumpus World
+### Core Properties for Theorem Proving
+Instead of enumerating models with truth tables, we can use inference rules to construct a proof. Two crucial principles bridge the gap between entailment and satisfiability/validity:
+1.  **The Deduction Theorem:** $\Gamma \cup \{\varphi\} \models \psi$ if and only if the implication $\Gamma \models (\varphi \to \psi)$ is valid. This means every valid implication sentence describes a legitimate inference.
+2.  **The Refutation Principle (Proof by Contradiction):** $\Gamma \models \varphi$ if and only if $\Gamma \cup \{\neg\varphi\}$ is **unsatisfiable**.
 
-As the agent perceives features,some maps
-
-(possibly all) are ruled out
-
-This map cannot have a pit in [1,2], as the formula
-
-```
-b1,1 ↔ p1,2∨p2,1
-```
-would not be satisfied: agent knows ¬b1,1
-
-thus both p1,2 and p2,1 must be false
-
-#### ????
-
-#### ???
-
-#### ????
-
-#### ?
-
-#### ??
-
-
-### Logical Inference in Wumpus World
-
-Before moving, agent checks, e.g., if pit can be in [1,2]
-
-How?
-
-- Consider observations collected so far:
-    Obs={¬b1,1, ¬p1,1, ¬w1,1, ¬s1,1, b1,2, ¬s1,2¬p1,2, ¬w1,2}
-- Check whether there exists a model of **all**
-    formulas in 𝚪 ∪ Obs ∪ {p2,1}
-
-If one such model exists, there exists a valid map
-
-with breeze in [2,1], agent in [1,1] and pit in [1,2]
-
-(thus moving to [1,2] is unsafe)
-
-#### ????
-
-#### ???
-
-#### ????
-
-#### ?
-
-#### ??
-
-
-### Propositional Satisfiability
-
-The problem of checking whether there exists an interpretation _I_ that satisfies a
-propositional formula φ is called
-
-```
-Propositional Satisfiability Problem (SAT)
-```
-This is among the most (if not **the** most) studied problems in AI (and CS)
-
-It allows for checking whether a world _I_ that satisfies certain properties is possible
-
-Observation: checking whether _I_ ⊨ φ 1 and _I_ ⊨ φ 2 ,..., and _I_ ⊨ φn is equivalent to
-
-checking whether _I_ ⊨ φ 1 ∧ φ 2 ∧...∧ φn (not applicable if n=∞)
-
-
-### Satisfiable Formulas
-
-A propositional formula φ is said to be _satisfiable_ if there exists an interpretation _I_
-such that _I_ ⊨ φ
-
-If φ doesn't have any model, it is said to be _unsatisfiable_
-
-Examples:
-
-- formula ¬(a∨b)→c is satisfiable: e.g., _I_ ={c}
-- formula a∧(a→b)∧(b→¬a) is unsatisfiable
-
-
-### Checking Satisfiability with Truth Tables
-
-One naïve way to check a formula for satisfiability consists in constructing the truth
-table of the formula
-
-The truth table lists all the interpretations of the propositions occurring in the
-formula and associates them with the truth value of the formula
-
-To check satisfiability, we can check whether some interpretation exists which
-satisfies the formula
-
-
-### Checking Satisfiability with Truth Tables
-
-Example: for ¬(a∨b)→c
-
-All interpretations but the
-
-first one are models
-
-```
-a b c (a ∨ b) ¬(a ∨ b) ¬(a ∨ b)
-→c
-F F F F T F
-F F T F T T
-F T F T F T
-F T T T F T
-T F F T F T
-T F T T F T
-T T F T F T
-T T T T F T
-```
-
-### Checking Satisfiability with Truth Tables
-
-Example: for a∧(a→b)∧(b→¬a)
-
-No interpretation is a model
-
-```
-a b ¬a (a→b) (b→¬a) a ∧ (a→b) ∧
-(b→¬a)
-F F T T T F
-F T T T T F
-T F F F T F
-T T F T F F
-```
-
-### Checking Satisfiability with Truth Tables
-
-Checking satisfiability with truth tables is not the smartest approach
-
-Requires listing all 2|P| interpretations (P: propositions occurring in formula)
-
-We shall see better approaches
-
-
-### Valid Formulas
-
-A propositional formula φ is said to be _valid_ if _I_ ⊨ φ for all interpretations _I_
-
-Examples:
-
-- (a→b)∨(b→¬a) is valid
-- (a→b) is satisfiable but not valid
-
-
-### Checking Validity with Truth Tables
-
-To check validity, we can check whether all interpretations satisfy the formula
-
-Also for this, better approaches exist
-
-Example: (a→b)∨(b→¬a)
-
-```
-a b (a→b) (b→¬a) (a→b) ∨ (b→¬a)
-F F T T T
-F T T T T
-T F F T T
-T T T F T
-```
-
-### Checking Validity with Truth Tables
-
-Example: (a→b)
-
-```
-a b (a→b)
-F F T
-F T T
-T F F
-T T T
-```
-
-### Satisfiability, Unsatisfiability, Validity
-
-By the definitions of satisfiability, unsatisfiability and validity, we have that:
-
-- if φ is valid then it is satisfiable
-- if φ is unsatisfiable then it is not valid
-- φ is satisfiable iff ¬φ is not valid
-- φ is valid iff ¬φ is unsatisfiable
-- φ is not valid iff ¬φ satisfiable
-- φ is unsatisfiable iff ¬φ is valid
-
-Proving the above is a simple exercise
-
-
-### Valid, Satisfiable and Unsatisfiable
-
-```
-Satisfiable
-```
-```
-Unsatisfiable
-```
-```
-Valid
-```
-```
-Not valid
-```
-#### ↔
-
-#### ↔
-
-#### ↔
-
-
-### Satisfiable, Unsatisfiable and Valid Knowledge Bases
-
-All previous notions can be lifted to KBs
-
-An interpretation _I_ is a _model_ of (or _satisfies_ ) a KB 𝚪 = {φ 1 ,...,φn}, written _I_ ⊨ 𝚪, if
-
-_I_ ⊨ φ 1 ,..., _I_ ⊨ φn (which is equivalent to _I_ ⊨ φ 1 ∧...∧φn – only for finite KBs!)
-
-A KB 𝚪 = {φ 1 ,...,φn} is:
-
-- _satisfiable_ if there exists an interpretation _I_ such that _I_ ⊨ 𝚪
-- _unsatisfiable_ if there exists no interpretation _I_ such that _I_ ⊨ 𝚪
-- _valid_ if _I_ ⊨ 𝚪, for all interpretations _I_
-
-Observation: all definitions apply also to infinite KBs
-
-
-### Using Satisfiability in Wumpus World
-
-Let's check whether there _can_ be a pit in [1,2]
-
-- Assume observations collected so far:
-    Obs={¬b1,1,¬p1,1,¬w1,1,¬s1,1,b1,2,¬s1,2,¬p1,2,¬w1,2}
-- Check whether there exists a model of **all**
-    formulas in 𝚪 ∪ Obs ∪ {p1,2}
-
-For simplicity, we consider only formulas from 𝚪
-
-mentioning squares [1,1], [1,2] or [2,1] (the only
-
-ones affected by observations)
-
-#### ????
-
-#### ???
-
-#### ????
-
-#### ?
-
-#### ??
-
-
-### Using Satisfiability in Wumpus World
-
-Is this set of formulas satisfiable?
-
-w1,1∨w1,2∨w2,1∨w2,2
-
-¬(w1,1∧w1,2); ¬(w1,1∧w2,1); ¬(w2,1∧w1,2)
-
-s1,1 ↔ w2,1∨w1,2 ; s1,2 ↔ w1,1∨w2,2∨w1,3 ; s2,1 ↔ w1,1∨w2,2∨w3,1
-
-b1,1 ↔ p2,1∨p1,2 ; b1,2 ↔ p1,1∨p2,2∨p1,3 ; b2,1 ↔ p1,1∨p2,2∨p3,1
-
-```
-¬b1,1,¬p1,1,¬w1,1,¬s1,1,b1,2,¬s1,2,¬p1,2,¬w1,2
-```
-p1,2
-
-```
-Wumpus KB
-```
-```
-Collected Observations
-```
-```
-Formula of interest
-```
-
-### Using Satisfiability in Wumpus World
-
-Assume _I_ is an interpretation satisfying all the formulas above
-
-Then, in particular:
-
-1. _I_ ⊨ p1,2
-2. _I_ ⊨ b1,1 ↔ p2,1∨p1,2
-
-By 1., it follows that p2,1∈ _I_
-
-By 2. and p2,1∈ _I_ , it follows that b1,1∈ _I_
-
-But if b1,1∈ _I_ then _I_ ⊭¬b1,1
-
-Therefore no _I_ satisfying all formulas above may exist, thus **no pit can be in [1,2]**
-
-
-### Using Satisfiability in Wumpus World
-
-We can also check whether Wumpus (instead of pit) can be in [1,2]:
-
-w1,1∨w1,2∨w2,1∨w2,2
-
-¬(w1,1∧w1,2); ¬(w1,1∧w2,1); ¬(w2,1∧w1,2)
-
-s1,1 ↔ w2,1∨w1,2 ; s1,2 ↔ w1,1∨w2,2∨w1,3 ; s2,1 ↔ w1,1∨w2,2∨w3,1
-
-b1,1 ↔ p2,1∨p1,2 ; b1,2 ↔ p1,1∨p2,2∨p1,3 ; b2,1 ↔ p1,1∨p2,2∨p3,1
-
-```
-¬b1,1,¬p1,1,¬w1,1,¬s1,1,b1,2,¬s1,2,¬p1,2,¬w1,2
-```
-w1,2
-
-```
-Wumpus KB
-```
-```
-Collected Observations
-```
-```
-Formula of interest
-```
-
-### Propositional Satisfiability
-
-Whenever we want to check whether some (propositional) property is _possible_ , we
-
-need to check for _satisfiability_
-
-We want to automatize this procedure
-
-Algorithms for satisfiability check (Later on)
-
-
-### Exercise
-
-Check whether the following formulas are valid, satisfiable, or unsatisfiable
-
-
-### (Propositional) Logical Implication
-
-We might also be interested in checking whether **_all models_** _that satisfy KB_ 𝚪 _and_
-
-_observations have a Wumpus in [1,3], i.e., whether we_ **_are sure_** _Wumpus is there_
-
-Formula φ _logically implies_ ψ (φ⊨ψ), if for every _I_ s.t. _I_ ⊨ φ, it is the case that _I_ ⊨ ψ
-
-Corresponds to requiring that the set of models of ψ includes that of φ
-
-(Notice we are _overloading_ ⊨ for satisfaction and logical implication)
-
-Can be lifted to KBs: 𝚪 ⊨ ψ, if for every _I_ s.t. _I_ ⊨ 𝚪, it is the case that _I_ ⊨ φ
-
-Notice that ∅ ⊨ φ, simply written as ⊨ φ, is equivalent to saying that _φ is valid_
-
-
-### Logical Implication
-
-Which ones of the following implications hold?
-
-
-### Logical Implication
-
-Is there a Wumpus in [1,3]?
-
-Wumpus-world KB: 𝚪
-
-Observations:
-
-_O_ ={¬b1,1;¬p1,1;¬w1,1;¬s1,1;b2,1;¬s2,1;¬w2,1; ... **¬w2,2;s1,2;s2,3** }
-
-Formula of interest: w1,3 (Wumpus in [1,3])
-
-Does 𝚪∪ _O_ ⊨ w1,3?
-
-#### ??
-
-#### ?
-
-#### ?
-
-#### ?
-
-#### ??
-
-#### ?
-
-#### ?
-
-#### ?
-
-#### ?
-
-#### ?
-
-
-### Logical Equivalence
-
-We can also be interested in checking whether two formulas (or KBs) have the
-_same meaning_.
-
-φ and ψ are _logically equivalent_ (φ☰ψ) if every interpretation _I_ is s.t. _I_ ⊨ φ iff _I_ ⊨ ψ
-
-Corresponds to requiring that φ and ψ have _exactly the same models_ and is
-equivalent to: φ ⊨ ψ _and_ ψ ⊨ φ
-
-
-### Logical Implication and Equivalence on KBs
-
-Logical implication and logical equivalence can be lifted to KBs 𝚪 and 𝚪'
-
-𝚪 ⊨ 𝚪', if for every _I_ s.t. _I_ ⊨ 𝚪, it is the case that _I_ ⊨ 𝚪'
-
-(The set of models of 𝚪' includes that of 𝚪)
-
-𝚪 ☰ 𝚪', if _I_ ⊨ 𝚪 and _I_ ⊨ 𝚪'
-
-(The set of models of 𝚪 and 𝚪' match )
-
-
-### Properties of Propositional Logical Implication
-
-Reflexivity: if φ∈𝚪 then 𝚪 ⊨ φ
-
-Ex falso (sequitur) quodlibet: if 𝚪 is unsatisfiable then 𝚪⊨φ for every φ
-
-Monotonicity: if 𝚪⊨φ then 𝚪∪𝚪'⊨φ
-
-Cut: if 𝚪 ⊨ φ and 𝚪'∪{φ} ⊨ φ' then 𝚪∪𝚪' ⊨ φ'
-
-Compactness: if 𝚪 ⊨ φ then there is a finite 𝚪'⊆ 𝚪 s.t. 𝚪' ⊨ φ
-
-Deduction Theorem: if 𝚪∪{φ} ⊨ φ' then 𝚪 ⊨ φ→φ'
-
-Deduction Principle: 𝚪∪{φ} ⊨ φ' iff 𝚪 ⊨ φ→φ'
-
-**Refutation Principle:** 𝚪 ⊨ **φ iff** 𝚪∪ **{¬φ} is unsatisfiable**
-
-
+*Note: The Refutation Principle (also known as reductio ad absurdum) is the foundation of many modern automated theorem provers. Instead of proving that a query is true, algorithms will assume the query is false ($\neg\varphi$) and attempt to find a contradiction within the Knowledge Base*.
