@@ -8,8 +8,6 @@
 
 ## 📝 Definizione: SSL Stripping
 
-
-
 L'**SSL Stripping** è un attacco di tipo _Man-in-the-Middle_ (MITM) in cui un attaccante si interpone tra l'utente e il server, forzando la connessione a rimanere su protocollo **HTTP** (in chiaro) anche se il server supporta HTTPS.
 
 - **Obiettivo:** Intercettare dati sensibili (password, cookie) che verrebbero altrimenti cifrati.
