@@ -342,7 +342,7 @@ ss -tlnp | grep 8118
 - [[Netcat]]
 - [[Socat]]
 - [[Anonymity Tools — VPN & Proxychains]]
-- [[Nmap]]
+- [[LinuxCommands/Nmap]]
 
 ---
 

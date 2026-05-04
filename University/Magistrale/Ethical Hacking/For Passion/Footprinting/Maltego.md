@@ -349,7 +349,7 @@ File → Export → PNG/PDF/CSV/XML
 - [[Sherlock]]
 - [[Exiftool]]
 - [[theHarvester]]
-- [[Nmap]]
+- [[LinuxCommands/Nmap]]
 - [[GHDB_Google_Hacking_Database]]
 - [[OSINT & Footprinting]]
 

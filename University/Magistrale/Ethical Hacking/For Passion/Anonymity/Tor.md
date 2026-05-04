@@ -322,7 +322,7 @@ nyx
 ## 🔗 Related Notes
 
 - [[Socat]]
-- [[Nmap]]
+- [[LinuxCommands/Nmap]]
 - [[Anonymity Tools — VPN & Proxychains]]
 - [[OSINT & Footprinting]]
 - [[Privilege Escalation Techniques]]

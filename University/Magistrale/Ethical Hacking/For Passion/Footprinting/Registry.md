@@ -14,6 +14,8 @@ Registry  → gestisce il DATABASE del TLD
 Registrar → vende i domini agli utenti
             GoDaddy, Aruba, Namecheap...
             interfaccia con il Registry per aggiornare il database
+            
+Registrant → Il cliente che si registra
 ```
 
 ---

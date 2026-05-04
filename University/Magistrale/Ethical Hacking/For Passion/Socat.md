@@ -267,7 +267,7 @@ socat TCP-LISTEN:4444,fork TCP:INTERNAL_IP:22              # on pivot machine
 
 ## 🔗 Related Notes
 
-- [[Nmap]]
+- [[LinuxCommands/Nmap]]
 - [[Privilege Escalation Techniques]]
 - [[Reverse Shells]]
 - [[Finding_Files]]

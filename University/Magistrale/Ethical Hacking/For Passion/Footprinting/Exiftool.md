@@ -363,7 +363,7 @@ exiftool -r -if '$GPSLatitude' directory/  # solo file con GPS
 - [[OSINT & Footprinting]]
 - [[GHDB_Google_Hacking_Database]]
 - [[theHarvester]]
-- [[Nmap]]
+- [[LinuxCommands/Nmap]]
 
 ---
 

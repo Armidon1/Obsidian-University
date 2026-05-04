@@ -13,6 +13,11 @@ whois example.com   → chi possiede il dominio
 whois 93.184.216.34 → chi possiede questo IP
 ```
 
+nota: spesso non si trovano tutte le informazioni necessarie perché l'unione europea ha censurato determinati valori per privacy. In tal caso si può suare il comando 
+```bash
+curl -s https://studionole.com | grep -i "email\|telefono\|contatti\|p.iva\|partita"
+```
+
 ---
 
 ## 🏛️ I Tre R — Fondamenta del Sistema
@@ -437,16 +442,16 @@ shodan search asn:AS8075
 
 ## 📊 WHOIS vs Tool Moderni — Confronto
 
-| |whois|Shodan|SecurityTrails|DomainTools|
-|---|---|---|---|---|
-|**Dati registrazione**|✅|❌|✅ storico|✅ completo|
-|**Dati registrant**|❌ GDPR|❌|✅ pre-2018|✅ storico|
-|**Porte e servizi**|❌|✅|❌|❌|
-|**Sottodomini**|❌|Parziale|✅|✅|
-|**Storico DNS**|❌|❌|✅|✅|
-|**Reverse WHOIS**|❌|❌|Parziale|✅|
-|**Costo**|Gratuito|Free/Paid|Free/Paid|Paid|
-|**Velocità**|⚡|⚡|🟡|🟡|
+|                        | whois    | Shodan    | SecurityTrails | DomainTools |
+| ---------------------- | -------- | --------- | -------------- | ----------- |
+| **Dati registrazione** | ✅        | ❌         | ✅ storico      | ✅ completo  |
+| **Dati registrant**    | ❌ GDPR   | ❌         | ✅ pre-2018     | ✅ storico   |
+| **Porte e servizi**    | ❌        | ✅         | ❌              | ❌           |
+| **Sottodomini**        | ❌        | Parziale  | ✅              | ✅           |
+| **Storico DNS**        | ❌        | ❌         | ✅              | ✅           |
+| **Reverse WHOIS**      | ❌        | ❌         | Parziale       | ✅           |
+| **Costo**              | Gratuito | Free/Paid | Free/Paid      | Paid        |
+| **Velocità**           | ⚡        | ⚡         | 🟡             | 🟡          |
 
 ---
 
@@ -487,7 +492,7 @@ curl "https://securitytrails.com/domain/example.com/history/whois"
 - [[Shodan]]
 - [[OSINT]]
 - [[theHarvester]]
-- [[Nmap]]
+- [[LinuxCommands/Nmap]]
 
 ---
 

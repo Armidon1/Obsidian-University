@@ -43,7 +43,7 @@ Nato con [[PGP]]. È un modello **decentralizzato**.
 ### B. TOFU (Trust On First Use)
 [[Trust On First Use (TOFU)]]
 
-Usato da [[SSH]].
+Usato da [[Obsidian-University/University/Magistrale/Cybersecurity/6 CFU/otherInfo/SSH]].
 
 - **Funzionamento:** La prima volta che ti colleghi, accetti la chiave presentata. Il sistema la memorizza.
     

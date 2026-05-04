@@ -336,7 +336,7 @@ python3 -c 'import pty; pty.spawn("/bin/bash")'      # inside shell
 
 - [[Socat]]
 - [[Tor]]
-- [[Nmap]]
+- [[LinuxCommands/Nmap]]
 - [[Privilege Escalation Techniques]]
 - [[Finding_Files]]
 

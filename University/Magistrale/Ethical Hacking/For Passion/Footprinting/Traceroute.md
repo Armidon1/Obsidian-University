@@ -378,7 +378,7 @@ mtr --report --tcp --port 443 target.com  # report completo
 
 ## 🔗 Related Notes
 
-- [[Nmap]]
+- [[LinuxCommands/Nmap]]
 - [[Dig]]
 - [[Stub Resolver]]
 - [[Recursive Resolver DNS]]
