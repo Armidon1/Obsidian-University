@@ -131,7 +131,7 @@ Qualsiasi tool  → Proxychains      → Tor (:9050) → Internet
 - [[Privoxy]]
 - [[Tor]]
 - [[Traceroute]]
-- [[LinuxCommands/Nmap]]
+- [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Scanning/Nmap]]
 - [[OSINT & Footprinting]]
 
 ---

@@ -342,7 +342,7 @@ ss -tlnp | grep 8118
 - [[Netcat]]
 - [[Socat]]
 - [[Anonymity Tools — VPN & Proxychains]]
-- [[LinuxCommands/Nmap]]
+- [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Scanning/Nmap]]
 
 ---
 

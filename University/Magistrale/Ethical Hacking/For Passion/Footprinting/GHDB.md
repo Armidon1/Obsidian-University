@@ -329,7 +329,7 @@ intitle:"Router" inurl:"/login.cgi"     # router esposti
 ## 🔗 Related Notes
 
 - [[Shodan]]
-- [[LinuxCommands/Nmap]]
+- [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Scanning/Nmap]]
 - [[Enumeration & Footprinting]]
 - [[Privilege Escalation Techniques]]
 - [[Finding_Files]]

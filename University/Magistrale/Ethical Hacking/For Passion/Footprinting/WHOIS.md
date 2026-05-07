@@ -492,7 +492,7 @@ curl "https://securitytrails.com/domain/example.com/history/whois"
 - [[Shodan]]
 - [[OSINT]]
 - [[theHarvester]]
-- [[LinuxCommands/Nmap]]
+- [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Scanning/Nmap]]
 
 ---
 

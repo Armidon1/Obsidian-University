@@ -342,7 +342,7 @@ proxychains4 python3 pagodo.py -d target.com \
 - [[SiteDigger]] ← il predecessore storico
 - [[theHarvester]] ← OSINT complementare
 - [[Tor]] ← proxy per evitare ban
-- [[LinuxCommands/Nmap]] ← passo successivo dopo pagodo
+- [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Scanning/Nmap]] ← passo successivo dopo pagodo
 
 ---
 

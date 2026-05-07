@@ -55,7 +55,7 @@ L'evoluzione degli attacchi è stata progressiva dagli anni '90 ad oggi:
 
 - **1990s:** Attacchi basati su bug o limitazioni di protocollo semplici.
     
-    - _Esempi:_ SYN flood, Ping of Death.
+    - _Esempi:_ [[SYN Flood DOS]], Ping of Death.
         
 - **2000s:** Introduzione della distribuzione e riflessione.
     

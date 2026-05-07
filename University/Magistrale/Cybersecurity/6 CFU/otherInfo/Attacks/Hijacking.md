@@ -430,7 +430,7 @@ curl -sI https://example.com | grep -iE \
 - [[Top Level Domain (TLD)]]
 - [[Dig]]
 - [[Tor]]
-- [[LinuxCommands/Nmap]]
+- [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Scanning/Nmap]]
 - [[Privilege Escalation Techniques]]
 
 ---

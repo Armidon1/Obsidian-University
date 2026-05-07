@@ -335,7 +335,7 @@ dig example.com DNSKEY +short       # chiavi DNSSEC
 - [[DNS Reconnaissance — dig]]
 - [[OSINT & Footprinting]]
 - [[Tor]]
-- [[LinuxCommands/Nmap]]
+- [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Scanning/Nmap]]
 - [[GHDB_Google_Hacking_Database]]
 
 ---
