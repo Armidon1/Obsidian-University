@@ -11,7 +11,7 @@
 - [x] 0. Course Introduction
 - [x] 1. Footprinting _(40 pag)_
 - [x] 2. Scanning _(36 pag)_
-- [ ] 3. Enumeration _(74 pag totali — in corso, ~60 pag rimanenti)_
+- [ ] 3. Enumeration _(74 pag totali)_
 - [ ] 4. Hacking Windows + Rainbow Tables _(71 pag)_
 - [ ] 5. Hacking Unix Part 1 + Part 2 _(80 pag)_
 - [ ] 6. Cybercrime and APT _(56 pag)_

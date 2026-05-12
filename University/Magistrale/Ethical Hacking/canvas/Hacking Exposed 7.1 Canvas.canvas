@@ -1,0 +1,9 @@
+{
+	"nodes":[
+		{"id":"f6152119a58306aa","type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/PDF/Book chapters/BOOK eth ch1.pdf","x":-421,"y":-507,"width":401,"height":587},
+		{"id":"6e7f0cc05a741001","type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Mappe Concettuali Capitoli ETH/ch1.png","x":120,"y":-376,"width":706,"height":325}
+	],
+	"edges":[
+		{"id":"ad8de2ba3bb2fc29","fromNode":"f6152119a58306aa","fromSide":"right","toNode":"6e7f0cc05a741001","toSide":"left"}
+	]
+}
