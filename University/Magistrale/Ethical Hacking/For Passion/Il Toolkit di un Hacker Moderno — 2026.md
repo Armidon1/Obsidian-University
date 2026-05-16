@@ -120,3 +120,55 @@ LLM per OSINT      → correlazione automatica di dati pubblici
 Chiunque può lanciare `metasploit` o `sqlmap`. Pochissimi capiscono perché un exploit funziona, cosa sta succedendo a livello di protocollo, e come adattarsi quando gli strumenti automatici falliscono.
 
 Quello che stai facendo tu — studiare `dig`, `chmod`, `find`, `netcat` dalla base — è esattamente il percorso giusto. I tool automatici vengono dopo.
+
+# Modern Toolkit
+
+This is the most useful mapping for your studies:
+
+| Cain & Abel Feature (OLD)                   | Modern Replacement                                                  |
+| ------------------------------------------- | ------------------------------------------------------------------- |
+| **Hash cracking** (dictionary, brute force) | **Hashcat** (GPU-accelerated), **John the Ripper**                  |
+| **Rainbow tables**                          | **RainbowCrack**, but mostly obsolete due to salting + GPU cracking |
+| **Network sniffing**                        | **Wireshark** (gold standard), **tcpdump**                          |
+| **ARP spoofing / MITM**                     | **Bettercap** (modern), **Ettercap**, **arpspoof**                  |
+| **Credential extraction from memory**       | **Mimikatz**, **LaZagne**                                           |
+| **Browser password recovery**               | **LaZagne**                                                         |
+| **Wireless key recovery**                   | **Aircrack-ng** suite                                               |
+| **VoIP sniffing**                           | **Wireshark + RTP decoder**, **UCSniff**                            |
+| **Hash dumping from SAM**                   | **secretsdump.py** (Impacket), **mimikatz**                         |
+| **Cisco password decoding**                 | Online decoders, **John the Ripper**                                |
+| **Route table / network utilities**         | Built-in OS tools, **nmap**, **Wireshark**                          |
+
+
+For **real engagements**:
+
+```
+2026 pentester reality:
+─────────────────────────────────────
+Wireshark      ← packet capture
+Bettercap      ← MITM / ARP
+mimikatz       ← Windows credentials
+Hashcat        ← cracking
+Impacket suite ← AD attacks
+Responder      ← network credential capture
+NetExec        ← lateral movement
+```
+
+---
+
+## A Note on Responder
+
+One tool worth knowing that essentially **replaced Cain's network sniffing role**: **Responder** by Laurent Gaffié.
+
+```python
+# Responder workflow (modern equivalent of Cain's sniffer)
+sudo responder -I eth0 -wd
+
+# Listens for LLMNR/NBT-NS/MDNS poisoning opportunities
+# Captures NetNTLMv2 hashes from misconfigured Windows clients
+# Then feed those hashes to hashcat
+```
+
+This is probably the **single most useful tool for network-level credential capture in 2026** — and it does what Cain's sniffer tried to do, but actually works on modern networks.
+
+---

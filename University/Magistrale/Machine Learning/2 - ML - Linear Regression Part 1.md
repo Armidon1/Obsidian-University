@@ -27,7 +27,7 @@ Puoi inserire questo blocco all'inizio della tua nota su Obsidian, subito prima 
 
 ## 2.1 Warm-Up: Linear Regression in 1-Dimension
 
-To understand linear regression, we start with the simplest possible scenario: working with data in a single dimension. Imagine you are given a dataset containing $n$ pairs of numbers: $$ (x_1, y_1), (x_2, y_2), \dots, (x_n, y_n) $$Remember: this is our Set of data, but we do not have full control of the Distribution **D**, that's why we won't work with the [[Obsidian-University/University/Magistrale/Machine Learning/Extra/Expected Risk|Expected Risk]] but with the [[Empirical Risk]].
+To understand linear regression, we start with the simplest possible scenario: working with data in a single dimension. Imagine you are given a dataset containing $n$ pairs of numbers: $$ (x_1, y_1), (x_2, y_2), \dots, (x_n, y_n) $$Remember: this is our Set of data, but we do not have full control of the Distribution **D**, that's why we won't work with the [[Expected Risk|Expected Risk]] but with the [[Empirical Risk]].
 Your goal is to find a relationship between the inputs ($x$) and the outputs ($y$). specifically, we want to find the best straight line defined by the equation $y = mx + q$ that fits this data.
 
 ### Defining "Best Fit": The Empirical Mean Square Error

@@ -18,7 +18,7 @@ Il nome "null" viene proprio dalle credenziali nulle passate alla connessione.
 
 ## Perché esiste IPC$
 
-`IPC$` (Inter-Process Communication) è una share nascosta presente su ogni sistema Windows. Non contiene file — espone **named pipes** per la comunicazione tra processi remoti via RPC (Remote Procedure Call).
+`IPC$` (Inter-Process Communication) è una share nascosta presente su ogni sistema Windows. Non contiene file — espone **named pipes** per la comunicazione tra processi remoti via [[RPC (Remote Procedure Call)]].
 
 Servizi Windows che usano IPC$:
 
