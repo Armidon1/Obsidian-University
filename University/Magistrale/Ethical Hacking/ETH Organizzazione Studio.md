@@ -12,7 +12,7 @@
 - [x] 1. Footprinting _(40 pag)_
 - [x] 2. Scanning _(36 pag)_
 - [x] 3. Enumeration _(74 pag totali)_
-- [ ] 4. Hacking Windows + Rainbow Tables _(71 pag)_
+- [x] 4. Hacking Windows + Rainbow Tables _(71 pag)_
 - [ ] 5. Hacking Unix Part 1 + Part 2 _(80 pag)_
 - [ ] 6. Cybercrime and APT _(56 pag)_
 - [ ] 7. Remote Connectivity and VoIP _(91 pag) ⚠️ lungo_
@@ -47,8 +47,8 @@
 | **Mar 12** (oggi) | HE7: Finire Enumeration (da NetBIOS UDP137)               | ~25 pag         | X   |
 | **Mer 13**        | HE7: Chiudere Enumeration (Cap 3 completo)                | ~35 pag         | X   |
 | **Gio 14**        | Lab **0x00 Intro + 0x01 Vulnerabilities**                 | —               | X   |
-| **Ven 15**        | HE7: Ch 4 Hacking Windows (prima metà)                    | ~35 pag         |     |
-| **Sab 16**        | HE7: Ch 4 Hacking Windows (seconda metà) + Rainbow Tables | ~36 pag         |     |
+| **Ven 15**        | HE7: Ch 4 Hacking Windows (prima metà)                    | ~35 pag         | x   |
+| **Sab 16**        | HE7: Ch 4 Hacking Windows (seconda metà) + Rainbow Tables | ~36 pag         | x   |
 | **Dom 17**        | HE7: Ch 5 Unix p1 + Lab **0x05 Unix p1**                  | ~40 pag + slide |     |
 | **Lun 18**        | HE7: Ch 5 Unix p2 + Lab **0x06 Unix p2**                  | ~40 pag + slide |     |
 
