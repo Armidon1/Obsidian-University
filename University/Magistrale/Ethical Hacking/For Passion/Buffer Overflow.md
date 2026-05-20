@@ -40,6 +40,7 @@ Indirizzi alti
 └──────────────────────┘
 Indirizzi bassi
 ```
+![[Pasted image 20260520154941.png]]
 
 > [!note] Direzione di crescita Lo **stack cresce verso il basso** (indirizzi decrescenti), mentre la **scrittura nei buffer avviene verso l'alto** (indirizzi crescenti). Da qui il "trabocco" che sovrascrive ciò che logicamente viene _dopo_ nello stack frame.
 
