@@ -3,6 +3,7 @@
 > [!info] TL;DR Un **buffer overflow** è una vulnerabilità di corruzione della memoria che si verifica quando un programma scrive più dati in un buffer di quanti questo possa contenerne, sovrascrivendo aree di memoria adiacenti. Nei casi gravi consente all'attaccante di **dirottare il flusso di esecuzione** e ottenere RCE (Remote Code Execution).
 
 ---
+![[Pasted image 20260520155418.png]]![[Pasted image 20260520155431.png]]![[Pasted image 20260520154941.png]]![[Pasted image 20260520155452.png]]![[Pasted image 20260520155511.png]]![[Pasted image 20260520155646.png]]
 
 ## 📚 Indice
 
@@ -40,7 +41,7 @@ Indirizzi alti
 └──────────────────────┘
 Indirizzi bassi
 ```
-![[Pasted image 20260520154941.png]]
+
 
 > [!note] Direzione di crescita Lo **stack cresce verso il basso** (indirizzi decrescenti), mentre la **scrittura nei buffer avviene verso l'alto** (indirizzi crescenti). Da qui il "trabocco" che sovrascrive ciò che logicamente viene _dopo_ nello stack frame.
 
