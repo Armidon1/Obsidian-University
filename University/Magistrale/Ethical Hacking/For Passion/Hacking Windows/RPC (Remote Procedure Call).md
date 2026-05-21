@@ -2,7 +2,7 @@
 
 **Tags:** #windows #protocol #enumeration #post-exploitation #htb  
 **Fonte:** Hacking Exposed 7 — Cap. 3 + Cap. 4  
-**Correlato:** [[NetBIOS_NBSS]] · [[SMB]] · [[Null_Session]] · [[Active_Directory]] · [[DCOM]]
+**Correlato:** [[NetBIOS Name Service (NBNS)]] · [[SMB]] · [[Null Session]] · [[Active Directory (AD)]] · [[DCOM]]
 
 ---
 
@@ -220,6 +220,107 @@ Mimikatz → DRSUAPI RPC → DC → risponde con hash utenti
 - RPC over Named Pipes viaggia su **SMB/445** — se 445 è aperto, molti servizi RPC sono raggiungibili anche senza 135.
 - **impacket** (Python) ha molti tool RPC: `rpcdump.py`, `samrdump.py`, `lookupsid.py`, `secretsdump.py` — fondamentali in HTB.
 - `secretsdump.py` di impacket usa DRSUAPI + SAMR per dumpare hash remoti senza Mimikatz.
+
+---
+
+RPC è uno di quei pezzi di Unix dove il concetto è elegante e l'implementazione è un campo minato. Vediamo perché.
+
+## Il concetto: chiamare funzioni su altre macchine
+
+RPC (Remote Procedure Call) ti permette di scrivere `risultato = funzione_X(param1, param2)` nel codice, ma `funzione_X` gira fisicamente su un'altra macchina. Sotto al cofano: il client serializza i parametri (Sun usa **XDR**, External Data Representation), li manda via rete, il server li deserializza, esegue, restituisce il risultato.
+
+> [!tip] Analogia moderna  
+> È l'antenato di gRPC, REST API, JSON-RPC. Stessa idea: nascondere la rete dietro una chiamata di funzione. La differenza è che oggi tutto passa via HTTPS sulla 443, mentre RPC anni '90 ha un'architettura molto più esposta.
+
+## Il problema del portmapper
+
+Domanda: il client come fa a sapere su quale porta sta ascoltando il servizio RPC che gli serve? Le porte sono assegnate dinamicamente all'avvio.
+
+Risposta: il **portmapper** (`rpcbind`), che gira sulla porta fissa **111** (TCP/UDP). È un meta-servizio:
+
+```
+Servizio RPC parte → si registra al portmapper:
+   "Io sono il programma 100083 (ttdbserverd), ascolto sulla porta 32773"
+
+Client vuole chiamare ttdbserverd:
+   1. Chiede al portmapper:111  "dov'è il programma 100083?"
+   2. Portmapper risponde:       "porta 32773"
+   3. Client si connette a       32773 e fa la sua RPC call
+```
+
+L'enumerazione attaccante:
+
+```bash
+rpcinfo -p target_ip          # lista tutti i servizi RPC registrati
+nmap -sR target_ip            # scan diretto se 111 è firewallato
+```
+
+Il `-sR` di nmap probe le porte alte mandando una RPC null call per vedere se rispondono come servizi RPC. Workaround per portmapper bloccato.
+
+## Perché RPC è un disastro di sicurezza
+
+Tre fattori che si moltiplicano:
+
+|Fattore|Conseguenza|
+|---|---|
+|Girano come **root** (servono accesso a risorse di sistema)|Bug → privilegi massimi|
+|**Complessi** (parsing XDR, callback, marshalling)|Superficie d'attacco enorme per buffer overflow, format string|
+|**Esposti via rete**, spesso attivi di default|Attaccante remoto non autenticato|
+
+Buffer overflow + root + remoto = il jackpot. Per questo HE7 dà rating 9-10 a tutto.
+
+## Servizi RPC storicamente vulnerabili (da sapere)
+
+|Servizio|Cosa fa|Famoso per|
+|---|---|---|
+|**rpc.ttdbserverd**|Tooltalk Database (CDE)|Buffer overflow, esempio HE7 (AIX)|
+|**rpc.cmsd**|Calendar Manager (CDE)|Buffer overflow → root|
+|**rpc.statd**|NFS lock recovery|Format string bug storico|
+|**mountd**|Gestisce mount NFS|Vari bug + abuso NFS|
+|**sadmind**|Solaris admin daemon|Worm **sadmind/IIS** (2001), cross-platform|
+
+CDE (Common Desktop Environment) era il desktop standard Unix commerciale anni '90 — Solaris, AIX, HP-UX. Tutti quei servizi venivano installati e attivati di default. Disastro.
+
+## Leggere l'esempio Metasploit
+
+Ti sblocco riga per riga:
+
+```
+use aix/rpc_ttdbserverd_realpath
+```
+
+Modulo Metasploit che sfrutta un bug nella funzione `realpath()` di `rpc.ttdbserverd` su AIX. Bug specifico: una RPC call con un path costruito ad arte triggera un buffer overflow.
+
+```
+set PAYLOAD aix/ppc/shell_bind_tcp
+```
+
+Shellcode per AIX su PowerPC che apre una **bind shell** — il target ascolterà su una porta (4444 di default) per la shell. **Attenzione**: qui è bind, non reverse — il target ascolta, l'attaccante si connette. Funziona solo se il firewall del target non blocca inbound su 4444. In un lab ok, in produzione moderna è raro.
+
+```
+[*] Trying to exploit rpc.ttdbserverd with address 0x20094ba0...
+[*] Trying to exploit rpc.ttdbserverd with address 0x20094fa0...
+```
+
+Metasploit prova più indirizzi di ritorno perché non sa esattamente dove cadrà nel buffer corrotto (manca ASLR su AIX vecchi, ma comunque deve indovinare l'offset). Brute force di indirizzi.
+
+```
+uid=0(root) gid=0(system)
+```
+
+Root. Game over.
+
+## Il pattern per la Q5
+
+Se all'esame ti capita uno scenario "servizio di rete che gira come root e crasha su input malformato", il flusso mentale è:
+
+```
+input non sanitizzato → parser complesso (XDR/protocollo custom) 
+   → memory corruption → controllo EIP → shellcode/ret2libc 
+   → privilegi del processo (= root per RPC)
+```
+
+È un'istanza esatta del pattern di [[data_driven_attacks]] applicata a servizi di sistema. La differenza con un buffer overflow su un eseguibile locale: qui il vettore è **remoto e non autenticato**, e i privilegi sono **massimi**. Ecco perché i RPC bug erano (e sono) l'oro degli attaccanti.
 
 ---
 
