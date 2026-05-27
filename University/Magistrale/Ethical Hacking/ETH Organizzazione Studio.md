@@ -13,7 +13,7 @@
 - [x] 2. Scanning _(36 pag)_
 - [x] 3. Enumeration _(74 pag totali)_
 - [x] 4. Hacking Windows + Rainbow Tables _(71 pag)_
-- [ ] 5. Hacking Unix Part 1 + Part 2 _(80 pag)_
+- [x] 5. Hacking Unix Part 1 + Part 2 _(80 pag)_
 - [ ] 6. Cybercrime and APT _(56 pag)_
 - [ ] 7. Remote Connectivity and VoIP _(91 pag) ⚠️ lungo_
 - [ ] 8. Wireless Hacking _(32 pag)_
