@@ -96,7 +96,7 @@ SOAP usa XML → vulnerabile a XXE se il parser non è configurato correttamente
 
 ## 📊 SOAP vs REST
 
-||SOAP|REST|
+| |SOAP|REST|
 |---|---|---|
 |Formato|XML|JSON / XML / altro|
 |Protocollo|HTTP, SMTP, altri|HTTP only|

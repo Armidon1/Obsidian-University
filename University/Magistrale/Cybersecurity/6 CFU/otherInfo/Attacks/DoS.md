@@ -90,4 +90,33 @@ Use a **layered, hybrid approach** combining:
 
 This ensures comprehensive protection against both traditional and evolving Denial of Service threats.
 
-Let me know if you’d like a real Snort rule example, a visual flowchart, or integration with SIEM/EDR tools! 🛡️📊
+# From ethical hacking
+
+# Denial of Service
+
+> [!abstract] In una riga Rendere il server **indisponibile** ai suoi utenti legittimi.
+
+## Cos'è
+
+Un **Denial of Service (DoS)** non punta a rubare dati ma a **negare il servizio**: il server smette di rispondere per crash, saturazione delle risorse o esaurimento delle connessioni. La variante distribuita (**DDoS**) usa molte sorgenti contemporaneamente.
+
+## Tipologie
+
+- **Esaurimento risorse:** consumo di CPU, RAM o disco fino al collasso.
+- **Richieste malformate:** pacchetti/richieste costruiti per **far crashare** il server o un suo modulo (collegamento con [[Input Validation]] e [[Server Extensions]]).
+- **Esaurimento connessioni:** es. **Slowloris**, che tiene aperte tante connessioni HTTP incomplete occupando tutti gli slot.
+- **Flood di traffico (DDoS):** volume di richieste superiore alla capacità.
+
+## Difese
+
+- **Rate limiting** e timeout aggressivi sulle connessioni lente.
+- **Patch** (molti DoS sono crash dovuti a bug correggibili).
+- Protezioni a **livello di rete**: firewall, scrubbing, anti-DDoS.
+- **Reverse proxy / WAF** davanti al server applicativo.
+- Dimensionamento e ridondanza delle risorse.
+
+## Collegamenti
+
+- ⬆️ [[Web Server Hacking]]
+- ↔️ [[Input Validation]] · [[Server Extensions]]
+

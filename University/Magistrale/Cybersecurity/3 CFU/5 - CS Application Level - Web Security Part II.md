@@ -233,9 +233,7 @@ JavaScript può modificare dinamicamente il DOM, ad esempio aggiungendo elementi
 
 **Here is the exact implementation shown in the slides:**
 
-JavaScript
-
-```
+```JavaScript
 // Aggiungere un nuovo item alla lista
 let list = document.getElementById('t1');
 let item = document.createElement('LI');
@@ -1559,6 +1557,72 @@ Set-Cookie: _Host-CSRF_token=aen4GjH9b3s; Path=/; Secure
 > [!abstract] Nota
 > 
 > La maggior parte dei moderni framework web utilizza token anti-CSRF per impostazione predefinita.
+
+### non ho capito come viene implementato questo token causale e come fa il server a verificare che il token è valido se lo genera il client
+
+Hai centrato il dubbio chiave, ed è esattamente l'inceppamento che hanno tutti la prima volta. La risposta è breve e cambia tutto:
+
+> **Il token non lo genera il client. Lo genera il _server_.** Il client si limita a **restituirlo** così com'è. Il server lo confronta con quello che si era segnato in precedenza.
+
+Una volta capito questo, le due implementazioni filano da sole. Te le smonto passo per passo.
+
+#### Synchronizer Token Pattern (con il form)
+
+Lo scenario: vuoi cambiare la password sul sito `banca.com`.
+
+1. **Richiesta del form:** il tuo browser chiede a `banca.com/cambia-password`.
+2. **Il server genera il token:** sul server viene generata una stringa casuale, es. `ak34F9dmAvp`.
+3. **Il server se la _segna_**: la salva nella tua sessione lato server (in memoria, associata a te).
+4. **Il server te la _manda_** incorporata nell'HTML del form:
+    
+    ```html
+    <form method="POST" action="/cambia-password">  <input type="hidden" name="csrf_token" value="ak34F9dmAvp">  <input type="password" name="nuova">  <button type="submit">Cambia</button></form>
+    ```
+    
+5. **Tu invii il form:** il browser rispedisce a `banca.com` la nuova password **e il token nascosto**.
+6. **Il server verifica:** confronta il `csrf_token` ricevuto con quello che si era segnato nella tua sessione. Combaciano → ok. Non combaciano (o manca) → richiesta rifiutata.
+
+**Perché blocca il CSRF:** l'attaccante su `evil.com` riesce a far partire la richiesta dal tuo browser (con i cookie, come al solito), ma **non può leggere l'HTML del form legittimo** — la _Same-Origin Policy_ del browser glielo impedisce. Quindi non conosce `ak34F9dmAvp`, non riesce a metterlo nella richiesta, e il server la scarta.
+
+Il punto-chiave: il server genera _e ricorda_. Il client è solo un postino.
+
+#### Cookie-to-header (la versione JS / AJAX)
+
+L'idea è la stessa, ma il "promemoria" del server non sta nella sessione lato server, sta **in un cookie che il server ha già piazzato nel tuo browser**. Si chiama anche _double-submit cookie_.
+
+1. **Prima visita:** il server ti manda
+    
+    ```http
+    Set-Cookie: __Host-CSRF_token=aen4GjH9b3s; Path=/; Secure
+    ```
+    
+    (di nuovo: lo genera il _server_, te lo _consegna_).
+2. **Il browser memorizza il cookie.**
+3. **Quando fai un'azione** (submit AJAX, chiamata API), il **JavaScript della pagina legittima** legge il valore del cookie e lo aggiunge come **header HTTP personalizzato**, es. `X-CSRF-Token: aen4GjH9b3s`.
+4. **La richiesta arriva al server** con **due pezzi**: il cookie (allegato in automatico dal browser) e l'header (messo dal JS della pagina).
+5. **Il server confronta i due valori.** Se l'header c'è e combacia col cookie → ok. Altrimenti → rifiutata.
+
+**Perché blocca il CSRF — e qui c'è la finezza:** l'attaccante può far partire una richiesta cross-site e il browser allega comunque il cookie in automatico (come al solito). Però:
+
+- Non può **leggere il valore** del cookie (è di un altro dominio → Same-Origin Policy, rafforzata dal prefisso `__Host-` e dal flag `Secure`).
+- Non può **aggiungere l'header custom** `X-CSRF-Token`, perché le richieste cross-origin non possono impostare header arbitrari senza un _preflight CORS_ che il server di `banca.com` rifiuta.
+
+Quindi la richiesta dell'attaccante arriva al server **con il cookie ma senza l'header** (o con un header sbagliato perché non conosce il valore). Il confronto fallisce, la richiesta viene scartata.
+
+#### Riassunto del meccanismo (vale per entrambi)
+
+> [!tip] Il punto in una frase Il server crea un **segreto condiviso** che invia al browser per un canale, e poi pretende di vederlo tornare per un **secondo canale che l'attaccante non può manipolare cross-site** (l'HTML del form, oppure un header HTTP custom).
+
+L'attaccante può sempre "spingere" il browser a fare richieste con i cookie. Ciò che non può fare è **scoprire il token** né **mettercelo dentro nel modo giusto**.
+
+#### E la storia di "ricaricato a ogni pagina" vs "una volta a sessione"?
+
+Solo un compromesso pratico:
+
+- **Generato una volta per sessione** → comodo: navighi con tab multiple, fai più azioni, il token è sempre lo stesso. Se però ti capita uno [[XSS]] che riesce a leggere il token, gliene basta uno solo per fare tutto.
+- **Rigenerato a ogni page load** → più sicuro: un token rubato vale solo per pochi secondi, prima del prossimo refresh. Ma rompe usabilità di tab multiple, back/forward, ecc.
+
+E il vincolo finale che il libro nomina (**"i token devono essere legati alla sessione utente"**) chiude un'ultima scappatoia: senza quel binding, un attaccante potrebbe registrarsi sul sito col _suo_ account, ottenere un token valido, e poi infilarlo nelle richieste fatte fare alla vittima. Legandolo alla sessione, il token di Tizio è valido **solo** per le richieste di Tizio.
 
 ### Ma non abbiamo detto che esiste già i flag SameSite=Lax per proteggerci dal CSRF?
 

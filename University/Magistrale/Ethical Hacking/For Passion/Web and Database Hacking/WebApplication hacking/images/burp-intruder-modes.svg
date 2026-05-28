@@ -1,0 +1,43 @@
+<svg viewBox="0 0 760 600" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <rect x="6" y="6" width="748" height="588" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="380" y="40" text-anchor="middle" font-size="21" font-weight="700" fill="#1e293b">Burp Intruder &#8212; le 4 modalit&#224;</text>
+  <text x="380" y="63" text-anchor="middle" font-size="12.5" fill="#64748b">set 1 = {a, b} &#160;·&#160; set 2 = {1, 2} &#160;·&#160; due punti marcati: &#167;A&#167; &#167;B&#167;</text>
+
+  <!-- Sniper -->
+  <rect x="26" y="80" width="346" height="232" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="44" y="111" font-size="16" font-weight="700" fill="#1d4ed8">Sniper</text>
+  <text x="44" y="131" font-size="11.5" fill="#475569">1 set &#183; un punto alla volta</text>
+  <text x="44" y="161" font-family="monospace" font-size="13" fill="#1e293b">req1:&#160; A=a&#160; B=&#8211;</text>
+  <text x="44" y="183" font-family="monospace" font-size="13" fill="#1e293b">req2:&#160; A=b&#160; B=&#8211;</text>
+  <text x="44" y="205" font-family="monospace" font-size="13" fill="#1e293b">req3:&#160; A=&#8211;&#160; B=a</text>
+  <text x="44" y="227" font-family="monospace" font-size="13" fill="#1e293b">req4:&#160; A=&#8211;&#160; B=b</text>
+  <text x="44" y="263" font-size="11.5" font-style="italic" fill="#64748b">&#8594; fuzzing di un singolo parametro</text>
+  <text x="44" y="287" font-size="11.5" fill="#2563eb" font-weight="700">il pi&#249; usato</text>
+
+  <!-- Battering Ram -->
+  <rect x="388" y="80" width="346" height="232" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="406" y="111" font-size="16" font-weight="700" fill="#15803d">Battering Ram</text>
+  <text x="406" y="131" font-size="11.5" fill="#475569">1 set &#183; stesso payload in tutti i punti</text>
+  <text x="406" y="161" font-family="monospace" font-size="13" fill="#1e293b">req1:&#160; A=a&#160; B=a</text>
+  <text x="406" y="183" font-family="monospace" font-size="13" fill="#1e293b">req2:&#160; A=b&#160; B=b</text>
+  <text x="406" y="233" font-size="11.5" font-style="italic" fill="#64748b">&#8594; stesso valore ripetuto ovunque</text>
+
+  <!-- Pitchfork -->
+  <rect x="26" y="328" width="346" height="240" rx="12" fill="#faf5ff" stroke="#7c3aed" stroke-width="2"/>
+  <text x="44" y="359" font-size="16" font-weight="700" fill="#6d28d9">Pitchfork</text>
+  <text x="44" y="379" font-size="11.5" fill="#475569">N set &#183; in parallelo, a coppie</text>
+  <text x="44" y="409" font-family="monospace" font-size="13" fill="#1e293b">req1:&#160; A=a&#160; B=1</text>
+  <text x="44" y="431" font-family="monospace" font-size="13" fill="#1e293b">req2:&#160; A=b&#160; B=2</text>
+  <text x="44" y="485" font-size="11.5" font-style="italic" fill="#64748b">&#8594; coppie note user / password</text>
+
+  <!-- Cluster Bomb -->
+  <rect x="388" y="328" width="346" height="240" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text x="406" y="359" font-size="16" font-weight="700" fill="#c2410c">Cluster Bomb</text>
+  <text x="406" y="379" font-size="11.5" fill="#475569">N set &#183; tutte le combinazioni</text>
+  <text x="406" y="409" font-family="monospace" font-size="13" fill="#1e293b">req1:&#160; A=a&#160; B=1</text>
+  <text x="406" y="431" font-family="monospace" font-size="13" fill="#1e293b">req2:&#160; A=a&#160; B=2</text>
+  <text x="406" y="453" font-family="monospace" font-size="13" fill="#1e293b">req3:&#160; A=b&#160; B=1</text>
+  <text x="406" y="475" font-family="monospace" font-size="13" fill="#1e293b">req4:&#160; A=b&#160; B=2</text>
+  <text x="406" y="511" font-size="11.5" font-style="italic" fill="#64748b">&#8594; brute force user &#215; password</text>
+  <text x="406" y="535" font-size="11.5" fill="#ea580c" font-weight="700">esplode in fretta!</text>
+</svg>

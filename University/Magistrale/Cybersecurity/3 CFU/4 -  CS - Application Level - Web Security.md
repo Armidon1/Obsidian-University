@@ -407,7 +407,7 @@ Bisogna prestare attenzione ai permessi:
 ## Command & Code Injection
 ![[Pasted image 20251117145401.png]]
 
-### Command Injection in sintesi
+### [[Command Injection]] in sintesi
 
 La **Command Injection** si verifica quando un'applicazione passa dati non sicuri (forniti dall'utente) a una shell di sistema. Un attaccante può usare questo difetto per eseguire comandi arbitrari del sistema operativo con i privilegi del server web.
 
@@ -461,7 +461,7 @@ Command Injection può essere anche fixato (anche qui) inserendo dei permessi in
 
 ---
 
-### Code Injection
+### [[Code Injection]]
 
 La **Code Injection** è simile, ma invece di eseguire comandi del sistema operativo, l'attaccante inietta codice che viene interpretato ed eseguito dall'applicazione stessa (es. codice PHP, Python, JavaScript).
 
@@ -577,7 +577,7 @@ Ecco le operazioni fondamentali (CRUD - Create, Read, Update, Delete):
 ## SQL Injection (SQLi) in Sintesi
 ![[Pasted image 20251117152059.png]]
 
-La **SQL Injection (SQLi)** è una vulnerabilità di validazione dell'input che si verifica quando dati non fidati forniti dall'utente vengono concatenati direttamente all'interno di una query SQL inviata al database. È un'istanza specifica delle vulnerabilità di **Code Injection**, ma nel contesto dei database.
+La **[[SQL Injection]] (SQLi)** è una vulnerabilità di validazione dell'input che si verifica quando dati non fidati forniti dall'utente vengono concatenati direttamente all'interno di una query SQL inviata al database. È un'istanza specifica delle vulnerabilità di **Code Injection**, ma nel contesto dei database.
 
 L'interprete SQL non riesce a distinguere tra il codice legittimo della query e i dati forniti dall'utente, eseguendo quindi comandi non previsti dallo sviluppatore.
 

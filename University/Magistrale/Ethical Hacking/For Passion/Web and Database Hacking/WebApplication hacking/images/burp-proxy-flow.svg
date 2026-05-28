@@ -1,0 +1,48 @@
+<svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <rect x="6" y="6" width="748" height="318" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="380" y="46" text-anchor="middle" font-size="21" font-weight="700" fill="#1e293b">Burp come proxy man-in-the-middle</text>
+
+  <defs>
+    <marker id="arrReq" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrRes" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <!-- Browser -->
+  <rect x="44" y="120" width="150" height="96" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="119" y="164" text-anchor="middle" font-size="16" font-weight="700" fill="#1e293b">Browser</text>
+  <text x="119" y="188" text-anchor="middle" font-size="12" fill="#64748b">il tester</text>
+
+  <!-- Burp -->
+  <rect x="305" y="112" width="150" height="112" rx="12" fill="#fff1ea" stroke="#ea580c" stroke-width="2.5"/>
+  <text x="380" y="150" text-anchor="middle" font-size="16" font-weight="700" fill="#c2410c">Burp Suite</text>
+  <text x="380" y="172" text-anchor="middle" font-size="11" fill="#9a3412">127.0.0.1:8080</text>
+  <text x="380" y="194" text-anchor="middle" font-size="11" fill="#64748b">intercetta · modifica</text>
+  <text x="380" y="210" text-anchor="middle" font-size="11" fill="#64748b">registra</text>
+
+  <!-- Server -->
+  <rect x="566" y="120" width="150" height="96" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="641" y="164" text-anchor="middle" font-size="16" font-weight="700" fill="#1e293b">Web Server</text>
+  <text x="641" y="188" text-anchor="middle" font-size="12" fill="#64748b">l'applicazione</text>
+
+  <!-- request arrows (top) -->
+  <line x1="196" y1="150" x2="301" y2="150" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrReq)"/>
+  <line x1="457" y1="150" x2="562" y2="150" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrReq)"/>
+  <text x="248" y="141" text-anchor="middle" font-size="11" fill="#2563eb" font-weight="600">richiesta &#8594;</text>
+  <text x="509" y="141" text-anchor="middle" font-size="11" fill="#2563eb" font-weight="600">richiesta &#8594;</text>
+
+  <!-- response arrows (bottom) -->
+  <line x1="301" y1="190" x2="196" y2="190" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrRes)"/>
+  <line x1="562" y1="190" x2="457" y2="190" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrRes)"/>
+  <text x="248" y="207" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="600">&#8592; risposta</text>
+  <text x="509" y="207" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="600">&#8592; risposta</text>
+
+  <!-- HTTPS note -->
+  <rect x="44" y="252" width="672" height="54" rx="10" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5"/>
+  <text x="62" y="275" font-size="12.5" fill="#92400e" font-weight="700">HTTPS:</text>
+  <text x="115" y="275" font-size="12.5" fill="#78350f">per leggere il traffico cifrato installa il certificato CA di Burp nel browser</text>
+  <text x="62" y="294" font-size="12.5" fill="#78350f">&#8212; oppure usa il browser Chromium integrato, gi&#224; pre-configurato.</text>
+</svg>
