@@ -223,7 +223,10 @@ Lo scenario: vuoi cambiare la password sul sito `banca.com`.
 4. **Il server te la _manda_** incorporata nell'HTML del form:
     
     ```html
-    <form method="POST" action="/cambia-password">  <input type="hidden" name="csrf_token" value="ak34F9dmAvp">  <input type="password" name="nuova">  <button type="submit">Cambia</button></form>
+    <form method="POST" action="/cambia-password">  
+		<input type="hidden" name="csrf_token" value="ak34F9dmAvp">  
+		<input type="password" name="nuova">  
+	<button type="submit">Cambia</button></form>
     ```
     
 5. **Tu invii il form:** il browser rispedisce a `banca.com` la nuova password **e il token nascosto**.

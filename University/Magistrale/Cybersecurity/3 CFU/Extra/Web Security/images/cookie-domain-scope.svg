@@ -1,0 +1,63 @@
+<svg viewBox="0 0 760 512" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <rect x="6" y="6" width="748" height="500" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="380" y="40" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Attributo Domain &#8212; chi riceve il cookie</text>
+
+  <!-- Panel A -->
+  <rect x="20" y="58" width="720" height="196" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="38" y="84" font-size="13.5" font-weight="700" fill="#15803d">Domain NON impostato &#8594; host-only (sicuro)</text>
+
+  <!-- apex A -->
+  <rect x="300" y="98" width="160" height="36" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.8"/>
+  <text x="372" y="121" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e293b">example.com</text>
+  <rect x="466" y="103" width="62" height="26" rx="13" fill="#dcfce7" stroke="#16a34a" stroke-width="1.3"/>
+  <text x="497" y="120" text-anchor="middle" font-size="10.5" font-weight="700" fill="#15803d">SESSID</text>
+
+  <!-- lines A -->
+  <line x1="380" y1="134" x2="150" y2="184" stroke="#cbd5e1" stroke-width="1.6"/>
+  <line x1="380" y1="134" x2="380" y2="184" stroke="#cbd5e1" stroke-width="1.6"/>
+  <line x1="380" y1="134" x2="610" y2="184" stroke="#cbd5e1" stroke-width="1.6"/>
+
+  <!-- children A -->
+  <rect x="70" y="184" width="160" height="34" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="150" y="206" text-anchor="middle" font-size="11" fill="#94a3b8">shop.example.com</text>
+  <rect x="300" y="184" width="160" height="34" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="380" y="206" text-anchor="middle" font-size="11" fill="#94a3b8">secure.example.com</text>
+  <rect x="530" y="184" width="160" height="34" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="610" y="206" text-anchor="middle" font-size="11" fill="#94a3b8">evil.example.com</text>
+  <text x="380" y="240" text-anchor="middle" font-size="11.5" fill="#15803d">&#10003; il cookie torna solo a example.com &#8212; i sottodomini non lo ricevono</text>
+
+  <!-- Panel B -->
+  <rect x="20" y="270" width="720" height="226" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="38" y="296" font-size="13.5" font-weight="700" fill="#b91c1c">Domain=example.com &#8594; tutti i sottodomini (related-domain attacker)</text>
+
+  <!-- apex B -->
+  <rect x="300" y="310" width="160" height="36" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.8"/>
+  <text x="372" y="333" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e293b">example.com</text>
+  <rect x="466" y="315" width="62" height="26" rx="13" fill="#dcfce7" stroke="#16a34a" stroke-width="1.3"/>
+  <text x="497" y="332" text-anchor="middle" font-size="10.5" font-weight="700" fill="#15803d">SESSID</text>
+
+  <!-- lines B -->
+  <line x1="380" y1="346" x2="150" y2="402" stroke="#fca5a5" stroke-width="1.8"/>
+  <line x1="380" y1="346" x2="380" y2="402" stroke="#fca5a5" stroke-width="1.8"/>
+  <line x1="380" y1="346" x2="610" y2="402" stroke="#fca5a5" stroke-width="1.8"/>
+
+  <!-- children B -->
+  <rect x="70" y="402" width="160" height="34" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="138" y="424" text-anchor="middle" font-size="10.5" fill="#1e293b">shop.example.com</text>
+  <rect x="196" y="407" width="30" height="24" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="1.1"/>
+  <text x="211" y="423" text-anchor="middle" font-size="8.5" font-weight="700" fill="#15803d">SID</text>
+
+  <rect x="300" y="402" width="160" height="34" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="368" y="424" text-anchor="middle" font-size="10.5" fill="#1e293b">secure.example.com</text>
+  <rect x="426" y="407" width="30" height="24" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="1.1"/>
+  <text x="441" y="423" text-anchor="middle" font-size="8.5" font-weight="700" fill="#15803d">SID</text>
+
+  <rect x="530" y="402" width="160" height="34" rx="8" fill="#fff1f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="595" y="420" text-anchor="middle" font-size="10.5" font-weight="700" fill="#b91c1c">evil.example.com</text>
+  <text x="595" y="431" text-anchor="middle" font-size="8" fill="#dc2626">attaccante</text>
+  <rect x="656" y="407" width="30" height="24" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="1.1"/>
+  <text x="671" y="423" text-anchor="middle" font-size="8.5" font-weight="700" fill="#15803d">SID</text>
+
+  <text x="380" y="462" text-anchor="middle" font-size="11.5" fill="#b91c1c">&#10007; inviato a TUTTI i sottodomini &#8594; evil.example.com pu&#242; leggerlo e sovrascriverlo</text>
+  <text x="380" y="483" text-anchor="middle" font-size="11" font-style="italic" fill="#64748b">Il prefisso __Host- vieta l'attributo Domain &#8594; forza host-only &#8594; blocca questo attacco</text>
+</svg>
