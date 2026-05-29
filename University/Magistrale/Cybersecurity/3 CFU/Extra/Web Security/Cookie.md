@@ -195,6 +195,46 @@ I prefissi danno al server garanzie **basate sul nome** del cookie, perché l'**
 - `SameSite=Lax` (default) ferma il CSRF esterno ma non il related-domain.
 - `__Host-` è la garanzia più forte: host-only + Secure + Path=/, imposta dal **browser**.
 
+## Esempio di come [[HTTPS]] ([[HTTP]] over [[TLS]]) protegge il payload e viene incapsulato
+
+Ottima richiesta — qui il concetto è l'**incapsulamento**: il pacchetto è come una matrioska, e la cifratura TLS avviene su uno strato ben preciso. Ti faccio vedere esattamente cosa succede a un GET, strato per strato.
+
+Partiamo dai dati che l'applicazione vuole mandare (in chiaro, come li vede il browser):
+
+```http
+GET /account HTTP/1.1
+Host: bank.com
+Cookie: SESSID=k7Fa9Zx2
+```
+
+Ora questo testo scende lungo lo stack di rete e a ogni livello viene "avvolto" in un nuovo strato. Il punto cruciale: **solo il contenuto HTTP viene cifrato (dal TLS Record); le intestazioni di TCP, IP ed Ethernet restano in chiaro**, perché servono ai router e alle schede di rete per consegnare il pacchetto.Ecco la matrioska del pacchetto: il GET parte in chiaro, il **TLS Record** lo cifra, e poi TCP, IP ed Ethernet aggiungono le loro intestazioni _intorno_ — ma quelle restano leggibili.Leggendo dall'interno verso l'esterno, ecco cosa succede passo per passo.
+
+**Lato client (incapsulamento, si scende lo stack):**
+![[https_packet_encapsulation.svg|618]]
+Il browser produce il GET in chiaro. Lo strato **TLS** lo prende e lo cifra con la chiave di sessione simmetrica concordata nell'handshake, producendo un **TLS record**. Sul filo quel record inizia con qualcosa tipo:
+
+```
+17 03 03 00 4A   →  type=23 (application_data), versione, lunghezza
+9f a3 c1 7e ...  →  byte cifrati (il GET + Cookie, illeggibili)
+[auth tag]       →  tag di integrità (AES-GCM)
+```
+
+Da qui scende: **TCP** ci mette davanti la sua intestazione (porta sorgente → `:443`, sequence number), **IP** aggiunge gli indirizzi (es. `192.168.1.10 → 203.0.113.5`), **Ethernet** aggiunge i MAC del prossimo hop e un controllo finale (FCS). Il frame va sul cavo.
+
+**Cosa vede un MITM / sniffer:** tutte le intestazioni esterne sono in chiaro, quindi vede _chi parla con chi_ — il tuo IP che contatta il server della banca sulla porta 443 (metadati). Ma il contenuto — path `/account`, header `Host`, **cookie di sessione**, body — è dentro il blob cifrato: vede solo byte casuali.
+
+**Lato server (de-incapsulamento, si risale lo stack — l'ordine inverso):**
+
+1. La scheda di rete riceve il frame, verifica l'**FCS** e toglie l'intestazione Ethernet → pacchetto IP.
+2. Lo strato IP controlla che l'IP di destinazione sia suo, toglie l'intestazione IP → segmento TCP.
+3. Lo strato TCP vede la porta `:443`, rimette in ordine i segmenti e toglie l'intestazione TCP → TLS record.
+4. Lo strato **TLS** usa la **stessa chiave simmetrica** dell'handshake per **decifrare** il payload e verifica l'**auth tag**: se il tag non torna, il pacchetto è stato manomesso in transito → connessione chiusa. Altrimenti → HTTP in chiaro.
+5. Il web server (es. nginx) riceve finalmente il `GET /account` in chiaro e lo elabora.
+
+Il punto chiave: la cifratura vive **solo sullo strato TLS**, "in mezzo" tra applicazione e TCP. Gli strati sotto non sanno nemmeno cosa trasportano — vedono il TLS record come un payload opaco qualsiasi. Per questo un router instrada un pacchetto HTTPS esattamente come uno HTTP: gli serve solo l'intestazione IP, che è in chiaro.
+
+Vuoi che trasformi questo schema in una nota `[[HTTPS]]` / `[[TLS]]` per il vault (con il diagramma dell'incapsulamento + quello dell'handshake che ti avevo proposto prima)? Così chiudi anche la parte "Network Protocol Issues" delle tue slide (SSL stripping, HSTS) con il pezzo che spiega _come_ funziona davvero la cifratura sotto.
+
 ## Collegamenti
 
 - ↔️ [[CSRF]] · [[XSS]] · [[SOP]]
