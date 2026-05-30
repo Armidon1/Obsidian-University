@@ -8,7 +8,7 @@ Quando l'app costruisce una query **concatenando** l'input dell'utente senza san
 
 ## Come funziona (bypass del login)
 
-![[sqli-auth-bypass.svg]] 
+![[sqli-auth-bypass.svg|604]] 
 _Con `admin'--` il `--` commenta il controllo della password: la query restituisce admin senza verificarne le credenziali._
 
 ## Tipi
@@ -453,9 +453,7 @@ L'uso di **Prepared Statements** è il metodo più efficace per prevenire la SQL
 
 Esempio sicuro in PHP (PDO):
 
-PHP
-
-```
+```PHP
 $db = new PDO(CONNECTION_STRING, DB_USER, DB_PASS);
 // Il '?' è un placeholder
 $query = "SELECT * FROM users WHERE user = ? AND password = ?";

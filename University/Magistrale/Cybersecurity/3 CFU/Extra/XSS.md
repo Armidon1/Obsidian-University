@@ -49,6 +49,39 @@ L'iniezione avviene interamente lato client. I dati controllati dall'attaccante 
     
 
 ---
+## DOM-based vs REFLECTED XSS
+
+L'asse vero che separa Reflected e DOM-based **non è chi interagisce con il server**, ma **dove il dato non fidato viene iniettato nella pagina**: lato server o lato client.
+
+### Le due imprecisioni
+
+**1. "Reflected = redirect verso il sito target."** Il redirect è solo _uno dei modi_ per consegnare l'URL alla vittima — è proprio l'Esempio #1 delle tue slide, ma è un dettaglio di consegna, non l'essenza. Una reflected XSS si fa benissimo anche con un semplice link di phishing che la vittima clicca direttamente, senza nessun 302. L'essenza è un'altra: **il server riceve il payload nella richiesta e lo "riflette" dentro l'HTML della risposta** senza sanitizzarlo.
+
+**2. "In DOM-based è l'attaccante a interagire col server."** Qui è il contrario: in una DOM-based il payload **spesso non raggiunge mai il server**. L'esempio classico è il fragment dell'URL (la parte dopo `#`, come `location.hash`): il browser **non invia il fragment al server**. È JavaScript _già presente nella pagina_ a leggerlo e a scriverlo in un sink pericoloso. Per questo i filtri lato server non lo intercettano.
+
+E in **entrambi** i casi, chi visita l'URL-trappola è la **vittima**, non l'attaccante. L'attaccante prepara il link e adesca; non interagisce lui col sito come se fosse la vittima.
+
+### La distinzione corretta
+
+| |Dove sta il codice vulnerabile|Il payload passa dal server?|Chi lo inietta nella pagina|
+|---|---|---|---|
+|**Reflected**|lato **server**|**Sì** — va al server e torna nella risposta|il **server**, che lo riflette nell'HTML|
+|**DOM-based**|lato **client** (JS)|**Spesso no** (es. dopo `#`)|il **JavaScript** del browser (source → sink)|
+
+Il test più rapido per distinguerle: **"chi mette materialmente il payload nell'HTML eseguito?"**
+
+- Se è il **server** che lo echeggia nella risposta → **Reflected**.
+- Se è il **JavaScript della pagina** che prende un _source_ (`location.hash`, `document.referrer`, `window.name`) e lo butta in un _sink_ (`innerHTML`, `eval`, `document.write`) → **DOM-based**.
+
+### Il punto in comune (per non confonderti)
+
+In tutti e tre i tipi — Reflected, Stored, DOM — lo script finisce per **eseguire nel browser della vittima**. Cambia solo _dove avviene l'iniezione_:
+
+- **Reflected:** il server riflette l'input nella risposta (la vittima va adescata ogni volta).
+- **Stored:** il server **salva** il payload e lo serve a chiunque apra la pagina (nessun adescamento per-vittima).
+- **DOM-based:** l'iniezione è tutta nel JS lato client, il server può non vederla mai.
+
+Quindi la tua frase andrebbe riscritta così: _Reflected = il server riflette l'input nella risposta; DOM-based = il JS della pagina inietta l'input nel DOM lato client, spesso senza che il server lo veda._ Il "chi interagisce" è uguale in entrambi (la vittima, adescata dall'attaccante).
 
 ## 🛡️ Prevenzione e Mitigazione
 

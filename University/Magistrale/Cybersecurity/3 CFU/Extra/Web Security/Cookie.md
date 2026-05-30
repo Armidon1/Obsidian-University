@@ -241,8 +241,7 @@ Vuoi che trasformi questo schema in una nota `[[HTTPS]]` / `[[TLS]]` per il vaul
 
 
 ---
-informazioni che puoi trovare in [[5 - CS Application Level - Web Security Part II]]
----
+# informazioni che puoi trovare in [[5 - CS Application Level - Web Security Part II]]
 
 ## 2. Cookies: Infrastruttura e Attributi
 

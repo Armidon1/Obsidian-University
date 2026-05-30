@@ -81,6 +81,23 @@ Reserved characters (like spaces, /, ?) cannot be used directly in certain parts
 - Example: `https://example.com/page?name=my%20page`
     
 
+### Enhanced edition
+
+![[Pasted image 20260529191527.png]]
+![[Pasted image 20260529191533.png]]![[Pasted image 20260529191538.png]]
+HTTP request
+Structure:
+	1 request line (e.g., GET /index.html HTTP/1.1 )
+	2 header (HTTP/1.1 MUST contain the Host field – host and
+	port number of the requested resource)
+	●3 empty line
+	●4 message body (optional)
+Note:
+	●request line and header are terminated by a CRLF (“\r\n”)
+	●empty line → CRLF
+	usually implementations are flexible (e.g., CR may not be mandatory)
+
+
 ---
 
 ### The HTTP Protocol
@@ -122,8 +139,6 @@ HTTPS is the **secure variant** of HTTP. It is not a separate protocol, but rath
 ![[Pasted image 20251105115247.png]]
 
 When a client sends a request, it is formatted as a plain-text message:
-
-HTTP
 
 ``` HTTP
 POST /login HTTP/2
@@ -186,8 +201,6 @@ You can see everything in a Network section in the [[3 - CS - Application Level 
 ![[Pasted image 20251105115257.png]]
 
 When the server replies, it also sends a plain-text message:
-
-HTTP
 
 ``` HTTP
 HTTP/2 200 OK
@@ -256,3 +269,59 @@ Strict-Transport-Security: max-age=63072000
     
     - `500 Internal Server Error`: A generic error on the server side.
         
+
+---
+## Differenza tra HEAD, GET e POST
+
+Il tuo modello **sull'intento** dei metodi è in realtà corretto. Quello che ti manca è un pezzo diverso: il fatto che GET _può comunque trasportare dei dati_ — solo che li mette in un **posto diverso** rispetto a POST. È questo che le slide stanno mostrando, e che fa sembrare contraddittorio il tuo schema.
+
+## Il malinteso da sciogliere
+
+"GET serve per richiedere risorse" è giusto. Ma _richiedere una risorsa_ non significa "senza dati": la risorsa può essere **parametrizzata**. Quando fai `search.php?q=gatti`, stai ancora **recuperando** una risorsa (i risultati della ricerca) — i parametri descrivono semplicemente _quale_ risorsa o quale versione vuoi. Non stai "inviando roba da salvare", stai dicendo al server _cosa_ restituirti.
+
+Quindi:
+
+- **GET** = "dammi questa risorsa" → i parametri dicono _quale_. (intento: lettura)
+- **POST** = "ecco dei dati da elaborare/registrare" → i parametri sono il _payload di un'azione_. (intento: scrittura/azione)
+- **HEAD** = come GET ma il server restituisce **solo gli header, niente body** (per sapere se la risorsa esiste, la sua dimensione, la data di modifica, senza scaricarla). Il tuo modello su HEAD era giusto.
+
+## La differenza concreta: _dove_ finiscono i parametri
+
+Questo è il cuore delle due slide:
+
+| |GET|POST|
+|---|---|---|
+|Dove vanno i parametri|nella **URL** (query string `?var1=a&var2=b`)|nel **body** della richiesta|
+|Visibili nell'URL|**Sì**|**No**|
+|Finiscono in cronologia, log, header `Referer`, bookmark|**Sì**|**No**|
+|Limite di lunghezza|sì (le URL hanno un limite)|praticamente no|
+|Intento (spec HTTP)|sicuro, idempotente (non dovrebbe cambiare stato)|non idempotente (cambia stato)|
+|Refresh della pagina|innocuo|il browser avvisa ("reinviare i dati?")|
+
+Guarda le slide con questa lente:
+
+- **GET** (slide 1): i parametri sono _attaccati all'URL_ → `GET /submit.php?var1=a&var2=b HTTP/1.1`. Tutto nell'URL, niente body.
+- **POST** (slide 2): i parametri stanno _dopo gli header, nel body_ → in fondo vedi `var1=a&var2=b` con `Content-Type: application/x-www-form-urlencoded` e `Content-Length: 13` (sono 13 caratteri). L'URL è pulito.
+
+## Il "Case 2: GET + POST" che ti confonde
+
+Quella slide mostra che i due canali **non si escludono**: una singola richiesta POST può portare parametri in **entrambi** i posti. Nel form:
+
+```html
+<form action="submit.php?var3=c&var4=d" method="post">
+```
+
+- `var3` e `var4` sono nell'**URL** dell'action → viaggiano nella query string (canale "GET").
+- `var1` e `var2` sono i campi del form → viaggiano nel **body** (canale "POST").
+
+Risultato: `POST /test.php?var3=c&var4=d` con `var1=a&var2=b` nel body. Una richiesta, due canali di parametri.
+
+## Perché questo conta per il tuo corso (sicurezza)
+
+La differenza "URL vs body" è esattamente ciò che spiega cose che hai già visto:
+
+- I parametri **GET finiscono nei log del server, nella cronologia e nell'header `Referer`** → per questo dati sensibili (token di sessione, password) **non vanno mai messi in GET**.
+- Il **CSRF via `<img>`** funziona _solo_ con GET: `<img src="bank.com/?act=...">` può scatenare una richiesta GET perché i parametri stanno nell'URL. Per fare CSRF su un endpoint POST serve invece un **form auto-inviato via JavaScript**, perché i dati devono stare nel body — è proprio la differenza tra i due scenari della tua nota [[CSRF]].
+- La **reflected [[XSS]]** spesso passa per un parametro GET, perché basta un link preparato (`?q=<script>...`) — il payload sta nell'URL, comodo da consegnare in un link di phishing.
+
+In sintesi: il _perché_ esistono (intento) lo avevi capito; il pezzo nuovo è il _dove_ mettono i dati (URL per GET, body per POST), ed è da lì che discendono quasi tutte le conseguenze pratiche e di sicurezza.
