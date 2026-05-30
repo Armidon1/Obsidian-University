@@ -1,17 +1,3 @@
----
-
-Tipo: Tool / Directory Busting Categoria: Web Enumeration tags:
-
-- tool
-- dirbuster
-- gobuster
-- ffuf
-- web-enumeration
-- directory-busting
-- fuzzing
-
----
-
 # 📂 DirBuster & Directory Busting
 
 > [!info] Cos'è Il **directory busting** è la tecnica di enumerare file e directory nascoste su un web server inviando richieste HTTP con nomi presi da una wordlist. DirBuster è il tool originale con interfaccia grafica, ma oggi è quasi completamente rimpiazzato da **gobuster** e **ffuf** — più veloci, più flessibili e usabili da CLI.

@@ -82,9 +82,14 @@ In una frase, il filo conduttore del capitolo nella sua forma locale: **un SUID 
 
 Primo gesto dopo aver ottenuto un account utente: censire i SUID/SGID.
 
+#### SUID
 ```bash
-find / -type f -perm -4000 -ls 2>/dev/null   # SUID
-find / -type f -perm -2000 -ls 2>/dev/null   # SGID
+find / -type f -perm -4000 -ls 2>/dev/null
+```
+
+#### SGID
+```
+find / -type f -perm -2000 -ls 2>/dev/null
 ```
 
 `-perm -4000`: il `-` significa _"almeno questi bit"_ (non "esattamente"). Trova ogni file con il SUID bit, a prescindere dal resto.

