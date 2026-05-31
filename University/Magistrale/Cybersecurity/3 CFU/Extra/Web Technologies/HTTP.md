@@ -254,6 +254,7 @@ Strict-Transport-Security: max-age=63072000
     - `301 Moved Permanently`: The resource has a new permanent URL.
         
     - `302 Found`: The resource is temporarily at a different URL.
+    - `304 Not Modified`: Il codice HTTP 304 indica che la risorsa richiesta non ha subito modifiche dall'ultimo download, istruendo il client a riutilizzare la copia già salvata nella propria cache locale.
         
 - **`4xx` (Client Error):** The request contains bad syntax or cannot be fulfilled.
     
