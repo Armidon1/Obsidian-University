@@ -283,7 +283,7 @@ rop.raw(system_address)
 
 Vedi: [[ROP Chain]], [[ropper]], [[ROPgadget]]
 
-### 8.2 ret2libc
+### 8.2 [[ret2libc]]
 
 Salta direttamente a una funzione della libc (es. `system("/bin/sh")`). Richiede di conoscere gli indirizzi della libc.
 

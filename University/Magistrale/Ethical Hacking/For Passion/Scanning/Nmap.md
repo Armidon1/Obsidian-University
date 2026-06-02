@@ -27,6 +27,11 @@ nmap -sn 192.168.0.0/24 --open   # show only hosts that responded
 > [!tip] Hacking Note `-sn` (ping scan) sends ICMP echo requests without touching ports — fast and relatively quiet. It gives you a **map of live targets** before you start scanning ports.
 
 ---
+## Specify Network Interface
+
+```bash
+nmap -e tun0 <ip_bersaglio>
+```
 
 ## 🚪 Port Scanning
 
@@ -44,13 +49,13 @@ nmap --top-ports 100 192.168.0.102 # scan top 100 most common ports
 
 ### Port States
 
-|State|Meaning|
-|---|---|
-|`open`|Port is accepting connections — **interesting**|
-|`closed`|Port is reachable but nothing is listening|
-|`filtered`|Firewall is blocking — no response|
-|`unfiltered`|Reachable but state is unclear (ACK scan)|
-|`open\|filtered`|Can't tell — common in UDP scans|
+| State            | Meaning                                         |
+| ---------------- | ----------------------------------------------- |
+| `open`           | Port is accepting connections — **interesting** |
+| `closed`         | Port is reachable but nothing is listening      |
+| `filtered`       | Firewall is blocking — no response              |
+| `unfiltered`     | Reachable but state is unclear (ACK scan)       |
+| `open\|filtered` | Can't tell — common in UDP scans                |
 
 ---
 
