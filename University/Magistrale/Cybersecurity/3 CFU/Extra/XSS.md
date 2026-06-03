@@ -3,6 +3,7 @@
 **Tag:** #security #web-security #vulnerability #XSS #javascript
 
 ---
+# XSS intro
 
 ## 📝 Definizione
 
@@ -114,7 +115,123 @@ Una API del browser progettata per eliminare il DOM XSS.
 da [[5 - CS Application Level - Web Security Part II]]
 
 
-# Web Security: Cross Site Scripting (XSS)
+
+# XSS Ethical Hacking 
+
+> [!abstract] In una frase L'**XSS** consiste nell'iniettare **JavaScript** in un sito vulnerabile, così che venga **eseguito nel browser della vittima** nel contesto (stessa origine, stessi cookie) del sito legittimo. In pratica: esecuzione di codice arbitrario _lato client_, con i privilegi della pagina vittima.
+
+> [!info] Dove sta nei lab Trattata in **[[Ethl 0x04 web security p2]]** sotto **A05:2025-Injection**. È il tema dell'injection applicato all'**interprete del browser (HTML/JS)**: come per [[SQL injection]] e [[Path Traversal]], il difetto è _dati controllati dall'utente che un interprete tratta come codice perché codice e dati non sono separati_.
+
+---
+
+## 1. Come funziona (slide 13)
+
+> [!info] La catena
+> 
+> 1. L'attaccante **inietta codice malevolo** in un sito vulnerabile (in un parametro, un commento, un campo profilo…).
+> 2. La **vittima visita la pagina** e il codice **viene eseguito nel suo browser**.
+> 3. Il codice può accedere a **cookie, dati di sessione, altri dati sensibili** del browser, oppure **forzare azioni** non volute.
+
+> [!info] Il punto chiave: XSS viola la fiducia _del browser nel sito_ Il browser esegue tutto il JavaScript che "sembra" provenire dal sito (stessa origine). Se l'attaccante riesce a far servire il proprio JS **dal dominio vittima**, quel codice eredita tutto: stessa origine, accesso ai cookie _non_ `HttpOnly`, capacità di fare richieste come l'utente. Per questo XSS è di fatto **RCE nel contesto della vittima**.
+
+---
+
+## 2. I tre tipi (slide 15–20)
+
+|Tipo|Dove vive il payload|Cosa lo attiva|Gravità|
+|---|---|---|---|
+|**Reflected** (1/3)|nell'**URL o form**, "rimbalzato" nella risposta|la vittima apre il link / invia il form|media — serve ingannare la vittima|
+|**Stored** (2/3)|**salvato sul server** (commento, post, profilo)|ogni volta che _chiunque_ carica la pagina|**la più grave**|
+|**DOM-based** (3/3)|manipolazione del **DOM lato client**|interazione specifica (click, modifica form, JS)|qualificazione di reflected/stored|
+
+### 2.1 Reflected XSS
+
+> [!info] (slide 15–16) Il payload fa un **viaggio andata-ritorno in una singola richiesta**: l'attaccante manda alla vittima un URL/form con il codice; la vittima lo invia; il server lo **riflette** nella risposta e il browser lo esegue. **Non viene memorizzato**. Demo: `?search=<script>alert(1)</script>` → la pagina stampa "0 search results for <script>…" e lo script gira.
+
+### 2.2 Stored XSS — la più severa
+
+> [!info] (slide 17–18) Il payload viene **salvato sul server** (es. in un commento di un forum). Quando la vittima — o **chiunque** — visualizza la pagina, il codice si esegue. Demo: lasciare un commento `<script>alert(1)</script>`; il commento viene salvato e lo script parte per ogni visitatore.
+
+> [!warning] Perché Stored è il più grave — punto d'esame Il codice si esegue **ogni volta** che la pagina è caricata, da **qualunque utente**, **a prescindere dalle sue azioni**. Non serve ingannare la vittima con un link (come nel reflected): basta che visiti una pagina normale. Persistente + automatico + di massa = massimo impatto.
+
+### 2.3 DOM-based XSS
+
+> [!info] (slide 19–20) **Non è una "terza posizione"**, ma una **qualificazione** di reflected/stored: il difetto sta nel **JavaScript client-side** che prende dati controllabili (es. `location.hash`, `document.URL`) e li scrive nel DOM in modo non sicuro (`innerHTML`, `document.write`…). Il payload **può non toccare mai il server**. Attivato da interazioni specifiche (click su link, modifica form, esecuzione di JS nella pagina). Demo: `"><svg onload=alert(1)>` che finisce in un attributo `src` costruito lato client.
+
+> [!tip] La distinzione che confonde all'esame Reflected e Stored riguardano **dove sta il payload** (richiesta vs server). DOM-based riguarda **dove avviene il difetto**: nel codice JavaScript del client, non nel rendering server-side. Un XSS può essere "reflected + DOM-based" insieme.
+
+---
+
+## 3. XSS → CSRF (slide 14)
+
+> [!note] Relazione (CSRF non si fa in questo lab) XSS può far emettere al browser richieste **verso altri siti** dove l'utente è **già autenticato** → **CSRF** (Cross-Site Request Forgery). Differenza concettuale: l'XSS "ruba" l'**esecuzione** (gira JS nel contesto vittima); il CSRF "ruba" l'**autenticazione implicita** (i cookie inviati automaticamente dal browser a un sito dove sei loggato). Il lab rimanda a PortSwigger per provare CSRF.
+
+---
+
+## 4. "Is XSS a big deal?" — l'impatto (slide 21–23)
+
+> [!warning] Sì. "Stiamo solo eseguendo JS arbitrario nel browser"… che è enorme
+> 
+> - **Furto di informazioni sensibili** — cookie, token di sessione, dati nel browser.
+> - **Session hijacking** — impersonare l'utente, accedere ad account/sistemi; direttamente (rubando il materiale di sessione) o **via CSRF**.
+> - **Website defacement** — alterare aspetto e contenuti del sito.
+> - Trampolino per attacchi più sofisticati: **distribuzione malware**, **phishing**.
+
+> [!example] Demo: XSS-Exploitation-Tool (slide 22) Strumento che, dato un XSS, **automatizza la raccolta** dal browser della vittima (cookie, screenshot, keylog…). Dimostra concretamente _quanto in là_ si arriva una volta che si esegue JS nella pagina vittima — non è "solo un `alert(1)`".
+
+---
+
+## 5. Mitigazioni (slide 24)
+
+> [!success]
+> 
+> - **Input validation server-side** — sanificare l'input _prima_ di salvarlo.
+> - **Output encoding** — **cruciale per lo Stored XSS**: codificare i dati non fidati al momento di _mostrarli_, così `<script>` diventa testo inerte (`&lt;script&gt;`) invece che codice eseguibile.
+> - **DOM-based** — secure coding lato client: evitare `innerHTML`/`eval`/`document.write` con dati controllabili; usare API sicure (`textContent`, sanitizer come DOMPurify).
+> - Difesa in profondità: **Content-Security-Policy** (limita quali script possono girare), cookie **`HttpOnly`** (il JS non può leggere il cookie di sessione), **`SameSite`** (mitiga il CSRF derivato).
+
+> [!info] Perché l'output encoding è la difesa giusta (e contestuale) Il difetto è che dati finiscono in un contesto dove vengono interpretati come codice. L'**output encoding** neutralizza al **punto di output**, trasformando i metacaratteri del contesto in entità inerti. Ma va fatto **nel contesto giusto**: l'encoding per HTML (`&lt;`) è diverso da quello per un attributo, per JavaScript o per un URL. Codificare nel contesto sbagliato lascia falle. Per questo "encoding contestuale" è la formula corretta, non un generico "escape".
+
+> [!info] Perché HttpOnly è difesa in profondità, non soluzione `HttpOnly` impedisce a `document.cookie` di leggere il cookie di sessione → blocca il _furto diretto_ del cookie via XSS. Ma l'XSS può ancora **agire come l'utente** (fare richieste autenticate dalla pagina stessa), quindi riduce l'impatto senza eliminarlo. La vera fix resta evitare l'esecuzione del payload (encoding + validation + CSP).
+
+---
+
+## 6. Trappole d'esame
+
+> [!danger] Domande "spiega questo / perché funziona"
+> 
+> 1. **Cosa esegue un XSS e in quale contesto** → JS arbitrario nel browser della vittima, con stessa origine e privilegi della pagina vittima.
+> 2. **I tre tipi e quale è più grave** → Reflected, Stored, DOM-based; **Stored** è il più grave (persistente, automatico, colpisce ogni visitatore senza azione della vittima).
+> 3. **Reflected vs Stored** → andata-ritorno in una richiesta (non memorizzato) vs salvato sul server.
+> 4. **DOM-based: cos'ha di diverso** → non è una posizione ma una _qualificazione_; il difetto è nel JS client-side, il payload può non toccare il server.
+> 5. **XSS vs CSRF** → XSS ruba l'esecuzione (gira codice); CSRF ruba l'autenticazione implicita (cookie automatici verso un sito dove sei loggato).
+> 6. **Perché l'output encoding batte il solo input filtering** → neutralizza al punto di output, nel contesto giusto, rendendo il payload testo inerte.
+> 7. **Perché "contestuale"** → l'encoding per HTML, attributo, JS, URL è diverso; sbagliare contesto lascia falle.
+> 8. **Cosa fa HttpOnly e perché non basta** → blocca la lettura del cookie via JS (furto diretto), ma l'XSS può ancora agire come l'utente.
+> 9. **Impatto reale di un XSS** → furto sessione/cookie, hijacking, defacement, malware/phishing — non "solo un alert".
+
+> [!todo] Challenge (lab 0x04, slide 25) _Trova manualmente un XSS in Juice Shop._ Suggerimento concettuale: cerca punti dove un tuo input viene **riflesso o memorizzato** e poi mostrato senza encoding (campo di ricerca, nome utente/profilo, recensioni). Prima inserisci un **marcatore innocuo** per capire _dove_ e _in che contesto_ finisce (testo? attributo? dentro un tag?), poi ragiona su quale encoding manca e perché il payload verrebbe eseguito.
+
+---
+
+## 7. Richiamo attivo (a libro chiuso)
+
+> [!question] Verifica
+> 
+> 1. Perché un XSS è di fatto "esecuzione di codice nel contesto della vittima"?
+> 2. Definisci reflected, stored e DOM-based in una frase ciascuno.
+> 3. Perché lo Stored XSS è il più grave dei tre?
+> 4. Perché DOM-based non è "una terza posizione" ma una qualificazione?
+> 5. Qual è la differenza concettuale tra XSS e CSRF?
+> 6. Perché l'output encoding deve essere "contestuale"? Fai un esempio di contesto diverso.
+> 7. Cosa protegge `HttpOnly` e cosa **non** protegge?
+> 8. Elenca tre impatti reali di un XSS oltre all'`alert(1)`.
+
+---
+
+> [!quote] Idea da portare a casa L'XSS è il tema dell'injection applicato al **browser**: input dell'utente che il browser esegue come JavaScript perché codice e dati non sono separati in output. Reflected (in una richiesta), Stored (persistente sul server, il più grave), DOM-based (difetto nel JS client). La difesa primaria è **output encoding contestuale** + validation; CSP e `HttpOnly` sono difesa in profondità.
+
+# Web Security: Cross Site Scripting (XSS) - corso cybersecurity
 
 **Tags:** #ingegneria #sicurezza_informatica #web_security #XSS #injection
 

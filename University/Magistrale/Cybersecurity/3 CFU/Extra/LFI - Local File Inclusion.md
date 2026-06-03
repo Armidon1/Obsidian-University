@@ -196,6 +196,7 @@ Il server carica ed esegue un file **tuo**.
 - [[A03-2021 Injection]]
 - [HackTricks - LFI](https://book.hacktricks.xyz/pentesting-web/file-inclusion)
 - [PayloadsAllTheThings - LFI](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion)
+- [[LFI/RFI - vulnerable parameters]]
 
 ---
 

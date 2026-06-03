@@ -1,4 +1,4 @@
-# SQL Injection
+# SQL Injection Intro
 
 > [!abstract] In una riga Inietti codice **SQL** tramite input non validato e prendi il controllo della query → del database.
 
@@ -39,7 +39,195 @@ Lettura/modifica/cancellazione di dati, **bypass dell'autenticazione**, in certi
 
 ---
 preso da [[4 - CS Applitcation Level - Sintesi Web Security Part I]]
-# SQL Injection
+
+# SQL Injection Ethical Hacking
+
+> [!abstract] In una frase La **SQL injection** sfrutta query costruite per **concatenazione di stringhe**: inserendo metacaratteri SQL nell'input, l'attaccante **esce dal contesto-dato ed entra nel contesto-codice**, alterando la struttura della query che il database esegue.
+
+> [!info] Dove sta nei lab Trattata in **[[Ethl 0x04 web security p2]]** sotto **A05:2025-Injection**. È un caso particolare del tema generale dell'injection (vedi anche [[Path Traversal]] e XSS): _dati controllati dall'utente che un interprete — qui il DBMS — tratta come codice perché codice e dati non sono separati._
+
+---
+
+## 1. Perché funziona
+
+> [!info] Il difetto base — vulnerability in WHERE clause (slide 28)
+> 
+> ```php
+> $query = "SELECT * FROM products WHERE category = '" . $c . "'";
+> //                                                  ^ input utente concatenato
+> ```
+> 
+> Con `category=Pets` → query benigna. Ma `$c` è sotto controllo dell'attaccante. Mettendo un apice `'`:
+> 
+> ```
+> category=Pets'
+> →  SELECT * FROM products WHERE category = 'Pets''   ← sintassi rotta / errore
+> ```
+> 
+> L'apice **chiude** la stringa prevista; tutto ciò che segue viene letto come **SQL, non come dato**. Es. `' OR '1'='1` rende la condizione sempre vera e restituisce tutte le righe.
+
+> [!note] Il peccato originale Identico a path traversal, XSS, command injection: **l'app mescola codice (la query) e dati (l'input)**. Il DBMS non può distinguere la parte "scritta dallo sviluppatore" da quella "iniettata dall'utente" e le esegue entrambe.
+
+---
+
+## 2. Impatto (slide 27)
+
+|Impatto|Esempio|
+|---|---|
+|**Retrieve hidden data**|leggere righe/tabelle non esposte dall'app|
+|**Subvert application logic**|bypass del login (`' OR 1=1 --` )|
+|**Retrieve data outside scope**|leggere altre tabelle (utenti, password) via `UNION`|
+|**Execute code on the OS** (*)|in certi DBMS/configurazioni, RCE|
+
+---
+
+## 3. Le primitive fondamentali
+
+### 3.1 Commentare la coda
+
+> [!info] Il `--` (o `#`) Dopo aver iniettato il proprio SQL, bisogna **neutralizzare il resto** della query originale (es. l'apice di chiusura che altrimenti romperebbe la sintassi). Il commento SQL `--` (con spazio finale) o `#` "spegne" tutto ciò che viene dopo:
+> 
+> ```
+> ' OR 1=1 -- '
+>           ^^^ tutto da qui in poi è commento → la query originale finisce qui
+> ```
+
+### 3.2 UNION-based — leggere altri dati (slide 29)
+
+> [!info] L'idea di UNION `UNION SELECT` **accoda** i risultati di una seconda query alla prima. Se l'output della prima è visibile in pagina, ci si "infila" dati arbitrari (versione del DB, contenuto di altre tabelle). **Vincolo**: la `SELECT` iniettata deve avere lo **stesso numero di colonne** (e tipi compatibili) della originale. Per questo nei payload reali compaiono tanti `null`/`0` di riempimento finché il numero torna.
+
+Rilevare il DBMS:
+
+|DBMS|Funzione versione|Payload tipo|
+|---|---|---|
+|MySQL / MS SQL|`@@version`|`' UNION SELECT @@version --`|
+|Oracle|`version FROM v$instance`|`' UNION SELECT version FROM v$instance --`|
+|PostgreSQL|`version()`|`' UNION SELECT version() --`|
+
+Esempio dalle slide (PostgreSQL, 8 colonne):
+
+```
+/filter?category=x'+union+select+0,null,version(),0,0,'',null,null-- 
+```
+
+> Il `+` è la codifica URL dello spazio; i `0`/`null`/`''` riempiono le 8 colonne; `version()` va nella colonna il cui valore è visibile in pagina.
+
+> [!tip] Come si trova il numero di colonne Due tecniche classiche (non nelle slide ma utili a capire i `null`):
+> 
+> - `ORDER BY 1`, `ORDER BY 2`, … finché dà errore → l'ultimo valore valido = numero colonne.
+> - `UNION SELECT null`, `UNION SELECT null,null`, … finché non dà più errore di mismatch.
+
+---
+
+## 4. Quando l'output NON si vede — Blind SQLi (slide 30)
+
+> [!info] Blind SQLi (caso comune) Spesso il risultato della query iniettata **non appare** in pagina. Si **inferisce** un bit/carattere alla volta osservando un comportamento osservabile (la pagina cambia? sì/no). Estrazione carattere per carattere con `SUBSTR`:
+> 
+> ```
+> ... AND (SELECT SUBSTR((SELECT version()),1,1))='P'-- 
+> ... AND (SELECT SUBSTR((SELECT version()),2,1))='o'-- 
+> ```
+> 
+> Se la pagina si comporta come "vero", il carattere indovinato è giusto. Si itera su tutte le posizioni e su tutti i caratteri possibili → si ricostruisce il dato.
+
+### 4.1 Time-based Blind — il canale temporale
+
+> [!info] Quando nemmeno il comportamento cambia Se la pagina è identica sia per "vero" che per "falso", si usa il **tempo** come canale laterale: si forza un `sleep` **solo se** la condizione è vera.
+> 
+> ```
+> '; SELECT CASE WHEN SUBSTR((SELECT version()),1,1)='P'
+>      THEN pg_sleep(5) ELSE pg_sleep(0) END-- 
+> ```
+> 
+> Se la risposta tarda 5 secondi → la condizione era vera (il carattere era 'P'). Lentissimo ma funziona **completamente alla cieca**.
+
+> [!tip] Concetto chiave da spiegare all'esame Boolean-based e time-based sono entrambe **esfiltrazione un bit alla volta tramite canale laterale**. Cambia solo il segnale osservato: contenuto della pagina (boolean) vs tempo di risposta (time-based). Si usa il time-based quando il boolean non è osservabile.
+
+---
+
+## 5. Second-Order (Stored) SQLi (slide 31)
+
+> [!info] L'app prende l'input da una richiesta e lo **memorizza**; l'injection scatta **più tardi**, quando quel dato salvato viene riutilizzato in un'altra query senza essere ri-sanificato. È l'analogo concettuale dello **Stored XSS** (vedi [[Ethl 0x04 web security p2]]): il payload "dorme" e si attiva in un secondo momento, spesso in un contesto diverso da dove è entrato → difficile da individuare con test ingenui (il punto di iniezione e il punto di esecuzione sono separati).
+
+---
+
+## 6. Automazione — sqlmap (slide 33)
+
+> [!warning] "Make sure you understand and explain what you are doing and why it worked/didn't work" Questa frase è **letteralmente** l'istruzione d'esame su sqlmap. Il tool automatizza rilevamento ed exploit:
+> 
+> ```
+> sqlmap -u "https://<target>/filter?category=Pets" --method GET
+> ```
+> 
+> Dall'output del lab impari a **leggere** cosa fa, passo per passo:
+> 
+> - rileva che il parametro `category` è dinamico;
+> - prova **boolean-based blind** (WHERE/HAVING);
+> - identifica il backend (es. **PostgreSQL**) con test euristici;
+> - testa **error-based**, **stacked queries**, **time-based blind**, **UNION**…
+> 
+> All'esame **non** conta lanciare il comando a memoria: conta **spiegare quale tecnica ha funzionato e perché** (es. _"time-based blind perché l'output non era riflesso in pagina, ma il parametro influenzava il tempo di risposta"_).
+
+---
+
+## 7. Difese
+
+> [!success]
+> 
+> - **Prepared statements / query parametrizzate** — _la_ difesa. I dati vengono passati separatamente dalla query e **non** sono mai interpretati come SQL:
+>     
+>     ```sql
+>     SELECT * FROM products WHERE category = ?    -- il '?' è un placeholder
+>     ```
+>     
+>     Qualunque cosa metta l'utente resta un _valore_, non può cambiare la struttura.
+> - **ORM** usati correttamente (che sotto usano prepared statements).
+> - **Escaping context-aware** come ripiego, mai come difesa primaria.
+> - **Privilegi minimi** sul DB: l'account dell'app non deve poter leggere tabelle di sistema o eseguire comandi OS.
+> - **Messaggi d'errore non verbosi**: riducono le info per l'attaccante (e l'efficacia dell'error-based).
+> - **Allowlist** per input strutturati (es. `category` ∈ {Pets, Gifts, …}).
+
+> [!info] Perché i prepared statement risolvono il problema alla radice Concatenare stringhe mescola codice e dati. Il prepared statement li **separa fisicamente**: prima il DB riceve la query _con i buchi_ (`?`) e ne fissa la struttura; poi riceve i valori, che vengono inseriti nei buchi _come dati puri_. Anche se il valore è `' OR 1=1 --` , non viene mai parsato come SQL: è solo una stringa cercata nella colonna `category`.
+
+---
+
+## 8. Trappole d'esame
+
+> [!danger] Domande "spiega questo / perché funziona"
+> 
+> 1. **Perché un `'` rompe/altera la query** → chiude la stringa-dato; il resto è letto come SQL.
+> 2. **A cosa serve `--` (o `#`)** → commenta la coda della query originale per non rompere la sintassi.
+> 3. **UNION-based: il vincolo** → stesso numero (e tipi) di colonne → da qui i `null`/`0` di padding.
+> 4. **Come si trova il numero di colonne** → `ORDER BY n` crescente fino all'errore, o `UNION SELECT null,null,…`.
+> 5. **Blind vs Time-based** → output non visibile → si inferiscono i bit dal _comportamento_ (boolean) o dal _tempo_ (`pg_sleep`) come canale laterale.
+> 6. **Quando usare time-based** → quando nemmeno il comportamento della pagina cambia tra vero e falso.
+> 7. **Second-order SQLi** → payload memorizzato che scatta in una query successiva; punto d'iniezione ≠ punto d'esecuzione (analogo Stored XSS).
+> 8. **sqlmap: quale tecnica e perché** → saper leggere l'output e motivare la tecnica vincente.
+> 9. **Perché i prepared statement risolvono** → separano fisicamente struttura (query) e valori (dati); l'input non è mai parsato come SQL.
+> 10. **Come si rileva il DBMS** → funzioni-versione specifiche (`@@version`, `version()`, `v$instance`) via UNION o error/time-based.
+
+> [!todo] Practice (lab 0x04, slide 32) _Trova manualmente una SQLi in Juice Shop._ Suggerimento concettuale: il **login** è il sospetto classico — pensa a una query tipo `WHERE email='<input>' AND password='<input>'`. Cosa succede se l'input nel campo email chiude l'apice e commenta il resto (`' --` )? Verifica _perché_ il comportamento cambia (quale parte della query hai "spento").
+
+---
+
+## 9. Richiamo attivo (a libro chiuso)
+
+> [!question] Verifica
+> 
+> 1. Dato `WHERE category='$c'`, mostra come `$c` può rendere la condizione sempre vera e cosa fa il `--` finale.
+> 2. Qual è il vincolo di una UNION-based SQLi e come lo soddisfi nella pratica?
+> 3. Come scopri quante colonne ha la query originale?
+> 4. Spiega la differenza tra boolean-based blind e time-based blind, e quando useresti la seconda.
+> 5. Cos'è una second-order SQLi e perché è difficile da trovare?
+> 6. Perché un prepared statement neutralizza `' OR 1=1 --` anche se l'utente lo inserisce?
+> 7. Come rileveresti che il backend è PostgreSQL piuttosto che MySQL?
+> 8. Su sqlmap: cosa significa che un parametro è "time-based blind injectable" e perché?
+
+---
+
+> [!quote] Idea da portare a casa La SQLi è il tema dell'injection applicato al database: **input dell'utente che il DBMS esegue come SQL perché codice e dati sono stati concatenati**. Visibile → UNION; invisibile → blind (boolean o time-based); differita → second-order. La difesa non è filtrare gli apici (aggirabile), ma **separare struttura e dati** con i prepared statement, più privilegi minimi sul DB.
+
+# SQL Injection corso di Cybersecurity 
 
 ## Cos'è SQL?
 
