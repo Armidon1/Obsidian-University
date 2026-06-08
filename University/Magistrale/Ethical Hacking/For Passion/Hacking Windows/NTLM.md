@@ -1,4 +1,4 @@
-# NTLM — NT LAN Manager
+	# NTLM — NT LAN Manager
 
 **Categoria:** #autenticazione #windows #hashing #exploitation  
 **OS:** Windows  

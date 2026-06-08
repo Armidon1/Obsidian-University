@@ -27,6 +27,8 @@ Dopo aver ottenuto un accesso iniziale (foothold), **spesso non hai abbastanza p
 > irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
 > redis:x:138:150::/var/lib/redis:/usr/sbin/nologin
 > ```
+notice: irc stands for Internet Relay chat which is a text based chat protocol from the 80s-90s, ircd is the irc deamon. if there is an irc account, then means that it is possible to abuse that service for privesc.
+also redis is a in-RAM database service that could have access to ssh keys for example.
 
 ### 1.2 Definizioni
 
@@ -63,18 +65,18 @@ rws r-x ---  (4750)   ← SetUID attivo
 rwx rws r-x  (2775)   ← SetGID attivo
 ```
 
-|Triade|Chi riguarda|
-|---|---|
-|1ª|cosa può fare il **proprietario**|
-|2ª|cosa può fare il **gruppo**|
-|3ª|cosa possono fare **gli altri**|
+| Triade | Chi riguarda                      |
+| ------ | --------------------------------- |
+| 1ª     | cosa può fare il **proprietario** |
+| 2ª     | cosa può fare il **gruppo**       |
+| 3ª     | cosa possono fare **gli altri**   |
 
 Per ogni triade: `r` (read), `w` (write), `x` (execute). Il terzo carattere può diventare:
 
-|Simbolo|Significato|
-|---|---|
-|`s` / `t`|setuid/setgid o sticky **+ eseguibile**|
-|`S` / `T`|setuid/setgid o sticky **non eseguibile** (la maiuscola = manca la `x`)|
+| Simbolo   | Significato                                                             |
+| --------- | ----------------------------------------------------------------------- |
+| `s` / `t` | setuid/setgid o sticky **+ eseguibile**                                 |
+| `S` / `T` | setuid/setgid o sticky **non eseguibile** (la maiuscola = manca la `x`) |
 
 > [!info] Cosa fa SetUID — il cuore di tutto Un binario con bit **SetUID** gira con l'**EUID del proprietario del file**, non dell'utente che lo lancia. Se il proprietario è `root` (UID 0), il programma gira con privilegi di root anche se lanciato da te. È esattamente ciò che si abusa: se riesci a far eseguire codice tuo a quel binario, il tuo codice eredita l'EUID di root.
 > 
@@ -222,6 +224,68 @@ find / -type f \( -perm -u+s -o -perm -g+s \) -ls 2>/dev/null
 > - **processo non privilegiato**: `setuid(X)` può solo impostare l'EUID al real UID corrente o al saved UID → non puoi diventare root da non-root chiamando `setuid(0)`.
 > 
 > Conseguenza: alcuni programmi SetUID **droppano i privilegi** appena partono (riallineano UID a EUID). Se trovi un SUID che "non funziona", controlla se fa drop early.
+Questa si collega direttamente al punto delle tue note 0x07/0x08 ("`setuid(0)` prima di `execve`, altrimenti la shell droppa i privilegi"). Sciogliamola.
+
+### Ogni processo ha TRE UID
+
+- **real UID (ruid)**: chi sei _davvero_ — l'utente che ha lanciato il processo
+- **effective UID (euid)**: chi il kernel usa per decidere "puoi fare questa azione?" → è **questo** che conta per i permessi
+- **saved UID (suid)**: una copia di backup, serve a fare avanti-indietro tra privilegi
+
+### Cosa ti dà un binario SetUID
+
+Se un eseguibile ha il bit SetUID ed è di proprietà di root, quando tu (utente 1000) lo lanci:
+
+```
+ruid = 1000    ← sei sempre tu
+euid = 0       ← root! per via del bit SetUID
+suid = 0       ← copia salvata
+```
+
+`euid=0` → puoi fare cose da root. Ma il tuo `ruid` è ancora 1000. C'è un disallineamento.
+
+### I due comportamenti di `setuid(X)`
+
+Ecco il punto sottile: `setuid` fa cose diverse a seconda che il processo sia privilegiato o no.
+
+|                             | processo **privilegiato** (euid=0)        | processo **non privilegiato** (euid≠0)                     |
+| --------------------------- | ----------------------------------------- | ---------------------------------------------------------- |
+| `setuid(X)` fa              | imposta **ruid, euid E suid** tutti a `X` | imposta **solo euid**, e solo a un valore tra {ruid, suid} |
+| `setuid(0)` (tu, ruid=1000) | ✓ tutto a 0 → **root pieno**              | ✗ fallisce (EPERM): 0 non è né il tuo ruid né il tuo suid  |
+
+Ecco perché nel `.so` malevolo `setuid(0)` funziona: il binario SetUID gira con `euid=0`, quindi il processo **è privilegiato** → `setuid(0)` mette tutti e tre gli UID a 0.
+
+Da utente normale invece (euid=1000) non puoi: `setuid(0)` non ti fa diventare root perché 0 non è tra i tuoi UID consentiti. (È la protezione che impedisce a chiunque di auto-promuoversi root.)
+
+### Perché serve `setuid(0)` PRIMA di lanciare la shell
+
+Una shell (`sh`/`bash`), all'avvio, controlla: **euid == ruid?**
+
+Se sono diversi (es. `euid=0`, `ruid=1000`), pensa: "sto girando in un contesto SetUID strano, potenzialmente pericoloso" e **riallinea euid a ruid (1000)** per sicurezza. Risultato:
+
+```
+execve("/bin/sh") con euid=0, ruid=1000  →  shell che NON è root
+```
+
+Se invece chiami `setuid(0)` _prima_ (mentre sei privilegiato), ottieni `ruid=euid=suid=0`. Ora la shell vede `euid==ruid==0`, nessun disallineamento, nessun drop:
+
+```
+setuid(0) → execve("/bin/sh")  →  shell ROOT ✓
+```
+
+Questo è esattamente il "`setuid(0)` prima di `execve`" delle tue note.
+
+### La conseguenza: "drop early"
+
+Un programma SetUID scritto bene può rinunciare ai privilegi appena parte:
+
+```c
+setuid(getuid());   // getuid() ritorna ruid = 1000
+```
+
+In quel momento il processo è ancora privilegiato (euid=0), quindi `setuid(1000)` mette **tutti e tre** gli UID a 1000 → **butta via root in modo permanente**. Da lì in poi sei non privilegiato, e nemmeno `setuid(0)` ti salva più.
+
+Morale: se trovi un SUID che "non funziona" per la privilege escalation, controlla se fa questo drop all'inizio. Se ha già abbassato gli UID a 1000, la nave è salpata.
 
 ---
 
@@ -229,7 +293,7 @@ find / -type f \( -perm -u+s -o -perm -g+s \) -ls 2>/dev/null
 
 ### 8.1 Recap
 
-`sudo` (SuperUser-DO) esegue programmi come root. L'utente deve essere abilitato in `/etc/sudoers`; di norma serve la **sua** password (ma in security testing spesso impersoni utenti **senza** conoscerla). In breve: **`sudo` imposta UID e GID a quelli del superuser**.
+[[Sudo]] (SuperUser-DO) esegue programmi come root. L'utente deve essere abilitato in `/etc/sudoers`; di norma serve la **sua** password (ma in security testing spesso impersoni utenti **senza** conoscerla). In breve: **`sudo` imposta UID e GID a quelli del superuser**.
 
 ```bash
 sudo -l    # lista cosa l'utente corrente può fare con sudo
