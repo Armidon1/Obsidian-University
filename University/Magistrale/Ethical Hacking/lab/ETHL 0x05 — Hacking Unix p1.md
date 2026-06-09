@@ -154,10 +154,11 @@ Tre modi:
 
 **(b) Caricare shared object (`.so`) che controlli** — se un eseguibile carica una libreria in modo insicuro, o puoi scrivere nella dir dove sta il `.so`.
 
-> [!example] `.so` injection — demo calc/libcalc Scenario: `suid-calc` carica `./libcalc.so` con `dlopen` usando un **path relativo** (insicuro).
+> [!example] `.so` injection — demo calc/libcalc 
+> Scenario: `suid-calc` carica `./libcalc.so` con `dlopen` usando un **path relativo** (insicuro).
 > 
 > **1. Scoprire il problema senza sorgente** — con `strace`:
-> 
+> [[strace & ldd|Strace]] intercetta tute le chiamate a sistema e le stampa a schermo, [[strace & ldd|ldd]] invece è un disassembler che legge l'header binario (non vede l'allocazione dinamica)  
 > ```bash
 > strace ./suid-calc 2>&1 | grep -iE "open|access|no such file"
 > # openat(AT_FDCWD, "./libcalc.so", ...) = -1 ENOENT (No such file or directory)
