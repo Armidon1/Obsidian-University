@@ -329,6 +329,86 @@ sudo LD_PRELOAD=./ldp.so <qualsiasi binario eseguibile con sudo>
 
 > [!info] Perché funziona (quando funziona) `LD_PRELOAD` forza il dynamic linker a **caricare la tua libreria prima** di tutte le altre. Il suo `_init()` parte subito e apre una shell con EUID=0 (perché lanciato via sudo). `unsetenv("LD_PRELOAD")` evita che la variabile si propaghi ai processi figli causando ricorsione. **Condizione**: i sudoers devono preservare `LD_PRELOAD` (no `env_reset`/`env_delete` per quella var).
 
+---
+
+**1. Cosa fa il dynamic linker normalmente**
+
+Quando esegui un binario dinamico (es. `ls`), prima che parta `main()`, c'è un programma invisibile — il **dynamic linker** (`ld.so`) — che:
+
+1. legge la lista delle librerie richieste dal binario (es. `libc.so.6`)
+2. le carica in memoria
+3. esegue eventuali funzioni "constructor"/`_init()` di quelle librerie
+4. solo a questo punto fa partire `main()`
+
+Tutto questo è trasparente — il programma non sa nemmeno che è successo.
+
+---
+
+**2. Cos'è `LD_PRELOAD`**
+
+È una variabile d'ambiente che dici al dynamic linker: _"prima di caricare qualsiasi altra libreria, carica anche questa che ti indico io"_.
+
+```bash
+LD_PRELOAD=./mialib.so ls
+```
+
+`ld.so` carica `mialib.so` **per prima**, esegue il suo `_init()`, e **poi** procede normalmente con `libc` e il resto. Non sostituisce niente — aggiunge.
+
+---
+
+**3. Perché questo ti dà una shell**
+
+Se la tua libreria ha:
+
+```c
+void _init() {
+  unsetenv("LD_PRELOAD");
+  system("/bin/sh");
+}
+```
+
+`_init()` viene eseguito automaticamente **durante la fase di caricamento**, ancora prima che il programma target faccia qualsiasi cosa. `system("/bin/sh")` apre una shell.
+
+---
+
+**4. Dove entra `sudo`**
+
+Da solo, `LD_PRELOAD=./mialib.so ls` ti darebbe una shell con i tuoi privilegi normali (1000) — non interessante.
+
+Il trucco è farlo **dentro un comando lanciato con `sudo`**:
+
+```bash
+sudo LD_PRELOAD=./ldp.so qualche_comando
+```
+
+`sudo` esegue `qualche_comando` con `euid=0`. Se `sudo` **non cancella** la variabile `LD_PRELOAD` dal suo ambiente (dipende dalla configurazione `/etc/sudoers`), il dynamic linker la vede e carica la tua libreria — ma ora il processo che la sta caricando è già root. Quindi `_init()` gira con `euid=0`, e `system("/bin/sh")` apre una shell root.
+
+---
+
+**5. Perché `unsetenv("LD_PRELOAD")`**
+
+`system("/bin/sh")` lancia un processo figlio (`/bin/sh`). Se `LD_PRELOAD` è ancora nell'ambiente, anche `/bin/sh` (e ogni comando che lanci da quella shell) ricaricherebbe `ldp.so`, rieseguendo `_init()` — un loop. `unsetenv` lo evita: rimuove la variabile prima che venga ereditata dal figlio.
+
+**6. condizioni per far sopravvivere ld_preload**
+
+`env_reset` ed `env_delete` sono direttive di `/etc/sudoers` che controllano quali variabili d'ambiente `sudo` lascia passare al comando che esegue.
+
+`env_reset` (default su quasi tutti i sistemi) fa ripartire `sudo` con un ambiente "pulito" — non eredita le tue variabili, ne costruisce uno nuovo minimale. `LD_PRELOAD` non sopravvive.
+
+`env_delete` è una blacklist esplicita di variabili da rimuovere comunque, anche se per qualche motivo `env_reset` non fosse attivo — e `LD_PRELOAD`/`LD_LIBRARY_PATH` ci sono quasi sempre per default proprio perché sono i vettori di attacco classici.
+
+**Perché sono la condizione per LD_PRELOAD**: se una di queste due elimina `LD_PRELOAD`, il dynamic linker del processo lanciato da `sudo` non la vede mai — non carica la tua libreria, niente `_init()`, niente shell.
+
+L'attacco funziona solo se i sudoers sono configurati per **preservarla** esplicitamente, ad esempio con:
+
+```
+Defaults env_keep += "LD_PRELOAD"
+```
+
+In pratica: cerchi questa riga (o l'assenza di `env_reset`) in `sudo -l` o in `/etc/sudoers` — se c'è, `LD_PRELOAD` passa indenne e l'attacco funziona.
+
+---
+
 ### 9.2 LD_LIBRARY_PATH
 
 ```c
@@ -360,6 +440,20 @@ sudo LD_LIBRARY_PATH=/tmp /usr/sbin/bridge
 > - assicurarsi che i sudoers consentano la variabile (`setenv`).
 > 
 > Il punto didattico: `LD_PRELOAD` _aggiunge_, `LD_LIBRARY_PATH` _sostituisce_ — e sostituire una libreria richiede di non rompere ciò che il binario si aspetta da quella libreria.
+
+`LD_LIBRARY_PATH` è una variabile d'ambiente che dice al dynamic linker: _"quando cerchi le librerie, guarda anche (o prima) in queste directory"_.
+
+```bash
+LD_LIBRARY_PATH=/tmp ./programma
+```
+
+Normalmente `ld.so` cerca `libcap.so.2` nei path standard (`/lib`, `/usr/lib`, ecc.). Con questa variabile, gli dici di cercare prima in `/tmp`. Se in `/tmp` c'è un file chiamato `libcap.so.2`, **quello** viene caricato — al posto dell'originale.
+
+A differenza di `LD_PRELOAD` (che _aggiunge_ una libreria extra senza toccare le altre), `LD_LIBRARY_PATH` _sostituisce_ — il programma carica il tuo file invece di quello vero, pensando che sia la stessa cosa.
+
+**Il problema**: il programma si aspetta che `libcap.so.2` contenga certe funzioni (`cap_get_proc`, `cap_free`, ecc.). Se il tuo file fake contiene solo il tuo codice malevolo e non quelle funzioni, il linker non trova quello che cerca → errore "simbolo non trovato" → il programma si blocca prima ancora di partire.
+
+**Per attaccare**: trovi una libreria che il binario SUID/sudo carica con path relativo o tramite `LD_LIBRARY_PATH` configurabile, crei un file con lo stesso nome contenente un constructor malevolo, e lo metti in una directory che controlli — sperando che `sudo`/il sistema rispettino la variabile.
 
 ---
 
