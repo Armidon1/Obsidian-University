@@ -447,7 +447,9 @@ sudo LD_LIBRARY_PATH=/tmp /usr/sbin/bridge
 LD_LIBRARY_PATH=/tmp ./programma
 ```
 
-Normalmente `ld.so` cerca `libcap.so.2` nei path standard (`/lib`, `/usr/lib`, ecc.). Con questa variabile, gli dici di cercare prima in `/tmp`. Se in `/tmp` c'è un file chiamato `libcap.so.2`, **quello** viene caricato — al posto dell'originale.
+Normalmente `ld.so` cerca `libcap.so.2` nei path standard (`/lib`, `/usr/lib`, ecc.). Con questa variabile, gli dici di cercare prima in `/tmp`. Se in `/tmp` c'è un file chiamato `libcap.so.2`, **quello** viene caricato — al posto dell'originale. 
+
+ma che cos'è libcap.so? `liblzo2` è una libreria di compressione (LZO — Lempel-Ziv-Oberhumer, un algoritmo veloce). `openvpn` la usa per comprimere il traffico prima di cifrarlo/inviarlo — chiama funzioni come `lzo1x_compress()`, `lzo1x_decompress()`, ecc. Il punto è solo: è una libreria che il binario (`openvpn`) usa attivamente per fare un lavoro reale, esportando funzioni con nomi specifici (`lzo1x_compress`, ecc.), esattamente come `libcap.so.2` esportava `cap_get_proc` nell'esempio precedente.
 
 A differenza di `LD_PRELOAD` (che _aggiunge_ una libreria extra senza toccare le altre), `LD_LIBRARY_PATH` _sostituisce_ — il programma carica il tuo file invece di quello vero, pensando che sia la stessa cosa.
 
