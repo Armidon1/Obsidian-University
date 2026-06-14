@@ -456,6 +456,84 @@ A differenza di `LD_PRELOAD` (che _aggiunge_ una libreria extra senza toccare le
 **Il problema**: il programma si aspetta che `libcap.so.2` contenga certe funzioni (`cap_get_proc`, `cap_free`, ecc.). Se il tuo file fake contiene solo il tuo codice malevolo e non quelle funzioni, il linker non trova quello che cerca → errore "simbolo non trovato" → il programma si blocca prima ancora di partire.
 
 **Per attaccare**: trovi una libreria che il binario SUID/sudo carica con path relativo o tramite `LD_LIBRARY_PATH` configurabile, crei un file con lo stesso nome contenente un constructor malevolo, e lo metti in una directory che controlli — sperando che `sudo`/il sistema rispettino la variabile.
+## Approfondimento e Chiarimento
+Facciamo un passo indietro e ricostruiamo tutto da zero, un pezzo alla volta.
+
+---
+
+**1. Cos'è `inject()` — niente di speciale**
+
+`inject()` non è una funzione di sistema, è solo il nome che diamo a **una funzione scritta da noi** dentro la libreria malevola. La cosa che la rende speciale è questa riga:
+
+```c
+static void inject() __attribute__((constructor));
+void inject() { system("/bin/sh"); }
+```
+
+`__attribute__((constructor))` è un'istruzione per il linker: _"esegui questa funzione automaticamente, senza che nessuno la chiami, nel momento in cui questa libreria viene caricata in memoria"_. È un meccanismo del dynamic linker, non magia di C.
+
+---
+
+**2. Cos'è un "simbolo"**
+
+Un simbolo è semplicemente **il nome di una funzione** che vive dentro una libreria. `lzo1x_compress` è il nome della funzione di compressione dentro `liblzo2.so.2`.
+
+Quando `openvpn` viene compilato, il suo codice contiene chiamate a `lzo1x_compress(...)`, ma il **codice vero** di quella funzione non è dentro `openvpn` — è dentro `liblzo2.so.2`. Il dynamic linker deve "collegare" (link) ogni chiamata al codice reale nella libreria. Questo collegamento si chiama **risoluzione del simbolo**.
+
+---
+
+**3. Due fasi separate, non una**
+
+Quando il linker carica una libreria, fa due cose **distinte**, che possono avvenire in **momenti diversi**:
+
+- **Fase A — caricamento**: i byte della libreria vengono messi in memoria, e i `constructor` (come `inject()`) vengono eseguiti.
+- **Fase B — risoluzione dei simboli**: per ogni funzione che il programma userà da quella libreria, il linker trova l'indirizzo reale e lo collega.
+
+ 
+Fase A (caricamento della libreria + esecuzione dei `constructor`) succede **sempre**, in entrambi i casi — è la fase di startup del processo, prima di `main()`. Questo è vero se stiamo usando un linker "lazy" e non "eagle".  Se però abbiamo l'eagle, è immediata la risoluzione dei simboli (le funzioni definite nel main del binario che però non sono ancora linkate nella shared library e che devono essere risolute), e porterebbe al chrash. nel dettaglio più avanti
+
+La differenza lazy/immediato riguarda **solo Fase B** (risoluzione dei simboli):
+
+- **lazy**: Fase B per una funzione avviene solo quando viene _chiamata_ per la prima volta — quindi _durante_ l'esecuzione di `main()`, molto dopo Fase A. Il constructor parte sempre, indisturbato.
+- **immediato (`-z now`)**: Fase B per _tutte_ le funzioni avviene _prima_ di Fase A — quindi prima che i constructor partano. Se manca un simbolo, abort prima che `inject()` venga eseguito.
+ 
+Il punto chiave: **quando avviene la Fase B dipende da come è compilato il binario** — questo è il "binding". se gcc compila con -z now, usa l'immediato e nella fase A, prima dell'esecuzione dei constructros, si fa la risoluzione dei simboli.
+
+---
+
+**4. Lazy vs immediato — il diagramma****5. Cosa hai sbagliato nell'Es. 2**
+![[Pasted image 20260612201330.png]]
+
+Hai ragionato così: "l'ambiente passa correttamente (grazie a `env_keep`) → il `.so` fake viene caricato → quindi ottieni la shell root". Hai trattato il caricamento come **un evento singolo, tutto-o-niente**.
+
+In realtà, come mostra il diagramma, sono **due eventi separati** che possono avvenire in **ordine diverso**:
+
+- Se il binding è **lazy** (caso più comune): il constructor parte _prima_ che venga controllata `lzo1x_compress` → ottieni la shell, anche se poi il programma crasha dopo.
+- Se il binding è **immediato** (`-z now`): tutti i simboli vengono controllati _prima_ di eseguire qualsiasi cosa, incluso il constructor → abort immediato, **nessuna shell**.
+
+Quindi `env_keep` (la condizione di cui parlavamo prima) ti garantisce solo che **il file venga effettivamente caricato** — non ti garantisce che il tuo `inject()` riesca a partire prima che tutto crashi. Sono due condizioni indipendenti, e devi verificarle entrambe.
+
+**`system()` vs `execve()` — hai ragione a sospettare una differenza**
+
+`system("/bin/sh")` **non trasforma** il processo in bash. Fa internamente:
+
+```c
+fork();           // crea un processo FIGLIO, copia di openvpn
+// nel figlio:
+execve("/bin/sh", ...);   // il FIGLIO diventa bash
+// nel padre (openvpn):
+wait(...);        // openvpn si blocca, aspetta che il figlio finisca
+```
+
+`execve()` da solo sostituirebbe il processo corrente (openvpn diventerebbe bash, niente da aspettare). `system()` invece crea un **nuovo processo separato** e il processo originale resta vivo, ma fermo.
+
+**3. Come ottieni la shell mentre "openvpn sta ancora girando"**
+
+![[Pasted image 20260612202555.png]]
+
+La risposta alla tua domanda "come fa l'attaccante ad avere la shell mentre openvpn sta ancora girando" è: **openvpn non sta facendo nulla in quel momento** — è bloccato in `wait()`, in attesa che il processo figlio (la tua shell) finisca. Dal punto di vista del terminale, sembra che "openvpn sia diventato bash", ma in realtà sono due processi separati che condividono lo stesso `fd[0]`/`fd[1]`/`fd[2]` (eredità del `fork()`) — è per questo che la shell appare nel tuo terminale come se fosse openvpn stesso.
+
+Solo quando fai `exit` dalla shell, `wait()` ritorna e openvpn riprende da dove era — ed è _lì_, dentro `main()`, che (in scenario lazy) chiamerà `lzo1x_compress()` e crasherà, perché il simbolo non esiste nel tuo `.so` fake. Ma a quel punto la tua shell root l'hai già usata.
 
 ---
 

@@ -55,7 +55,7 @@ Non legge il codice — osserva il **comportamento reale** del processo. Se il p
 
 ### Cos'è
 
-`ldd` legge l'**header ELF** del binario e stampa la lista delle shared library dichiarate come dipendenze, con i path dove il linker le ha trovate (o `not found` se mancanti).
+`ldd` legge l'**[[header ELF]]** del binario e stampa la lista delle shared library dichiarate come dipendenze, con i path dove il linker le ha trovate (o `not found` se mancanti).
 
 ```bash
 ldd ./suid-calc
@@ -141,8 +141,8 @@ gcc -shared -fPIC -o libcalc.so libcalc.c
 
 > [!question] A libro chiuso
 > 
-> 1. Cosa intercetta `strace`? In che momento lo fa?
-> 2. Cosa legge `ldd`? Perché non può vedere `dlopen` con path relativo?
+> 1. Cosa intercetta [[strace]]? In che momento lo fa?
+> 2. Cosa legge [[ldd]]? Perché non può vedere `dlopen` con path relativo?
 > 3. Dato l'output `openat(AT_FDCWD, "./libcalc.so", ...) = -1 ENOENT`, spiega perché è un vettore di attacco.
 > 4. Qual è il workflow in due passi per analizzare un binario SUID senza sorgente?
 > 5. Perché in `strace ./suid-calc 2>&1 | grep ...` serve `2>&1`?
