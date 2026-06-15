@@ -105,6 +105,14 @@ www-data@three:/var/www/html$
 
 You now have a full interactive shell on the target.
 
+### Dopo aver ottenuto una shell, potresti renderla interattiva con 
+
+```bash
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+```
+
+ovviamente con `bash -i` la rendi interattiva già di suo
+
 ---
 
 ## Breaking Down the Payload

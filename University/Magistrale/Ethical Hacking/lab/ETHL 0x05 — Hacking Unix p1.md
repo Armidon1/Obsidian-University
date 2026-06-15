@@ -97,7 +97,7 @@ Per ogni triade: `r` (read), `w` (write), `x` (execute). Il terzo carattere può
 > - **Scrivere/cambiare ownership su un file setuid rimuove i bit setuid/setgid** (difesa automatica del kernel contro la sostituzione del binario).
 > - **La maggior parte degli unix ignora il bit setuid sugli script `#!`** → vedi la spiegazione in [[#Trappole d'esame]] (secure scripting è difficile).
 > - Un programma SetUID usa **EUID/EGID** (effective), diversi da **UID/GID** (real). Alcuni programmi fanno **drop dei privilegi** di default (per questo a volte serve `-p`).
-> - **`LD_PRELOAD` e `LD_LIBRARY_PATH` sono ignorati per i binari SetUID** (il dynamic linker li scarta per sicurezza). Funzionano invece con `sudo`, a seconda della config → vedi [[#9. LD_PRELOAD e LD_LIBRARY_PATH]].
+> - **`LD_PRELOAD` e `LD_LIBRARY_PATH` sono ignorati per i binari SetUID** (il dynamic linker li scarta per sicurezza). Funzionano invece con `sudo`, a seconda della config → vedi [[#9. LD_PRELOAD e LD_LIBRARY_PATH]]. è anche vero che ogni singolo file eseguibile segue la regola del [[Dynamic Linking]] per cui ogni eseguibile prima di partire consulta il dynamic linker ld.so che esegue tutti i costruttori delle shared libraries presenti dentro se stesso, presenti dentro ld.so.preload (fa la stessa cosa di LD_PRELOAD) e risolve i restanti linking presenti nel binario (consultare [[Dynamic Linking]] per saperne meglio)
 
 ---
 
@@ -182,7 +182,7 @@ Tre modi:
 > 
 > **3. Eseguire** `./suid-calc` → carica il nostro `.so` → `inject()` parte → **shell root**.
 
-> [!info] Perché `setuid(0)` e non `/bin/sh -p`? Il constructor gira con EUID=0 (perché suid-calc è SetUID root). `setuid(0)` imposta il **real UID** a 0 (possibile perché siamo privilegiati, vedi [[#7. Nota su setuid - privilegiato vs no]]), così la shell parte come root pieno senza bisogno di `-p`.
+> [!info] Perché `setuid(0)` e non `/bin/sh -p`? Il constructor gira con EUID=0 (perché suid-calc è SetUID root). `setuid(0)` imposta il **real UID** a 0 (possibile perché siamo privilegiati, vedi [[ETHL 0x05 — Hacking Unix p1#7. Nota su setuid() — privilegiato vs no]]), così la shell parte come root pieno senza bisogno di `-p`.
 
 **(c) Vulnerabile ad altra code injection** (es. buffer overflow) → il codice iniettato gira con EUID/EGID privilegiati. Si vedrà nelle lezioni di binary exploitation (es. CVE-2019-10149, CVE-2019-14267).
 
