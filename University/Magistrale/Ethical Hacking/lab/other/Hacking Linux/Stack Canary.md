@@ -162,3 +162,50 @@ checksec      # mostra tutte le protezioni del binario corrente
 > 5. Perché il byte basso del canary è `0x00`? Cosa impedisce esattamente?
 > 6. Un overflow che corrompe solo le variabili locali (non il canary) viene rilevato?
 > 7. Nomina due tecniche per bypassare il canary.
+
+
+## 10. Approfondimento — perché `fs:0x28` e non `mov fs, rax` + offset?
+
+La TLS è memoria **dentro** il processo — non è una zona esterna o privilegiata. 
+Qualsiasi codice utente può accederci con `fs:0x28`. Il canary è al sicuro 
+non per protezione hardware esclusiva, ma perché la TLS è in una zona lontana 
+e non adiacente allo stack: un overflow lineare non può raggiungerla. Quindi, anche se il canary è nella stessa memoria del processo, tecnicamente potrebbe trovarlo l'attaccante, ma è molto lontano dallo stack:
+
+```
+indirizzo alto
+┌─────────────────────────┐
+│   stack                 │
+├─────────────────────────┤
+│   TLS                   │ ← è qui, nella memoria del processo
+├─────────────────────────┤
+│   (spazio libero)       │
+├─────────────────────────┤
+│   librerie condivise    │
+├─────────────────────────┤
+│   heap                  │
+├─────────────────────────┤
+│   data / BSS            │
+├─────────────────────────┤
+│   text (codice)         │
+└─────────────────────────┘
+indirizzo basso
+```
+l'attaccante farebbe prima ad applicare altri bypass elencati precedentemente.
+
+Il punto che crea confusione è che `fs` ha due facce distinte:
+
+- **Come registro leggibile** (`movl %fs, %eax`): contiene un *selettore* a 
+  16 bit — un indice nella GDT (Global Descriptor Table) gestita dal kernel. 
+  Non è un indirizzo usabile, è solo un numero tipo `0x63`.
+- **Come prefisso di segmento** (`fs:0x28`): attiva un meccanismo hardware 
+  interno — la CPU consulta la GDT (o direttamente il registro `IA32_FS_BASE` 
+  su x86-64) per trovare la base reale della TLS, ci aggiunge `0x28`, e 
+  accede a quella locazione. Tutto in una singola istruzione.
+
+Non puoi quindi ricostruire `fs:0x28` manualmente come:
+`mov rax, fs` → `add rax, 0x28` → `mov rbx, [rax]`
+perché `fs` come registro ti dà il selettore, non la base. Il calcolo 
+dell'indirizzo reale avviene dentro la CPU in modo trasparente.
+
+Il selettore in `fs` è usato dal kernel durante la creazione dei thread 
+e il context switch — non è pensato per essere letto dal codice applicativo.

@@ -298,7 +298,7 @@ Step 4: Trigger
 - [[data_driven_attacks]]
 - [[buffer_overflow]]
 - [[stack_canary]]
-- [[aslr]]
+- [[ASLR]]
 - [[got_overwrite]]
 - [[rop_return_oriented_programming]]
 - [[binary_exploitation]]

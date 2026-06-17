@@ -380,7 +380,7 @@ Dato dell'attaccante → arriva in un contesto che lo INTERPRETA come codice
 - [[buffer_overflow]]
 - [[heap_exploitation]]
 - [[rop_return_oriented_programming]]
-- [[aslr]]
+- [[ASLR]]
 - [[stack_canary]]
 - [[heartbleed]]
 - [[shellshock]]
