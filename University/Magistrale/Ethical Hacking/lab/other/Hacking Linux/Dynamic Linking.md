@@ -1,8 +1,10 @@
 # Dynamic Linking — come un programma trova il suo codice a runtime
 
-> [!abstract] In una frase Un eseguibile dinamico **non contiene tutto il suo codice**: le funzioni di libreria (`printf`, `malloc`…) vivono in file `.so` separati, e un programma speciale — il **dynamic linker** (`ld.so`) — le carica e le "collega" al momento dell'avvio, _prima_ che parta `main()`. Capire questo meccanismo è la chiave per (a) capire come funziona davvero un processo Linux, e (b) capire un'intera famiglia di attacchi di privilege escalation: `LD_PRELOAD`, `LD_LIBRARY_PATH`, `/etc/ld.so.preload`, `.so` injection.
+> [!abstract] In una frase 
+> Un eseguibile dinamico **non contiene tutto il suo codice**: le funzioni di libreria (`printf`, `malloc`…) vivono in file `.so` separati, e un programma speciale — il **dynamic linker** (`ld.so`) — le carica e le "collega" al momento dell'avvio, _prima_ che parta `main()`. Capire questo meccanismo è la chiave per (a) capire come funziona davvero un processo Linux, e (b) capire un'intera famiglia di attacchi di privilege escalation: `LD_PRELOAD`, `LD_LIBRARY_PATH`, `/etc/ld.so.preload`, `.so` injection.
 
-> [!tip] Come usare questa nota Questa nota è il "pezzo teorico mancante" sotto a [[ETHL 0x05 — Hacking Unix p1]]. Lì gli attacchi (`LD_PRELOAD`, `.so` injection, CVE Screen) erano descritti _operativamente_; qui c'è il **perché** a livello di sistema operativo. Le sezioni 1–4 sono teoria pura (utile anche per esami di Sistemi Operativi / Architetture), le sezioni 5–8 collegano la teoria agli attacchi.
+> [!tip] Come usare questa nota 
+> Questa nota è il "pezzo teorico mancante" sotto a [[ETHL 0x05 — Hacking Unix p1]]. Lì gli attacchi (`LD_PRELOAD`, `.so` injection, CVE Screen) erano descritti _operativamente_; qui c'è il **perché** a livello di sistema operativo. Le sezioni 1–4 sono teoria pura (utile anche per esami di Sistemi Operativi / Architetture), le sezioni 5–8 collegano la teoria agli attacchi.
 
 ---
 
@@ -23,6 +25,137 @@ Quando scrivi `printf("ciao")`, il codice macchina di `printf` non lo scrivi tu 
 
 > [!info] Perché "shared" object Il `.so` sta per **shared object**: la stessa copia in RAM di `libc` è mappata in (quasi) ogni processo del sistema. Risparmio enorme di memoria — ed è il motivo per cui i sistemi moderni usano dynamic linking quasi ovunque. Il prezzo è la complessità a runtime (e gli attacchi che vedremo).
 
+## A livello di memoria, i processi come condividono la stessa shared library risparmiando spazio?
+
+Ottima domanda — il pezzo mancante è come funziona la **memoria virtuale**.
+
+---
+
+### Ogni processo vive in una bolla isolata
+
+Ogni processo ha il proprio **spazio di indirizzi virtuali** — vede la memoria come se fosse tutta sua, da `0x0000...` a `0xffff...`. Ma questi indirizzi virtuali non corrispondono direttamente alla RAM fisica.
+
+Il kernel mantiene una **tabella di traduzione** (page table) per ogni processo che mappa indirizzi virtuali → indirizzi fisici in RAM.
+
+---
+
+### Come libc viene condivisa
+
+Quando il primo processo carica libc, il kernel:
+
+1. Legge il file `libc.so` dal disco
+2. Lo carica in alcune pagine di **RAM fisica**
+3. Mappa quelle pagine nello spazio virtuale del processo
+
+Quando un secondo processo carica la stessa libc:
+
+1. Il kernel vede che `libc.so` è già in RAM fisica
+2. **Non la ricarica** — mappa le stesse pagine fisiche nello spazio virtuale del secondo processo
+
+```
+Processo A          RAM fisica          Processo B
+spazio virtuale                         spazio virtuale
+
+0x7f2d4bc00000 ──→  [pagine libc]  ←── 0x7f9a1de00000
+(indirizzo A)       (una sola copia)    (indirizzo B)
+```
+
+Gli indirizzi virtuali sono diversi (ASLR), ma puntano alle **stesse pagine fisiche**. Nessuna copia duplicata.
+
+---
+
+### A livello assembly — cosa vede il processo
+
+Il processo non sa nulla di tutto questo. Vede semplicemente:
+
+```
+la mia memoria virtuale:
+  0x00400000   testo del mio programma
+  0x7f2d4bc000  libc  ← sembra memoria normale
+  0x7ffd3a2ce000  stack
+```
+
+Quando esegue `call puts@plt → jmp [GOT[puts]]`, salta a un indirizzo nel suo spazio virtuale che corrisponde a libc — la CPU fa la traduzione in modo trasparente tramite la **MMU** (Memory Management Unit).
+
+---
+
+### Il problema dei dati — Copy-on-Write
+
+Il codice di libc (`.text`) è **read-only** → può essere condiviso senza problemi, nessun processo lo modifica.
+
+Ma libc ha anche dati (`.data`, variabili globali) che ogni processo potrebbe modificare diversamente. Qui entra il **Copy-on-Write (CoW)**:
+
+```
+Finché nessuno scrive:
+  Processo A e B → stesse pagine fisiche (condivise)
+
+Quando il processo A scrive su una pagina dati:
+  kernel crea una copia privata di quella pagina solo per A
+  Processo A → pagina privata (modificata)
+  Processo B → pagina originale condivisa
+```
+
+Solo le pagine effettivamente modificate vengono copiate — il risparmio di memoria rimane massimo.
+
+---
+
+Puoi vederlo concretamente con `/proc/PID/maps`:
+
+```bash
+cat /proc/$(pgrep bash)/maps | grep libc
+
+7f2d4bc00000-7f2d4bd45000 r-xp  libc.so  ← codice, read+execute, condiviso
+7f2d4bd45000-7f2d4bf44000 ---p  libc.so  ← gap di protezione
+7f2d4bf44000-7f2d4bf48000 r--p  libc.so  ← dati read-only
+7f2d4bf48000-7f2d4bf4a000 rw-p  libc.so  ← dati scrivibili (CoW)
+```
+
+`r-xp` = read+execute, **p**rivate (CoW). Il codice appare "privato" ma fisicamente è condiviso — CoW significa che diventerebbe privato solo se qualcuno ci scrivesse, cosa che non succede mai per il codice.
+
+---
+### chiarimento condivisione memoria fisica
+
+Hai ragione che ogni processo ha libc mappata nel proprio spazio virtuale. Il punto chiave è che **spazio virtuale e RAM fisica sono due cose separate**.
+
+Pensa alla virtual memory come a una **mappa stradale** — segnare una strada sulla mappa non costruisce fisicamente la strada. Costa solo l'inchiostro per disegnarla.
+
+```
+Processo A                 RAM fisica               Processo B
+page table:                                         page table:
+0x7f2d → pagina 301 ───→  [pagina 301: printf]  ←─── 0x7f9a → pagina 301
+0x7f2e → pagina 302 ───→  [pagina 302: malloc]  ←─── 0x7f9b → pagina 302
+...                        [pagina 303: fopen]        ...
+```
+
+La page table di ogni processo è solo un **elenco di traduzione** — costa pochissimo (qualche kilobyte). Le pagine fisiche con il codice di libc esistono una volta sola.
+
+---
+
+#### Il costo effettivo con N processi
+
+Mettiamo che libc occupi 2MB di codice:
+
+```
+Static linking (vecchio modo):
+  100 processi × 2MB = 200MB di RAM fisica
+
+Dynamic linking:
+  2MB di RAM fisica (libc, una copia)
+  + 100 × ~4KB di page table entries (le "mappe")
+  = ~2.4MB totali
+```
+
+Le page table entries sono 8 byte per pagina da 4KB — per 2MB di libc sono circa 512 entries × 8 byte = 4KB per processo. Trascurabile.
+
+---
+
+#### Il tuo intuito era corretto, ma applicato alla cosa sbagliata
+
+Hai ragione che "printf è definita da qualche parte nella memoria del processo" — è nella sua virtual memory. Ma virtual memory non è RAM. È uno spazio di indirizzi astratto che il processo usa come se fosse suo, ma fisicamente i byte di printf esistono in un solo posto nella RAM, condiviso da tutti.
+
+La MMU fa questa traduzione in hardware, in modo trasparente, ad ogni accesso. Il processo non sa né gli importa — vede solo il suo spazio virtuale.
+
+---
 ### 1.2 Verificare le dipendenze di un binario
 
 ```bash
@@ -48,7 +181,7 @@ ldd /bin/ls
 
 ### 2.1 La catena di avvio
 
-Quando lanci `./ls`, **non** è il kernel a eseguire direttamente il codice di `ls`. La sequenza reale è:
+Quando lanci `./ls`, **non** è il kernel a eseguire direttamente il codice di `ls`. La sequenza reale è (in linea generale senza distinguere lazy binding oppure binding immediato):
 
 ```
 tu:        ./ls
@@ -58,9 +191,11 @@ kernel:    carica ED ESEGUE ld.so, passandogli ls come argomento
 ld.so:     1. legge le librerie richieste da ls (campi DT_NEEDED)
            2. le trova su disco e le mappa in memoria
            3. esegue i CONSTRUCTOR di tutte le librerie caricate
-           4. risolve i simboli (vedi §4)
+           4. risolve i simboli (non è esattamente così, vedi §4) 
            5. SOLO ORA salta a _start → main() di ls
 ```
+
+**NOTA**: Se consideriamo lazy binding, la risoluzione dei simboli avviene a run time del main(), cioè esattamente quando per la prima volta tale funzione viene chiamata. Se il binding è immediato, allora la risoluzione dei simboli avviene prima dell'esecuzione del costruttore (quindi del punto 3) e se non è presente una funzione chiamata dal processo nella libreria, restituisce `abort`. 
 
 Il punto chiave: **c'è sempre uno step intermedio invisibile** (`ld.so`) prima che il tuo programma "vero" inizi. Tutti gli attacchi di questa famiglia colpiscono _quello step_, non il programma target.
 
@@ -143,31 +278,43 @@ Un **simbolo** è il nome di una funzione (o variabile globale) esportata da una
 
 Per chi vuole il dettaglio architetturale:
 
-- **GOT** (Global Offset Table): tabella di puntatori. Una entry per ogni simbolo esterno. All'inizio puntano a codice del linker.
+- **GOT** (Global Offset Table): tabella di puntatori. Una entry per ogni simbolo esterno (ed anche eventuali struct necessari per il processo). All'inizio puntano a codice del linker.
 - **PLT** (Procedure Linkage Table): piccoli stub di codice. Quando `ls` chiama `printf`, in realtà salta a `printf@plt`, che la prima volta invoca il linker per risolvere l'indirizzo, lo scrive nella GOT, e le volte successive ci salta direttamente.
 
-> [!info] Collegamento alla binary exploitation GOT e PLT sono anche bersagli di attacco (GOT overwrite) e oggetto di mitigazioni come **RELRO** (Relocation Read-Only): `partial RELRO` / `full RELRO` rendono la GOT non scrivibile dopo lo startup. `full RELRO` implica binding immediato. Lo vedrai in binary exploitation — qui basta sapere che esiste il collegamento.
+> [!info] Collegamento alla binary exploitation [[ETHL 0x07 — Binary Exploitation p1]] 
+> GOT e PLT sono anche bersagli di attacco (GOT overwrite) e oggetto di mitigazioni come **RELRO** (Relocation Read-Only): `partial RELRO` / `full RELRO` rendono la GOT non scrivibile dopo lo startup. `full RELRO` implica binding immediato. Lo vedrai in binary exploitation — qui basta sapere che esiste il collegamento.
 
 ---
 
-## 5. I constructor: `__attribute__((constructor))`
+### 4.4 PLT e GOT — come è implementato il lazy binding
 
-```c
-#include <stdlib.h>
-__attribute__((constructor))
-void mia_init(void) {
-    // questo codice gira AL CARICAMENTO della libreria,
-    // prima di main(), senza che nessuno lo chiami
-}
+Il problema concreto: quando `ls` chiama `printf`, il compilatore sa che `printf` è in libc — ma con [[ASLR]] attivo non sa a quale indirizzo sarà caricata libc a runtime. Il codice compilato deve contenere qualcosa tipo "chiama printf, ma l'indirizzo te lo dico dopo". GOT e PLT sono quel "dopo".
+
+**GOT — Global Offset Table** Tabella di puntatori dentro l'eseguibile — una entry per ogni funzione di libreria usata. All'avvio è vuota (o punta a stub del linker). Man mano che le funzioni vengono chiamate per la prima volta, `ld.so` la popola con gli indirizzi reali.
+
+**PLT — Procedure Linkage Table** Stub di codice fissi nell'eseguibile — uno per ogni funzione esterna. Ogni chiamata a `puts()` nel codice passa prima dallo stub PLT, che consulta la GOT:
+
+```
+il tuo codice
+    │  call puts
+    ▼
+puts@plt (stub PLT)
+    │  jmp [GOT[puts]]        ← leggi l'indirizzo dalla GOT e salta lì
+    ▼
+Prima chiamata:
+  GOT[puts] punta ancora al linker
+    → ld.so trova puts in libc, scrive l'indirizzo reale in GOT[puts]
+    → libc puts() eseguita
+
+Seconda chiamata:
+  GOT[puts] ora punta direttamente a libc puts()
+    → nessun passaggio intermedio
 ```
 
-Punti chiave:
+> [!warning] GOT overwrite 
+> La GOT è **dati scrivibili** senza RELRO. Se un attaccante riesce a scrivere a un indirizzo arbitrario, può sovrascrivere `GOT[puts]` con l'indirizzo di `system`. La prossima chiamata a `puts(stringa)` eseguirà `system(stringa)`. Full RELRO rende la GOT read-only dopo il caricamento, impedendo questa tecnica.
 
-- `__attribute__((constructor))` è un'istruzione per il compilatore/linker che mette il puntatore alla funzione nella sezione `.init_array`. `ld.so` esegue tutto ciò che trova lì durante la **Fase A**.
-- **Non serve che nessuno chiami la funzione.** Il solo fatto che la libreria sia caricata nel processo basta a farla partire.
-- È esattamente questo che rende il preload un vettore così potente: garantisci l'esecuzione di codice tuo, sempre, per primo, senza dipendere da cosa fa il programma target.
-
-> [!note] `_init()` vs constructor Negli exploit più vecchi (e in alcune note) vedi `void _init() { ... }` compilato con `-nostartfiles`. È il vecchio modo di ottenere lo stesso effetto. Il moderno `__attribute__((constructor))` è preferibile perché non richiede flag speciali e non interferisce con l'inizializzazione standard della libreria.
+> [!info] Collegamento con le difese `partial RELRO` → alcune sezioni read-only, GOT ancora scrivibile `full RELRO` → GOT completamente read-only + binding immediato forzato Vedi [[ASLR]] e [[ETHL 0x07 — Binary Exploitation p1]] per il contesto exploitation.
 
 ---
 
