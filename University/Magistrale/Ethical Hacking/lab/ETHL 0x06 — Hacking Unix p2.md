@@ -1,8 +1,10 @@
 # ETHL 0x06 — Hacking Unix p2
 
-> [!abstract] In una frase Seconda parte della privilege escalation su Unix. Tre fronti nuovi: **abusare di cronjob** che girano come root (script scrivibili, PATH insicuro, wildcard), **raccogliere credenziali** già presenti sul sistema (config, history, chiavi, core dump) e **crackarle** ([[john_the_ripper]]/[[Hashcat]]), e **automatizzare** il recon con **LinPEAS** e **LES**. Continua il filo di [[ETHL 0x05 — Hacking Unix p1]]: trovare qualcosa che gira con più privilegi di te, e dirottarlo.
+> [!abstract] In una frase 
+> Seconda parte della privilege escalation su Unix. Tre fronti nuovi: **abusare di cronjob** che girano come root (script scrivibili, PATH insicuro, wildcard), **raccogliere credenziali** già presenti sul sistema (config, history, chiavi, core dump) e **crackarle** ([[john_the_ripper]]/[[Hashcat]]), e **automatizzare** il recon con **LinPEAS** e **LES**. Continua il filo di [[ETHL 0x05 — Hacking Unix p1]]: trovare qualcosa che gira con più privilegi di te, e dirottarlo.
 
-> [!tip] Come usare questa nota Per ogni tecnica: _cosa fa → perché funziona → come ci si difende_. I payload sono riferimento da saper commentare. La domanda chiave del lab è il **wildcard injection** (Method 3) e il **docker group** — sono in [[#Trappole d'esame]]. Le reverse shell `bash -i >& /dev/tcp/...` le hai già spiegate in [[ETHL 0x02 — Remote Access - Shells]].
+> [!tip] Come usare questa nota 
+> Per ogni tecnica: _cosa fa → perché funziona → come ci si difende_. I payload sono riferimento da saper commentare. La domanda chiave del lab è il **wildcard injection** (Method 3) e il **docker group** — sono in [[#Trappole d'esame]]. Le reverse shell `bash -i >& /dev/tcp/...` le hai già spiegate in [[ETHL 0x02 — Remote Access - Shells]].
 
 vedere [[linux-privesc lab]] per la parte pratica di questo lab
 

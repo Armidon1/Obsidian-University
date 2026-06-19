@@ -132,7 +132,89 @@ GEF e pwndbg usano Intel di default.
 
 ---
 
-## 7. Richiamo attivo
+## 7. `movabs` — caso speciale per immediati a 64 bit
+
+`mov` normale accetta immediati fino a **32 bit** (con estensione del segno a 64 bit). Se vuoi caricare un valore a 64 bit pieno in un registro serve `movabs`:
+
+```asm
+; Intel
+mov    rax, 0x1234           ; ok — valore a 32 bit, esteso a 64
+movabs rbx, 0x68732f6e69622f ; necessario — valore a 48 bit, non entra in 32
+```
+
+```asm
+; AT&T equivalente
+movq    $0x1234, %rax
+movabsq $0x68732f6e69622f, %rbx
+```
+
+In pratica lo vedrai nello shellcode quando si carica la stringa `/bin/sh` in un registro:
+
+```asm
+movabs rbx, 0x68732f6e69622f   ; "/bin/sh" in little-endian (7 byte = 56 bit)
+```
+
+`0x68732f6e69622f` non entra in 32 bit → `mov` normale non basta → serve `movabs`.
+
+> [!tip] Come riconoscerlo Se GDB/GEF mostra `movabs` invece di `mov`, significa che l'immediato è troppo grande per 32 bit. In AT&T lo stesso caso usa il suffisso `absq` (`movabsq`).
+
+
+**nota**
+`movq` specifica la dimensione dell'**operazione** — quanti bit vengono trasferiti. Ma il problema di `movabs` non riguarda la dimensione dell'operazione, riguarda la dimensione dell'**immediato** nell'encoding dell'istruzione.
+
+Nell'encoding x86-64, la maggior parte delle istruzioni `mov` con immediato riservano solo **32 bit** per codificare la costante nell'istruzione stessa — poi la estendono a 64 bit automaticamente. Quindi:
+
+```asm
+movq $0x1234, %rax        ; ok — 0x1234 entra in 32 bit, esteso a 64 ✅
+movq $0x68732f6e69622f, %rbx  ; NON ESISTE — la costante è 48 bit,
+                               ; non ci sta nell'encoding normale ❌
+```
+
+`movabs` usa un encoding diverso che riserva **64 bit** per la costante nell'istruzione:
+
+```asm
+movabsq $0x68732f6e69622f, %rbx  ; ok — encoding speciale a 64 bit ✅
+```
+
+Quindi la distinzione è:
+
+| |Dimensione operazione|Dimensione immediato|
+|---|---|---|
+|`movq`|64 bit|max 32 bit (esteso a 64)|
+|`movabsq`|64 bit|64 bit pieni|
+
+`movq` sposta 64 bit — ma se la **costante** supera i 32 bit, non puoi usarlo con un immediato. Devi usare `movabs`.
+
+## Compilatore DIVERSO!!
+**Perché non posso usare gcc come compilatore?** Ottima domanda! Sono strumenti diversi:
+
+| |**GCC**|**NASM**|
+|---|---|---|
+|Scopo|Compila **codice C** → assembly → binario|Assembla direttamente **assembly → binario**|
+|Sintassi assembly|AT&T (`movl %eax, %ebx`)|Intel (`mov rax, rbx`)|
+|Aggiunge|Runtime C, libc, `_start` di sistema|Solo quello che scrivi tu|
+|Output|Binario con overhead libc|Binario minimalista|
+
+---
+
+Il tuo file è scritto in **sintassi Intel** (quella di NASM) — GCC non lo capisce direttamente.
+
+Potresti usare GCC ma dovresti:
+
+```bash
+# Rinominare in .s e aggiungere direttive AT&T... molto scomodo
+gcc -nostdlib -static shellcode.s -o shellcode
+```
+
+Per shellcode si usa NASM perché:
+
+- Sintassi Intel è più leggibile
+- Controllo totale sui byte generati — zero aggiunge cose nascoste
+- È lo standard nel mondo pwn/CTF
+
+In pratica: **GCC** per programmi C, **NASM** per assembly puro.
+
+## 8. Richiamo attivo
 
 > [!question] Converti da AT&T a Intel (a mente)
 > 

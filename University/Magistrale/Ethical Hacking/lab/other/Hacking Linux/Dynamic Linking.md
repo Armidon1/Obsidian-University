@@ -245,6 +245,56 @@ Dice a `ld.so`: _"carica questa libreria **in più**, prima di tutte le altre, a
 
 > [!success] La regola da ricordare **PRELOAD aggiunge, LIBRARY_PATH sostituisce.** Sostituire è fragile (devi rispettare il "contratto" dei simboli che il binario si aspetta). Aggiungere è robusto (il binario non sa nemmeno che la tua libreria esiste, non ti chiede niente, non può rompersi). È per questo che gli exploit preferiscono il preload.
 
+## RPATH e RUNPATH
+
+Entrambi sono percorsi di ricerca delle librerie **embedded direttamente nel binario** a compile-time — un modo per dire al dynamic linker "cerca le librerie anche qui", senza dipendere da variabili d'ambiente.
+
+---
+
+### La differenza pratica
+
+Ricorda l'ordine di ricerca di `ld.so` che avevi nella nota:
+
+```
+1. LD_PRELOAD
+2. RPATH          ← viene prima di LD_LIBRARY_PATH
+3. LD_LIBRARY_PATH
+4. RUNPATH        ← viene dopo LD_LIBRARY_PATH
+5. /etc/ld.so.cache
+6. /lib, /usr/lib...
+```
+
+**RPATH** — meccanismo vecchio. Ha priorità **sopra** `LD_LIBRARY_PATH` → non può essere sovrascritto a runtime dall'utente.
+
+**RUNPATH** — meccanismo nuovo, lo sostituisce. Viene **dopo** `LD_LIBRARY_PATH` → può essere sovrascritto a runtime.
+
+Come si impostano a compile-time:
+
+```bash
+gcc programma.c -Wl,-rpath,/opt/mylibs          # imposta RPATH
+gcc programma.c -Wl,-rpath,/opt/mylibs \
+                -Wl,--enable-new-dtags           # imposta RUNPATH invece
+```
+
+---
+
+### Perché interessano in security
+
+Se RPATH o RUNPATH contengono un percorso **scrivibile dall'attaccante** o **relativo**, diventano un vettore:
+
+```bash
+# binario compilato con RPATH="."  (directory corrente)
+# l'attaccante mette una libreria malevola nella stessa directory
+# ld.so la carica al posto di quella legittima
+```
+
+Si vede in pentest quando trovi binari con RPATH che include `/tmp`, directory home, o semplicemente `.` — è una misconfiguration sfruttabile esattamente come un PATH insicuro nei cronjob che hai visto nel lab.
+
+```bash
+# verifica RPATH/RUNPATH di un binario
+readelf -d ./binario | grep -E "RPATH|RUNPATH"
+```
+
 ---
 
 ## 4. Caricamento vs Risoluzione dei simboli — due fasi distinte
