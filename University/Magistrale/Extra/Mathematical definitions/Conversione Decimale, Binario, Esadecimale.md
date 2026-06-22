@@ -65,16 +65,16 @@ Usiamo lo stesso numero dell'esempio precedente, **11001**:
 
 1. Scrivi il numero e assegna le potenze da destra a sinistra:
     
-    |**Cifra Binaria**|**1**|**1**|**0**|**0**|**1**|
-    |---|---|---|---|---|---|
-    |Potenza di 2|$2^4$|$2^3$|$2^2$|$2^1$|$2^0$|
-    |Valore Potenza|16|8|4|2|1|
-    
-2. Ora, moltiplica ogni cifra binaria per il valore della sua potenza e somma i risultati:
+| **Cifra Binaria** | **1** | **1** | **0** | **0** | **1** |
+| ----------------- | ----- | ----- | ----- | ----- | ----- |
+| Potenza di 2      | $2^4$ | $2^3$ | $2^2$ | $2^1$ | $2^0$ |
+| Valore Potenza    | 16    | 8     | 4     | 2     | 1     |
+
+1. Ora, moltiplica ogni cifra binaria per il valore della sua potenza e somma i risultati:
     
     $(1 \times 16) + (1 \times 8) + (0 \times 4) + (0 \times 2) + (1 \times 1)$
     
-3. Calcola la somma:
+2. Calcola la somma:
     
     $16 + 8 + 0 + 0 + 1 = 25$
     
@@ -161,10 +161,10 @@ Usiamo lo stesso numero, **1EF**, per verificare:
 
 1. Scrivi il numero e assegna le potenze da destra a sinistra:
     
-    |**Cifra Esadecimale**|**1**|**E (vale 14)**|**F (vale 15)**|
-    |---|---|---|---|
-    |Potenza di 16|$16^2$|$16^1$|$16^0$|
-    |Valore Potenza|256|16|1|
+| **Cifra Esadecimale** | **1**  | **E (vale 14)** | **F (vale 15)** |
+| --------------------- | ------ | --------------- | --------------- |
+| Potenza di 16         | $16^2$ | $16^1$          | $16^0$          |
+| Valore Potenza        | 256    | 16              | 1               |
     
 2. Moltiplica ogni cifra (convertita) per il valore della sua potenza e somma i risultati:
     

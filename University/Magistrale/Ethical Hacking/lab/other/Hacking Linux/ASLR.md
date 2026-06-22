@@ -6,7 +6,7 @@
 Collegamento: [[ETHL 0x07 — Binary Exploitation p1]] · [[Stack Canary]] · [[PIC-PIE]]
 
 ---
-
+![[Pasted image 20260622160600.png]]
 ## 1. Il problema che risolve
 
 Un exploit classico sovrascrive il return address con l'indirizzo di qualcosa di utile — per esempio `system()` in libc per chiamare `system("/bin/sh")`.
