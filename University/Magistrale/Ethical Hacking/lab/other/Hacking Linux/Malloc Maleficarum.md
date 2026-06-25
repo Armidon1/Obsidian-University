@@ -39,6 +39,8 @@ present the Malloc Maleficarum.
 ---
 ## The House of Prime
 
+![[the houce of prime.gif]]
+
 An artist has the first brush stroke of a painting. A writer has
 the first line of a poem. I have the House of Prime. It was the
 first breakthrough, the indication of everything that was to come.
@@ -440,6 +442,7 @@ address B is returned to the requesting application.
 ---
 ## The House of Mind
 
+
 Perhaps the most useful and certainly the most general technique in
 the Malloc Maleficarum is the House of Mind. The House of Mind has
 the distinct advantage of causing a direct memory overwrite with
@@ -657,6 +660,8 @@ of fastbin_index() that will help in positioning fb to a GOT or
 ---
 
 ## The House of Force
+[[house of force lab]]
+![[the house of force.gif]]
 
 I first wrote about glibc malloc in 2004 with "Exploiting the
 Wilderness". Since the techniques developed in that text were some
@@ -691,10 +696,31 @@ a completely designer controlled request size. The second call must
 simply be large enough to trigger the wilderness code, while the
 chunk returned must be (to some extent) designer controlled.
 
+>[!abstract] Cos'è `av`
+>**Commento di Simone:** `av` sta per **arena vector** — è il puntatore alla `malloc_state`, cioè all'arena corrente.
+>
+>È la struct che contiene tutto lo stato di malloc: i bin, il puntatore al top chunk, quanta memoria è stata chiesta all'OS. Quando vedi `av->top` è esattamente come accedere a `main_arena.top` — il puntatore al top chunk dentro la struct dell'arena.
+>
+>In pratica in questo codice `av` è sempre la main arena perché il binario è single-thread. Il controllo `av != &main_arena` nella `set_head` serve solo a distinguere se siamo in un thread secondario con una arena diversa — nel nostro caso è sempre falso.
+>**Domanda**: \_int_Malloc è chiamato da malloc()?
+>Sì, esattamente.
+>
+`malloc()` è sostanzialmente un wrapper pubblico. Quando chiami `malloc(size)` nel tuo codice, internamente glibc chiama `_int_malloc(av, size)` passando l'arena corrente e la dimensione richiesta. Tutta la logica vera — bin lookup, top chunk, calcoli di allineamento — sta dentro `_int_malloc`.
+>`use_top` non è una funzione separata — è un label C a cui il codice salta con `goto use_top` quando tutti i bin sono vuoti e l'unica opzione rimasta è il top chunk.
+La struttura è:
+```
+malloc(size)
+    └→ _int_malloc(av, size)
+            ├→ guarda fastbins
+            ├→ guarda unsorted/small/large bins
+            └→ use_top: alloca dal top chunk  ← il codice che hai letto
+```
+
+
 The following is the wilderness code with some additional context:
 ```C
-Void_t*
-_int_malloc(mstate av, size_t bytes)
+av= arena vector
+Void_t* _int_malloc(mstate av, size_t bytes)
 {
   INTERNAL_SIZE_T nb;               /* normalized request size */
   mchunkptr       victim;           /* inspected/selected chunk */
@@ -704,21 +730,36 @@ _int_malloc(mstate av, size_t bytes)
   ...
   checked_request2size(bytes, nb);
   ...
-  use_top:
-    victim = av->top;
-    size = chunksize(victim);
+  use_top: /* a label C used for jump instruction, after checking all the bins */
+    victim = av->top;   /*takes the top chunk pointer */
+	size = chunksize(victim);  /* reads the size|flag value to get 
+									    the pure dimension */
 
+/*nb is the dimension requested already alligned and MINSIZE=32, which is needed for being sure that after the allocation there still exists the top chunk */
     if ((unsigned long)(size) >= (unsigned long)(nb + MINSIZE)) {
-      remainder_size = size - nb;
-      remainder = chunk_at_offset(victim, nb);
-      av->top = remainder;
-      set_head(victim, nb | PREV_INUSE |
-               (av != &main_arena ? NON_MAIN_ARENA : 0));
-      set_head(remainder, remainder_size | PREV_INUSE);
-      check_malloced_chunk(av, victim, nb);
-      return chunk2mem(victim);
+      remainder_size = size - nb; /*finds the remainder top chunk size */
+      remainder = chunk_at_offset(victim, nb);/*calculate the new topchunk addr, simply victim+nb */
+      av->top = remainder; /*updates the top chunk addr */
+      set_head(victim, nb | PREV_INUSE |    /* writes the proper headers */
+               (av != &main_arena ? NON_MAIN_ARENA : 0));/* for the new chunk*/
+      set_head(remainder, remainder_size | PREV_INUSE); /* writes the NEW top
+													       chunk header */
+      check_malloced_chunk(av, victim, nb); /* checks if evething went smothly */
+      return chunk2mem(victim); /*returns the actual memory pointer to the user */
     }
 ```
+
+>[!Note] Nota che in verità av->top e qualsiasi operazione viene fatta sugli 8 byte che contengono `prev_size` e non direttamente su `size|flags`
+>Sì, esatto. Vediamo riga per riga dal codice che hai incollato.
+>
+ **av->top punta a prev_size**
+chunk_ptr  →  |prev_size  8B |  ← av->top punta QUI
+|size|flags 8B |
+user_ptr   →   |user data  ...| ← chunk2mem(victim) punta QUI
+
+>
+Tutte le funzioni interne usano **chunk pointer** (punta a `prev_size`). Il chiamante riceve sempre **user pointer** (`chunk_ptr + 0x10`). `av->top` è sempre un chunk pointer. Quando scrivi `target - 0x10` nella formula, stai convertendo l'indirizzo che vuoi ricevere come utente nell'indirizzo del chunk che deve stare in `av->top` — esattamente quello che `set_head(remainder, ...)` andrà a scrivere.
+
 The first goal of the House of Force is to overwrite the wilderness
 pointer, av->top, with an arbitrary value. In order to do this the
 designer must have control of the location of the remainder chunk.
@@ -727,7 +768,7 @@ the largest possible size (preferably 0xffffffff). This is done to
 ensure that even large values passed as an argument to malloc will
 trigger the wilderness code instead of trying to extend the heap.
 
-The checked_request2size() macro ensures that the requested value
+The `checked_request2size()` macro ensures that the requested value
 is less than -2\*MINSIZE (by default -32), while also adding on
 enough room for the size and prev_size fields and storing the final
 value in nb. For the purposes of this technique the
@@ -738,7 +779,7 @@ House of Force must have a designer controlled argument. It can be
 seen that the value of remainder is obtained by adding the request
 size to the existing top chunk. Since the top chunk is not yet
 under the designer's control the request size must be used to
-position remainder to at least 8 bytes before a .GOT or .dtors
+position remainder to at least 8 bytes (in x86-64 16 bytes) before a .GOT or .dtors
 entry, or any other area of memory that may subsequently be used by
 the designer to circumvent execution.
 
