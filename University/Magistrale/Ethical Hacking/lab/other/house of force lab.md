@@ -40,7 +40,8 @@
 - Per questo `usable = chunk_size - 8` (si perde solo `size|flags`).
 - Se il chunk precedente è in uso può sovrascrivere quei byte; un overflow oltre `chunk_size - 8` corrompe l'header del chunk successivo.
 
-> [!info] Formula della size `chunk_size = max((X + 8 + 15) & ~15, 32)`. Il `+15` prima dell'AND arrotonda **su** al multiplo di 16; `~15` azzera i 4 bit bassi. Il flag `PREV_INUSE` aggiunge `+1` alla size vista in `vis` (es. `0x21` = 0x20 + 1).
+> [!info] Formula della size 
+> `chunk_size = max((X + 8 + 15) & ~15, 32)`. Il `+15` prima dell'AND arrotonda **su** al multiplo di 16; `~15` azzera i 4 bit bassi. Il flag `PREV_INUSE` aggiunge `+1` alla size vista in `vis` (es. `0x21` = 0x20 + 1).
 
 ### Top chunk e _int_malloc
 
