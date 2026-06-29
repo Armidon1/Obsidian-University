@@ -1,17 +1,17 @@
 {
 	"nodes":[
 		{"id":"c5a150355c63559c","type":"text","text":"### Hacking Exposed 7 (Esame scritto)\n\n- [x] 0. Course Introduction\n- [x] 1. Footprinting _(40 pag)_\n- [x] 2. Scanning _(36 pag)_\n- [ ] 3. Enumeration _(74 pag totali)_\n- [ ] 4. Hacking Windows + Rainbow Tables _(71 pag)_\n- [ ] 5. Hacking Unix Part 1 + Part 2 _(80 pag)_\n- [ ] 6. Cybercrime and APT _(56 pag)_\n- [ ] 7. Remote Connectivity and VoIP _(91 pag) ⚠️ lungo_\n- [ ] 8. Wireless Hacking _(32 pag)_\n- [ ] 9. Hacking Hardware _(30 pag)_\n- [ ] 10. Web Application Hacking Part 1 + Part 2 _(61 pag)_\n- [ ] 11. Mobile Hacking _(77 pag)_\n- [ ] Extra: WEP Attack on RC4","x":-760,"y":-160,"width":560,"height":780},
-		{"id":"51e7357b31605032","x":-1800,"y":880,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.8 Canvas.canvas"},
-		{"id":"2b6ae51425d47c85","x":-1800,"y":360,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.9 Canvas.canvas"},
-		{"id":"4e7aa9030f98a39e","x":-1800,"y":-160,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.10 Canvas.canvas"},
-		{"id":"ae97f886767eacf4","x":-1800,"y":-720,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.11 Canvas.canvas"},
-		{"id":"cb4b440f8d84ca36","x":-1200,"y":1236,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.7 Canvas.canvas"},
-		{"id":"e12839086145e1d5","x":-680,"y":1236,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.6 Canvas.canvas"},
-		{"id":"69e6f6eb50970829","x":-200,"y":1236,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.5 Canvas.canvas"},
-		{"id":"bf664d58fb1caf09","x":480,"y":-750,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.1 Canvas.canvas"},
-		{"id":"b187cc377f8c54cd","x":480,"y":-270,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.2 Canvas.canvas"},
-		{"id":"7e314547aba5e128","x":480,"y":280,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.3 Canvas.canvas"},
-		{"id":"356f3be9b03b9b6f","x":480,"y":880,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/canvas/Hacking Exposed 7.4 Canvas.canvas"}
+		{"id":"51e7357b31605032","x":-1800,"y":880,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.8 Canvas.canvas"},
+		{"id":"2b6ae51425d47c85","x":-1800,"y":360,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.9 Canvas.canvas"},
+		{"id":"4e7aa9030f98a39e","x":-1800,"y":-160,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.10 Canvas.canvas"},
+		{"id":"ae97f886767eacf4","x":-1800,"y":-720,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.11 Canvas.canvas"},
+		{"id":"cb4b440f8d84ca36","x":-1200,"y":1236,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.7 Canvas.canvas"},
+		{"id":"e12839086145e1d5","x":-680,"y":1236,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.6 Canvas.canvas"},
+		{"id":"69e6f6eb50970829","x":-200,"y":1236,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.5 Canvas.canvas"},
+		{"id":"bf664d58fb1caf09","x":480,"y":-750,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.1 Canvas.canvas"},
+		{"id":"b187cc377f8c54cd","x":480,"y":-270,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.2 Canvas.canvas"},
+		{"id":"7e314547aba5e128","x":480,"y":280,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.3 Canvas.canvas"},
+		{"id":"356f3be9b03b9b6f","x":480,"y":880,"width":400,"height":400,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Hacking Exposed 7.4 Canvas.canvas"}
 	],
 	"edges":[
 		{"id":"2d9271e94baaaafa","fromNode":"c5a150355c63559c","fromSide":"right","toNode":"bf664d58fb1caf09","toSide":"left"},

@@ -1,0 +1,13 @@
+{
+	"nodes":[
+		{"id":"59dbdf29478a5aa3","type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/PDF/Book chapters/BOOK eth ch3.pdf","x":-223,"y":12,"width":403,"height":568},
+		{"id":"3b7d6778b82c710e","x":360,"y":180,"width":400,"height":187,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Mappe Concettuali Capitoli ETH/CH3_1.png"},
+		{"id":"150fb3dc99888ae9","x":-720,"y":144,"width":400,"height":304,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Mappe Concettuali Capitoli ETH/CH3_2.png"},
+		{"id":"dc1a7239a0bb0129","x":-720,"y":520,"width":400,"height":247,"type":"file","file":"Obsidian-University/University/Magistrale/Ethical Hacking/Others/canvas/Mappe Concettuali Capitoli ETH/CH3_3.png"}
+	],
+	"edges":[
+		{"id":"d39fb33ae80d63da","fromNode":"59dbdf29478a5aa3","fromSide":"right","toNode":"3b7d6778b82c710e","toSide":"left"},
+		{"id":"96b01e099b1d50ac","fromNode":"59dbdf29478a5aa3","fromSide":"left","toNode":"150fb3dc99888ae9","toSide":"right"},
+		{"id":"bfbed09f619d63ff","fromNode":"59dbdf29478a5aa3","fromSide":"left","toNode":"dc1a7239a0bb0129","toSide":"right"}
+	]
+}
