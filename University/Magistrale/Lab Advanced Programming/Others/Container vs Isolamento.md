@@ -1,6 +1,6 @@
 # Container ≠ Isolamento
 
-> [!abstract] In una frase La containerizzazione (Docker) isola tramite **namespace del kernel Linux** (PID, network, mount, UTS, IPC, user) e **cgroups**, ma condivide lo **stesso kernel** dell'host — non è virtualizzazione. L'isolamento è una configurazione applicata da un **demone root**, e quindi è **rimovibile su richiesta**: per questo "container" e "sandbox di sicurezza" non sono sinonimi. Questa nota è il modello mentale dietro il vettore del gruppo `docker` in [[LinPEAS#6. Caso studio il gruppo docker]].
+> [!abstract] In una frase La containerizzazione (Docker) isola tramite **namespace del kernel Linux** (PID, network, mount, UTS, IPC, user) e **cgroups**, ma condivide lo **stesso kernel** dell'host — non è virtualizzazione. L'isolamento è una configurazione applicata da un **demone root**, e quindi è **rimovibile su richiesta**: per questo "container" e "sandbox di sicurezza" non sono sinonimi. Questa nota è il modello mentale dietro il vettore del gruppo `docker` in [[Obsidian-University/University/Magistrale/Ethical Hacking/Lab/other/Hacking Linux/LinPEAS#6. Caso studio il gruppo docker]].
 
 > [!tip] Come usare questa nota Non è un argomento d'esame isolato — è il **perché** che rende ovvi gli exploit di container escape e il vettore "gruppo docker = root". Se all'esame ti chiedono di _spiegare_ (non solo elencare) perché `docker run -v /:/host` funziona, il ragionamento è qui.
 
@@ -102,9 +102,9 @@ Se il **user namespace** fosse attivo (`userns-remap`), `uid=0` _dentro_ il cont
 
 ## 7. Collegamento al vettore "gruppo docker"
 
-Questo è esattamente il meccanismo dietro [[LinPEAS#6. Caso studio il gruppo docker]]: appartenere al gruppo `docker` significa poter parlare con un socket posseduto da un processo root, **senza ACL granulari**. Il comando `docker run -it -v /:/host/ bash:latest bash` non è un bypass di sicurezza nel senso classico (nessun bug, nessuna race condition) — è l'uso _previsto_ di una feature, concessa da un demone che non distingue "utente fidato" da "utente nel gruppo docker".
+Questo è esattamente il meccanismo dietro [[Obsidian-University/University/Magistrale/Ethical Hacking/Lab/other/Hacking Linux/LinPEAS#6. Caso studio il gruppo docker]]: appartenere al gruppo `docker` significa poter parlare con un socket posseduto da un processo root, **senza ACL granulari**. Il comando `docker run -it -v /:/host/ bash:latest bash` non è un bypass di sicurezza nel senso classico (nessun bug, nessuna race condition) — è l'uso _previsto_ di una feature, concessa da un demone che non distingue "utente fidato" da "utente nel gruppo docker".
 
-> [!quote] Confused Deputy, ancora Stesso schema di cron-root ([[ETHL 0x06 — Hacking Unix p2]]) e del dynamic linker su SetUID ([[Dynamic Linking]]): un componente con più privilegi di te (demone Docker root, cron, `ld.so` su un binario SetUID) esegue un'azione **per tuo conto**, e tu controlli un parametro di quell'azione (il flag `-v`, lo script eseguito, la libreria caricata). L'azione di per sé è legittima — il problema è _chi_ può richiederla.
+> [!quote] Confused Deputy, ancora Stesso schema di cron-root ([[ETHL 0x06 — Hacking Unix p2]]) e del dynamic linker su SetUID ([[Obsidian-University/University/Magistrale/Ethical Hacking/Lab/other/Hacking Linux/Dynamic Linking]]): un componente con più privilegi di te (demone Docker root, cron, `ld.so` su un binario SetUID) esegue un'azione **per tuo conto**, e tu controlli un parametro di quell'azione (il flag `-v`, lo script eseguito, la libreria caricata). L'azione di per sé è legittima — il problema è _chi_ può richiederla.
 
 ---
 
