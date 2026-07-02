@@ -1,20 +1,7 @@
----
-
-Tipo: Protocollo / Servizio Porta: 445 (SMB diretto) / 139 (NetBIOS) Rischio: 🔴 Alto (dipende dalla configurazione) tags:
-
-- protocollo
-- smb
-- windows
-- enumeration
-- null-session
-- lateral-movement
-- htb/dancing
-
----
-
 # 🗂️ SMB — Server Message Block
 
-> [!warning] Attenzione SMB è uno dei protocolli più abusati nella storia della sicurezza informatica. Da EternalBlue a WannaCry, passando per share mal configurati e null session — se trovi SMB aperto, è sempre il primo posto dove guardare.
+> [!warning] Attenzione 
+> SMB è uno dei protocolli più abusati nella storia della sicurezza informatica. Da EternalBlue a WannaCry, passando per share mal configurati e null session — se trovi SMB aperto, è sempre il primo posto dove guardare.
 
 ---
 

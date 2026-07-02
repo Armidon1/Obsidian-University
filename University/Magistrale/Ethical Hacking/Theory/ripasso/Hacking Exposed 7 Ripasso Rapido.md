@@ -50,6 +50,8 @@ Ottima scelta! Se il footprinting (Capitolo 1) era l'equivalente di studiare il 
 
 Manteniamo la stessa struttura tattica: prima vediamo come l'attaccante mappa la rete, e poi come devi rispondere all'esame indossando i panni del difensore.
 
+[[ETH - Hacking Exposed 7 - Cap 2 - Scanning]]
+
 ---
 
 ### Fase 1: L'Offensiva (Come agisce l'attaccante)
@@ -97,7 +99,6 @@ Ed ecco il piano di difesa per impressionare il professore, suddiviso in base ai
 
 Che te ne pare di questo schema per il Capitolo 2? Rende chiara la dinamica "attacco-difesa" esattamente come la vuole il prof.
 
-Possiamo procedere con l'**Enumerazione (Capitolo 3)**, oppure c'è qualche dinamica specifica dello scanning (come il funzionamento esatto di uno script di Nmap) che ti preoccupa e su cui vorresti che creassi delle _Flashcard_ dedicate nello Studio Panel?
 # Capitolo 3 - Enumeration
 Eccoci al **Capitolo 3: Enumeration (Enumerazione)**. Se lo scanning serviva a capire quali "porte" erano aperte, l'enumerazione consiste nell'entrare e fare domande dirette ai servizi per capire esattamente chi ci abita. È una fase molto più intrusiva in cui l'attaccante si collega attivamente ai sistemi per estrarre nomi utente, risorse condivise mal configurate e versioni di software vulnerabili.
 

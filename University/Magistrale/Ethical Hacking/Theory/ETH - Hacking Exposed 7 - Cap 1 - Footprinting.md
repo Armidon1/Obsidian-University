@@ -237,3 +237,5 @@ Attackers don't just read the text on a website; they analyze the hidden `[[Meta
 
 - **Connecting the Dots:** Because information is scattered across so many different sources, attackers use data-mining tools like **Maltego** to aggregate and correlate the data.
 - **Visualizing the Target:** Maltego maps out the relationships between different pieces of gathered intelligence (e.g., linking a specific employee to a set of e-mail addresses, social networks, and internal servers) and displays them in an easy-to-understand graphical format.
+
+Next lesson [[ETH - Hacking Exposed 7 - Cap 2 - Scanning]]
