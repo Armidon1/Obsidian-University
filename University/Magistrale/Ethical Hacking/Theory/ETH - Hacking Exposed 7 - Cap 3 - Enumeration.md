@@ -274,6 +274,23 @@ Quindi dal punto di vista del client c'è un unico DNS server per tutto; è il D
 
 Piccola nota che collega al capitolo di prima: è proprio questa la ragione per cui il DNS cache snooping ha senso come tecnica — un DNS che fa da resolver per i suoi client accumula in cache i nomi esterni che gli utenti hanno visitato, e interrogandolo con `+norecurse` puoi dedurre cosa è stato risolto di recente.
 
+**se noi stiamo inviando una stringa in formato DNS-like, il server allora non userà mai il protocollo NetBIOS Name Resolution**
+Hai messo il dito su una confusione reale, e vale la pena scioglierla perché stai mescolando due meccanismi diversi che ho descritto in momenti diversi. Ti separo i due, perché la tua domanda nasce proprio dal trattarli come se fossero lo stesso.
+
+Prima una correzione di fondo che è la radice dell'equivoco: non esistono "due famiglie di DNS", una moderna e una legacy. Esistono due sistemi di risoluzione nomi _distinti e separati_ — il DNS da una parte, e il NetBIOS name resolution dall'altra. Non sono due versioni dello stesso protocollo: sono due protocolli diversi, con formati di nome diversi, che Windows prova in cascata. Il DNS non "mantiene una parte per retrocompatibilità"; il pezzo legacy è un sistema a sé, NetBIOS, che vive accanto al DNS, non dentro di esso.
+
+Ora, i due meccanismi che stai fondendo insieme:
+
+Il primo è il **DNS suffix search list** — l'espansione dei nomi corti. Quando digiti `server1` (nome corto, senza punti), il client lo completa in `server1.azienda.local` e lo manda al DNS. Questo è puramente un fatto di _formato del nome_: prendo un nome breve e lo rendo un FQDN valido. Ma attenzione — questo non ha niente a che vedere con NetBIOS. Un nome corto non è un "nome NetBIOS"; è solo un nome DNS incompleto. Qui NetBIOS non entra proprio in gioco. Questo è il meccanismo di cui parli quando dici "lo converte nel formato moderno", e la tua conclusione su _questo_ è corretta: se il nome viene espanso e risolto via DNS, stai usando DNS puro, NetBIOS non tocca palla.
+
+Il secondo, completamente diverso, è la **catena di fallback NetBIOS**. Questa non converte niente. Scatta solo quando la catena DNS ha già _fallito_ — non ha trovato il nome. A quel punto Windows non "traduce il nome in formato moderno": prova un protocollo diverso, NetBIOS, con i suoi meccanismi (cache NetBIOS, WINS, broadcast). Qui il vecchio protocollo viene usato _davvero_, sul serio, perché il DNS non ha saputo rispondere.
+
+Quindi la risposta secca alla tua domanda: la conversione di cui parli (nome corto → FQDN) e l'uso del protocollo NetBIOS sono due cose che non si incontrano mai. O il nome si risolve via DNS — e allora sì, è tutto DNS moderno, NetBIOS non viene usato — oppure il DNS fallisce e Windows ripiega su NetBIOS, e in quel caso non c'è nessuna conversione, si parla proprio il vecchio protocollo con i suoi pacchetti.
+
+La domanda giusta da porsi, allora, è: _quando_ si finisce sul fallback NetBIOS, dato che oggi quasi tutto si risolve via DNS? La risposta è: quando cerchi un nome che nel DNS non esiste. Casi tipici — una vecchia macchina che non si è registrata nel DNS interno, un errore di battitura, una share che non c'è più, oppure una rete senza un DNS che copra quei nomi. In tutti questi casi il DNS dice "non lo conosco", e Windows, invece di arrendersi, urla sulla rete locale in NetBIOS "c'è qualcuno che si chiama così?". Ed è esattamente qui — in questo fallback che parla il protocollo vecchio per davvero — che vivono gli attacchi di poisoning (Responder) di cui parlavamo: l'attaccante risponde "sì, sono io" a quella richiesta NetBIOS che il DNS non ha saputo gestire.
+
+Riassumendo il punto che ti sfuggiva: la retrocompatibilità NetBIOS non è "il DNS che converte formati". È un secondo protocollo separato che entra in scena solo dopo il fallimento del DNS, e quando entra in scena lo fa in pieno, senza conversioni. L'espansione dei nomi corti è tutt'altra faccenda, tutta interna al mondo DNS.
+
 > [!info] NBNS e name resolution 
 > NBNS è il servizio di risoluzione nomi di Microsoft, simile a DNS, disponibile solo su IPv4. Windows usa due sistemi: DNS (preferito) e NetBIOS Name Resolution (ancora usato da tutte le versioni). Metodi di risoluzione standard: nome host locale, file hosts, server DNS. Metodi aggiuntivi: cache resolver DNS, cache nomi NetBIOS, server NBNS (l'implementazione Microsoft è WINS), broadcast locale (fino a 3 messaggi Name Query Request), file Lmhosts.
 

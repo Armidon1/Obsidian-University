@@ -163,6 +163,7 @@ Su HTB le macchine sono configurate apposta con password crackabili con rockyou.
 |Sicurezza|Debole|Più robusto|
 |Uso|Workgroup, legacy|Active Directory|
 |Attacchi|Capture, PtH, Relay|Pass-the-Ticket, Kerberoasting|
+guarda pure [[LM-Lan Manager]] il predecessore di NTLM e perché fa troppo cagare. 
 
 ---
 

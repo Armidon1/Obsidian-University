@@ -1,30 +1,37 @@
 # ETHL 0x12 — Cap 4: Hacking Windows
 
-> [!abstract] Di cosa parla il capitolo Come si attacca e si difende un sistema Windows. È il capitolo dove l'output dei due precedenti viene finalmente **usato**: Cap. 2 (Scanning) dava porte e OS, Cap. 3 (Enumeration) dava la lista di account validi, e qui quegli account e quelle porte diventano accesso reale. Il capitolo è costruito su tre blocchi netti: attacchi **non autenticati** (entrare da fuori senza credenziali), attacchi **autenticati** (cosa fa un attaccante una volta dentro), e le **security features** di Windows (le difese). Ogni tecnica offensiva è seguita dalle sue contromisure — è un testo difensivo travestito da manuale d'attacco.
+> [!abstract] Di cosa parla il capitolo 
+> Come si attacca e si difende un sistema Windows. È il capitolo dove l'output dei due precedenti viene finalmente **usato**: Cap. 2 (Scanning) dava porte e OS, Cap. 3 (Enumeration) dava la lista di account validi, e qui quegli account e quelle porte diventano accesso reale. Il capitolo è costruito su tre blocchi netti: attacchi **non autenticati** (entrare da fuori senza credenziali), attacchi **autenticati** (cosa fa un attaccante una volta dentro), e le **security features** di Windows (le difese). Ogni tecnica offensiva è seguita dalle sue contromisure — è un testo difensivo travestito da manuale d'attacco.
 
 ---
 
 ## Mappa mentale del capitolo
 
-> [!info] I tre blocchi Il capitolo segue l'arco temporale di un'intrusione. **Unauthenticated attacks**: l'attaccante è fuori, senza credenziali, e cerca un varco (password deboli, servizi bucati, driver, l'utente stesso). **Authenticated attacks**: ha già un piede dentro (anche solo come Guest) e vuole diventare Administrator/SYSTEM, rubare password per andare più in profondità, piazzare backdoor, cancellare le tracce. **Windows security features**: il rovescio della medaglia, cosa Microsoft mette a disposizione per chiudere quei buchi. Tenere a mente questa scansione temporale è la chiave per non perdersi tra le decine di tool citati.
+> [!info] I tre blocchi 
+> Il capitolo segue l'arco temporale di un'intrusione. **Unauthenticated attacks**: l'attaccante è fuori, senza credenziali, e cerca un varco (password deboli, servizi bucati, driver, l'utente stesso). **Authenticated attacks**: ha già un piede dentro (anche solo come Guest) e vuole diventare Administrator/SYSTEM, rubare password per andare più in profondità, piazzare backdoor, cancellare le tracce. **Windows security features**: il rovescio della medaglia, cosa Microsoft mette a disposizione per chiudere quei buchi. Tenere a mente questa scansione temporale è la chiave per non perdersi tra le decine di tool citati.
 
-> [!info] Guessing vs Cracking vs Pass-the-Hash vs Sniffing Quattro modi diversi di "avere a che fare con le password", spesso confusi. **Guessing (online)**: provo user/password contro un servizio vivo (SMB, RDP…); il lockout dell'account è un problema perché sto facendo rumore. **Cracking (offline)**: ho già l'hash e provo a invertirlo sulla mia macchina; il lockout è irrilevante, conta solo la potenza di calcolo. **Pass-the-Hash**: non cracko niente, uso l'hash _così com'è_ come credenziale. **Sniffing/Dumping**: non attacco la password, la intercetto sul filo o la estraggo dalla RAM/registro. Questo schema mentale ordina metà del capitolo.
+> [!info] Guessing vs Cracking vs Pass-the-Hash vs Sniffing 
+> Quattro modi diversi di "avere a che fare con le password", spesso confusi. **Guessing (online)**: provo user/password contro un servizio vivo (SMB, RDP…); il lockout dell'account è un problema perché sto facendo rumore. **Cracking (offline)**: ho già l'hash e provo a invertirlo sulla mia macchina; il lockout è irrilevante, conta solo la potenza di calcolo. **Pass-the-Hash**: non cracko niente, uso l'hash _così com'è_ come credenziale. **Sniffing/Dumping**: non attacco la password, la intercetto sul filo o la estraggo dalla RAM/registro. Questo schema mentale ordina metà del capitolo.
 
 ---
 
 ## Perché Windows è così bucato
 
-> [!info] Le cause strutturali Le slide aprono con tre motivi: la **retrocompatibilità** (importantissima in azienda, abilitata di default, causa di enormi problemi di sicurezza), la **proliferazione di funzionalità** (più codice = più superficie d'attacco: da NT 3.51 a Windows 7 il codice è cresciuto di dieci volte), e il volume di vulnerabilità (~70 bollettini di sicurezza Microsoft l'anno). Il rischio è funzione di **popolarità × complessità**: Windows è insieme il più diffuso e uno dei più complessi, quindi il bersaglio ideale. Worm storici citati: Code Red, Nimda, Slammer, Blaster, Netsky, Gimmiv, EternalBlue, NotPetya.
+> [!info] Le cause strutturali 
+> Le slide aprono con tre motivi: la **retrocompatibilità** (importantissima in azienda, abilitata di default, causa di enormi problemi di sicurezza), la **proliferazione di funzionalità** (più codice = più superficie d'attacco: da NT 3.51 a Windows 7 il codice è cresciuto di dieci volte), e il volume di vulnerabilità (~70 bollettini di sicurezza Microsoft l'anno). Il rischio è funzione di **popolarità × complessità**: Windows è insieme il più diffuso e uno dei più complessi, quindi il bersaglio ideale. Worm storici citati: Code Red, Nimda, Slammer, Blaster, Netsky, Gimmiv, EternalBlue, NotPetya.
 
-> [!tip] Il filo rosso è già qui La **retrocompatibilità = buco di sicurezza** era il pattern ricorrente di tutto il Cap. 3 (NetBIOS piatto vs LDAP gerarchico, RestrictAnonymous, modalità legacy NT4 di LDAP). Qui è letteralmente la _prima riga della prima slide_: la stessa idea che in enumeration lasciava trapelare utenti, in Windows lascia attivi protocolli di autenticazione deboli (LM) e sessioni null. Non è una coincidenza tematica, è il difetto architetturale di fondo dell'ecosistema.
+> [!tip] Il filo rosso è già qui 
+> La **retrocompatibilità = buco di sicurezza** era il pattern ricorrente di tutto il Cap. 3 (NetBIOS piatto vs LDAP gerarchico, RestrictAnonymous, modalità legacy NT4 di LDAP). Qui è letteralmente la _prima riga della prima slide_: la stessa idea che in enumeration lasciava trapelare utenti, in Windows lascia attivi protocolli di autenticazione deboli (LM) e sessioni null. Non è una coincidenza tematica, è il difetto architetturale di fondo dell'ecosistema.
 
-> [!info] Prelude — le vulnerabilità Due famiglie: quelle **banali da configurazione** (null session NetBIOS, buffer overflow IIS semplici) e quelle **complesse** (heap exploit, attacchi all'utente finale via Internet Explorer). Il focus degli attaccanti si è spostato nel tempo da servizi di rete → driver kernel → applicazioni. Miglioramenti recenti: meno servizi di rete attivi di default, firewall host abilitato di default, **UAC** (User Account Control).
+> [!info] Prelude — le vulnerabilità 
+> Due famiglie: quelle **banali da configurazione** (null session NetBIOS, buffer overflow IIS semplici) e quelle **complesse** (heap exploit, attacchi all'utente finale via Internet Explorer). Il focus degli attaccanti si è spostato nel tempo da servizi di rete → driver kernel → applicazioni. Miglioramenti recenti: meno servizi di rete attivi di default, firewall host abilitato di default, **UAC** (User Account Control).
 
 ---
 
 ## Parte 1 — Unauthenticated Attacks
 
-> [!info] I quattro vettori L'attacco da fuori passa da uno di quattro punti deboli: **Authentication Spoofing** (indovinare/aggirare le password), **Network Services** (bucare un servizio esposto), **Client Software Vulnerabilities** (l'applicazione dell'utente, es. browser/PDF), **Device Drivers** (i driver, che girano in kernel mode). Tutto il primo blocco è l'esplorazione ordinata di questi quattro.
+> [!info] I quattro vettori 
+> L'attacco da fuori passa da uno di quattro punti deboli: **Authentication Spoofing** (indovinare/aggirare le password), **Network Services** (bucare un servizio esposto), **Client Software Vulnerabilities** (l'applicazione dell'utente, es. browser/PDF), **Device Drivers** (i driver, che girano in kernel mode). Tutto il primo blocco è l'esplorazione ordinata di questi quattro.
 
 ### Authentication Spoofing — servizi bersaglio
 
@@ -36,7 +43,8 @@
 |**SQL Server**|TCP 1433, UDP 1434||
 |**SharePoint / web services**|TCP 80, 443||
 
-> [!info] Password guessing da riga di comando Guessing **online** contro questi servizi. A mano si usa il ciclo `FOR` di Windows con `net use` e un file di coppie username/password (esistono DB online di password di default). Automatizzato con: **enum**, **Brutus**, **THC Hydra**, **Medusa**, **Venom**, e per la GUI di Terminal Services/RDP **TSGrinder** o Rdesktop patchato. Punto chiave: gli account **si bloccano** dopo troppi tentativi (lockout), quindi il guessing online è rumoroso e limitato.
+> [!info] Password guessing da riga di comando 
+> Guessing **online** contro questi servizi. A mano si usa il ciclo `FOR` di Windows con `net use` e un file di coppie username/password (esistono DB online di password di default). Automatizzato con: **enum**, **Brutus**, **THC Hydra**, **Medusa**, **Venom**, e per la GUI di Terminal Services/RDP **TSGrinder** o Rdesktop patchato. Punto chiave: gli account **si bloccano** dopo troppi tentativi (lockout), quindi il guessing online è rumoroso e limitato.
 
 ```text
 # Esempio dalle slide: guessing con enum contro l'host "mirage"
@@ -45,7 +53,8 @@ C:\> enum -D -u administrator -f Dictionary.txt mirage
 (12) administrator | opensesame   password found: opensesame
 ```
 
-> [!warning] Contromisure al guessing Firewall di rete per limitare l'accesso a SMB (139/445); feature host-resident (filtri IPSec, Windows Firewall); disabilitare del tutto SMB se non serve; **policy di password forti/lunghe**; soglia di **account-lockout** — e assicurarsi che valga _anche per l'Administrator built-in_ (spesso escluso di default); audit dei logon falliti con revisione regolare degli Event Log; **defense in depth** (usarle tutte insieme). Strumenti: `SECPOL.MSC` per la Security Policy, Audit Policy, `dumpel` per analizzare i log, IDS/IPS.
+> [!warning] Contromisure al guessing 
+> Firewall di rete per limitare l'accesso a SMB (139/445); feature host-resident (filtri IPSec, Windows Firewall); disabilitare del tutto SMB se non serve; **policy di password forti/lunghe**; soglia di **account-lockout** — e assicurarsi che valga _anche per l'Administrator built-in_ (spesso escluso di default); audit dei logon falliti con revisione regolare degli Event Log; **defense in depth** (usarle tutte insieme). Strumenti: `SECPOL.MSC` per la Security Policy, Audit Policy, `dumpel` per analizzare i log, IDS/IPS.
 
 ```text
 C:\> dumpel -e 529 -f seclog.txt -l security -n Security -t
@@ -53,11 +62,81 @@ C:\> dumpel -e 529 -f seclog.txt -l security -n Security -t
 
 ### Sniffing dello scambio di password sulla rete
 
-> [!info] Intercettare l'autenticazione Invece di indovinare, si ascolta il traffico di autenticazione. **Cain** (il più usato) sniffa gli hash challenge-response di **LM**. Su rete switchata non basta stare in ascolto: serve **ARP spoofing/poisoning** per far passare il traffico dall'attaccante. Tre protocolli di autenticazione in gioco, in ordine di robustezza crescente: **LM** (LAN Manager, debolissimo), **NTLM** (con cifratura), **Kerberos** (chiave privata o opzionalmente pubblica). Tool: Cain, LCP, L0phtcrack, KerbSniff.
+> [!info] Intercettare l'autenticazione 
+> Invece di indovinare, si ascolta il traffico di autenticazione. **Cain** (il più usato) sniffa gli hash challenge-response di **LM**. Su rete switchata non basta stare in ascolto: serve **ARP spoofing/poisoning** per far passare il traffico dall'attaccante. Tre protocolli di autenticazione in gioco, in ordine di robustezza crescente: **LM** (LAN Manager, debolissimo), **NTLM** (con cifratura), **Kerberos** (chiave privata o opzionalmente pubblica). Tool: Cain, LCP, L0phtcrack, KerbSniff.
 
-> [!info] Kerberos sniffing Kerberos 5 invia un pacchetto di **pre-autenticazione** contenente un timestamp cifrato con una chiave derivata dalla password dell'utente. Se la password è debole, un attacco **offline** su quello scambio può recuperarla (Cain ha uno sniffer MSKerb5-PreAuth). Non c'è difesa semplice se non usare password lunghe e complesse — perché il materiale intercettato è già valido, il collo di bottiglia è solo la forza della password.
+Buona memoria — e la tua intuizione su Responder coglie una cosa vera: i tool delle slide sono in gran parte **reperti storici**, e il modo in cui si fa sniffing/poisoning oggi (quello che usavi su HTB) è cambiato parecchio. Ti divido i due mondi.
 
-> [!warning] Contromisure allo sniffing **Disabilitare l'autenticazione LM** (gli hash NTLM sono più duri da craccare); password complesse e non da dizionario; cifratura a chiave pubblica; usare **IPsec** built-in di Windows per autenticare e cifrare il traffico.
+**I tool delle slide, cosa sono e in che stato versano.**
+
+- **Cain (Cain & Abel)** — il coltellino svizzero dell'epoca per Windows: ARP poisoning, sniffing, e cracking (dizionario, brute-force, rainbow table) tutto in una GUI. È **morto e sepolto**: sviluppo fermo da anni, non gira sui Windows moderni, l'antivirus lo segnala. Storicamente importante, operativamente reliquia.
+- **L0phtCrack** — password auditor/cracker storico (nato dal collettivo L0pht). Ha avuto una vita travagliata: chiuso, riaperto, poi reso **open source nel 2021**. Esiste ancora ma non è ciò che usa nessuno oggi per craccare.
+- **LCP** — clone gratuito di L0phtCrack, cracking di hash LM/NTLM. Abbandonato, di fatto scomparso.
+- **KerbSniff / KerbCrack** — coppia storica per sniffare e brute-forzare la pre-auth Kerberos. Concetto ancora validissimo (è l'antenato di quello che oggi chiami **Kerberoasting/AS-REP roasting**), ma quei binari specifici non li usa più nessuno.
+
+Il filo comune: sono tutti **tool GUI Windows dei primi 2000**, dal lato sbagliato della barricata — incarnano strumenti obsoleti invece di attaccare protocolli. È lo stesso pattern che avevi già isolato nel Cap. 3: enum4linux sopravvive perché è un wrapper sui protocolli ancora vivi, gli altri no.
+
+**Dove entra Responder, e perché tu ricordi quello.**
+
+Responder non fa esattamente la stessa cosa di Cain, ed è per questo che è il tool giusto del 2026. Cain faceva **ARP poisoning**: ti mettevi in mezzo al traffico a livello 2. Responder invece **avvelena la name resolution**: risponde alle query broadcast **LLMNR, NBT-NS e MDNS** che le macchine Windows sparano quando il DNS fallisce ("chi è \fileserver?"). Responder alza la mano — "sono io" — la vittima gli si autentica contro, e lui **cattura l'hash NetNTLMv1/v2** (cioè la challenge-response, non l'hash NT memorizzato). Quella la porti offline su **hashcat/John** per craccarla, oppure la **rilanci** senza craccarla con `ntlmrelayx` (di Impacket) — che è il MITM/relay moderno che ha preso il posto di SMBRelay.
+
+Tradotto nella tabella mentale delle note: **Responder = il canale d'ingresso** (poisoning della risoluzione nomi + cattura), **hashcat = il cracking**, **ntlmrelayx = il relay**. Cain provava a fare tutto e tre insieme; oggi sono tre tool specializzati.
+
+Ecco la mappa vecchio → nuovo, che è esattamente il tipo di aggiornamento che le note del corso servono a fissare:
+
+|Concetto|Slide (storico)|Oggi (HTB / reale)|
+|---|---|---|
+|Mettersi in mezzo|Cain (ARP poisoning)|**Responder** (LLMNR/NBT-NS poisoning), mitm6 (IPv6/DNS)|
+|Catturare la challenge-response|Cain sniffer|**Responder**, Inveigh (variante PowerShell/C#)|
+|Relay senza craccare|SMBRelay, SMBProxy|**ntlmrelayx** (Impacket)|
+|Cracking degli hash|LCP, L0phtCrack, Cain|**hashcat**, **John the Ripper** (Jumbo)|
+|Attaccare la pre-auth Kerberos|KerbSniff/KerbCrack|**Kerberoasting / AS-REP roasting** (Rubeus, Impacket `GetUserSPNs`/`GetNPUsers`)|
+
+Un paio di sfumature che vale la pena tenere a mente, così non fai confusione all'esame vs in lab:
+
+- **Il concetto è identico, cambia il vettore.** Le slide poisonano il _layer 2_ (ARP); Responder poisona la _name resolution_ di fallback (LLMNR/NBT-NS), che è proprio la catena "NetBIOS-style" che avevi ricostruito nella nota del Cap. 3 (cache → WINS → broadcast → Lmhosts). Responder vive esattamente in quel gradino "broadcast locale": se il DNS interno risponde, non c'è query da avvelenare — motivo per cui la contromisura n.1 è _disabilitare LLMNR e NBT-NS_.
+- **Attento al nome "hash".** Responder cattura il **NetNTLM** (la response sul filo), non l'hash NT del SAM. È craccabile o relay-abile, ma **non** è pass-the-hash-abile: è la distinzione a tre che avevamo fissato (hash memorizzato ≠ response sul filo ≠ password).
+
+
+> [!info] Kerberos sniffing 
+> Kerberos 5 invia un pacchetto di **pre-autenticazione** contenente un timestamp cifrato con una chiave derivata dalla password dell'utente. Se la password è debole, un attacco **offline** su quello scambio può recuperarla (Cain ha uno sniffer MSKerb5-PreAuth). Non c'è difesa semplice se non usare password lunghe e complesse — perché il materiale intercettato è già valido, il collo di bottiglia è solo la forza della password.
+
+> [!warning] Contromisure allo sniffing 
+> **Disabilitare l'autenticazione LM** (gli hash NTLM sono più duri da craccare); password complesse e non da dizionario; cifratura a chiave pubblica; usare **IPsec** built-in di Windows per autenticare e cifrare il traffico.
+
+questa è una di quelle sezioni dove le slide dicono _cosa_ si fa ma non _cosa viaggia effettivamente sul filo_, ed è lì che sta tutta la comprensione. Ti ricostruisco il meccanismo da sotto.
+
+**Il punto di partenza: cosa NON viene mai trasmesso.** Quando ti autentichi a un servizio Windows, la password in chiaro non attraversa mai la rete. E — sorpresa — nemmeno l'hash memorizzato nel SAM attraversa la rete così com'è. Quello che viaggia è una **challenge-response**: il server ti manda un numero casuale (la _challenge_ C, un nonce), e tu rispondi con quel numero trasformato usando una chiave derivata dal tuo hash. È esattamente la formula che hai già nella nota: $Response = E_{K_1}(C)|E_{K_2}(C)|E_{K_3}(C)$, dove le tre chiavi vengono da $H = MD4(pwd)$. Il senso di questo schema è che il server può verificarti (conosce il tuo hash e sa ricalcolare la stessa risposta) senza che tu spedisca mai il segreto.
+
+**Perché allora sniffare serve a qualcosa?** Perché chi cattura la coppia (challenge, response) ha in mano tutto il necessario per un **attacco offline**. Il ragionamento dell'attaccante è: "provo una password candidata → ne derivo l'hash → ne derivo le chiavi → cifro la challenge che ho catturato → confronto con la response che ho catturato. Se combaciano, ho indovinato la password." È lo stesso loop del cracking del capitolo dopo, con una differenza cruciale: **è tutto offline**, quindi il lockout dell'account non esiste come problema. Sniffi una volta, poi macini candidati sulla tua macchina per giorni senza che il bersaglio se ne accorga. Ecco perché questa sezione è il ponte naturale verso il cracking: lo sniffing _procura il materiale_, il cracking lo _inverte_.
+
+**Perché LM / NTLM / Kerberos non sono ugualmente sniffabili.** Sono tre generazioni dello stesso problema, con robustezza crescente:
+
+- **LM** è il disastro. L'hash LM è costruito malissimo (password forzata in maiuscolo, spezzata in due metà da 7 caratteri hashate indipendentemente con DES). Questo significa che una challenge-response basata su LM si cracca offline in un lampo, perché stai attaccando due tronconi da 7 caratteri maiuscoli invece di una password intera. È _il_ motivo per cui Cain punta a sniffare proprio l'LM.
+- **NTLM** usa l'hash NT (MD4 della password intera, case-sensitive, senza lo spezzettamento). La response è molto più dura da invertire — non impossibile con password debole, ma niente a che vedere con LM.
+- **Kerberos** è un'altra bestia, e vale la pena guardarlo a parte.
+
+**Il caso Kerberos.** Qui non c'è una challenge del server nel senso classico. In Kerberos 5, quando il client parte, invia nella richiesta iniziale un dato di **pre-autenticazione**: un timestamp cifrato con una chiave derivata dalla password dell'utente. Serve a provare "sono davvero io, guarda che so cifrare l'ora corrente con la mia chiave". Ma per l'attaccante che lo cattura (lo sniffer MSKerb5-PreAuth di Cain) diventa un oracolo offline: prova una password → deriva la chiave → decifra il pacchetto → è venuto fuori un timestamp valido e sensato? Se sì, password trovata. È lo stesso schema "materiale cifrato con una chiave che dipende dalla password" → brute force offline. Per questo le slide dicono che non c'è difesa semplice: il materiale intercettato è _già valido di suo_, l'unico muro che rimane è la forza della password.
+
+**Il pezzo che le slide danno per scontato: la rete switchata.** "Sniffare" su un hub è banale, perché l'hub ripete ogni pacchetto su tutte le porte — sei in ascolto e senti tutto. Ma le reti moderne sono **switchate**, e lo switch manda il traffico solo alla porta del destinatario giusto: due macchine che dialogano tra loro non passano mai dalla tua porta. Ecco perché serve l'**ARP spoofing/poisoning**: avveleni la cache ARP delle vittime così che credano che _tu_ sia il gateway (o l'altro host), e il traffico viene deviato attraverso di te. A quel punto sei in posizione man-in-the-middle e lo sniffing torna possibile. È lo stesso ARP poisoning della sezione MITM subito successiva — non è una ripetizione, è che sniffing passivo e MITM attivo sono un continuum: una volta in mezzo, oltre a _leggere_ la challenge-response puoi anche **forzare un downgrade**, cioè convincere il client a usare il dialetto più debole (LM) per rendere il materiale il più facile possibile da craccare.
+
+**Una distinzione che ti conviene fissare adesso**, perché è la fonte di confusione numero uno quando poi arrivi a pass-the-hash e relay. Ci sono tre cose diverse che vengono tutte chiamate "hash" a sproposito:
+
+1. L'**hash memorizzato** (nel SAM o in RAM) → è quello che riusi _direttamente_ nel pass-the-hash.
+2. La **challenge-response sul filo** (il "NetNTLM") → questa NON la puoi passare come un hash: o la **cracki** offline per risalire alla password, oppure la **rilanci live** verso un altro server (ed è esattamente l'attacco SMBRelay della sezione dopo).
+3. La **password in chiaro** → il fine ultimo.
+
+Sniffing ti dà il tipo 2. Pass-the-hash lavora sul tipo 1. Sono canali diversi verso prede diverse, anche se il capitolo li mette vicini.
+
+**Le contromisure, lette attraverso il meccanismo** (così non sono una lista da memorizzare ma conseguenze logiche):
+
+- _Disabilitare l'autenticazione LM_ toglie dal filo la response più facile da craccare — costringi l'attaccante a lavorare su NTLM, ordini di grandezza più duro.
+- _Password lunghe e complesse_ sono la difesa vera contro Kerberos pre-auth e in generale contro tutto lo sniffing, perché ricordati che l'attacco finale è sempre un brute force offline: l'entropia della password è letteralmente il muro.
+- _Cifratura a chiave pubblica e IPsec_ attaccano il problema alla radice: se il canale è cifrato e mutuamente autenticato, non c'è più una challenge-response in chiaro da catturare **e** l'ARP spoofing non ti mette più in mezzo in modo utile, perché non puoi decifrare né impersonare senza le chiavi.
+
+Il filo conduttore, se lo vuoi in una frase: **lo sniffing non ruba la password, ruba una prova crittografica derivata dalla password, e la trasforma in un problema di brute force offline** — dove "offline" è la parola che rende l'attacco paziente e silenzioso, e "forza della password" è l'unica variabile che decide se ci riesce.
+
+Se ti è utile, posso aggiungere alla nota un callout che rende esplicita quella distinzione a tre (hash memorizzato / response sul filo / password) — è il tipo di chiarimento "a voce" che nelle slide manca e che torna utile quando arrivi a SMBRelay e pass-the-hash.
 
 ### Man-in-the-Middle (MITM)
 
