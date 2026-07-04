@@ -234,9 +234,11 @@ Il protocollo si sviluppa in tre fasi principali, ognuna composta da una richies
 
 L'utente Alice vuole loggarsi nel sistema.
 
-1. **AS_REQ:** Alice invia il suo nome all'AS.
+1. **AS_REQ:** Alice invia il suo nome all'AS. Alice chiede il TGT. 
+	1. Se un account ha la flag **"non richiedere pre-autenticazione"** (`DONT_REQ_PREAUTH`), chiunque può mandare una AS-REQ _a nome di Alice_ senza conoscere la password, e il KDC risponde con una AS-REP che contiene un blob **cifrato con la chiave di Alice del $S_A$ e TGT**. (possibile attacco [[AS-REP Roasting]])
+	2. Se non è presente quel flag, Il dettaglio che manca nella slide è _cosa_ Alice allega alla AS-REQ. Per dimostrare di essere lei, allega il dato di **pre-autenticazione**: un **timestamp cifrato con la sua chiave** (derivata dalla password). Il KDC lo decifra con la chiave di Alice che ha nel DB; se ne esce un orario sensato, Alice è autentica e il KDC risponde con la AS-REP (session key + TGT). Possibile attacco:  (lo sniffer MSKerb5-PreAuth) intercetta **quel timestamp cifrato** nella AS-REQ. È materiale cifrato-con-chiave-derivata-da-password → oracolo offline: provo password → derivo la chiave → decifro → è un timestamp valido? sì = password trovata. Questo è **sniffing vero**, perché catturi qualcosa che transita. Nota che però MSKerb5-PreAuth è un reperto archeologico ormai. Non esistono più tool moderni per fare una cosa del genere e se si vuole ottenere un informazione del genere, bisogna usare Wireshark (il perché è [[Kerberos|qui]])
     
-2. AS_REP: L'AS genera una chiave di sessione $S_A$ e un [[TGT (Ticket-Granting Ticket)]].
+3. AS_REP: L'AS genera una chiave di sessione $S_A$ e un [[TGT (Ticket-Granting Ticket)]].
     
     Il messaggio ricevuto da Alice è:
     
@@ -258,6 +260,8 @@ Alice vuole accedere a una stampante o a un server Bob.
 4. TGS_REP: Il TGS verifica il TGT, genera $K_{AB}$ e risponde:
 
 $$S_A \{ \text{Bob}, K_{AB}, \text{Ticket}_B \}$$
+
+[[Kerberoasting]] sfrutta esattamente questo: un utente autenticato qualsiasi chiede al KDC un ticket per un servizio (un account con un **SPN**), e il KDC glielo consegna cifrato con l'hash di quel service account. L'attaccante prende quel ticket e lo **cracca offline** per recuperare la password del _servizio_. Il KDC non verifica se Alice ha davvero il permesso di _parlare_ con Bob — quel controllo lo fa Bob dopo; il KDC consegna il ticket a chiunque abbia un TGT valido. Questa è la falla.
 
 ### Fase 3: Utilizzo del Servizio (Client ↔ Server Bob)
 
@@ -413,4 +417,38 @@ Il tuo schema è ben fatto. Una piccola precisazione: nell'AS_REP, in realtà il
 > Il professore potrebbe chiedere perché esiste il TGT.
 > 
 > Risposta: Serve a evitare che l'utente debba digitare la password ogni volta che vuole accedere a un nuovo servizio. Il TGT funge da "credenziale temporanea" che scade solitamente dopo 8-10 ore.
+
+---
+
+
+# Domande extra
+## Ma che si usa oggi al posto di MSKerb5-PreAuth per sniffare il pacchetto di autenticazione di Alice nella fase 1 con però il flag presente? (vedi [[Kerberos#Fase A Login Iniziale (AS)]])
+
+Domanda precisa, e la risposta onesta è: **quasi nessuno, perché quasi nessuno lo fa via sniffing.** Non c'è un "Responder del pre-auth sniffing" moderno che ha preso il posto di MSKerb5-PreAuth, e il motivo non è che manca il tool — è che quel vettore è diventato poco conveniente. Ti spiego il perché, che è più utile del nome di un tool.
+
+**Perché lo sniffing della fase 1 è un vettore quasi morto.** Tre ostacoli che si sommano:
+
+Primo, **serve posizione MITM sul traffico Kerberos** — devi già essere in mezzo tra la workstation di Alice e il KDC. Ma se sei già in quella posizione, hai strade molto più redditizie (relay, avvelenamento della name resolution) che non ti costringono poi a un brute force offline sperando che la password sia debole.
+
+Secondo, e decisivo: **oggi il timestamp di pre-auth è cifrato in AES**, non in RC4. I domini moderni (da Windows Server 2008 in su, con AD in modalità funzionale recente) negoziano etype 17/18. La chiave AES è **salata** con `dominio+username` e derivata con **4096 iterazioni di PBKDF2**. Ricordi il principio "hash lenti"? È esattamente questo: quelle 4096 iterazioni rendono il brute force offline ordini di grandezza più costoso rispetto all'RC4/NT-hash che MSKerb5-PreAuth attaccava. Il materiale sniffato resta craccabile _in teoria_, ma il rapporto sforzo/resa è pessimo.
+
+Terzo: quando c'è pre-auth attiva e password decente, l'attacco semplicemente **non rende**. Per questo l'ecosistema si è spostato sulle varianti _senza_ sniffing — [[AS-REP Roasting]] (utenti senza pre-auth) e Kerberoast (service ticket) — che ti fanno _richiedere_ il materiale invece di doverti mettere in mezzo.
+
+**Se proprio vuoi farlo oggi, cosa useresti.** Non esiste il tool dedicato "sniffa pre-auth e cracka" con un nome noto; si compone da pezzi generici:
+
+- **Cattura**: un normale sniffer di rete — `tcpdump` / `Wireshark` / `tshark` — sul traffico verso la porta 88 (Kerberos), da posizione MITM. Non c'è un cap턞ratore Kerberos-specifico moderno perché non serve: la AS-REQ con la pre-auth è un pacchetto come un altro, lo estrai con un filtro.
+- **Estrazione del blob** dal PCAP nel formato che il cracker si aspetta. Questo è il pezzo "artigianale": non c'è un `GetNPUsers` per lo sniffing, devi tirare fuori l'`enc-timestamp` dal pacchetto catturato.
+- **Cracking**: hashcat. Modalità **19900** per Kerberos 5 AS-REQ Pre-Auth in **etype 18 (AES256)**, **19800** per AES128, **7500** per il vecchio RC4. Nota che quelle modalità AES esistono _proprio_ per craccare il pre-auth sniffato — quindi hashcat lo supporta ancora, semplicemente è raro che valga la pena.
+
+Quindi il quadro completo, riallineato:
+
+|Vettore|Cattura moderna|Cracking|
+|---|---|---|
+|Sniff pre-auth (Alice con pre-auth)|Wireshark/tcpdump su porta 88 + estrazione manuale|hashcat 19900/19800 (AES), 7500 (RC4)|
+|AS-REP roast (utente senza pre-auth)|GetNPUsers / Rubeus (richiesta, no sniff)|hashcat 18200|
+|Kerberoast (service ticket)|GetUserSPNs / Rubeus (richiesta, no sniff)|hashcat 13100|
+
+La riga in alto è quella che MSKerb5-PreAuth incarnava; oggi la fai con tool generici, ma raramente la fai, perché le altre due righe rendono di più senza richiedere di stare in mezzo al traffico e senza sbattere contro l'AES salato.
+
+In una frase, la risposta alla tua domanda: **l'attaccante moderno per lo sniffing della fase 1 usa un packet capture generico più hashcat, non un tool dedicato — ma in pratica evita quel vettore e passa a richiedere il materiale (AS-REP roast / Kerberoast), perché la pre-auth in AES rende lo sniffing offline poco redditizio.**
 
