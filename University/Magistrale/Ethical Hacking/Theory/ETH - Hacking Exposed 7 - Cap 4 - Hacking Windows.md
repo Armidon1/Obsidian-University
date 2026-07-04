@@ -1,4 +1,4 @@
-# ETHL 0x12 — Cap 4: Hacking Windows
+# Cap 4: Hacking Windows
 
 > [!abstract] Di cosa parla il capitolo 
 > Come si attacca e si difende un sistema Windows. È il capitolo dove l'output dei due precedenti viene finalmente **usato**: Cap. 2 (Scanning) dava porte e OS, Cap. 3 (Enumeration) dava la lista di account validi, e qui quegli account e quelle porte diventano accesso reale. Il capitolo è costruito su tre blocchi netti: attacchi **non autenticati** (entrare da fuori senza credenziali), attacchi **autenticati** (cosa fa un attaccante una volta dentro), e le **security features** di Windows (le difese). Ogni tecnica offensiva è seguita dalle sue contromisure — è un testo difensivo travestito da manuale d'attacco.
