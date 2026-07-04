@@ -315,11 +315,14 @@ E qui si chiude un cerchio con la nota LSASS di prima: la difesa moderna del ker
 
 ### Privilege Escalation
 
-> [!info] Da Guest a SYSTEM Una volta loggati come Guest o Limited User, l'obiettivo è salire ad **Administrator** o **SYSTEM**. Exploit storici: `getadmin.exe` (DLL injection), buffer overrun MS03-013, e molti altri.
+> [!info] Da Guest a SYSTEM 
+> Una volta loggati come Guest o Limited User, l'obiettivo è salire ad **Administrator** o **SYSTEM**. Exploit storici: `getadmin.exe` (DLL injection), buffer overrun MS03-013, e molti altri.
 
-> [!info] SYSTEM > Administrator Punto controintuitivo: l'account **SYSTEM è più potente dell'Administrator**. L'Administrator però può schedulare task che vengono eseguiti _come_ SYSTEM — quindi è il ponte per arrivarci (più complicato da Vista in poi, ma ancora possibile).
+> [!info] SYSTEM > Administrator 
+> Punto controintuitivo: l'account **SYSTEM è più potente dell'Administrator**. L'Administrator però può schedulare task che vengono eseguiti _come_ SYSTEM — quindi è il ponte per arrivarci (più complicato da Vista in poi, ma ancora possibile).
 
-> [!warning] Prevenire l'escalation Tenere le macchine patchate; **restringere il logon interattivo** ad account fidati via Security Policy (`secpol.msc` → Local Policies → User Right Assignment → _Deny log on locally_).
+> [!warning] Prevenire l'escalation 
+> Tenere le macchine patchate; **restringere il logon interattivo** ad account fidati via Security Policy (`secpol.msc` → Local Policies → User Right Assignment → _Deny log on locally_).
 
 ### Estrarre gli hash delle password
 
@@ -334,33 +337,46 @@ E qui si chiude un cerchio con la nota LSASS di prima: la difesa moderna del ker
 
 ### Cracking degli hash
 
-> [!info] Invertire l'hash offline L'hash è pensato per essere difficilissimo da invertire. Gli hash **NTLM** sono duri; il problema sono gli **LM**, ancora usati da Windows XP e precedenti per **retrocompatibilità** (disabilitati di default da Vista/Win7). Il cracking offline funziona così: prendo una lista di candidati (dizionario), li hasho con lo stesso algoritmo, confronto con l'hash estratto — se combaciano, password trovata. Il **lockout non conta** perché è tutto offline.
+> [!info] Invertire l'hash offline 
+> L'hash è pensato per essere difficilissimo da invertire. Gli hash **NTLM** sono duri; il problema sono gli **LM**, ancora usati da Windows XP e precedenti per **retrocompatibilità** (disabilitati di default da Vista/Win7). Il cracking offline funziona così: prendo una lista di candidati (dizionario), li hasho con lo stesso algoritmo, confronto con l'hash estratto — se combaciano, password trovata. Il **lockout non conta** perché è tutto offline.
 
-> [!danger] Windows non usa il salt Il difetto cruciale. Il **salt** è un valore casuale aggiunto alla password prima dell'hashing, così due utenti con la stessa password producono hash diversi. **Windows non salta** i suoi hash: due account con la stessa password danno lo _stesso_ hash. Questo rende praticabili le **rainbow table** (hash precomputati che barattano tempo con memoria). Linux invece salta i suoi hash. Es. dalle slide: "Project Rainbow Crack", tabella LM precomputata da 24 GB su 6 DVD per $120.
+> [!danger] Windows non usa il salt 
+> Il difetto cruciale. Il **salt** è un valore casuale aggiunto alla password prima dell'hashing, così due utenti con la stessa password producono hash diversi. **Windows non salta** i suoi hash: due account con la stessa password danno lo _stesso_ hash. Questo rende praticabili le **rainbow table** (hash precomputati che barattano tempo con memoria). Linux invece salta i suoi hash. Es. dalle slide: "Project Rainbow Crack", tabella LM precomputata da 24 GB su 6 DVD per $120.
 
-> [!info] NTLM usa MD4 (challenge-response) Il meccanismo mostrato nelle slide: dalla password si deriva $H = MD4(pwd)$, poi $H$ viene spezzata (con padding di zeri) in tre chiavi $K_1, K_2, K_3$. Il server manda una **challenge** $C$; il client risponde con $C$ cifrata sotto le tre chiavi concatenate: $Response = E_{K_1}(C) | E_{K_2}(C) | E_{K_3}(C)$. È questo che rende possibile il pass-the-hash: chi ha $H$ può calcolare la risposta senza conoscere la password in chiaro.
+> [!info] NTLM usa MD4 (challenge-response) 
+> Il meccanismo mostrato nelle slide: dalla password si deriva $H = MD4(pwd)$, poi $H$ viene spezzata (con padding di zeri) in tre chiavi $K_1, K_2, K_3$. Il server manda una **challenge** $C$; il client risponde con $C$ cifrata sotto le tre chiavi concatenate: $Response = E_{K_1}(C) | E_{K_2}(C) | E_{K_3}(C)$. È questo che rende possibile il pass-the-hash: chi ha $H$ può calcolare la risposta senza conoscere la password in chiaro.
 
-> [!info] Hash veloci vs lenti Regola generale: **tutti gli hash veloci sono sbagliati per le password** (SHA, MD, CRC), proprio perché sono veloci a calcolare in massa. Serve un algoritmo **lento** (Ubuntu e macOS hashano migliaia di volte in iterazione, per rallentare l'attaccante). Le due tecniche di cracking: **brute force** (tutte le combinazioni) e **dictionary** (parole di una lista, con varianti tipo `ABLE`, `Able`, `@bl3`).
+> [!info] Hash veloci vs lenti 
+> Regola generale: **tutti gli hash veloci sono sbagliati per le password** (SHA, MD, CRC), proprio perché sono veloci a calcolare in massa. Serve un algoritmo **lento** (Ubuntu e macOS hashano migliaia di volte in iterazione, per rallentare l'attaccante). Le due tecniche di cracking: **brute force** (tutte le combinazioni) e **dictionary** (parole di una lista, con varianti tipo `ABLE`, `Able`, `@bl3`).
 
-> [!warning] Contromisure al cracking Password forti (non da dizionario, lunghe, complesse); aggiungere caratteri ASCII non stampabili (es. NUM LOCK + ALT255 o ALT-129). Concetto chiave: **entropia** = imprevedibilità della password. Consigliati i **password manager** / generatori automatici. Nota critica delle slide: possiamo davvero fidarci dei vault?
+> [!warning] Contromisure al cracking 
+> Password forti (non da dizionario, lunghe, complesse); aggiungere caratteri ASCII non stampabili (es. NUM LOCK + ALT255 o ALT-129). Concetto chiave: **entropia** = imprevedibilità della password. Consigliati i **password manager** / generatori automatici. Nota critica delle slide: possiamo davvero fidarci dei vault?
 
-> [!info] Accelerare il cracking **Rainbow table** (barattano tempo con memoria) ed **Elcomsoft Distributed Password Recovery**, che usa molte macchine e le loro **GPU** insieme per craccare ~100× più veloce. Tool: John The Ripper Jumbo (CLI); LCP, Cain, Ophcrack, L0phtcrack, Elcomsoft (GUI).
+> [!info] Accelerare il cracking 
+> **Rainbow table** (barattano tempo con memoria) ed **Elcomsoft Distributed Password Recovery**, che usa molte macchine e le loro **GPU** insieme per craccare ~100× più veloce. Tool: John The Ripper Jumbo (CLI); LCP, Cain, Ophcrack, L0phtcrack, Elcomsoft (GUI).
 
 ### Dump delle credenziali in cache
+ricorda: SAM contiene account locali, LSASS contiene account loggati nella sessione corrente, [[LSA Secrets]] contiene utenti e password dei servizi (docker ecc) mentre Previous Logon Cache gli ultimi 10 account collegati che vengono tenuti in caso il Controller non fosse raggiungibile. La distinzione è negli account locali (della macchina stessa), di dominio (AD) e dei servizi.
 
-> [!info] Tre depositi diversi di credenziali Oltre al SAM, Windows tiene credenziali in altri due posti, spesso confusi tra loro. **LSA Secrets**, **cache dei logon di dominio** e ciò che estrae **WCE** sono tre cose distinte — vale la pena tenerle separate.
+> [!info] Tre depositi diversi di credenziali 
+> Oltre al SAM, Windows tiene credenziali in altri due posti, spesso confusi tra loro. **LSA Secrets**, **cache dei logon di dominio** e ciò che estrae **WCE** sono tre cose distinte — vale la pena tenerle separate.
 
-> [!info] LSA Secrets Il **Local Security Authority** conserva credenziali di logon _in chiaro_ per sistemi esterni, sotto `HKLM\SECURITY\Policy\Secrets`. Cifrate a macchina spenta, ma **decifrate e tenute in memoria dopo il login**. Contenuto: password di service account in plaintext (anche di domini esterni), hash in cache degli ultimi 10 utenti, password FTP/web in chiaro, credenziali RAS dial-up, password degli account computer per l'accesso al dominio.
+> [!info] LSA Secrets 
+> Il **Local Security Authority** conserva credenziali di logon _in chiaro_ per sistemi esterni, sotto `HKLM\SECURITY\Policy\Secrets`. Cifrate a macchina spenta, ma **decifrate e tenute in memoria dopo il login**. Contenuto: password di service account in plaintext (anche di domini esterni), hash in cache degli ultimi 10 utenti, password FTP/web in chiaro, credenziali RAS dial-up, password degli account computer per l'accesso al dominio.
 
-> [!info] Previous Logon Cache Se un membro del dominio non raggiunge il domain controller, fa un **logon offline** con credenziali in cache. Gli ultimi **10 logon di dominio** sono memorizzati cifrati e hashati. Il tool **CacheDump** inverte la cifratura e ottiene gli hash, che poi **John the Ripper** cracka con brute-force/dizionario.
+> [!info] Previous Logon Cache 
+> Se un membro del dominio non raggiunge il domain controller, fa un **logon offline** con credenziali in cache. Gli ultimi **10 logon di dominio** sono memorizzati cifrati e hashati. Il tool **CacheDump** inverte la cifratura e ottiene gli hash, che poi **John the Ripper** cracka con brute-force/dizionario.
 
-> [!info] Windows Credential Editor (di nuovo) Estrae la password di login **in chiaro dalla RAM**, senza bisogno di crackare nessun hash. **Limite**: prende solo gli utenti _attualmente loggati_ (o a volte quelli che si erano loggati e poi sconnessi).
+> [!info] Windows Credential Editor (di nuovo) 
+> Estrae la password di login **in chiaro dalla RAM**, senza bisogno di crackare nessun hash. **Limite**: prende solo gli utenti _attualmente loggati_ (o a volte quelli che si erano loggati e poi sconnessi).
 
-> [!warning] Contromisure ai cached credentials Poco da fare (Microsoft offre una patch, KB Q184017, ma aiuta poco). Serve comunque privilegio Administrator/SYSTEM per prenderli → **evitare di farsi bucare come admin**. Non usare account di dominio ad alti privilegi per loggarsi sulle macchine locali (es. per avviare servizi); i **Domain Admin dovrebbero evitare connessioni RDP**; si può cambiare il valore di registro per azzerare le credenziali in cache — ma allora gli utenti non potranno loggarsi quando il DC è irraggiungibile (il solito trade-off compatibilità/sicurezza).
+> [!warning] Contromisure ai cached credentials 
+> Poco da fare (Microsoft offre una patch, KB Q184017, ma aiuta poco). Serve comunque privilegio Administrator/SYSTEM per prenderli → **evitare di farsi bucare come admin**. Non usare account di dominio ad alti privilegi per loggarsi sulle macchine locali (es. per avviare servizi); i **Domain Admin dovrebbero evitare connessioni RDP**; si può cambiare il valore di registro per azzerare le credenziali in cache — ma allora gli utenti non potranno loggarsi quando il DC è irraggiungibile (il solito trade-off compatibilità/sicurezza).
 
 ### Remote Control e Back Doors
 
-> [!info] Riprendere il controllo Le backdoor sono servizi che abilitano il controllo remoto. **Netcat per Windows** in ascolto che esegue `cmd` (con `-d` per stealth mode, nessuna console interattiva); ci si connette da un'altra macchina via `telnet IP porta` ottenendo una shell — **remote control senza logon**, molto pericoloso. **PsExec** (SysInternals): esecuzione di codice remoto via SMB (139/445) con username e password. **Metasploit** ha un'ampia gamma di payload backdoor. Controllo remoto **grafico**: Terminal Services/RDP (3389, non attivo di default) e **VNC** (gratuito, installabile da remoto, avvio stealth via registro). **Port redirection** con **Fpipe** (McAfee).
+> [!info] Riprendere il controllo 
+> Le backdoor sono servizi che abilitano il controllo remoto. **Netcat per Windows** in ascolto che esegue `cmd` (con `-d` per stealth mode, nessuna console interattiva); ci si connette da un'altra macchina via `telnet IP porta` ottenendo una shell — **remote control senza logon**, molto pericoloso. **PsExec** (SysInternals): esecuzione di codice remoto via SMB (139/445) con username e password. **Metasploit** ha un'ampia gamma di payload backdoor. Controllo remoto **grafico**: Terminal Services/RDP (3389, non attivo di default) e **VNC** (gratuito, installabile da remoto, avvio stealth via registro). **Port redirection** con **Fpipe** (McAfee).
 
 ```text
 # Netcat in ascolto sulla 8080 che serve una shell (concetto dalle slide)
@@ -372,9 +388,11 @@ TELNET <IP> 8080
 
 ### Covering Tracks
 
-> [!info] Cancellare le tracce Ottenuti privilegi Administrator/SYSTEM, l'intruso nasconde le prove, installa backdoor e nasconde un toolkit per rientrare. **Disabilitare l'auditing**: `auditpol /disable` (e `/enable` per riattivarlo). **Svuotare l'Event Log**: `ELsave` (scritto per NT). **Nascondere file**: `attrib +h` (nasconde blandamente) e gli **Alternate Data Streams (ADS)** — nascondere un file _dentro_ un altro, feature NTFS nata per compatibilità con Macintosh.
+> [!info] Cancellare le tracce 
+> Ottenuti privilegi Administrator/SYSTEM, l'intruso nasconde le prove, installa backdoor e nasconde un toolkit per rientrare. **Disabilitare l'auditing**: `auditpol /disable` (e `/enable` per riattivarlo). **Svuotare l'Event Log**: `ELsave` (scritto per NT). **Nascondere file**: `attrib +h` (nasconde blandamente) e gli **Alternate Data Streams (ADS)** — nascondere un file _dentro_ un altro, feature NTFS nata per compatibilità con Macintosh.
 
-> [!info] ADS in pratica Meccanismo: si allega un file allo stream di un altro file. Per file binari serve il `cp` POSIX (Resource Kit). Rilevamento con **LADS** o **SFIND** di Foundstone; per cancellare un ADS si copia il file su una partizione **FAT** e poi di nuovo su NTFS (FAT non supporta gli stream, quindi lo perde).
+> [!info] ADS in pratica 
+> Meccanismo: si allega un file allo stream di un altro file. Per file binari serve il `cp` POSIX (Resource Kit). Rilevamento con **LADS** o **SFIND** di Foundstone; per cancellare un ADS si copia il file su una partizione **FAT** e poi di nuovo su NTFS (FAT non supporta gli stream, quindi lo perde).
 
 ```text
 # Nascondere netcat nello stream di un file esca
@@ -385,9 +403,11 @@ C:\> cp oso001.009:nc.exe nc.exe
 start oso001.009:nc.exe
 ```
 
-> [!info] Rootkit Il modo migliore per nascondere file, account, backdoor e connessioni di rete su una macchina. Trattati in un capitolo dedicato.
+> [!info] Rootkit 
+> Il modo migliore per nascondere file, account, backdoor e connessioni di rete su una macchina. Trattati in un capitolo dedicato.
 
-> [!warning] Contromisure alla compromissione autenticata Regola d'oro: una volta compromesso con privilegi admin, **reinstallare da zero** — non si può mai essere certi di aver rimosso tutte le backdoor. Se proprio si vuole ripulire, coprire **quattro aree**: File, chiavi di Registro, Processi, Porte di rete. File sospetti: nomi noti come `nc.exe`, antivirus, Tripwire per rilevare modifiche ai file di sistema. Registro sospetto: chiavi di backdoor note (WINVNC3, NetBus Server), rimosse con `reg delete`; attenzione agli **ASEP** (Autostart Extensibility Points). Processi sospetti: alto uso CPU, `schtasks`/task scheduler. Porte sospette: `netstat -aon`.
+> [!warning] Contromisure alla compromissione autenticata 
+> Regola d'oro: una volta compromesso con privilegi admin, **reinstallare da zero** — non si può mai essere certi di aver rimosso tutte le backdoor. Se proprio si vuole ripulire, coprire **quattro aree**: File, chiavi di Registro, Processi, Porte di rete. File sospetti: nomi noti come `nc.exe`, antivirus, Tripwire per rilevare modifiche ai file di sistema. Registro sospetto: chiavi di backdoor note (WINVNC3, NetBus Server), rimosse con `reg delete`; attenzione agli **ASEP** (Autostart Extensibility Points). Processi sospetti: alto uso CPU, `schtasks`/task scheduler. Porte sospette: `netstat -aon`.
 
 ---
 
@@ -411,13 +431,17 @@ start oso001.009:nc.exe
 |**Windows service hardening**|Isolamento risorse, least privilege, refactoring, accesso di rete ristretto, **session 0 isolation**|
 |**Enhancement del compilatore**|Feature compile-time non configurabili: buffer security check (**GS**), **ASLR**, **SafeSEH**|
 
-> [!info] EFS e Recovery Agent Punto di attenzione: EFS ha un **Recovery Agent** per recuperare i file cifrati (utile quando un dipendente lascia l'azienda, ma pone problemi di privacy). Su Win 2000 e Server 2003 il **Local Administrator era il Default Recovery Agent** — grave buco di sicurezza, corretto da Win XP. La vulnerabilità primaria di EFS resta l'account Recovery Agent.
+> [!info] EFS e Recovery Agent 
+> Punto di attenzione: EFS ha un **Recovery Agent** per recuperare i file cifrati (utile quando un dipendente lascia l'azienda, ma pone problemi di privacy). Su Win 2000 e Server 2003 il **Local Administrator era il Default Recovery Agent** — grave buco di sicurezza, corretto da Win XP. La vulnerabilità primaria di EFS resta l'account Recovery Agent.
 
-> [!info] BitLocker e cold boot BitLocker cifra tutto il volume e conserva la chiave in modo sicuro, proteggendo da boot di OS alternativi. Attacco **cold boot**: si raffreddano i chip DRAM per allungare il tempo prima che la chiave venga cancellata dalla memoria volatile, e la si legge. Contromisura: separare la chiave _fisicamente_ in un modulo esterno removibile.
+> [!info] BitLocker e cold boot 
+> BitLocker cifra tutto il volume e conserva la chiave in modo sicuro, proteggendo da boot di OS alternativi. Attacco **cold boot**: si raffreddano i chip DRAM per allungare il tempo prima che la chiave venga cancellata dalla memoria volatile, e la si legge. Contromisura: separare la chiave _fisicamente_ in un modulo esterno removibile.
 
-> [!info] Least privilege Problema culturale: la maggior parte degli utenti Windows usa un account **Administrator tutto il tempo**, e molti servizi girano con privilegi admin — comodo ma pessimo per la sicurezza. Su XP/2003 e precedenti: loggarsi come utente limitato e usare **run as** per elevare solo quando serve.
+> [!info] Least privilege 
+> Problema culturale: la maggior parte degli utenti Windows usa un account **Administrator tutto il tempo**, e molti servizi girano con privilegi admin — comodo ma pessimo per la sicurezza. Su XP/2003 e precedenti: loggarsi come utente limitato e usare **run as** per elevare solo quando serve.
 
-> [!info] CIS Il **Center for Internet Security** (nonprofit) fornisce benchmark di configurazione di sicurezza Microsoft e tool di scoring gratuiti (cisecurity.org).
+> [!info] CIS 
+> Il **Center for Internet Security** (nonprofit) fornisce benchmark di configurazione di sicurezza Microsoft e tool di scoring gratuiti (cisecurity.org).
 
 ---
 

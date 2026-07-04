@@ -1,4 +1,4 @@
-# ETHL — LAN Manager (LM) vs NTLM
+# LAN Manager (LM) vs NTLM
 
 > [!abstract] Di cosa parla la nota 
 > Come funzionano davvero i due protocolli di autenticazione Windows più vecchi: **LM** (LAN Manager) e **NTLM**. Prima come è costruito l'hash memorizzato, poi come avviene lo scambio challenge-response sulla rete, infine il confronto punto per punto. È il tassello che spiega _perché_ nel Cap. 4 lo sniffing e il cracking funzionano, e perché la prima contromisura è sempre "disabilita LM".

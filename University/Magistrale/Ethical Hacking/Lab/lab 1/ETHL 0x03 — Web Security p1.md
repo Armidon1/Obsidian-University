@@ -1,8 +1,10 @@
 # ETHL 0x03 — Web Security p1
 
-> [!abstract] In una frase Si guarda alla sicurezza web **dal punto di vista dell'attaccante** usando la mappa **OWASP Top 10**, e ci si allena sulla **OWASP Juice Shop** (web app volutamente insicura). Il lab tocca: anatomia di una web app, Top 10 (web + API), un attacco completo a **JWT** (downgrade `alg:none` + **IDOR**), **enumeration** (Gobuster/Seclists, vhost, `robots.txt`), **Burp Suite** come proxy, **path traversal** e **file upload**.
+> [!abstract] In una frase 
+> Si guarda alla sicurezza web **dal punto di vista dell'attaccante** usando la mappa **OWASP Top 10**, e ci si allena sulla **OWASP Juice Shop** (web app volutamente insicura). Il lab tocca: anatomia di una web app, Top 10 (web + API), un attacco completo a **JWT** (downgrade `alg:none` + **IDOR**), **enumeration** (Gobuster/Seclists, vhost, `robots.txt`), **Burp Suite** come proxy, **path traversal** e **file upload**.
 
-> [!tip] Come usare questa nota Il prof valuta il **perché** ("spiega perché ha funzionato o meno"), non la ricetta. Per ogni tecnica trovi: _cosa fa → perché funziona → come ci si difende_. I comandi delle slide sono **riferimento da saper leggere e commentare all'esame**, non un kit. Tre slide sono letteralmente domande "spiega questo" (22, 28, 31): le ho marcate come [[#Trappole d'esame]].
+> [!tip] Come usare questa nota 
+> Il prof valuta il **perché** ("spiega perché ha funzionato o meno"), non la ricetta. Per ogni tecnica trovi: _cosa fa → perché funziona → come ci si difende_. I comandi delle slide sono **riferimento da saper leggere e commentare all'esame**, non un kit. Tre slide sono letteralmente domande "spiega questo" (22, 28, 31): le ho marcate come [[#Trappole d'esame]].
 
 ---
 
@@ -38,7 +40,8 @@ docker run --rm -e NODE_ENV=unsafe -p 3000:3000 bkimminich/juice-shop
 # poi http://localhost:3000/#/register per creare un utente
 ```
 
-> [!note] Perché "unsafe" Senza `NODE_ENV=unsafe` Juice Shop disabilita alcune challenge considerate troppo rischiose (es. RCE). È un poligono: lo si rende deliberatamente più fragile per imparare.
+> [!note] Perché "unsafe" 
+> Senza `NODE_ENV=unsafe` Juice Shop disabilita alcune challenge considerate troppo rischiose (es. RCE). È un poligono: lo si rende deliberatamente più fragile per imparare.
 
 ---
 
@@ -80,7 +83,8 @@ docker run --rm -e NODE_ENV=unsafe -p 3000:3000 bkimminich/juice-shop
 9. **API09** — Improper Inventory Management
 10. **API10** — Unsafe Consumption of APIs
 
-> [!info] Pattern da notare Tre delle prime cinque voci API sono varianti di **autorizzazione rotta** (object level, property level, function level). Il messaggio: nelle API il bug n.1 è "controllo se posso _autenticarmi_, ma non se sono _autorizzato_ su _questo specifico oggetto_". Tienilo a mente per l'IDOR sotto.
+> [!info] Pattern da notare 
+> Tre delle prime cinque voci API sono varianti di **autorizzazione rotta** (object level, property level, function level). Il messaggio: nelle API il bug n.1 è "controllo se posso _autenticarmi_, ma non se sono _autorizzato_ su _questo specifico oggetto_". Tienilo a mente per l'IDOR sotto.
 
 ### 2.3 A01:2025 — Broken Access Control
 
@@ -166,7 +170,8 @@ Juice Shop usa **RS256**: solo il server (che ha la chiave privata) può produrr
 
 ### 3.4 Walkthrough dell'attacco a Juice Shop (riferimento d'esame)
 
-> [!tip] Spiega ogni passo, non recitarlo Le slide 23–28 sono "[practice] login come admin **the hard way**". All'esame conta sapere **cosa fa e perché** ogni comando, non eseguirlo a memoria. Lo riporto in chiave commentata.
+> [!tip] Spiega ogni passo, non recitarlo 
+> Le slide 23–28 sono "[practice] login come admin **the hard way**". All'esame conta sapere **cosa fa e perché** ogni comando, non eseguirlo a memoria. Lo riporto in chiave commentata.
 
 **Acquisire il token** — DevTools → Storage → Cookies → copia il valore `token`.
 ![[Pasted image 20260602000245.png]]
@@ -248,7 +253,8 @@ echo "<payload>" | base64 -d | sed 's/"id":[0-9]*/"id":1/' | base64 | sed 's/=*$
 - **Far crashare l'app** spesso rivela lo **stack tecnologico** (messaggi d'errore verbosi → collega ad **A10:2025 Mishandling of Exceptional Conditions** e **A09 logging**).
 - _L'esperienza rende tutto più efficace._
 
-> [!tip] Perché `robots.txt` è oro per l'attaccante Non è un controllo di sicurezza: è solo una richiesta gentile ai motori di ricerca. Elencare lì `/admin` o `/backup` significa **dirlo anche all'attaccante**. "Security through obscurity" che si auto-sabota.
+> [!tip] Perché `robots.txt` è oro per l'attaccante 
+> Non è un controllo di sicurezza: è solo una richiesta gentile ai motori di ricerca. Elencare lì `/admin` o `/backup` significa **dirlo anche all'attaccante**. "Security through obscurity" che si auto-sabota.
 
 ### 4.2 Filone 2 — Virtual host / sottodomini (non applicabile a Juice Shop)
 
@@ -262,13 +268,15 @@ Più web app sullo stesso server (virtual hosting). Tecniche **passive** (silenz
 |**subdomainfinder.c99.nl**|passiva|enumerazione sottodomini|
 |**vhost / DNS brute-forcing**|**attiva** ⚠|rumoroso, **può essere considerato un attacco**|
 
-> [!warning] Etica/legalità L'esempio `repubblica.it` sulle slide è **"do not actually attack it"**. La distinzione passiva/attiva è anche **legale**: il brute-forcing genera traffico verso il target e può violare i termini d'uso o la legge. Saper distinguere i due regimi è un punto d'esame.
+> [!warning] Etica/legalità 
+> L'esempio `repubblica.it` sulle slide è **"do not actually attack it"**. La distinzione passiva/attiva è anche **legale**: il brute-forcing genera traffico verso il target e può violare i termini d'uso o la legge. Saper distinguere i due regimi è un punto d'esame.
 
 ### 4.3 Gobuster
 
 Brute-forcer per: **URI/directory**, **vhost**, **sottodomini DNS**, bucket GCP/S3, server TFTP.
 
-> [!warning] Disclaimer obbligatorio (dalle slide) A parte forse l'enumerazione DNS, **queste sono attività attive → attacchi**. Solo su target autorizzati (Juice Shop, lab tuoi).
+> [!warning] Disclaimer obbligatorio (dalle slide)
+>  A parte forse l'enumerazione DNS, **queste sono attività attive → attacchi**. Solo su target autorizzati (Juice Shop, lab tuoi).
 
 **Wordlist — Seclists** (username, password, URL, payload di fuzzing, web shell…):
 
@@ -293,7 +301,8 @@ gobuster dir   -w .../Web-Content/common.txt --exclude-length 3748 \
                -u http://192.168.1.73:3000/
 ```
 
-> [!info] Trappola: a cosa serve `--exclude-length 3748`? (slide 38) Juice Shop è una **Single Page Application** (Angular): qualunque path inesistente restituisce **sempre la stessa pagina `index.html`**, con la **stessa lunghezza in byte** e status 200. Senza filtro, Gobuster segnalerebbe _tutto_ come "trovato" (falsi positivi). `--exclude-length 3748` **scarta le risposte di quella lunghezza** (la pagina di fallback), lasciando solo i path realmente diversi. È un esempio di come si adatta lo strumento al comportamento del target.
+> [!info] Trappola: a cosa serve `--exclude-length 3748`? (slide 38) 
+> Juice Shop è una **Single Page Application** (Angular): qualunque path inesistente restituisce **sempre la stessa pagina `index.html`**, con la **stessa lunghezza in byte** e status 200. Senza filtro, Gobuster segnalerebbe _tutto_ come "trovato" (falsi positivi). `--exclude-length 3748` **scarta le risposte di quella lunghezza** (la pagina di fallback), lasciando solo i path realmente diversi. È un esempio di come si adatta lo strumento al comportamento del target.
 
 ---
 
@@ -304,9 +313,11 @@ gobuster dir   -w .../Web-Content/common.txt --exclude-length 3748 \
 - **Community Edition** gratuita (limitata ma sufficiente per il corso). Download dal sito PortSwigger.
 - Funzione cardine: **proxy intercettante** tra browser e server → vedi/modifichi ogni richiesta e risposta.
 
-> [!info] Perché serve il setup TLS (demo slide 42) Per intercettare **HTTPS**, Burp fa un _man-in-the-middle_ "buono": presenta al browser un certificato firmato dalla **CA di Burp**. Il browser si fida solo se installi quella CA come **trusted**. Senza, vedi errori di certificato. Concettualmente: stai inserendo volontariamente un MITM nel tuo stesso traffico per ispezionarlo. (Collega questo a _come funziona la fiducia TLS_ del corso.)
+> [!info] Perché serve il setup TLS (demo slide 42) 
+> Per intercettare **HTTPS**, Burp fa un _man-in-the-middle_ "buono": presenta al browser un certificato firmato dalla **CA di Burp**. Il browser si fida solo se installi quella CA come **trusted**. Senza, vedi errori di certificato. Concettualmente: stai inserendo volontariamente un MITM nel tuo stesso traffico per ispezionarlo. (Collega questo a _come funziona la fiducia TLS_ del corso.)
 
-> [!tip] Burp vs Gobuster Gobuster = brute-forcing **automatico** di path/host (rumoroso, a tappeto). Burp = ispezione/manipolazione **mirata e interattiva** delle singole richieste. Spesso si usano insieme: Gobuster scopre, Burp approfondisce.
+> [!tip] Burp vs Gobuster 
+> Gobuster = brute-forcing **automatico** di path/host (rumoroso, a tappeto). Burp = ispezione/manipolazione **mirata e interattiva** delle singole richieste. Spesso si usano insieme: Gobuster scopre, Burp approfondisce.
 
 ---
 
@@ -321,9 +332,11 @@ https://insecure-website.com/loadImage?filename=../../../etc/passwd
 https://insecure-website.com/loadImage?filename=..\..\..\windows\win.ini
 ```
 
-> [!info] Perché funziona L'app prende un nome file dall'utente e lo concatena a una directory base senza sanificarlo. La sequenza `../` (parent directory) "risale" l'albero del filesystem fino a uscire dalla cartella prevista e raggiungere file di sistema (`/etc/passwd`, `/proc/self/environ`, ecc.). Su Windows si usa `..\`.
+> [!info] Perché funziona 
+> L'app prende un nome file dall'utente e lo concatena a una directory base senza sanificarlo. La sequenza `../` (parent directory) "risale" l'albero del filesystem fino a uscire dalla cartella prevista e raggiungere file di sistema (`/etc/passwd`, `/proc/self/environ`, ecc.). Su Windows si usa `..\`.
 
-> [!example] Cosa si legge nella demo (slide 45) Recuperando `/proc/self/environ` via `?filename=..%2f..%2f..%2fproc/self/environ` si vedono le **variabili d'ambiente del processo** (HOME, USER, PATH…): info preziose sullo stack e talvolta segreti.
+> [!example] Cosa si legge nella demo (slide 45) 
+> Recuperando `/proc/self/environ` via `?filename=..%2f..%2f..%2fproc/self/environ` si vedono le **variabili d'ambiente del processo** (HOME, USER, PATH…): info preziose sullo stack e talvolta segreti.
 
 ### 6.1 Bypass dei filtri (encoding)
 
@@ -440,4 +453,5 @@ Se l'app filtra `../`, si prova a **codificare** i caratteri così che il filtro
 
 ---
 
-> [!quote] Filo conduttore del lab Quasi tutto ruota attorno a **fidarsi di input controllati dall'attaccante**: il campo `alg` di un JWT, l'`id` nel payload, il nome file in una richiesta, l'estensione di un upload. La difesa è sempre la stessa idea: **non fidarti del client, valida e autorizza sul server**.
+> [!quote] Filo conduttore del lab 
+> Quasi tutto ruota attorno a **fidarsi di input controllati dall'attaccante**: il campo `alg` di un JWT, l'`id` nel payload, il nome file in una richiesta, l'estensione di un upload. La difesa è sempre la stessa idea: **non fidarti del client, valida e autorizza sul server**.

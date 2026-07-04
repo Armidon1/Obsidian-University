@@ -4,6 +4,7 @@
 **OS:** Windows  
 **Relazioni:** [[WinRM]] [[MariaDB]]
 
+vedi LM [[LM-Lan Manager]] per saperne di più sulla parte tecnica
 ---
 
 ## 📖 Cos'è

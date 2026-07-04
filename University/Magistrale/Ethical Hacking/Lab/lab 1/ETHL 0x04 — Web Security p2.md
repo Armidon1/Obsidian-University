@@ -446,4 +446,5 @@ Utilizzando queste tabelle di metadati, un attaccante può mappare alla cieca l'
 
 ---
 
-> [!quote] Filo conduttore (stesso del lab precedente, più forte) Ogni vulnerabilità di questo lab è la stessa frase ripetuta su interpreti diversi: **dati controllati dall'utente che un interprete tratta come codice perché codice e dati non sono separati.** Cambia l'interprete (browser, SQL, template, shell, include di file), non il principio. E la difesa è sempre la stessa idea: **separare codice e dati**, validare in ingresso, codificare in uscita, usare API parametrizzate.
+> [!quote] Filo conduttore (stesso del lab precedente, più forte) 
+> Ogni vulnerabilità di questo lab è la stessa frase ripetuta su interpreti diversi: **dati controllati dall'utente che un interprete tratta come codice perché codice e dati non sono separati.** Cambia l'interprete (browser, SQL, template, shell, include di file), non il principio. E la difesa è sempre la stessa idea: **separare codice e dati**, validare in ingresso, codificare in uscita, usare API parametrizzate.
