@@ -1,8 +1,10 @@
 # ETHL 0x05 — Hacking Unix p1
 
-> [!abstract] In una frase Sei già **dentro** un sistema con privilegi bassi (tipicamente `www-data` dopo una RCE web). Ora devi **salire** — Privilege Escalation (PE) — o **spostarti** verso altri utenti — Lateral Movement. Il filo conduttore è uno: **abusare di programmi che girano con privilegi maggiori dei tuoi** (`SetUID`/`SetGID`, `sudo`) costringendoli a fare cose non previste: leggere file, eseguire codice, caricare librerie che controlli tu.
+> [!abstract] In una frase 
+> Sei già **dentro** un sistema con privilegi bassi (tipicamente `www-data` dopo una RCE web). Ora devi **salire** — Privilege Escalation (PE) — o **spostarti** verso altri utenti — Lateral Movement. Il filo conduttore è uno: **abusare di programmi che girano con privilegi maggiori dei tuoi** (`SetUID`/`SetGID`, `sudo`) costringendoli a fare cose non previste: leggere file, eseguire codice, caricare librerie che controlli tu.
 
-> [!tip] Come usare questa nota Il prof chiede sempre il **perché** ("perché ha funzionato / perché no"). Per ogni tecnica trovi _cosa fa → perché funziona → come ci si difende_. I comandi delle slide sono **da saper leggere e commentare**, non da recitare. Le slide 19, 45 sono domande "spiega questo": le trovi in [[#Trappole d'esame]]. È il "dopo" di una RCE — le shell le hai già in [[ETHL 0x02 — Remote Access - Shells]].
+> [!tip] Come usare questa nota 
+> Il prof chiede sempre il **perché** ("perché ha funzionato / perché no"). Per ogni tecnica trovi _cosa fa → perché funziona → come ci si difende_. I comandi delle slide sono **da saper leggere e commentare**, non da recitare. Le slide 19, 45 sono domande "spiega questo": le trovi in [[#Trappole d'esame]]. È il "dopo" di una RCE — le shell le hai già in [[ETHL 0x02 — Remote Access - Shells]].
 
 ---
 
@@ -77,15 +79,45 @@ Per ogni triade: `r` (read), `w` (write), `x` (execute). Il terzo carattere può
 | --------- | ----------------------------------------------------------------------- |
 | `s` / `t` | setuid/setgid o sticky **+ eseguibile**                                 |
 | `S` / `T` | setuid/setgid o sticky **non eseguibile** (la maiuscola = manca la `x`) |
+Lo **sticky bit** è il terzo bit speciale dei permessi Unix, accanto a SetUID e SetGID. Ma fa una cosa completamente diversa da quei due.
 
-> [!info] Cosa fa SetUID — il cuore di tutto Un binario con bit **SetUID** gira con l'**EUID del proprietario del file**, non dell'utente che lo lancia. Se il proprietario è `root` (UID 0), il programma gira con privilegi di root anche se lanciato da te. È esattamente ciò che si abusa: se riesci a far eseguire codice tuo a quel binario, il tuo codice eredita l'EUID di root.
+Oggi ha un solo uso pratico rilevante: applicato a una **directory**, cambia le regole di cancellazione dei file al suo interno.
+
+**Il problema che risolve.** Normalmente, per cancellare un file, non serve poter scrivere _sul file_ — serve poter scrivere _sulla directory_ che lo contiene (perché cancellare = rimuovere la voce dalla directory). Questo è un guaio per le directory condivise e scrivibili da tutti, come `/tmp`: se tutti hanno permesso di scrittura su `/tmp`, allora chiunque potrebbe cancellare i file _degli altri_, anche senza averne alcun diritto.
+
+**Cosa fa lo sticky bit.** Con lo sticky bit attivo sulla directory, un file al suo interno può essere cancellato o rinominato **solo dal proprietario del file, dal proprietario della directory, o da root** — non più da chiunque abbia scrittura sulla directory. È esattamente la protezione di `/tmp`:
+
+```
+drwxrwxrwt  ... /tmp
+        └── la 't' finale nella triade "others" è lo sticky bit
+```
+
+Nota la `t` al posto della `x` nell'ultima triade. Come per SetUID/SetGID:
+
+- `t` minuscola = sticky bit attivo **e** il bit di esecuzione è presente
+- `T` maiuscola = sticky bit attivo ma **manca** la `x` (la maiuscola segnala sempre l'assenza dell'eseguibile)
+
+In ottale è il valore `1000` (mentre SetUID è `4000` e SetGID è `2000`):
+
+```bash
+chmod 1777 /tmp     # rwxrwxrwt
+chmod +t  /mydir    # forma simbolica
+```
+
+**Perché nelle tue note appare insieme a SetUID/SetGID.** Condivide con loro la stessa "posizione" nella rappresentazione dei permessi (il terzo carattere di una triade) e la stessa logica di lettura minuscola/maiuscola — per questo la tabella li mette insieme. Ma per la privilege escalation lo sticky bit **non è un vettore** come SetUID: non fa girare nulla con privilegi altrui, anzi, _restringe_ i permessi invece di espanderli. È una difesa, non un buco.
+
+Curiosità storica: in origine ("sticky" = appiccicoso) il bit, applicato a un _eseguibile_, diceva al kernel di tenerne il codice in memoria/swap dopo l'uscita, per riavviarlo più in fretta. Quell'uso è obsoleto: sui sistemi Linux moderni lo sticky bit sui file normali viene ignorato, e resta solo il significato "sulle directory" descritto sopra.
+
+> [!info] Cosa fa SetUID — il cuore di tutto 
+> Un binario con bit **SetUID** gira con l'**EUID del proprietario del file**, non dell'utente che lo lancia. Se il proprietario è `root` (UID 0), il programma gira con privilegi di root anche se lanciato da te. È esattamente ciò che si abusa: se riesci a far eseguire codice tuo a quel binario, il tuo codice eredita l'EUID di root.
 > 
 > ```
 > -rwsr-xr-x 1 root _ssh ... ssh-agent   ← SetUID root
 > -rwsr-xr-x 1 root root ... sudo        ← SetUID root
 > ```
 
-> [!note] Capabilities (solo accenno) Esistono anche le **capabilities** (es. `cap_net_raw=ep` su `ping`) — un modo più granulare di assegnare privilegi specifici senza SetUID root pieno. Il corso non le approfondisce ma vanno conosciute. Si leggono con `getcap`.
+> [!note] Capabilities (solo accenno) 
+> Esistono anche le **capabilities** (es. `cap_net_raw=ep` su `ping`) — un modo più granulare di assegnare privilegi specifici senza SetUID root pieno. Il corso non le approfondisce ma vanno conosciute. Si leggono con `getcap`.
 
 ---
 
@@ -121,7 +153,8 @@ Alcuni programmi rivelano parti di file arbitrari **nei messaggi d'errore**:
 - `bridge --batch /etc/shadow` (se SetUID) → l'errore di parsing stampa righe dello shadow
 - `date -f /etc/shadow` (se SetUID) → "invalid date 'root:$y$j9T...'" stampa l'hash mentre si lamenta del formato
 
-> [!info] Perché funziona Il programma legge un file con privilegi root per processarlo, e quando il contenuto non rispetta il formato atteso lo **rigurgita nell'errore**. Tu non avresti potuto leggere `/etc/shadow`, ma il programma SetUID sì — ed è abbastanza "stupido" da mostrartelo. Confused Deputy puro. _Pensaci due volte prima di lasciare agli utenti il permesso di cambiare la data di sistema._
+> [!info] Perché funziona 
+> Il programma legge un file con privilegi root per processarlo, e quando il contenuto non rispetta il formato atteso lo **rigurgita nell'errore**. Tu non avresti potuto leggere `/etc/shadow`, ma il programma SetUID sì — ed è abbastanza "stupido" da mostrartelo. Confused Deputy puro. _Pensaci due volte prima di lasciare agli utenti il permesso di cambiare la data di sistema._
 
 ### 4.3 Può eseguire codice che controlli tu
 
@@ -145,7 +178,8 @@ Tre modi:
 > 
 > Il `-p` è cruciale: dice a `sh` di **non droppare** i privilegi (di default `bash`/`sh` riallineano UID a EUID per sicurezza).
 
-> [!info] Quando si può "iniettare" il programma eseguito Si controlla cosa il SetUID esegue se:
+> [!info] Quando si può "iniettare" il programma eseguito 
+> Si controlla cosa il SetUID esegue se:
 > 
 > 1. l'app eredita il **`PATH` che controlli tu** E usa **percorsi relativi** (es. chiama `ls` invece di `/bin/ls`), AND
 > 2. l'app esegue un programma che **puoi sovrascrivere**
@@ -300,13 +334,15 @@ Morale: se trovi un SUID che "non funziona" per la privilege escalation, control
 sudo -l    # lista cosa l'utente corrente può fare con sudo
 ```
 
-> [!info] Leggere l'output di sudo -l — è oro Mostra le voci tipo `(root) NOPASSWD: /usr/bin/systemctl start xkeysnail`. Ogni binario lì elencato è un **potenziale vettore**: se quel programma può eseguire comandi, leggere file, o caricare librerie, lo abusi (→ [[GTFOBins]] elenca esattamente come per ciascun binario). `NOPASSWD` = non serve nemmeno la password.
+> [!info] Leggere l'output di sudo -l — è oro 
+> Mostra le voci tipo `(root) NOPASSWD: /usr/bin/systemctl start xkeysnail`. Ogni binario lì elencato è un **potenziale vettore**: se quel programma può eseguire comandi, leggere file, o caricare librerie, lo abusi (→ [[GTFOBins]] elenca esattamente come per ciascun binario). `NOPASSWD` = non serve nemmeno la password.
 
 ### 8.2 L'ambiente con sudo
 
 L'environment **non è preservato** (si usa quello di root), a meno che: (1) sia specificato sulla command line, AND (2) sia consentito nei sudoers (`setenv`, assenza di `env_reset`/`env_delete`). Questo è la chiave per capire perché `LD_PRELOAD`/`LD_LIBRARY_PATH` a volte passano e a volte no.
 
-> [!success] Stesse strategie del SUID/SGID Tutto ciò della sezione 4 vale anche per sudo (ricorda EUID/EGID): leggere/scrivere file, errori insicuri, eseguire codice (programmi, `.so`, code injection).
+> [!success] Stesse strategie del SUID/SGID 
+> Tutto ciò della sezione 4 vale anche per sudo (ricorda EUID/EGID): leggere/scrivere file, errori insicuri, eseguire codice (programmi, `.so`, code injection).
 
 ---
 
@@ -327,7 +363,8 @@ gcc -fPIC -shared -nostartfiles -o ./ldp.so ./ldp.c
 sudo LD_PRELOAD=./ldp.so <qualsiasi binario eseguibile con sudo>
 ```
 
-> [!info] Perché funziona (quando funziona) `LD_PRELOAD` forza il dynamic linker a **caricare la tua libreria prima** di tutte le altre. Il suo `_init()` parte subito e apre una shell con EUID=0 (perché lanciato via sudo). `unsetenv("LD_PRELOAD")` evita che la variabile si propaghi ai processi figli causando ricorsione. **Condizione**: i sudoers devono preservare `LD_PRELOAD` (no `env_reset`/`env_delete` per quella var).
+> [!info] Perché funziona (quando funziona) 
+> `LD_PRELOAD` forza il dynamic linker a **caricare la tua libreria prima** di tutte le altre. Il suo `_init()` parte subito e apre una shell con EUID=0 (perché lanciato via sudo). `unsetenv("LD_PRELOAD")` evita che la variabile si propaghi ai processi figli causando ricorsione. **Condizione**: i sudoers devono preservare `LD_PRELOAD` (no `env_reset`/`env_delete` per quella var).
 
 ---
 
@@ -599,4 +636,5 @@ Solo quando fai `exit` dalla shell, `wait()` ritorna e openvpn riprende da dove 
 
 ---
 
-> [!quote] Filo conduttore Privilege escalation su Unix = **trovare un programma che gira con più privilegi di te e convincerlo a lavorare per te**. Cambia il meccanismo (SetUID, sudo, LD_PRELOAD, `.so`, errori verbosi), non il principio. È il Confused Deputy applicato al sistema operativo — lo stesso "fidarsi di un input controllato dall'attaccante" che hai visto nel web in [[ETHL 0x04 — Web Security p2]], qui spostato sul filesystem e sul dynamic linker. La difesa è sempre **minimo privilegio + niente input/percorsi controllabili nei processi privilegiati**.
+> [!quote] Filo conduttore 
+> Privilege escalation su Unix = **trovare un programma che gira con più privilegi di te e convincerlo a lavorare per te**. Cambia il meccanismo (SetUID, sudo, LD_PRELOAD, `.so`, errori verbosi), non il principio. È il Confused Deputy applicato al sistema operativo — lo stesso "fidarsi di un input controllato dall'attaccante" che hai visto nel web in [[ETHL 0x04 — Web Security p2]], qui spostato sul filesystem e sul dynamic linker. La difesa è sempre **minimo privilegio + niente input/percorsi controllabili nei processi privilegiati**.

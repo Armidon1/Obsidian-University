@@ -11,7 +11,7 @@ vedere [[linux-privesc lab]] per la parte pratica di questo lab
 ---
 ## 1. Exploiting cronjobs
 
-### 1.1 Cos'è cron
+### 1.1 Cos'è [[Cron]]
 
 **Cron** è lo scheduler di task sui sistemi Unix: esegue comandi **periodicamente** secondo espressioni nei file **crontab**.
 

@@ -2,7 +2,8 @@
 
 # ETHL 0x01 — Vulnerabilities
 
-> [!abstract] In una riga Questo lab insegna a **classificare** le vulnerabilità (CVE / CWE / CVSS), a **cercarle** (Exploit-DB, Vulners…), a **enumerarle** (Nmap + NSE) e a **gestire l'intero workflow** con Metasploit. È quasi tutto concetti + metodologia → terreno perfetto per il richiamo attivo.
+> [!abstract] In una riga 
+> Questo lab insegna a **classificare** le vulnerabilità (CVE / CWE / CVSS), a **cercarle** (Exploit-DB, Vulners…), a **enumerarle** (Nmap + NSE) e a **gestire l'intero workflow** con Metasploit. È quasi tutto concetti + metodologia → terreno perfetto per il richiamo attivo.
 
 > [!tip] Sovrapposizione con la teoria Nmap, banner grabbing ed enumerazione coincidono con il **recon di Hacking Exposed (Cap. 1-3)**. Studi una volta, vale doppio: teoria + lab.
 
@@ -111,7 +112,8 @@ Dal punto di vista dell'attaccante: trovare vuln per **un sistema specifico** (c
 |**Authenticated / Agent-based**|**Fa login** (es. SSH) e scansiona filesystem, memoria, pacchetti installati|Alta (vede dall'interno)|
 |**Dependency scanner**|Raccoglie l'**SBOM** (Software Bill Of Materials) e fa matching con i DB di vuln|Ottima per la supply chain|
 
-> [!note] Filosofia del corso L'obiettivo è **saper ricercare** vulnerabilità, **non** usare exploit "pre-confezionati" alla cieca. Ma devi saper **usare** i tool e **capirli fin nel dettaglio** (= saper spiegare _perché_ un attacco funziona). È esattamente ciò che valuta l'esame.
+> [!note] Filosofia del corso 
+> L'obiettivo è **saper ricercare** vulnerabilità, **non** usare exploit "pre-confezionati" alla cieca. Ma devi saper **usare** i tool e **capirli fin nel dettaglio** (= saper spiegare _perché_ un attacco funziona). È esattamente ciò che valuta l'esame.
 
 ---
 
@@ -143,13 +145,17 @@ Script in **Lua** (al momento ~604 predefiniti, alcuni accettano argomenti). **C
 
 ### [[Metasploitable 2]] — domande pratiche (stile esame)
 
-> [!question] C'è un firewall? Spiega. Lo deduci dagli **stati/ragioni** delle porte (`--reason`). Su Metasploitable 2 le porte chiuse rispondono con **`conn-refused` (RST)** → niente firewall che fa _drop_ silenzioso. Se invece molte porte risultassero **`filtered`** (nessuna risposta), sarebbe il sintomo di un **firewall che scarta i pacchetti**. → _Risposta: no, perché vediamo RST e non drop._
+> [!question] C'è un firewall? Spiega. Lo deduci dagli **stati/ragioni** delle porte (`--reason`). 
+> Su Metasploitable 2 le porte chiuse rispondono con **`conn-refused` (RST)** → niente firewall che fa _drop_ silenzioso. Se invece molte porte risultassero **`filtered`** (nessuna risposta), sarebbe il sintomo di un **firewall che scarta i pacchetti**. → _Risposta: no, perché vediamo RST e non drop._
 
-> [!question] `nmap -sU -sV -p1-53 <target>` — c'è un servizio? Scan **UDP**. L'UDP è _connectionless_: il "nessuna risposta" è ambiguo → Nmap marca **`open|filtered`**. Deduce **closed** solo se riceve un **ICMP port-unreachable**. Quindi "come fa Nmap a sapere che non c'è servizio?" → tramite l'**ICMP unreachable**; in assenza di esso resta nel dubbio open|filtered. Servizi trovati: **21/udp, 53/udp**.
+> [!question] `nmap -sU -sV -p1-53 <target>` — c'è un servizio? 
+> Scan **UDP**. L'UDP è _connectionless_: il "nessuna risposta" è ambiguo → Nmap marca **`open|filtered`**. Deduce **closed** solo se riceve un **ICMP port-unreachable**. Quindi "come fa Nmap a sapere che non c'è servizio?" → tramite l'**ICMP unreachable**; in assenza di esso resta nel dubbio open|filtered. Servizi trovati: **21/udp, 53/udp**.
 
-> [!question] Porta `2121/tcp`? **ProFTPD** (FTP secondario su Metasploitable). Esistono exploit noti per certe versioni → ricerca su Exploit-DB / `search` in Metasploit.
+> [!question] Porta `2121/tcp`? 
+> **ProFTPD** (FTP secondario su Metasploitable). Esistono exploit noti per certe versioni → ricerca su Exploit-DB / `search` in Metasploit.
 
-> [!question] Due modi "diretti" per fare root su Metasploitable 2 Senza loggarti come `msfadmin`, i vettori classici sono **servizi con backdoor / versioni vulnerabili note**, ad esempio:
+> [!question] Due modi "diretti" per fare root su Metasploitable 2 
+> Senza loggarti come `msfadmin`, i vettori classici sono **servizi con backdoor / versioni vulnerabili note**, ad esempio:
 > 
 > 1. **vsftpd 2.3.4** (porta 21) → versione con backdoor famigerata.
 > 2. **UnrealIRCd 3.2.8.1** (porta 6667) → backdoor nella tarball. _(altri: Samba `usermap_script`, distccd, ecc.)_. Il punto d'esame è il **ragionamento**: enumero versione → cerco CVE/exploit noto → spiego perché funziona.
