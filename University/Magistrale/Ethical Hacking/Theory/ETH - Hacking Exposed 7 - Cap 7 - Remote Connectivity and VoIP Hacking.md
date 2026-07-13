@@ -16,6 +16,10 @@ Il capitolo è, di fatto, un catalogo di vie d'ingresso "non convenzionali". Fin
 
 ## 1. Dial-up hacking
 
+Il **dial-up** è un modo di connettersi a una rete remota usando la **linea telefonica analogica**: un modem converte i dati in segnali audio, compone un numero e stabilisce la connessione con un modem all'altro capo. È l'accesso remoto pre-Internet a banda larga — lento (fino a 56 kbps), e occupa la linea telefonica mentre è attivo.
+
+Nel contesto del Cap. 7 conta perché, anche se soppiantato dalla VPN, **sopravvive** dove nessuno lo cerca più: vecchi server, apparati di rete e soprattutto sistemi di controllo industriale (ICS). Ed è proprio l'essere «dimenticato» a renderlo un vettore d'attacco reale.
+
 Il dial-up è il capostipite dell'accesso remoto. Molte aziende lo tengono ancora acceso per raggiungere vecchi server, apparati di rete o ICS, e proprio perché "dimenticato" resta un vettore reale.
 
 ### Footprinting: trovare i numeri
@@ -27,7 +31,7 @@ Prima di attaccare bisogna procurarsi i numeri da comporre. Il footprinting tele
 
 ### Wardialing
 
-Il **wardialing** automatizza la scansione di interi blocchi di numeri per scoprire quali rispondono con un modem. Conta sia l'hardware sia il software.
+Il **wardialing** automatizza la scansione di interi blocchi di numeri per scoprire quali rispondono con un modem — è il compito del **wardialer**, distinto dal **demon dialer** che invece martella ripetutamente un singolo numero. Conta sia l'hardware sia il software.
 
 Sul lato **hardware** l'efficienza dipende dal numero e dalla qualità dei modem. Ci sono poi due voci spesso trascurate: i **problemi legali** (le leggi che regolano identificazione delle linee, registrazione delle chiamate e spoofing del numero variano da giurisdizione a giurisdizione) e i **costi accessori** (chiamate a lunga distanza, internazionali o a tariffa nominale che si moltiplicano su migliaia di numeri).
 
@@ -35,7 +39,7 @@ Sul lato **software** contano scheduling automatico, facilità di setup e accura
 
 ### Brute-force scripting: i cinque domini
 
-Dai risultati del wardialing si categorizzano le connessioni in **domini di penetrazione**, in base a come il server dial-up gestisce l'autenticazione e i tentativi falliti. È la mappa che decide se e come vale la pena montare un attacco brute-force scriptato (con **ZOC, Procomm Plus** e il linguaggio di scripting **ASPECT**).
+Dai risultati del wardialing si categorizzano le connessioni in **domini di penetrazione** — una classificazione che richiede esperienza con una grande varietà di server dial-up e sistemi operativi — in base a come il server gestisce l'autenticazione e i tentativi falliti. È la mappa che decide se e come vale la pena montare un attacco brute-force scriptato (con **ZOC, Procomm Plus** e il linguaggio di scripting **ASPECT**).
 
 | Dominio | Caratteristica |
 |---|---|
@@ -50,7 +54,29 @@ Dai risultati del wardialing si categorizzano le connessioni in **domini di pene
 
 ### Contromisure: un ciclo, non una lista
 
-Le misure di sicurezza dial-up sono dodici, ma il punto non è impararle a memoria: sono un **processo continuo** che si chiude tornando al passo 1. In sintesi tematica: inventariare le linee esistenti e **consolidarle** in un modem bank centrale posizionato come connessione *non fidata* fuori dalla rete interna; rendere le linee analogiche difficili da trovare e mettere in sicurezza fisica gli armadi delle telecomunicazioni; monitorare i log del software dial-up; imporre **autenticazione multi-fattore** e **dial-back** (il sistema richiama un numero noto); sensibilizzare l'help desk sul rischio di rilasciare o resettare credenziali; centralizzare il provisioning e stabilire policy ferme. Poi si ricomincia dall'inventario.
+Le misure di sicurezza dial-up sono dodici, ma il punto non è impararle a memoria: sono un **processo continuo** che si chiude tornando al passo 1. In sintesi tematica: inventariare le linee esistenti e **consolidarle** in un modem bank centrale posizionato come connessione *non fidata* fuori dalla rete interna; rendere le linee analogiche difficili da trovare e mettere in sicurezza fisica gli armadi delle telecomunicazioni; monitorare i log del software dial-up; **non rivelare informazioni identificative** sulle linee che servono clienti/business (niente banner che dica chi sei o che sistema è); imporre **autenticazione multi-fattore** e **dial-back** (il sistema richiama un numero noto); sensibilizzare l'help desk sul rischio di rilasciare o resettare credenziali; centralizzare il provisioning e stabilire policy ferme. Poi si ricomincia dall'inventario.
+
+### Come si comporta l'attaccante
+
+Ha senso che ti sembri alieno: sei abituato al mondo IP, e il dial-up gira su una logica **completamente diversa nel primo passo**. Ma la parte confusa è solo l'ingresso — una volta dentro, torna tutto familiare. Ti rimappo i concetti su quelli che già conosci.
+
+Nel mondo IP hai un **indirizzo IP**, fai un **port scan**, trovi un **servizio aperto**, ti connetti **attraverso Internet** e ti autentichi. Nel dial-up cambia solo il livello di trasporto e indirizzamento:
+
+- **numero di telefono** al posto dell'indirizzo IP
+- **wardialing** al posto del port scan: componi in sequenza un blocco di numeri e ascolti _cosa risponde_. Persona → salti. Fax → annoti. **Tono di modem (carrier)** → jackpot, dall'altra parte c'è un computer. È discovery pura, come nmap che trova le porte aperte.
+- il **modem che risponde con un prompt** è l'equivalente del servizio aperto: ti connetti e ti trovi davanti un login Windows RAS, una console Cisco, un getty Unix, un'interfaccia di manutenzione ICS o l'admin di un PBX. Il **banner** ti dice cos'è — è enumeration.
+- poi **bruteforce scripting** delle credenziali (i cinque domini dicono se è praticabile), esattamente come forzeresti un login qualsiasi.
+
+Fin qui è la solita catena _footprint → scan → enumerate → exploit_ che già padroneggi. **L'unica cosa che cambia è il tubo**: invece di pacchetti IP instradati su Internet, il tuo modem fa una **telefonata diretta** sulla rete telefonica (PSTN) fino al modem del bersaglio, e i due negoziano un collegamento punto-punto (quel rumore stridulo dell'handshake).
+
+Ed è qui il punto che rende il dial-up _pericoloso_, non la tecnica in sé:![[Pasted image 20260713113145.png]]Questa è l'intera ragione d'essere del dial-up come vettore. Le difese perimetrali — firewall, IDS, VPN — stanno tutte **sul bordo IP**, perché è da lì che ci si aspetta il traffico. Un modem appeso a una porta seriale in uno sgabuzzino non passa da nessuna di quelle difese: è una **porta laterale che entra dritta nella rete interna**, e nessuno la sorveglia perché "tanto chi usa più il dial-up".
+
+Quindi il modo tipico in cui un attaccante lo sfrutta, in una frase: **wardialing dei numeri del target per trovare un modem vivo e dimenticato, autenticazione (spesso banale, credenziali di default o deboli) contro quello che risponde, e da lì ci si ritrova con un piede _dentro_ la rete — bypassando completamente il firewall — da cui poi si fa il solito lateral movement IP che già conosci.**
+
+Ecco perché le contromisure del capitolo sembrano ovvie ma sono esattamente mirate a questo: _inventaria le linee_ (non puoi difendere un modem che non sai di avere), _consolida i modem_ in un unico punto trattato come non fidato, _dial-back_ (il sistema richiama un numero noto, così non basta chiamare), _MFA_. Tutte cose che servono a chiudere quella porta laterale o almeno a metterci una guardia.
+
+E il collegamento che ti fa scattare il "perché è ancora nel libro": negli **ICS/SCADA** questi modem legacy ci sono davvero ancora, ed è lo stesso mondo di infrastruttura critica-su-roba-vecchia che chiudeva il Cap. 6 con Stuxnet. Il canale obsoleto è pericoloso _proprio perché_ obsoleto — è l'unico pezzo di rete che nessuno ha aggiornato né sta guardando.
+
 
 ---
 
@@ -75,6 +101,10 @@ Le connessioni dial-up verso i **PBX** (i centralini aziendali) esistono ancora,
 ---
 
 ## 3. Voicemail hacking
+
+Un sistema di Voicemail o segreteria telefonica è un sistema centralizzato utilizzato nelle aziende per l’invio, l’archiviazione e il recupero di messaggi audio, proprio come farebbe una segreteria telefonica a casa. Questi sistemi rendono un sistema telefonico più flessibile e potente consentendo il passaggio di informazioni e messaggi tra gli utenti anche quando uno di essi non è presente.
+
+Ogni interno di un [sistema telefonico](https://www.3cx.it/centralino/telefonico/) è normalmente collegato ad una Voicemail, quindi quando viene chiamato il numero e la linea non riceve risposta o è occupata, il chiamante ascolta un messaggio precedentemente registrato dall’utente. Questo messaggio può dare istruzioni al chiamante di lasciare un messaggio vocale o fornire altre opzioni disponibili. Le opzioni includono il paging dell’utente o il trasferimento a un altro interno o un receptionist. I sistemi di Voicemail forniscono inoltre notifiche agli utenti per informarli di nuovi messaggi vocali. I sistemi più moderni offrono agli utenti diversi modi per controllare la propria Voicemail, incluso l’accesso tramite PC, smartphone, telefoni fissi o persino tramite [App mobili](https://www.3cx.it/centralino/app-telelavoro/).![[Pasted image 20260713113006.png]]
 
 Il brute-force della voicemail funziona come il dial-up. Servono tre ingredienti: il **numero** per accedere al sistema di voicemail, la **casella target** (3–5 cifre) e una **stima educata della password**, che di norma è composta solo da numeri — ed è proprio questo spazio ristretto a renderla fragile. Strumenti storici per sistemi vecchi e poco sicuri: **Voicemail Box Hacker 3.0** e **VrACK 0.51**, oltre allo scripting **ASPECT**.
 
