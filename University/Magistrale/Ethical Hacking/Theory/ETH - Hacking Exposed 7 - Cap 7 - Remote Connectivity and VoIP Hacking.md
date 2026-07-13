@@ -108,6 +108,18 @@ Ogni interno di un [sistema telefonico](https://www.3cx.it/centralino/telefonico
 
 Il brute-force della voicemail funziona come il dial-up. Servono tre ingredienti: il **numero** per accedere al sistema di voicemail, la **casella target** (3–5 cifre) e una **stima educata della password**, che di norma è composta solo da numeri — ed è proprio questo spazio ristretto a renderla fragile. Strumenti storici per sistemi vecchi e poco sicuri: **Voicemail Box Hacker 3.0** e **VrACK 0.51**, oltre allo scripting **ASPECT**.
 
+#### Ma che ci fai?
+
+Buona domanda, perché il "che ci fai con una segreteria telefonica" è proprio il punto che non è ovvio. Lo scopo non è la voicemail in sé — è ciò a cui dà accesso. Ci sono tre payoff, in ordine crescente di gravità.
+
+Il primo è **intelligence**. Una casella vocale è una miniera di ricognizione: messaggi che nominano persone, numeri interni, progetti, "richiamami a questo numero riguardo alla fusione", chi è in ferie e chi copre. È lo stesso valore del footprinting, ma servito su un piatto — informazione sensibile che l'azienda non pensa di star esponendo. Lo scandalo _News of the World_ nel Regno Unito era esattamente questo: giornalisti che indovinavano il PIN di default per ascoltare i messaggi di celebrità e vittime.
+
+Il secondo è l'eredità **phreaking / toll fraud**. I sistemi di voicemail vecchi, spesso integrati col PBX, una volta che sei autenticato ti lasciano fare outbound calling, call forwarding o "out-dial" dall'interno del sistema. L'attaccante usa la casella come trampolino per **telefonate internazionali o a numeri premium a spese della vittima**. È il motivo per cui voicemail e PBX stanno nello stesso capitolo: stesso mondo, stesso bottino.
+
+Il terzo — e per te che vieni dalla sicurezza IP è quello che fa scattare il _click_ — è che la voicemail è un **buco nell'autenticazione telefonica**. Moltissimi servizi mandano codici di reset password o OTP con una **telefonata**, e se non rispondi il codice finisce... in segreteria. Chi controlla la tua voicemail (PIN debole) fa partire il "chiamami col codice", lascia squillare a vuoto, poi recupera l'OTP dal messaggio. Così **scavalca la 2FA basata sul telefono** e ti prende l'account vero. È il ponte tra il capitolo telefonico e il mondo che conosci: la vecchia casella vocale diventa la chiave per un account moderno.
+
+E il motivo per cui vale la pena provarci è la stessa fragilità che il libro sottolinea: PIN **solo numerici**, corti, spesso lasciati di default. Keyspace minuscolo, brute-force banale — esattamente la stessa meccanica del dial-up, con questi tre payoff a giustificare lo sforzo.
+
 > [!info] Contromisure voicemail
 > Lockout dopo un numero di tentativi falliti e logging/osservazione delle connessioni alla voicemail.
 
