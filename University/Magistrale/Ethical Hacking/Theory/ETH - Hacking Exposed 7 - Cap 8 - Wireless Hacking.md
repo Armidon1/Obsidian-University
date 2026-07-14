@@ -155,9 +155,108 @@ La sequenza è airodump-ng (cattura) → aireplay-ng (fake auth) → aireplay-ng
 
 **WPA-PSK cade con passphrase debole.** WPA non aveva vulnerabilità maggiori «fino al 2017» (il riferimento è a KRACK, che colpisce il 4-way handshake). Il punto debole resta la PSK: condivisa fra tutti gli utenti, lunga 8–63 caratteri, hashata 4096 volte insieme all'SSID — se è lunga e casuale servono trilioni di tentativi. L'attacco è **offline**: si cattura il 4-way handshake (aspettando, o forzandolo con un deauth) e poi si bruteforza in locale. Tool: aircrack-ng (dizionario + PCAP), coWPAtty (rainbow table specifiche per SSID, ~40 GB, generate sui top 1000 SSID di WiGLE), Pyrit (hashing scaricato su GPU). Mitigazione: PSK complessa e SSID unico (le rainbow table sono legate all'SSID) — ma basta un utente a divulgare la chiave.
 
-**WPA-Enterprise: si attacca l'EAP.** Qui non c'è una chiave condivisa da rubare, quindi il bersaglio è il protocollo EAP. Prima si identifica il tipo: si cattura l'handshake EAP, Wireshark ne mostra il tipo e lo username viaggia in chiaro verso il RADIUS. Il caso peggiore è **LEAP** (Cisco, 2000): schema 802.1X su RADIUS nato per rimediare a WEP, ma con zero resistenza al dizionario offline perché si appoggia solo a MS-CHAPv2. E MS-CHAPv2 è fragile — niente SALT negli hash NT, chiave DES debole da 2 byte, username in chiaro — così le rainbow table (DB da ~4 GB) rendono il crack efficiente. Cisco sostiene che LEAP sia sicuro solo con password ≥10 caratteri random, che quasi nessuno usa, quindi in pratica si cracca in giorni o minuti. Tool: asleap estrae e cracca le password LEAP deboli, ed è integrato con Air-Jack per buttare giù gli utenti autenticati; alla riautenticazione la password viene sniffata e crackata. Verdetto: evitarlo come WEP. (È lo stesso mondo degli hash NT senza salt di [[ETHL - LAN Manager (LM) vs NTLM]]; e Microsoft stessa sconsiglia PPTP/MS-CHAP dopo la CloudCracker di Moxie Marlinspike — ~200 $ in 24 h — raccomandando PEAP, L2TP/IPsec, IPSec+IKEv2 o SSTP.)
+**WPA-Enterprise: si attacca l'EAP.** Qui lo scenario cambia: non esiste una passphrase unica condivisa da tutti, ma ogni utente ha le proprie credenziali, verificate da un server **RADIUS** tramite 802.1X/EAP. Non c'è quindi una singola «chiave di rete» da catturare e bruteforzare offline come in WPA-PSK — il bersaglio si sposta sul **protocollo EAP** e su come tratta le credenziali. Il primo passo dell'attaccante è capire _quale_ EAP è in uso: cattura l'handshake, Wireshark ne mostra il tipo, e la cosa comoda è che l'identità esterna (lo **username**) viaggia in chiaro nella prima risposta EAP verso il RADIUS, così sa già chi sta attaccando.
 
-Meglio stanno **EAP-TTLS e PEAP**, che incapsulano un protocollo di autenticazione interno — spesso debole (MS-CHAPv2, EAP-GTC a password monouso, o cleartext) — dentro un tunnel TLS. La cifratura TLS non si rompe direttamente, ma resta la via dell'**AP impersonation / MITM**: se il client è mal configurato e non valida il certificato del server RADIUS, l'attaccante tira su un finto AP/RADIUS (hostapd per fare da AP, FreeRADIUS-WPE che accetta qualunque connessione e logga tutto), fa da terminatore del tunnel TLS e legge l'autenticazione interna, poi la bruteforza offline con asleap. La contromisura decisiva è spuntare «Validate server certificate» su *tutti* i client.
+Il caso peggiore è **[[LEAP]]**, protocollo proprietario Cisco del 2000, uno schema 802.1X su RADIUS nato per rimediare a WEP. Il suo peccato originale è appoggiarsi interamente a **[[MS-CHAPv2]]** come challenge-response, esponendone lo scambio sull'aria senza protezione — e MS-CHAPv2 è fragile per costruzione. Funziona a botta-e-risposta: il server manda una sfida, il client risponde calcolando qualcosa a partire dall'**hash NT** (hash pezzotto di [[LM-Lan Manager]]) della password. I difetti si sommano. L'hash NT **non è salato**, quindi la stessa password dà sempre lo stesso hash e le **rainbow table** precalcolate (DB da ~4 GB) funzionano; la risposta si ottiene spezzando l'hash NT in tre chiavi DES, e la terza è riempita di zeri lasciando appena **2 byte reali**, banali da forzare; e lo username è in chiaro. Il risultato è che basta catturare sfida e risposta per un attacco a dizionario/forza bruta offline, reso rapidissimo dalle rainbow table. Cisco sostiene che LEAP sia sicuro solo con password casuali da ≥10 caratteri — che quasi nessuno usa — quindi in pratica cade in giorni o minuti. Lo strumento è **asleap**, che estrae e cracca le password LEAP deboli ed è integrato con **Air-Jack** per buttare giù gli utenti già autenticati: alla riautenticazione forzata lo scambio viene risniffato e crackato. Verdetto: evitarlo come WEP. (È lo stesso mondo degli hash NT senza salt di [[LM-Lan Manager]]; e Microsoft stessa sconsiglia PPTP/MS-CHAP dopo la CloudCracker di Moxie Marlinspike — che riduce MS-CHAPv2 alla fatica di _una sola_ chiave DES-56, quindi ~200 $ e 24 h a prescindere da quanto è forte la password — raccomandando PEAP, L2TP/IPsec, IPSec+IKEv2 o SSTP.)
+<svg width="100%" viewBox="0 0 860 1120" xmlns="http://www.w3.org/2000/svg" font-family="Inter, Segoe UI, system-ui, sans-serif">
+<rect x="0" y="0" width="860" height="1120" rx="16" fill="#1f2023"/>
+<text x="30" y="40" text-anchor="start" font-size="18" fill="#e8eaed" font-weight="700">MS-CHAPv2 — handshake e costruzione della NT Response</text>
+<line x1="250" y1="70" x2="250" y2="560" stroke="#4b5563" stroke-width="1" stroke-dasharray="4 5"/>
+<line x1="610" y1="70" x2="610" y2="560" stroke="#4b5563" stroke-width="1" stroke-dasharray="4 5"/>
+<text x="430" y="87" text-anchor="middle" font-size="12.5" fill="#e8eaed" font-weight="400">1. Avvio / Identity (username)</text>
+<line x1="258" y1="95" x2="602" y2="95" stroke="#9aa0a8" stroke-width="1.4"/>
+<polygon points="602,95 596,91 596,99" fill="#9aa0a8"/>
+<text x="430" y="120" text-anchor="middle" font-size="12.5" fill="#e8eaed" font-weight="400">2. Authenticator Challenge — 16 byte</text>
+<line x1="602" y1="128" x2="258" y2="128" stroke="#9aa0a8" stroke-width="1.4"/>
+<polygon points="258,128 264,124 264,132" fill="#9aa0a8"/>
+<rect x="55.0" y="148" width="430" height="30" rx="6" fill="#3a3115" stroke="#a98b3a" stroke-width="1.4" opacity="1"/>
+<text x="270" y="167.375" text-anchor="middle" font-size="12.5" fill="#f0e2b8" font-weight="400">3. Peer Challenge — 16 byte (generata dal client)</text>
+<rect x="55.0" y="186" width="430" height="30" rx="6" fill="#3a3115" stroke="#a98b3a" stroke-width="1.4" opacity="1"/>
+<text x="270" y="205.2" text-anchor="middle" font-size="12" fill="#f0e2b8" font-weight="400">4. Challenge Hash  C = SHA1(Peer + Auth + User) → 8 byte</text>
+<rect x="55.0" y="224" width="430" height="30" rx="6" fill="#3a3115" stroke="#a98b3a" stroke-width="1.4" opacity="1"/>
+<text x="270" y="243.375" text-anchor="middle" font-size="12.5" fill="#f0e2b8" font-weight="400">5. NT hash = MD4(password) → 16 byte</text>
+<rect x="55.0" y="262" width="430" height="30" rx="6" fill="#3a3115" stroke="#a98b3a" stroke-width="1.4" opacity="1"/>
+<text x="270" y="281.025" text-anchor="middle" font-size="11.5" fill="#f0e2b8" font-weight="400">6. NT Response = DES(C,K1)+DES(C,K2)+DES(C,K3) → 24 byte</text>
+<text x="430" y="312" text-anchor="middle" font-size="12.5" fill="#e8eaed" font-weight="400">7. Peer Challenge + NT Response + Username</text>
+<line x1="258" y1="320" x2="602" y2="320" stroke="#9aa0a8" stroke-width="1.4"/>
+<polygon points="602,320 596,316 596,324" fill="#9aa0a8"/>
+<rect x="420.0" y="344" width="380" height="30" rx="6" fill="#3a3115" stroke="#a98b3a" stroke-width="1.4" opacity="1"/>
+<text x="610" y="363.375" text-anchor="middle" font-size="12.5" fill="#f0e2b8" font-weight="400">8. Ricalcola col proprio hash NT e verifica</text>
+<text x="430" y="397" text-anchor="middle" font-size="12.5" fill="#e8eaed" font-weight="400">9. Success + Authenticator Response</text>
+<line x1="602" y1="405" x2="258" y2="405" stroke="#9aa0a8" stroke-width="1.4"/>
+<polygon points="258,405 264,401 264,409" fill="#9aa0a8"/>
+<rect x="25.0" y="428" width="460" height="38" rx="6" fill="#3a3115" stroke="#a98b3a" stroke-width="1.4" opacity="1"/>
+<text x="255" y="444.0" text-anchor="middle" font-size="12.5" fill="#f0e2b8" font-weight="400">10. Il client verifica l'Authenticator Response</text>
+<text x="255" y="460.0" text-anchor="middle" font-size="11" fill="#f0e2b8" font-weight="400">→ server autenticato (autenticazione MUTUA)</text>
+<rect x="185.0" y="505" width="130" height="46" rx="6" fill="#232a4d" stroke="#3b4a7a" stroke-width="1.4" opacity="1"/>
+<text x="250" y="533.25" text-anchor="middle" font-size="15" fill="#c7d2fe" font-weight="400">Client</text>
+<rect x="545.0" y="505" width="130" height="46" rx="6" fill="#232a4d" stroke="#3b4a7a" stroke-width="1.4" opacity="1"/>
+<text x="610" y="532.725" text-anchor="middle" font-size="13.5" fill="#c7d2fe" font-weight="400">Server (RADIUS)</text>
+<line x1="200" y1="600" x2="660" y2="600" stroke="#4b5563" stroke-width="3"/>
+<text x="30" y="646" text-anchor="start" font-size="15" fill="#9ca3af" font-weight="400">Dove il Response è il seguente:</text>
+<rect x="180.0" y="672" width="180" height="46" rx="6" fill="#12564c" stroke="#2ea88f" stroke-width="1.4" opacity="1"/>
+<text x="270" y="692.0" text-anchor="middle" font-size="13" fill="#c9f2e6" font-weight="400">Hash NT — 16 byte</text>
+<text x="270" y="708.0" text-anchor="middle" font-size="11" fill="#c9f2e6" font-weight="400">fa da chiave</text>
+<rect x="525.0" y="672" width="190" height="46" rx="6" fill="#5a4517" stroke="#c69a3a" stroke-width="1.4" opacity="1"/>
+<text x="620" y="692.0" text-anchor="middle" font-size="12.5" fill="#f2e2b0" font-weight="400">Challenge Hash C — 8 byte</text>
+<text x="620" y="708.0" text-anchor="middle" font-size="11" fill="#f2e2b0" font-weight="400">fa da testo in chiaro</text>
+<rect x="200.0" y="738" width="140" height="36" rx="6" fill="#12564c" stroke="#2ea88f" stroke-width="1.4" opacity="1"/>
+<text x="270" y="760.55" text-anchor="middle" font-size="13" fill="#c9f2e6" font-weight="400">Pad → 21 byte</text>
+<rect x="145.0" y="800" width="130" height="44" rx="6" fill="#12564c" stroke="#2ea88f" stroke-width="1.4" opacity="1"/>
+<text x="210" y="826.55" text-anchor="middle" font-size="13" fill="#c9f2e6" font-weight="400">K1 — 7 byte</text>
+<rect x="335.0" y="800" width="130" height="44" rx="6" fill="#12564c" stroke="#2ea88f" stroke-width="1.4" opacity="1"/>
+<text x="400" y="826.55" text-anchor="middle" font-size="13" fill="#c9f2e6" font-weight="400">K2 — 7 byte</text>
+<rect x="525.0" y="800" width="130" height="44" rx="6" fill="#12564c" stroke="#2ea88f" stroke-width="1.4" opacity="1"/>
+<text x="590" y="819.0" text-anchor="middle" font-size="13" fill="#c9f2e6" font-weight="400">K3 — 7 byte</text>
+<text x="590" y="835.0" text-anchor="middle" font-size="11" fill="#c9f2e6" font-weight="400">2 byte reali + 5 zeri</text>
+<rect x="145.0" y="876" width="130" height="44" rx="6" fill="#33383f" stroke="#6b7280" stroke-width="1.4" opacity="1"/>
+<text x="210" y="895.0" text-anchor="middle" font-size="13" fill="#e5e7eb" font-weight="400">DES</text>
+<text x="210" y="911.0" text-anchor="middle" font-size="11" fill="#e5e7eb" font-weight="400">cifra C con K1</text>
+<rect x="335.0" y="876" width="130" height="44" rx="6" fill="#33383f" stroke="#6b7280" stroke-width="1.4" opacity="1"/>
+<text x="400" y="895.0" text-anchor="middle" font-size="13" fill="#e5e7eb" font-weight="400">DES</text>
+<text x="400" y="911.0" text-anchor="middle" font-size="11" fill="#e5e7eb" font-weight="400">cifra C con K2</text>
+<rect x="525.0" y="876" width="130" height="44" rx="6" fill="#33383f" stroke="#6b7280" stroke-width="1.4" opacity="1"/>
+<text x="590" y="895.0" text-anchor="middle" font-size="13" fill="#e5e7eb" font-weight="400">DES</text>
+<text x="590" y="911.0" text-anchor="middle" font-size="11" fill="#e5e7eb" font-weight="400">cifra C con K3</text>
+<rect x="190.0" y="952" width="420" height="46" rx="6" fill="#3f356e" stroke="#7c6bc4" stroke-width="1.4" opacity="1"/>
+<text x="400" y="972.0" text-anchor="middle" font-size="13.5" fill="#e6ddff" font-weight="400">Response — 24 byte</text>
+<text x="400" y="988.0" text-anchor="middle" font-size="11" fill="#e6ddff" font-weight="400">i tre output DES concatenati (3 × 8)</text>
+<line x1="270" y1="718" x2="270" y2="738" stroke="#2ea88f" stroke-width="1.3"/>
+<polygon points="270,738 266,732 274,732" fill="#2ea88f"/>
+<line x1="270" y1="774" x2="210" y2="800" stroke="#2ea88f" stroke-width="1.3"/>
+<polygon points="210,800 206,794 214,794" fill="#2ea88f"/>
+<line x1="270" y1="774" x2="400" y2="800" stroke="#2ea88f" stroke-width="1.3"/>
+<polygon points="400,800 396,794 404,794" fill="#2ea88f"/>
+<line x1="270" y1="774" x2="590" y2="800" stroke="#2ea88f" stroke-width="1.3"/>
+<polygon points="590,800 586,794 594,794" fill="#2ea88f"/>
+<line x1="210" y1="844" x2="210" y2="876" stroke="#2ea88f" stroke-width="1.3"/>
+<polygon points="210,876 206,870 214,870" fill="#2ea88f"/>
+<line x1="400" y1="844" x2="400" y2="876" stroke="#2ea88f" stroke-width="1.3"/>
+<polygon points="400,876 396,870 404,870" fill="#2ea88f"/>
+<line x1="590" y1="844" x2="590" y2="876" stroke="#2ea88f" stroke-width="1.3"/>
+<polygon points="590,876 586,870 594,870" fill="#2ea88f"/>
+<line x1="620" y1="718" x2="620" y2="858" stroke="#c69a3a" stroke-width="1.3"/>
+<line x1="210" y1="858" x2="620" y2="858" stroke="#c69a3a" stroke-width="1.3"/>
+<line x1="210" y1="858" x2="210" y2="876" stroke="#c69a3a" stroke-width="1.3"/>
+<polygon points="210,876 206,870 214,870" fill="#c69a3a"/>
+<line x1="400" y1="858" x2="400" y2="876" stroke="#c69a3a" stroke-width="1.3"/>
+<polygon points="400,876 396,870 404,870" fill="#c69a3a"/>
+<line x1="590" y1="858" x2="590" y2="876" stroke="#c69a3a" stroke-width="1.3"/>
+<polygon points="590,876 586,870 594,870" fill="#c69a3a"/>
+<line x1="210" y1="920" x2="400" y2="952" stroke="#6b7280" stroke-width="1.3"/>
+<line x1="400" y1="920" x2="400" y2="952" stroke="#6b7280" stroke-width="1.3"/>
+<line x1="590" y1="920" x2="400" y2="952" stroke="#6b7280" stroke-width="1.3"/>
+<polygon points="400,952 396,946 404,946" fill="#6b7280"/>
+<rect x="185" y="1016" width="490" height="44" rx="8" fill="none" stroke="#7c6bc4" stroke-width="1.2" opacity="1"/>
+<text x="430" y="1034" text-anchor="middle" font-size="12" fill="#cdbff5" font-weight="400">K3 ha solo 16 bit e i tre DES cifrano lo stesso C noto:</text>
+<text x="430" y="1051" text-anchor="middle" font-size="12" fill="#cdbff5" font-weight="400">la sicurezza crolla a una singola chiave DES-56 → crack garantito.</text>
+<rect x="250" y="1082" width="14" height="14" rx="3" fill="#12564c" stroke="#2ea88f" stroke-width="1.2" opacity="1"/>
+<text x="272" y="1093" text-anchor="start" font-size="12" fill="#9ca3af" font-weight="400">chiave (dall'hash)</text>
+<rect x="430" y="1082" width="14" height="14" rx="3" fill="#5a4517" stroke="#c69a3a" stroke-width="1.2" opacity="1"/>
+<text x="452" y="1093" text-anchor="start" font-size="12" fill="#9ca3af" font-weight="400">testo in chiaro (la challenge)</text>
+</svg>
+
+Stanno meglio **EAP-TTLS e PEAP**, e conviene capire _perché_. Invece di esporre un challenge-response debole all'aria aperta, prima costruiscono un **tunnel TLS** — con il server RADIUS autenticato da un **certificato** — e solo dentro quel tunnel fanno girare l'autenticazione interna, che resta spesso debole (MS-CHAPv2, EAP-GTC a password monouso, o addirittura in chiaro). Chi ascolta vede solo byte cifrati da TLS: niente attacco a dizionario offline sull'auth interna, ed è questo il salto di qualità. La cifratura TLS, di per sé, non si rompe. Il punto debole si sposta sulla **fiducia**: TLS protegge davvero solo se il client verifica il certificato del server RADIUS. Se il client è mal configurato e **non valida il certificato** (o accetta qualunque certificato), si apre la via dell'**AP impersonation / MITM**. L'attaccante monta un finto AP e un finto RADIUS — **hostapd** per fare da access point, **FreeRADIUS-WPE** che accetta qualunque connessione e logga tutto — e il supplicant della vittima costruisce il tunnel TLS verso il RADIUS _dell'attaccante_ (perché non ha controllato il certificato). A quel punto l'attaccante è il terminatore del tunnel: legge l'autenticazione interna in chiaro e la bruteforza offline con asleap. Tutta la sicurezza di PEAP/TTLS poggia quindi su una casella — **«Validate server certificate»** attivata su _tutti_ i client, meglio ancora indicando la CA attesa e il nome del server e non «un certificato qualsiasi». Con quella spunta il certificato del RADIUS-canaglia non passa la verifica, il supplicant rifiuta, e l'attacco muore sul nascere.
 
 | Bersaglio | Come si buca | Tool | Contromisura |
 |---|---|---|---|
