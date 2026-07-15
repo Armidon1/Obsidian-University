@@ -4,7 +4,6 @@ capitolo: 8
 data: 2026-07-13
 collegamenti: ["[[ETHL - Cap 7 Remote Connectivity e VoIP Hacking]]", "[[ETHL - Cap 6 Cybercrime e APT]]", "[[ETHL - LAN Manager (LM) vs NTLM]]"]
 ---
-
 # ETHL — Cap 8 · Wireless Hacking
 
 > [!abstract] Il filo del capitolo
