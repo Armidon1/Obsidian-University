@@ -420,7 +420,7 @@ Organization-specific phenomena are represented as **facts**. A fact is viewed a
 - each cell contains one or more numerical **measures**;
 - each dimension may have a **hierarchy** that supports progressively coarser levels of analysis. The idea is: a single date (a specific dimension for instance, see the three-dimensional sales cube) can be aggregated in a moth, a motnh ina year, a year in a decay, so this means that an associated date we can have an hierarchy of possible analysis. But why is it important? it is, because we would like to know how can we aggregate that dimension.
 
-1:57
+
 
 ## A Three-Dimensional Sales Cube
 
@@ -444,7 +444,13 @@ The conceptual cube has `product`, `store`, and `date` as axes. The cell at thei
 
 The **grain** of this fact is “one product, in one store, on one date.” Grain states exactly what one fact record represents. It must be fixed before measures are interpreted, because `quantity = 10` is ambiguous without its coordinates and level of detail.
 
+Notice: every cell can be interpreted as a tuple (product, store, date): i could represent a tuple as a cell of a n-dimensional way, and a grain is a specific value that can be retrieved by joining more tables with a proper key constraint. This kind of view helps a lot in comapare to the "table" view of the relational database. In math this is an appliction of the isomorphism property: the capability to change the system from A to B wihtout loosing informations and revert from B to A. Key constraints in the end is an application of a bigger math property called function contraint.
+
+Now when we see a cube, we should also be able to see the hierarchie behind of it.
+
 ## Hierarchies and Functional Dependencies
+
+![[Pasted image 20260902172412.png]]
 
 A dimension can be described at several aggregation levels. For example:
 
@@ -469,6 +475,390 @@ $$
 These dependencies make aggregation semantically well-defined. We can group product-level facts by type or category because every product determines one member at each higher level.
 
 “All products” and “all stores” represent the top of the corresponding hierarchies. Aggregating to that level removes the distinction among individual members of the dimension.
+
+Notice: an hierarchie is a tree, a tree is a graph and a graph is an application of a RELATION. I can represent it as a Relation.
+
+### Spiegotto più chiaro
+
+Il professore sta mostrando gerarchie e dipendenze funzionali perché sono il “ponte” tra:
+
+- la visione multidimensionale a cubo usata dall’utente;
+    
+- la rappresentazione relazionale usata dal DBMS;
+    
+- le operazioni di aggregazione OLAP, come il roll-up.
+    
+
+Il punto non è soltanto classificare i prodotti: bisogna formalizzare perché possiamo passare correttamente da vendite per prodotto a vendite per tipo o categoria.
+
+#### Il cubo al livello più dettagliato
+
+Supponiamo di analizzare le vendite attraverso tre dimensioni:
+
+```text
+product × store × date
+```
+
+Ogni cella contiene una misura:
+
+```text
+quantity sold
+```
+
+Una cella potrebbe quindi essere:
+
+```text
+(product = P1, store = S1, date = D1) → quantity = 10
+```
+
+Possiamo pensare al cubo come a una funzione parziale:
+
+$$C : Product \times Store \times Date \rightarrow Quantity$$
+
+È parziale perché non tutte le combinazioni possibili corrispondono a una vendita realmente avvenuta.
+
+#### La rappresentazione relazionale equivalente
+
+Lo stesso contenuto può essere rappresentato con una relazione:
+
+```text
+SALES(product, store, date, quantity)
+```
+
+|product|store|date|quantity|
+|---|---|---|--:|
+|P1|S1|D1|10|
+|P2|S1|D1|5|
+|P3|S2|D1|8|
+
+La corrispondenza è:
+
+|Modello multidimensionale|Modello relazionale|
+|---|---|
+|Asse del cubo|Attributo dimensionale|
+|Coordinata|Valore dell’attributo|
+|Cella|Tupla della fact table|
+|Contenuto della cella|Misura|
+|Cella vuota|Assenza della tupla|
+
+Quindi:
+
+```text
+Cella del cubo:
+(P1, S1, D1) → 10
+
+Tupla relazionale:
+(P1, S1, D1, 10)
+```
+
+Questo è probabilmente ciò che il professore chiama “isomorfismo”: la stessa informazione può essere vista come un insieme di celle multidimensionali oppure come un insieme di tuple relazionali.
+
+#### Dove entrano le gerarchie?
+
+Le coordinate del cubo precedente sono al livello più dettagliato:
+
+```text
+product
+store
+date
+```
+
+Ma un utente non vuole necessariamente analizzare sempre le singole vendite. Potrebbe voler conoscere:
+
+- le vendite per tipo di prodotto;
+    
+- le vendite per categoria;
+    
+- le vendite per città;
+    
+- le vendite per regione;
+    
+- le vendite per mese o anno.
+    
+
+Per rendere possibili questi passaggi, ogni dimensione contiene una gerarchia:
+
+```text
+product -> type -> category -> all products
+store   -> city -> region -> all stores
+date    -> month -> quarter -> year -> all dates
+```
+
+La gerarchia indica i livelli ai quali possiamo osservare e aggregare i fatti.
+
+#### Perché gli archi sono dipendenze funzionali?
+
+Prendiamo:
+
+```text
+product -> type -> category
+```
+
+Immaginiamo questi dati:
+
+|product|type|category|
+|---|---|---|
+|Shiny|Detergent|House cleaning|
+|Bleachy|Detergent|House cleaning|
+|CleanHand|Soap|House cleaning|
+|DrinkMe|Soft drink|Food|
+
+La dipendenza:
+$$product \rightarrow type$$
+
+significa che, dato un prodotto, il suo tipo è determinato univocamente.
+
+Non possono quindi esistere due tuple come:
+
+|product|type|
+|---|---|
+|Shiny|Detergent|
+|Shiny|Soft drink|
+
+Allo stesso modo:
+
+$type→category$
+
+significa che ogni tipo appartiene a una sola categoria.
+
+Grazie alla transitività:
+
+$$product \rightarrow type \quad\land\quad type \rightarrow category \quad\Rightarrow\quad product \rightarrow category$$
+
+Conoscendo un prodotto possiamo quindi determinare senza ambiguità anche la sua categoria.
+
+#### Perché questo è necessario per l’aggregazione?
+
+Supponiamo di avere le vendite dettagliate:
+
+|product|quantity|
+|---|--:|
+|Shiny|10|
+|Bleachy|15|
+|CleanHand|7|
+|DrinkMe|20|
+
+Vogliamo passare dalle vendite per prodotto alle vendite per tipo:
+
+|type|total quantity|
+|---|--:|
+|Detergent|25|
+|Soap|7|
+|Soft drink|20|
+
+Questa operazione è un **roll-up**:
+
+```text
+product → type
+```
+
+È possibile perché ogni prodotto determina esattamente un tipo. Ogni vendita viene quindi assegnata a un solo gruppo.
+
+Possiamo poi fare un altro roll-up:
+
+```text
+type → category
+```
+
+ottenendo:
+
+|category|total quantity|
+|---|--:|
+|House cleaning|32|
+|Food|20|
+
+Le dipendenze funzionali garantiscono che ogni fatto dettagliato abbia un percorso di aggregazione univoco:
+
+```text
+Shiny
+  ↓
+Detergent
+  ↓
+House cleaning
+  ↓
+All products
+```
+
+#### Traduzione del roll-up in SQL
+
+In uno star schema potremmo avere:
+
+```text
+SALES(product_key, store_key, date_key, quantity)
+
+PRODUCT(
+    product_key,
+    product,
+    type,
+    category
+)
+```
+
+Il cubo dettagliato per prodotto corrisponde a:
+
+```sql
+SELECT
+    p.product,
+    SUM(f.quantity) AS total_quantity
+FROM SALES AS f
+JOIN PRODUCT AS p
+    ON f.product_key = p.product_key
+GROUP BY p.product;
+```
+
+Il roll-up da `product` a `type` cambia il livello del `GROUP BY`:
+
+```sql
+SELECT
+    p.type,
+    SUM(f.quantity) AS total_quantity
+FROM SALES AS f
+JOIN PRODUCT AS p
+    ON f.product_key = p.product_key
+GROUP BY p.type;
+```
+
+Il roll-up fino a `category` diventa:
+
+```sql
+SELECT
+    p.category,
+    SUM(f.quantity) AS total_quantity
+FROM SALES AS f
+JOIN PRODUCT AS p
+    ON f.product_key = p.product_key
+GROUP BY p.category;
+```
+
+Quindi, nel modello multidimensionale diciamo:
+
+```text
+Roll-up: product → type → category
+```
+
+Nel modello relazionale eseguiamo:
+
+```text
+JOIN con la dimension table
++
+GROUP BY sull’attributo del livello desiderato
++
+funzione di aggregazione sulla misura
+```
+
+#### Come cambia il cubo
+
+Il cubo di partenza potrebbe essere:
+
+```text
+product × store × date
+```
+
+Dopo un roll-up su tutte le dimensioni:
+
+```text
+type × city × month
+```
+
+La nuova cella:
+
+```text
+(Detergent, Rome, January) → 2,500
+```
+
+riassume tutte le celle dettagliate relative:
+
+- ai prodotti di tipo `Detergent`;
+    
+- ai negozi situati a `Rome`;
+    
+- alle date appartenenti a `January`.
+    
+
+Le gerarchie definiscono quindi quali celle dettagliate devono essere raccolte nella stessa cella aggregata.
+
+#### Perché serve l’unicità?
+
+Supponiamo che un prodotto possa appartenere contemporaneamente a due tipi:
+
+```text
+P1 → Type A
+P1 → Type B
+```
+
+Se `P1` ha venduto 10 unità, aggregando per tipo potremmo ottenere:
+
+|type|quantity|
+|---|--:|
+|Type A|10|
+|Type B|10|
+
+Il totale diventerebbe 20, anche se sono state vendute solo 10 unità.
+
+Questo succede perché non abbiamo più una relazione many-to-one:
+$$product \not\rightarrow type$$
+
+Abbiamo una relazione many-to-many. Non è una gerarchia semplice e richiede una modellazione diversa, ad esempio una bridge table e, talvolta, dei pesi di allocazione.
+
+Le dipendenze funzionali garantiscono quindi la proprietà di **summarizability**: la possibilità di aggregare senza duplicazioni o ambiguità.
+
+#### Il significato di “All products”
+
+`All products` è il livello più alto della gerarchia:
+
+```text
+product → type → category → all products
+```
+
+Tutti i prodotti appartengono allo stesso membro finale, che possiamo immaginare come una costante:
+
+```text
+Shiny    → All products
+Bleachy  → All products
+DrinkMe  → All products
+```
+
+Aggregare a questo livello significa eliminare completamente la distinzione tra prodotti:
+
+```sql
+SELECT SUM(quantity)
+FROM SALES;
+```
+
+Otteniamo il totale generale delle vendite rispetto alla dimensione prodotto.
+
+Analogamente:
+
+```text
+all stores → non distinguiamo più i negozi
+all dates  → non distinguiamo più i periodi
+```
+
+Se aggreghiamo tutte le dimensioni al livello `All`, otteniamo una sola cella: il totale complessivo dell’intero cubo.
+
+#### Il senso del discorso del professore
+
+La sequenza logica è questa:
+
+1. Un fatto multidimensionale è identificato dalle coordinate del cubo.
+    
+2. Una cella può essere rappresentata come una tupla relazionale.
+    
+3. Le dimensioni hanno livelli di dettaglio organizzati in gerarchie.
+    
+4. Gli archi delle gerarchie corrispondono a dipendenze funzionali many-to-one.
+    
+5. Le dipendenze funzionali rendono univoco il passaggio dal dettaglio ai livelli superiori.
+    
+6. Il roll-up multidimensionale viene implementato relazionalmente attraverso `JOIN`, `GROUP BY` e funzioni di aggregazione.
+    
+
+La frase da ricordare è:
+
+> Le gerarchie definiscono i livelli ai quali un cubo può essere aggregato; le dipendenze funzionali garantiscono che ogni valore dettagliato appartenga in modo univoco a un valore del livello superiore.
+
+In forma estremamente compatta:
+![[Pasted image 20260902174716.png]]
 
 ## Restrictions: Slicing, Dicing, and Projection
 
