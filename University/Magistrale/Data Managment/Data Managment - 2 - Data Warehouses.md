@@ -308,7 +308,7 @@ The layers have distinct responsibilities:
 
 The main advantage is separation of concerns. Source-specific problems are resolved once in the reconciled layer, which becomes a reusable enterprise reference. Warehouse population can then concentrate on dimensions, facts, granularity, and analytical performance.
 
-What is the difference between Primary datawarehouse and reconciled database? The Primary datawarehouse may be built with different technologies and not only with [[Relational Data Model|Relational Data Technology]], while in the reconciled database tipically is a relational database. So for instance the reconciled database can be MariaDB, PostgreSQL or whatsoever relational database, while the primary data warehouse can be whatever database, like also a Graph database or [[MongoDB]] NoSQL databses.
+What is the difference between Primary datawarehouse and reconciled database? The reconciled data layer separates source integration from analytical data organization. It stores detailed data that has already been cleaned, standardized, and integrated according to common enterprise definitions. The data warehouse layer then reorganizes this reconciled data into structures optimized for decision support, such as facts, dimensions, aggregates, or multidimensional models. This separation improves modularity and allows the source systems and analytical structures to evolve more independently. It may also permit the use of different database technologies at different layers. However, it introduces additional storage, processing, maintenance, and data-latency costs.
 
 The cost is additional storage, data replication, and design complexity. Whether the extra layer is justified depends on the number and heterogeneity of sources, the need for reusable integrated detail, and organizational governance. Here we have also 2 times the ETL that moves twice the data, which costs more, most we have a cleaner result. This is something that many organization wants to have, although is very difficult to achive. 
 
@@ -419,6 +419,122 @@ Organization-specific phenomena are represented as **facts**. A fact is viewed a
 - each axis is a **dimension** relevant to the analysis;
 - each cell contains one or more numerical **measures**;
 - each dimension may have a **hierarchy** that supports progressively coarser levels of analysis. The idea is: a single date (a specific dimension for instance, see the three-dimensional sales cube) can be aggregated in a moth, a motnh ina year, a year in a decay, so this means that an associated date we can have an hierarchy of possible analysis. But why is it important? it is, because we would like to know how can we aggregate that dimension.
+
+### Fact
+
+Un **fact** è un evento o fenomeno aziendale che vogliamo analizzare:
+
+- a sale;
+    
+- an examination;
+    
+- a shipment;
+    
+- a bank transaction.
+    
+
+Non è necessariamente un numero. Per esempio:
+
+> A customer buys a product in a store on a particular date.
+
+Quello è il fatto **sale**.
+
+### Measure
+
+Le **measures** sono le proprietà quantitative associate al fatto:
+
+```text
+quantity
+unit_price
+discount
+revenue
+cost
+```
+
+Quindi la funzione può essere rappresentata così:
+$$C(d_1,d_2,\ldots,d_n)=(m_1,m_2,\ldots,m_k)$$
+
+dove:
+
+- $d_1,\ldots,d_n$ sono membri delle dimensioni;
+    
+- $m_1,\ldots,m_k$ sono misure;
+    
+- l’intera associazione rappresenta un fatto o una cella del cubo.
+    
+
+Per esempio:
+
+$$C(\text{Laptop},\text{Rome},\text{2026-09-03}) = (\text{quantity}=4,\text{revenue}=3200)$$
+
+`Average mark` è una misura, ma normalmente è una **derived measure** ottenuta da misure più elementari:
+
+average mark=sum of marksnumber of examinations\text{average mark} = \frac{\text{sum of marks}}{\text{number of examinations}}
+
+“Average mark in a specific year” è quindi una cella già aggregata, non il fatto elementare.
+
+### Dimensions
+
+Le dimensioni descrivono le prospettive attraverso cui analizziamo i fatti:
+
+```text
+Product
+Store
+Customer
+Date
+Promotion
+```
+
+Un membro dimensionale è invece un valore concreto:
+
+```text
+Product  → Laptop
+Store    → Rome Central
+Date     → 2026-09-03
+```
+
+Il cubo non è limitato a tre dimensioni. Tre dimensioni permettono una rappresentazione grafica, ma un cubo OLAP può avere qualsiasi numero di dimensioni.
+
+### Grain
+
+Il **grain** non è il valore numerico della cella. È il livello di dettaglio rappresentato da ogni singolo fatto.
+
+Per esempio:
+
+> One fact-table row represents one product appearing on one sales receipt in one store at one moment.
+
+Questo è un grain molto dettagliato:
+
+```text
+one order line
+```
+
+Un grain più aggregato potrebbe essere:
+
+> One row represents the daily sales of one product in one store.
+
+```text
+product × store × day
+```
+
+La differenza è importante:
+
+|Concept|Example|
+|---|---|
+|Fact|A sale|
+|Grain|One row per product, receipt, store, and timestamp|
+|Dimensions|Product, customer, store, time|
+|Measures|Quantity, revenue, discount|
+|Cell coordinates|Laptop, customer 42, Rome Central, 2026-09-03|
+|Cell value|Quantity 4, revenue €3,200|
+
+### In sintesi
+
+> A fact represents a business event or phenomenon, such as a sale. Each fact is described through dimensions and may have one or more numerical measures.
+> 
+> A sales cube can be represented as a partial function that maps a combination of dimension members to a set of measures. For example, the dimensions could be product, store, customer, and date, while the measures could include quantity, revenue, and discount.
+> 
+> The grain defines exactly what one individual fact represents. For example, the grain could be one product line within one sales receipt. Alternatively, an aggregated fact table could have one row for each product, store, and day.
 
 
 
@@ -862,6 +978,8 @@ In forma estremamente compatta:
 
 ## Restrictions: Slicing, Dicing, and Projection
 
+![[Pasted image 20260903181602.png]]
+
 Restrictions select a portion of a cube.
 
 **Slicing** fixes one or more dimensions to a specific value. Fixing `store = EverMore`, for example, removes store as a varying axis and returns a lower-dimensional view over product and date.
@@ -881,6 +999,9 @@ Dicing selects a sub-cube but does not itself imply aggregation. If data is filt
 These operations correspond to familiar relational ideas, but are expressed in analytical vocabulary: slice and dice resemble selections, while projection keeps selected measures.
 
 ## Aggregation
+
+![[Pasted image 20260903181625.png]]
+![[Pasted image 20260903181652.png]]
 
 Aggregation replaces fine-grained facts with coarser **secondary events**. Daily sales by product and store may be aggregated into monthly sales by product type and city. Each coarser cell summarizes all compatible detailed cells.
 
