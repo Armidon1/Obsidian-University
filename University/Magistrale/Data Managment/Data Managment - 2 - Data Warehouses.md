@@ -594,6 +594,8 @@ These dependencies make aggregation semantically well-defined. We can group prod
 
 Notice: an hierarchie is a tree, a tree is a graph and a graph is an application of a RELATION. I can represent it as a Relation.
 
+We are exploiring hierarchies to aggregate values.
+
 ### Spiegotto più chiaro
 
 Il professore sta mostrando gerarchie e dipendenze funzionali perché sono il “ponte” tra:
@@ -1028,13 +1030,13 @@ They differ in how much the question is known in advance and how actively the us
 | Data mining | Discover patterns not explicitly specified as ordinary queries | Model-driven discovery |
 | OLAP | Explore facts across dimensions and detail levels | Active, iterative navigation |
 
-## Reports
+## Reports (skipped)
 
 Reports serve users who need information in an essentially static structure at predetermined intervals. A monthly revenue report might always show the same product categories and the latest three months.
 
 Reports are appropriate when the information requirement is stable, the audience should not need technical knowledge, and consistency of presentation matters. Their limitation is the same property that makes them simple: the designer decides the structure in advance.
 
-## Dashboards
+## Dashboards (skipped)
 
 A dashboard presents a concise overview of relevant phenomena through indicators, tables, charts, and alerts. The term is a metaphor from a vehicle dashboard: a limited number of instruments should tell the operator whether the system is behaving normally.
 
@@ -1042,7 +1044,9 @@ Dashboards are often used by senior managers because they compress complex data 
 
 Dashboards are not a replacement for deeper analysis. When an indicator reveals a problem, an OLAP or specialized analysis tool is needed to investigate its causes.
 
-## Data Mining
+## Data Mining (introduced but there is an entire course for it)
+
+data mining is about algorithms that, given a specific set of data, i could extract/indeduce to find informations that are not so obvius (for instance: "it is very common that when someone buys a shoes, he buys also socks") . It is not a query, but an induction given the set of data. Here the professor cite Socrate and highilights the difference between induce and deduce. So inductive reasoining is based by experience (so machine learning reasons in this way), and clustering is another kind of inductive reasoning.
 
 Data mining searches large data collections for significant patterns that users may not discover through ordinary queries. It combines techniques from statistics, artificial intelligence, machine learning, and pattern recognition.
 
@@ -1112,7 +1116,7 @@ Unlike a report reader, an OLAP user plays an active role. The user begins with 
 
 ## The OLAP Session
 
-An OLAP session is a **navigation path** through a fact. The user changes viewpoints and levels of detail one step at a time. Each step is represented by an OLAP operator that transforms the previous query into a new one.
+An OLAP session is a **navigation path** through a fact. The user changes viewpoints and levels of detail (hierarchy connection) one step at a time. Each step is represented by an OLAP operator that transforms the previous query into a new one.
 
 Results are multidimensional even when displayed as two-dimensional tables. Multiple headers, nested rows and columns, colours, and interactive controls preserve the dimensional structure in a form a screen can display.
 
@@ -1128,7 +1132,11 @@ holds in an instance when any two tuples that agree on the attributes on the lef
 
 Functional dependencies are crucial in dimensional hierarchies. If `month -> quarter` and `quarter -> year`, the system can move from month-level data to quarter- or year-level data without ambiguity. A hierarchy that violates its expected dependencies produces incorrect aggregation.
 
+![[Pasted image 20260904104418.png]]
+
 ## The Virtual-Mall Example
+
+![[Pasted image 20260904100114.png]]
 
 The virtual-mall example uses a sales fact with three principal hierarchies:
 
@@ -1143,6 +1151,9 @@ Revenue can be analysed at any compatible combination of levels, such as revenue
 ## OLAP Operators
 
 ### Roll-Up
+![[Pasted image 20260904100459.png]]
+
+is aggregating data from an higher tier in te hierarchy.
 
 **Roll-up** increases aggregation by removing a detail level from a hierarchy. Examples include:
 
@@ -1152,7 +1163,7 @@ customer city -> customer region
 product -> subcategory -> category
 ```
 
-Measures must be combined through a valid aggregation operator, often `SUM`. Roll-up therefore changes both the grouping attributes and the measure values.
+**Measures must be combined through a valid aggregation operator**, often `SUM`. Roll-up therefore changes both the grouping attributes and the measure values.
 
 Conceptually, a time roll-up can be expressed as:
 
@@ -1162,32 +1173,53 @@ FROM SALES_ANALYSIS
 GROUP BY year, category, customer_region;
 ```
 
+![[Pasted image 20260904100008.png]]
+![[Pasted image 20260904100035.png]]
 ### Drill-Down
 
-**Drill-down** is the inverse of roll-up. It moves toward finer detail, such as region to city or year to quarter. Drill-down does not recreate detail that was never stored. It is possible only if the warehouse retains or can derive the finer-grained data.
+![[Pasted image 20260904100534.png]]
+
+**Drill-down** is the inverse of roll-up. It moves toward finer detail, such as region to city or year to quarter. **Drill-down does not recreate detail that was never stored. It is possible only if the warehouse retains or can derive the finer-grained data.** 
 
 A drill-down can be restricted to one context, for example revealing customer cities only for `year = 1998`.
-
+![[Pasted image 20260904100724.png]]
+![[Pasted image 20260904100738.png]]
 ### Slice and Dice
 
+![[Pasted image 20260904100752.png]]
 **Slice-and-dice** produces a sub-cube through selection conditions.
 
 - slicing fixes a dimension, for example `year = 2006`, and can reduce dimensionality;
 - dicing uses a more general predicate, such as `year = 2006 AND category = 'Electronics' AND revenue > 80 AND customer_region = 'Northwest'`.
 
 The operation changes which cells are considered, not necessarily their aggregation level.
-
+![[Pasted image 20260904100814.png]]
+![[Pasted image 20260904100837.png]]
 ### Pivoting
+
+![[Pasted image 20260904101057.png]]
+
+pivoting strats from a tabular of the representation of the data
 
 **Pivoting** changes the layout of a multidimensional result. A dimension displayed in rows may be moved to columns, or dimensions may exchange display roles. The underlying data and aggregation do not change; only the perspective does.
 
-Pivoting is important because a layout that makes one comparison obvious may hide another. Placing years in columns is useful for temporal comparison, whereas placing regions in columns is useful for geographic comparison.
+Pivoting is important because a layout that makes one comparison obvious may hide another. Placing years in columns is useful for temporal comparison, whereas placing regions in columns is useful for geographic comparison.![[Pasted image 20260904101140.png]]
+
+**So rows becames columns**. Is it a different cube? no, it is the same but has a different form. 
 
 ### Drill-Across
+
+![[Pasted image 20260904101504.png]]
+
+this kind of merge is possible only if the data is omogenous
 
 **Drill-across** combines measures from different cubes or fact schemata at compatible aggregation levels. For example, a sales cube containing revenue can be combined with a promotion cube containing discounts.
 
 Compatibility is essential. If one fact is recorded daily by product and store while another is monthly by category and region, they cannot be joined naively. Both must first be aligned to common dimensions and a common grain.
+
+![[Pasted image 20260904101523.png]]
+
+Notice that there isn't a standard SQL that implements this operator. SQL Microsoft systems, Oracle and other companys has implemented this operator in its own way.
 
 # Implementing the Multidimensional Model
 
@@ -1195,11 +1227,13 @@ The multidimensional model is a conceptual and user-facing abstraction. It can b
 
 ## ROLAP
 
-**Relational OLAP (ROLAP)** implements multidimensional analysis on a relational DBMS. It benefits from mature relational technology, SQL, established administration experience, scalability, and broad availability.
+![[Pasted image 20260904102624.png]]
 
-The relational model does not natively contain the first-class concepts “dimension,” “measure,” and “hierarchy.” They must be represented through specialized relational schemas, principally star and snowflake schemas.
+**Relational OLAP (ROLAP)** implements multidimensional analysis on a **relational DBM**S. It benefits from mature relational technology, SQL, established administration experience, scalability, and broad availability.
 
-Large joins may cause performance problems. ROLAP therefore uses controlled denormalization, indexes, partitions, query rewriting, and **materialized views** that store selected query results or aggregates in advance.
+The relational model does not natively contain the first-class concepts “dimension,” “measure,” and “hierarchy.” They must be represented through specialized relational schemas, **principally star and snowflake schemas.**
+
+Large joins may cause performance problems. ROLAP therefore uses controlled **denormalization** (a normalized database is a database without duplciated data, if you have a non normalized database, means that you have duplicates in it), indexes, partitions, query rewriting, and **materialized views** that store selected query results or aggregates in advance.
 
 ROLAP generally supports large data volumes and many users, but some multidimensional operations require more processing time or storage than in a native cube engine.
 
@@ -1215,10 +1249,26 @@ A ROLAP engine acts as middleware between the relational back end and the analyt
 
 Metadata is central to this translation because it tells the engine which tables and joins implement each business concept.
 
+### Professor explaination
+
+given a cube where d1,d2,d3 are the dimensions and the `(d1,d2,d3) -> m` , where m is the measure and is being **functional determined** by d1,d2,d3, we can conclude that the "->" is a **[[Functional Dependency]]** and it is basically an **integrity constraint**, and we can imagine a table that represent tha cube where the attributes are `d1,d2,d3,measure`, where `d1,d2,d3` is a **SUPER KEY**. So a SUPER KEY is basically a fucntional dependency. fucntional dependency  is represented as an `->` and does not mean "implies". So everytime we will see a cube, we can represent it properly as a table and we know exactly that there is a superkey. 
+
+But what about hierachies? How should we represent for exaple hierarchy h1: 
+```
+store->city->region
+```
+with key constrains: Store functionally detemines City, and Vity functionally determines Region. 
+In particular, if we have d1,d2,d3 in a cube, and d1 is Store, we could simply say that there exists a foreign-key from d1 to h1=Store, which h1 means hierarchy1 and we have h2=city, h3=region.
+
+In practice: this is not the real implementation. the real implementation uss the notion of "surrogate key". 
+
 ## MOLAP
 
-**Multidimensional OLAP (MOLAP)** uses an ad hoc logical model in which multidimensional data and operations are represented natively, commonly through array-like cube structures.
+**Multidimensional OLAP (MOLAP)** uses an ad hoc logical model in which multidimensional data and operations are represented natively, commonly through array-like cube structures. Doesn't use Relational Technoloy, but another tech (could be a vector database or others).
 
+In MOLAP systems instead of "fact" they call it "event", and the most important event they call it "primary event" and an aggregate event they call it "secondary event", but nothing really new conceptually.
+
+Most of the time they use arrays/matrixes, so it can be efficient but there is no stndard in the implementation. We will see also that MOLAP suffers from "sparsity": becasue are matrixes, like multidimensional cubes, it is possible that not all the cells are being uccupied, so there is a bad optimization of the usage. the question is: **Why then should we even care about MOLAP if those kind of databases suffers from Sparsity and Non-Standard?** The answer is simple: it is incredibly rapid and optimized. Because they're matrixes, so everything is being idecied, we have a direct access to the values.
 ### Primary and Secondary Events
 
 A **primary event** is a particular occurrence of a fact identified by one value for each dimension. Each measure has a value for that event. For example:
@@ -1234,6 +1284,8 @@ revenue = 25
 A **secondary event** aggregates the compatible primary events at coarser dimensional levels. Sales may be aggregated from date to month, product to type, and store to city. Hierarchies define which aggregations are meaningful and how granularity increases.
 
 ### Data Cubes and Materialization
+
+![[Pasted image 20260904102456.png]]
 
 The primary cube contains the finest stored events. Secondary cubes contain coarser aggregates along one or more dimensions. For a fact with store, time, and product dimensions, possible secondary cubes include:
 
@@ -1336,7 +1388,7 @@ Although the Entity-Relationship model can technically represent relevant entiti
 
 The course therefore adopts the **Dimensional Fact Model (DFM)**.
 
-## The Dimensional Fact Model
+## The Dimensional Fact Model (DMF)
 
 DFM is a graphical conceptual model for data marts. It is intended to:
 
@@ -1350,6 +1402,8 @@ DFM is a graphical conceptual model for data marts. It is intended to:
 A DFM design consists of one or more **fact schemata**. Each fact schema describes a fact, its measures, dimensions, dimensional attributes, and hierarchies.
 
 ## Basic Constructs
+
+![[Pasted image 20260904170116.png]]
 
 ### Fact Type
 
@@ -1378,6 +1432,10 @@ Dimensions answer the analytical questions “by what?” and “according to wh
 
 ### Dimensional Attributes and Hierarchies
 
+remembre: this is usefull for aggreagte data in different ways. Spioiler: sales will be a relation (or an entity with some costraints) and date, store product which are the dimension are the Entities of the ED. 
+
+![[Pasted image 20260904170312.png]]
+
 The term **dimensional attribute** includes both the root dimension and the discrete attributes that describe it. A product may be described by type, category, brand, and department.
 
 A **hierarchy** is a directed tree rooted in a dimension. Its arcs represent many-to-one associations between dimensional attributes. A path such as
@@ -1390,6 +1448,8 @@ defines progressively coarser aggregation levels. Hierarchies are not arbitrary 
 
 ## Relationship with ER Diagrams
 
+![[Pasted image 20260904170330.png]]
+
 An ER model can represent entities corresponding to dimensions and relationships corresponding to facts. Measures can appear as relationship attributes. Nevertheless, the analytical roles remain implicit. DFM makes them visually and semantically explicit:
 
 - the fact is immediately recognizable;
@@ -1399,6 +1459,23 @@ An ER model can represent entities corresponding to dimensions and relationships
 - advanced constructs express optionality, shared structures, and additivity.
 
 DFM does not claim that ER is incapable of representing the domain. It provides a vocabulary better aligned with analytical reasoning.
+
+Notice: if you in te exam put an entity=data, you have to come in the next exam (because date is with respect of a subject, like a person)
+
+let's say that we want to represent the "sale" table from this ER, how do i do that? i need 3 object: store, sale, date and those are a key. This is something that we have already seen in basi di dati:
+
+![[5-progettazioneconcettuale.pdf]]
+
+But the most important thing is that we want to construct an ED that is effective for OLAP systems, and what we are seing in the image before is exactly what we want: for each store, product, date are the dimensions, sales is a fact and it models instances with quantities, recepits, numberof customers and other attributes that will be usefull based on the group by policy.
+
+Notice: of course i could have designed this ED in a different way: if i don't want to use create an relationship "sale" between those 3 entities, i could model sale as an entity, but i have to put some constraints.
+
+**notice that this ED models only sales, eveything else is needed for hierarchies.**
+
+2 things to knwo then:
+1) here is important to have clear which is the sematinc of an entity, of a relation, of an attribute and difference between an attribute and an entity, explaining why sales is a relationship. If it isn't, you have to revise the multidimensional model and how to model ED diagrams in basi di dati
+2) THIS STUFF IS USELESS, because in ED we do not have a direct notion o multidimensionali diagram, and we are basically adpating this ED for something that isn't designed for. Also it requires extra work because we are continuosly asking for information about which is the thing that we want to model but in practice we are asking to the wrong persons: managers or marketing guys who knows nothing about databases. You can do it, but an ED is something that should be used for explaining how the database is being desinged, but YOU have to exaplining it. 
+
 
 ## Naming Conventions
 
