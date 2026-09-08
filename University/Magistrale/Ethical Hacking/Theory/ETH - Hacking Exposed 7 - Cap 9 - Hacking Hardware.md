@@ -4,6 +4,8 @@
 > Il capitolo sposta l'attenzione dalle minacce logiche al software verso le minacce **fisiche e hardware**. I controlli di accesso fisico e la sicurezza degli endpoint vengono spesso incontrati dall'attaccante *molto prima* di arrivare a un access point di rete o a un prompt di login. Si parte dal bypass delle serrature, si passa alla clonazione delle card di accesso, poi all'attacco ai dispositivi (hard disk, USB) e si chiude con un'introduzione al **reverse engineering** dell'hardware.
 > Dispositivi embedded ben connessi (smartphone, tablet) sono ovunque e usano gli stessi mezzi — GSM, Wi-Fi, Bluetooth, RFID — creando un rischio significativo per aziende e privati.
 
+guarda anche la nota gemella [[Hacking_Exposed_7_Cap9_Nota_di_studio]]
+
 **Struttura del capitolo:**
 
 1. Physical Access: Getting In The Door
@@ -275,8 +277,15 @@ E c'è un dettaglio importante che il libro del 2012 non poteva avere: nel 2018 
 > - La chiavetta U3 si presenta come **due dispositivi** in "Risorse del computer":
 >   1. Un **Removable Disk** (storage normale).
 >   2. Un **CD drive nascosto** chiamato "U3" (partizione read-only).
-> - La partizione U3 esegue **automaticamente** ciò che è configurato nel file `autorun.ini`, sfruttando la funzione **Autorun** di Windows.
+> - La partizione U3 esegue **automaticamente** ciò che è configurato nel file `autorun.inf`, sfruttando la funzione **Autorun** di Windows.
 > - Il produttore fornisce un tool per **sovrascrivere** la partizione U3 con un ISO custom → ci si può inserire un programma malevolo che gira nel contesto dell'utente loggato.
+
+
+**La sottigliezza che le slide non spiegano bene: perché U3 era "speciale"**
+
+Questo è il concetto che vale davvero la pena capire. Le slide dicono che la chiavetta si presenta come due dispositivi, uno dei quali è un "CD drive nascosto". Non è un dettaglio estetico: è _il cuore del trucco_. Windows trattava (e tratta) l'Autorun in modo diverso a seconda del tipo di dispositivo. Per le unità removibili "normali" l'esecuzione automatica era già più restrittiva; per le unità **CD/DVD**, invece, l'autorun restava pieno e affidabile.
+
+U3 sfruttava proprio questo: emulava un lettore CD-ROM read-only, così Windows lo trattava come un disco ottico e ne eseguiva il contenuto automaticamente, con un'affidabilità che una semplice chiavetta non aveva. Quindi dire genericamente "funziona grazie ad Autorun" è vero ma impreciso — funzionava grazie all'**Autorun via emulazione CD-ROM**, che è ciò che aggirava le restrizioni già presenti sulle chiavette normali. Le slide questo lo saltano, e senza di esso non si capisce perché U3 fosse più pericoloso di una USB qualsiasi.
 
 > [!example] U3 PocketKnife
 > **PocketKnife** è una suite di potenti tool di hacking che vive sulla partizione disco della U3, e gira come le altre applicazioni. Tra le cose che fa:
@@ -291,6 +300,13 @@ E c'è un dettaglio importante che il libro del 2012 non poteva avere: nel 2018 
 > - Risultato: password e file vengono rubati e messi automaticamente sulla flash drive appena inserita.
 >
 > Passi (da libro): creare un `autorun.inf` custom (`open= go.cmd`), un `go.cmd` che lancia `fgdump.exe`, poi impacchettare i file nella cartella U3CUSTOM con `ISOCreate.cmd` e scrivere l'ISO con Universal_Customizer.exe.
+
+**Perché U3 è morto e sepolto**
+
+U3 era una joint venture tra SanDisk e M-Systems, lanciata intorno al 2005. SanDisk ha annunciato la fine del supporto nel 2009 e il sito con i tool di customizzazione è sparito intorno al 2010. Quindi non è "un po' datato": è un ecosistema estinto da ~15 anni. Non trovi più chiavette U3 né gli strumenti ufficiali per riscriverne la partizione.
+
+E soprattutto è morto il meccanismo che lo faceva funzionare: l'**Autorun da chiavetta USB**. Con l'aggiornamento di Microsoft del febbraio 2011 (KB971029), Autorun è stato disabilitato per i supporti removibili non ottici su tutte le versioni di Windows allora in uso. Da lì in poi, infilare una USB non lancia più automaticamente niente. L'intera premessa del PocketKnife — "la inserisci e parte da sola" — è caduta.
+
 
 > [!caution] Attenzione
 > Il device U3 **non distingue** tra computer: infetta/compromette qualsiasi macchina in cui è inserito. Attenzione a non infettare se stessi.
@@ -307,6 +323,13 @@ E c'è un dettaglio importante che il libro del 2012 non poteva avere: nel 2018 
 > - **Microsoft ha limitato Autorun** (fix opzionale in Windows Update, feb 2011) — spinto anche dal worm **Stuxnet**.
 > - Il **militare USA ha bandito le chiavette USB** (nov 2008) per fermare gli "adversary attacks".
 
+**Il riferimento a Stuxnet è impreciso**
+
+Le slide legano il fix di Autorun del 2011 a Stuxnet. È una connessione traballante: Stuxnet si propagava via USB ma sfruttava soprattutto la **vulnerabilità dei file .LNK** (MS10-046), non il classico `autorun.inf`. Il worm che ha davvero abusato di Autorun in modo massiccio, e che ha spinto Microsoft a chiuderlo, è **Conficker** (2008-2009). Se ti serve l'esempio "giusto" di malware da autorun, è Conficker, non Stuxnet.
+
+Il bando delle USB nell'esercito USA (novembre 2008), invece, è corretto ma anch'esso ha un trigger preciso che le slide non nominano: il worm **Agent.btz**, che aveva infettato reti militari classificate (l'operazione di bonifica si chiamò Buckshot Yankee).
+
+
 > [!tip] Riduzione immediata del rischio
 > - Bloccare tutti i device USB via **Group Policy**.
 > - Disabilitare **AutoRun**.
@@ -316,6 +339,21 @@ E c'è un dettaglio importante che il libro del 2012 non poteva avere: nel 2018 
 > - Standard: *Standard Protocol for Authentication in Host Attachments of Transient Storage Devices*.
 > - I device USB possono essere **firmati e autenticati** → solo device autorizzati sono ammessi.
 > - Implementato in **Windows 7**.
+
+**IEEE 1667 come "soluzione migliore": promessa mancata**
+
+Qui le slide sono ottimiste in modo datato. IEEE 1667 (Enhanced Storage) è stato effettivamente supportato in Windows 7, ma nella pratica **non è mai diventato la difesa che prometteva**. Richiedeva hardware specifico che quasi nessuno produceva, è rimasto confinato a nicchie enterprise e oggi è di fatto irrilevante come contromisura generale. Presentarlo come "la soluzione migliore" è invecchiato malissimo: la difesa reale che ha vinto è tutt'altra roba (controllo dei dispositivi via policy, e per l'HID injection le protezioni tipo controlli sui nuovi dispositivi di input).
+
+
+**Cosa è invece vivissimo: la minaccia USB "cattivo"**
+
+Le slide chiudono con una frase profetica — "anche con Autorun disabilitato, un device malevolo può infettare con altri meccanismi". È esattamente lì che è andata la storia. L'attacco USB non è morto, ha solo smesso di dipendere da Autorun:
+
+- **USB Rubber Ducky** e simili: il dispositivo non si finge una chiavetta, si finge una **tastiera**. Windows si fida ciecamente delle tastiere, e il device "digita" comandi a velocità sovrumana appena inserito. Nessun Autorun coinvolto, quindi disabilitarlo non serve a niente.
+- **BadUSB** (Karsten Nohl / SRLabs, 2014): riprogrammazione del firmware del controller USB. Un dispositivo apparentemente innocuo può ridichiararsi qualcos'altro (tastiera, scheda di rete). È a livello di firmware, sotto il sistema operativo, difficilissimo da rilevare.
+- Cavi malevoli tipo **O.MG cable**: l'attacco dentro un cavo di ricarica dall'aspetto normale.
+
+Quindi la morale, di nuovo, è la stessa dell'ATA security e regge benissimo oggi: il PocketKnife su U3 è un fossile, ma il principio "non inserire mai un dispositivo USB non fidato" è più valido che mai — anzi peggiorato, perché contro un Rubber Ducky le contromisure delle slide (disabilitare Autorun, tenere premuto Shift) non fanno _nulla_. L'unica difesa che ha attraversato indenne tutti questi anni è la più rozza e la più radicale che le slide citano quasi per scherzo: il controllo fisico e per-policy delle porte.
 
 > [!question] Domande di ripasso — U3 / USB
 > 1. Come si presenta una chiavetta U3 al sistema operativo (quanti e quali dispositivi)?
@@ -328,17 +366,31 @@ E c'è un dettaglio importante che il libro del 2012 non poteva avere: nel 2018 
 
 Una delle minacce più trascurate sono le **impostazioni di fabbrica** (out-of-the-box), pensate per mostrare funzionalità ma spesso insicure.
 
+**Il principio: intramontabile, anzi peggiorato**
+
+L'idea centrale — "le configurazioni di fabbrica insicure sono la minaccia più trascurata" — non è affatto deprecata. È il contrario: con l'esplosione dell'IoT (telecamere, router, videocitofoni, lampadine smart, termostati) il problema è oggi _ordini di grandezza_ più grave di quando fu scritto il libro. Il caso simbolo è la **botnet Mirai (2016)**: ha infettato centinaia di migliaia di dispositivi IoT proprio usando una lista di ~60 coppie utente/password di default, ed è stata usata per attacchi DDoS storici (Dyn, che mise offline mezzo internet USA). È esattamente il "Standard/Default Passwords" delle slide, scalato a livello planetario. Quindi su questo capitolo il tuo istinto "è deprecato" **non** vale: il concetto è più attuale che mai.
+
+C'è anche stata una risposta normativa che il libro non poteva prevedere: diverse giurisdizioni hanno **vietato per legge** le password di default identiche sui dispositivi. La California (SB-327, in vigore dal 2020) e soprattutto il Regno Unito con il **PSTI Act (2024)** obbligano i produttori a non spedire più device con password comuni preimpostate. Il problema è stato preso così sul serio da diventare oggetto di legge.
+
 > [!example] Owned Out of the Box — ASUS Eee PC
 > - L'**Eee PC 701** era spedito con **Xandros Linux** custom.
 > - Il servizio di file-sharing **Samba** era **attivo di default** (per facilità d'uso verso utenti poco tecnici).
 > - Era una versione vulnerabile, **rootabile** con un modulo Metasploit standard, con quasi nessuno sforzo. → *"Easy to learn, easy to work, easy to root."*
 > - Se Samba fosse stato off di default, la superficie d'attacco sarebbe stata molto ridotta.
 
+**Gli esempi specifici: quasi tutti fossili**
+
+L'**ASUS Eee PC 701** con Xandros Linux e Samba aperto è del 2007-2008. Quel modello, quella distro, quel modulo Metasploit: tutto storia. Vale zero come minaccia oggi, ma resta un buon _esempio didattico_ del principio "servizio attivo di default = superficie d'attacco". La frase "easy to learn, easy to work, easy to root" era un gioco sullo slogan ufficiale ASUS "easy to learn, easy to work, easy to play".
+
+La **Default Password List di Phenoelit** esiste ancora concettualmente, ma quel dominio/URL è di fatto morto. Oggi il riferimento vivo è **RouterPasswords.com**, i database dentro strumenti come Metasploit, o le liste integrate in scanner come **Shodan** (il "motore di ricerca dei dispositivi esposti" che è diventato lo strumento chiave per trovare device con credenziali di default esposti su internet — roba che nel 2012 era agli inizi).
+
+Gli **ATM Triton** con codice admin condiviso: il caso reale è del 2008 (Derrick Shoemaker), e riguardava i Triton RL2000 che uscivano di fabbrica con lo stesso master password nel manuale. Ancora oggi ci sono ATM vulnerabili, ma il vettore moderno è più il **jackpotting** con malware (Ploutus, attacchi "black box") che il semplice codice di default. Reggono come principio, ma la tecnica è evoluta.
+
 > [!warning] Standard / Default Passwords
 > - Ogni device che richiede login ha il problema "chicken-and-egg" di comunicare la password iniziale all'utente → molti usano **password standard** o impostazioni insicure.
 > - Esiste una **Default Password List** mantenuta da Phenoelit (phenoelit.org/dpl/dpl.html).
 > - I peggiori offender sono i **router embedded**, che spesso condividono la stessa password su intere linee di prodotto; molti hanno amministrazione remota e password di default ancora attiva su Internet.
-> - Abilita **vulnerability chaining**: un attaccante usa una cross-site request forgery per loggarsi nel router e reindirizzare gli utenti verso DNS malevoli.
+> - Abilita **vulnerability chaining**: un attaccante usa una cross-site request forgery [[CSRF]] per loggarsi nel router e reindirizzare gli utenti verso DNS malevoli.
 > - **ATM Triton**: spediti tutti con lo stesso codice di accesso amministrativo → chiunque col codice può stampare il transaction log (che rivelava numeri di conto e nomi dei clienti) o eseguire funzioni amministrative.
 
 > [!note] Casi reali — ATM
@@ -351,6 +403,26 @@ Una delle minacce più trascurate sono le **impostazioni di fabbrica** (out-of-t
 > - Il Bluetooth **supporta la cifratura**, ma è **off di default** e la password di default è **0000**.
 > - Ha permesso per quasi un decennio di penetrare reti, rubare contatti e fare social engineering (es. eavesdropping sugli auricolari Bluetooth).
 > - Strumento off-the-shelf: **Ubertooth** (ubertooth.sourceforge.net), ~**120$** da SparkFun: sniffing e playback dei frame Bluetooth su tutti gli **80 canali** della banda ISM 2.4 GHz, più spectrum analysis.
+
+**Errori/imprecisioni da segnalare**
+
+C'è un punto da correggere con attenzione nella parte Bluetooth, perché le slide mescolano due cose:
+
+Dire che "il Bluetooth supporta la cifratura ma è off di default e la password di default è 0000" è **impreciso e in parte sbagliato** per il Bluetooth classico. Lo 0000 (e 1234) non è una "password di cifratura disattivata": è il **PIN di default per il pairing** di dispositivi senza interfaccia (auricolari, vivavoce, altoparlanti) che non possono far digitare un codice all'utente. La cifratura in Bluetooth, una volta stabilito il legame, non è banalmente "off" — il problema vero era la debolezza del PIN corto, che rendeva il legame _forzabile_. È una sfumatura, ma il libro la appiattisce in modo fuorviante.
+
+Poi c'è il grande assente temporale: il libro parla di **Bluetooth classico** (BR/EDR). Tutto il mondo si è spostato su **Bluetooth Low Energy (BLE)**, che ha un modello di sicurezza completamente diverso e una storia di vulnerabilità sua (il pairing "Just Works" senza autenticazione, gli attacchi KNOB del 2019, BLESA, ecc.). Le minacce Bluetooth non sono sparite, ma quelle descritte nelle slide appartengono a un'epoca del protocollo che oggi conta poco.
+
+**Ubertooth: ancora vivo, ma superato**
+
+Questo è il dettaglio più utile che ho verificato. L'Ubertooth One esiste ancora (di Great Scott Gadgets, la stessa gente dell'HackRF), ma è invecchiato tecnicamente. Il suo radio-chip, il CC2400, ha un limite hardware serio: può sniffare un solo canale di advertising alla volta, su tre, perché ha una sola radio a banda stretta. E soprattutto, supporta il BLE fino alla specifica 4.0 con copertura limitata della 4.2: nel momento in cui due dispositivi negoziano LE Secure Connections (introdotte in BLE 4.2), l'Ubertooth mostra payload cifrati senza poterli decifrare, anche avendo catturato il pairing.
+
+Oggi lo standard di fatto per catturare BLE non è più l'Ubertooth: è il **dongle Nordic nRF52840** con il firmware nRF Sniffer gratuito, che alimenta direttamente Wireshark ed è ormai lo strumento di riferimento sia per hobbisti che professionisti, a un costo bassissimo e con supporto completo al BLE 5.2, incluse le modalità 2 Mbps e long-range PHY che l'Ubertooth non riesce nemmeno a ricevere. Quindi il prezzo "~120$ da SparkFun" nelle slide è ancora nell'ordine di grandezza giusto per l'Ubertooth, ma non è più la scelta ovvia che era.
+
+**In sintesi**
+
+Il principio (default insicuri = disastro) è il più attuale del capitolo, tanto da essere diventato legge. Gli esempi (Eee PC, Triton, Bluetooth classico, Phenoelit) sono datati ma didatticamente ancora validi come illustrazioni. Le imprecisioni da correggere: lo 0000 è un PIN di pairing, non una "password di cifratura off"; e tutto il discorso Bluetooth va mentalmente aggiornato da BR/EDR a BLE, con Ubertooth ormai affiancato/superato dall'nRF52840.
+
+A questo punto abbiamo coperto un bel pezzo di capitolo. Vuoi che ti prepari la nota Obsidian di ripasso che ti offrivo, con tutto — ATA/hot-swap/Vogon, U3, default config — e dei callout che marcano esplicitamente cosa è "storico/deprecato", cosa è "errore da correggere" e cosa "regge ancora oggi"?
 
 > [!question] Domande di ripasso — Default Configurations
 > 1. Perché il caso ASUS Eee PC è un esempio di rischio da configurazione di default?
@@ -399,6 +471,35 @@ Fino a qui si sono visti attacchi a dispositivi COTS (*Commercial Off-The-Shelf*
 > 4. Perché le board multilayer complicano il reverse engineering?
 > 5. Come funziona la funzione di *toning* di un multimetro per mappare il bus?
 
+Questa è la sezione **meno deprecata di tutto il libro**, e per un motivo semplice: è fisica, non software. La chimica della de-encapsulation, la numerazione dei pin, il test di continuità con il multimetro — queste cose non invecchiano, perché non dipendono da una versione di Windows o da un protocollo che cambia. Un datasheet si legge oggi come nel 2012. Quindi qui il tuo istinto "è deprecato?" per una volta va quasi tutto verso il "no".
+
+Detto ciò, ci sono un paio di **errori** da correggere nella tua nota e soprattutto una grossa parte _mancante_ (la tecnica non è deprecata, ma il libro si ferma a metà strada rispetto a come si lavora oggi).
+
+**Errori da sistemare nella nota**
+
+Il più netto è nel callout "Identificare i pin importanti": scrivi che la tacca _"dice quale pin è il pin 0/21"_. Questo è sbagliato — la numerazione dei pin negli IC parte da **pin 1**, non da pin 0. Non esiste una convenzione "pin 0" negli integrati standard. Quel "0/21" è quasi certamente un residuo corrotto (OCR o copia mal riuscita) del testo originale: la frase corretta è semplicemente "indica qual è il **pin 1**".
+
+Sul "senso antiorario" invece sei nel giusto, ma manca una precisazione importante che è proprio il tipo di trabocchetto da esame: la numerazione è antioraria **guardando il chip dall'alto** (lato componenti). Se lo guardi da sotto (lato saldature, come capita con i BGA), l'immagine è specchiata e il verso si inverte. Vale la pena aggiungerlo, perché è l'errore classico che fa saldare il pin sbagliato.
+
+Un'imprecisione più lieve: "DL (digital lines), AD (analog/digital lines)" sono sigle vaghe e non standard. I pin _davvero_ ghiotti per chi fa reverse, oltre a TX/RX, hanno nomi precisi: le interfacce di debug **JTAG** (TCK, TMS, TDI, TDO) e **SWD** (SWDIO, SWCLK), e i bus **I²C** (SDA/SCL) e **SPI** (MOSI/MISO/SCK/CS). Se nella nota metti questi al posto del generico "DL/AD", hai qualcosa di molto più utile e corretto.
+
+(Minore: "da 4 a 64 strati" è tecnicamente possibile ma fuorviante come tipico — la stragrande maggioranza delle board di consumo sta sui 4-12 strati; 64 è roba da backplane esotici.)
+
+**Cosa il libro salta — la parte che oggi conta di più**
+
+Il capitolo descrive il reverse _fisico_ (aprire, identificare, tracciare col multimetro) ma si ferma prima del pezzo che nel 2012 era già la vera scorciatoia e oggi è centrale: **le interfacce di debug integrate**. Quasi ogni dispositivo ha una JTAG o una SWD sulla board — spesso solo dei pad o dei fori non popolati. Trovarle e collegarcisi ti dà accesso diretto alla CPU: puoi fermare il processore, leggere/scrivere la memoria, dumpare il firmware. È molto più efficiente che tracciare bus a mano.
+
+E qui c'è un'ironia che vale la pena conoscere: lo strumento simbolo per _scovare_ automaticamente una JTAG nascosta è il **JTAGulator**, creato da **Joe Grand** (alias Kingpin, del gruppo L0pht) — che è proprio uno degli autori del materiale di hardware hacking da cui derivano queste slide. Il libro descrive il metodo manuale; l'evoluzione naturale è il suo stesso tool.
+
+Insieme al JTAGulator, la cassetta degli attrezzi moderna che il libro non poteva avere pienamente:
+
+- **Logic analyzer USB economici** (i cloni Saleae da poche decine di euro): oggi "vedere" cosa passa su un bus seriale costa quasi niente, mentre nel 2012 era attrezzatura costosa.
+- **Bus Pirate** e **Flipper Zero**: multi-tool per parlare a I²C/SPI/UART al volo.
+- **Chip-off**: dissaldi direttamente la memoria flash/eMMC e la leggi con un programmatore esterno. È diventata _la_ tecnica principe della forense su smartphone e IoT — bypassa tutta la parte di tracciamento.
+- L'**X-ray** che il libro cita come "quasi non invasivo" oggi è arrivato fino al **CT scanning** delle PCB: ricostruisci in 3D tutti gli strati interni senza toccare nulla. Esattamente la risposta al problema "multilayer difficile da tracciare a vista".
+
+Quindi la sintesi: la sezione è **valida e ancora insegnabile così com'è** (a differenza di U3 o dell'hot-swap), ma è _incompleta_ — fotografa il reverse manuale e si ferma prima di JTAG/SWD, chip-off e strumenti economici, che sono il cuore del lavoro reale odierno.
+
 ### 3.2 Sniffing dei Bus Data
 
 > [!info] Sniffing del bus
@@ -436,6 +537,36 @@ Fino a qui si sono visti attacchi a dispositivi COTS (*Commercial Off-The-Shelf*
 > 2. In cosa consiste il *symbol decoding*?
 > 3. Quali strumenti Software-Defined Radio vengono citati?
 
+Come la 3.1, queste due sezioni sono **fisica e radio**, quindi invecchiano bene nella sostanza. Ma ci sono un paio di punti dove il libro è ormai fuori data e uno dove è tecnicamente impreciso. Lascia che verifichi due dettagli che sono cambiati dal 2012.Bene, ho confermato il dettaglio che sospettavo. Anche qui la sostanza regge (è fisica e radio), ma ci sono due punti datati e uno da precisare.
+
+**Un errore fattuale ormai vero: il grantee code non è più "3 caratteri"**
+
+La tua nota dice "grantee code di 3 caratteri". Era vero quando fu scritto il libro, ma **è cambiato proprio nel 2012** (ironia della sorte, lo stesso anno di Hacking Exposed 7). La FCC stava esaurendo le combinazioni a 3 caratteri e dal maggio 2013 ha iniziato a emettere codici a **5 caratteri**. La regola attuale è precisa e vale la pena saperla, perché è il tipo di cosa che un esame ama: il grantee code è di 3 caratteri se inizia con una **lettera** (A-Z), di 5 caratteri se inizia con un **numero** (2-9). Lo zero e l'uno non si usano mai, per non confonderli con le lettere O e I. Quindi la formulazione corretta oggi è "grantee code di 3 **o** 5 caratteri". I vecchi codici a 3 caratteri restano validi a vita, quindi ne trovi ancora tantissimi in giro — ma la tua nota, così com'è, è tecnicamente incompleta.
+
+(Nota minore sull'URL: il libro cita `fcc.gov/oet/ea/fccid/`. La pagina di ricerca vive ancora lì, ma esistono mirror di terze parti molto più comodi da usare — **fccid.io** e **fcc.report** — che aggregano foto interne, test report e diagrammi in modo più navigabile. Utile saperlo perché è proprio da lì che un reverse engineer parte davvero.)
+
+**Il pezzo più datato: gli strumenti SDR**
+
+Qui c'è il classico "invecchiamento da prezzi". Il libro cita **WinRadio** e **USRP** come strumenti SDR. Il problema non è che siano sbagliati — l'USRP (di Ettus Research) è tuttora l'apparato professionale di riferimento — ma che nel 2012 fare SDR costava **centinaia o migliaia di dollari**, ed era roba da specialisti. Nel frattempo è successa una piccola rivoluzione che il libro non poteva avere:
+
+- **RTL-SDR**: intorno al 2012 si scoprì che certi sintonizzatori TV USB da ~20-30$ potevano essere usati come ricevitori SDR a banda larga. Ha democratizzato completamente il campo — oggi chiunque può fare ricognizione radio con una chiavetta da pochi euro. Questo _è_ il cambiamento più importante rispetto alle slide.
+- **HackRF One** (di Michael Ossmann, lo stesso dell'Ubertooth): ~150$, e a differenza dell'RTL-SDR _trasmette_ anche, non solo riceve. È diventato lo strumento simbolo dell'hardware/RF hacking hobbistico.
+- **Flipper Zero**: multi-tool RF sub-GHz alla portata di tutti, oggi il volto pop di questa disciplina.
+
+Quindi il concetto di "usare un SDR per il symbol decoding" è validissimo e attuale, ma la lista di strumenti va mentalmente aggiornata: da "USRP costoso" a "RTL-SDR economico + HackRF". Da segnalare nella nota.
+
+**HDCP: l'"eccezione cifrata" che è stata bucata**
+
+Questo è il punto più gustoso della 3.2. Il libro cita **HDMI-HDCP** come esempio virtuoso di bus cifrato, l'eccezione alla regola "i bus non sono protetti". Ecco il colpo di scena storico: la **master key di HDCP (v1) è trapelata nel 2010** ed è stata confermata autentica da Intel. Da quella chiave si possono derivare tutte le chiavi dei dispositivi, il che ha reso HDCP 1.x sostanzialmente rotto: sono comparsi splitter/stripper hardware che rimuovono la protezione al volo. In più esiste da sempre l'"analog hole" e, per HDCP 2.2, l'attacco HDCP-2.2 su alcune implementazioni.
+
+Non è che l'esempio sia _sbagliato_ — HDCP resta un bus cifrato, quindi illustra bene il concetto. Ma presentarlo come baluardo di sicurezza è invecchiato male: è l'ennesima conferma della tesi di fondo del libro (i meccanismi DRM/hardware danno spesso falsa sicurezza). Vale la pena annotare che l'esempio del "bus cifrato robusto" si è poi rivelato bucabile — è coerente con tutto il resto del capitolo.
+
+**Cosa invece regge perfettamente**
+
+Tutta la parte metodologica è solida e ancora insegnata così: la logica dell'intercept/replay/MITM sui bus, l'uso del logic analyzer con decoder di protocollo per I²C/SPI/UART, la ricognizione via FCC ID per scoprire frequenze e diagrammi interni, il concetto di symbol decoding. Anzi, il flusso di lavoro "trova l'FCC ID → scarica il test report → leggi frequenze e foto interne → sniffa con l'SDR" è _esattamente_ come si lavora oggi in RF reversing. Solo gli strumenti si sono abbassati di prezzo.
+
+**Sintesi per le tue note:** correggi il grantee code in "3 o 5 caratteri", aggiungi RTL-SDR/HackRF accanto a USRP/WinRadio, e nota che HDCP 1.x è stato bucato nel 2010. Il resto è metodo intramontabile.
+
 ### 3.4 Firmware Reversing
 
 > [!info] Perché reversare il firmware
@@ -465,6 +596,40 @@ Fino a qui si sono visti attacchi a dispositivi COTS (*Commercial Off-The-Shelf*
 > - **Microcontroller dev tools**: es. **MPLAB IDE** per i PIC di Microchip (emulatore software, debugger, assembler, compilatore C).
 > - **ICE (In-Circuit Emulator)**: hardware debugger che dà una finestra sul funzionamento dell'hardware in-circuit. Termine che si sovrappone a JTAG. Contattare il produttore per l'ICE disponibile.
 > - **JTAG (Joint Test Action Group)**: interfaccia di test tra i componenti su PCB, nata per verificare l'assemblaggio post-produzione. È il tipo di interfaccia ICE più comune sui sistemi embedded moderni → ottima risorsa quando il reversing semplice non basta. **"One size does not fit all"**: pin count da 8 a 20, configurazioni diverse (ARM, Altera, MIPS, Atmel). Progetti open: **OpenOCD** e **UrJTAG**.
+
+Questa è la sezione **più solida e più attuale di tutto il capitolo** — al punto che è la disciplina che oggi è cresciuta di più rispetto al 2012, non diminuita. Il firmware reversing è diventato un campo enorme proprio grazie all'esplosione dell'IoT. Quindi qui la risposta alla domanda "è deprecato?" è un secco no. Ma c'è un tool centrale che manca completamente, e un paio di aggiornamenti importanti sugli strumenti.
+
+**La grande assenza: `binwalk`**
+
+Questo è il buco più vistoso della nota, e non è colpa tua — è che il libro descrive il flusso di lavoro _manuale_ (apri con hex editor → `strings` → indovina il filesystem → monta a mano con `mount -o loop`). Nel frattempo è arrivato lo strumento che ha reso quasi tutto questo automatico: **binwalk**. Fai `binwalk firmware.bin` e ti scansiona l'immagine cercando le "firme" di formati noti (filesystem, kernel, immagini, chiavi), poi con `binwalk -e` **estrae automaticamente** i filesystem incapsulati. È il primo comando che chiunque lancia oggi su un firmware, e ha soppiantato in gran parte il montaggio manuale che descrive il libro. Va assolutamente aggiunto alla nota: il procedimento `strings` → capisci il filesystem → `mount` è ancora valido concettualmente, ma nella pratica lo fa binwalk in un colpo.
+
+Nella stessa famiglia, per il filesystem: il libro cita `cramfs`. Oggi lo standard di fatto nei device embedded è **SquashFS** (con `unsquashfs` per estrarlo). cramfs esiste ancora ma è molto meno comune — vale la pena affiancarli nella nota.
+
+**L'aggiornamento più importante sugli strumenti: Ghidra**
+
+Il libro cita **IDA Pro** come disassembler, ed è corretto — IDA resta lo standard commerciale di riferimento. Ma è sempre stato costoso (licenze da migliaia di euro), il che lo teneva fuori dalla portata di molti. Il cambiamento epocale che il libro non poteva avere: nel **2019 la NSA ha rilasciato Ghidra**, un framework di reverse engineering completo, gratuito e open source, con decompiler incluso. Ha democratizzato il disassembly esattamente come l'RTL-SDR ha fatto con la radio. Oggi la coppia "IDA Pro / Ghidra" va citata insieme, e per chi studia (o per un hobbista) Ghidra è spesso il punto di partenza. Un'ironia che si sposa col capitolo: è proprio la NSA — l'agenzia che uno immaginerebbe voler _nascondere_ certe capacità — ad aver messo in mano a tutti lo strumento.
+
+**Le backdoor hard-coded: la parte più profetica e più viva**
+
+Il callout sulle backdoor (dati di autenticazione hard-coded, sequenze speciali di input) è concettualmente perfetto e oggi _più_ rilevante che mai. Gli esempi del libro (Intel NetStructure, Palm OS Debug Mode, Sega Dreamcast) sono datati, ma il fenomeno è esploso: si trovano regolarmente credenziali hard-coded in router, telecamere IP, DVR. Il caso emblematico post-libro sono le **backdoor nei router D-Link** (2013): un ricercatore scoprì che se lo user-agent del browser era una certa stringa bizzarra (`xmlset_roodkcableoj28840ybtide` — che letto al contrario contiene "edit by 04882 joel backdoor"), si bypassava del tutto l'autenticazione. È _esattamente_ la "sequenza speciale di input" descritta nel libro, trovata in natura su hardware di massa. Se vuoi un esempio moderno da mettere in nota accanto ai tre storici, questo è perfetto.
+
+Aggiungo il collegamento a quanto dicevi sui backdoor governativi qualche messaggio fa: nota che quasi tutte queste backdoor reali si sono rivelate **residui di debug lasciati dagli sviluppatori** (comode in fabbrica, dimenticate in produzione), non porte per i governi. Ennesima conferma del rasoio di Hanlon.
+
+**Un paio di precisazioni tecniche minori**
+
+Nel callout dell'hex editor: attenzione a "dai decode si può indovinare la cifratura usata (es. si vede che è usato AES)". La formulazione è un po' fuorviante — non "vedi" AES guardando i byte cifrati (il ciphertext AES è indistinguibile dal rumore casuale, è il suo scopo). Quello che realmente trovi con `strings`/hex editor sono le **stringhe in chiaro** che _nominano_ l'algoritmo (nomi di librerie, costanti, riferimenti a "aes", "openssl"), oppure zone ad alta entropia che _suggeriscono_ che qualcosa è cifrato/compresso. La distinzione è sottile ma importante: indovini l'uso di AES dai metadati e dai simboli, non decifrando a occhio.
+
+Su **UrJTAG**: è uno dei due progetti open citati per JTAG, ma è ormai in gran parte abbandonato/dormiente. Quello vivo e universale è **OpenOCD**, che è diventato lo standard de facto per parlare a JTAG/SWD. Nella nota li puoi lasciare entrambi ma segnare che OpenOCD è quello attuale.
+
+E un collegamento utile per la tua nota complessiva: qui il libro finalmente introduce **JTAG** in modo esteso — è lo stesso JTAG che ti segnalavo come "grande assente" nella sezione 3.1 sul mapping. Quindi le due sezioni si parlano: il mapping fisico (3.1) e il firmware reversing (3.4) convergono proprio sulla JTAG come porta d'accesso privilegiata. Il **JTAGulator di Joe Grand** che citavo prima è il ponte tra le due: serve a _trovare_ i pin JTAG che poi userai con OpenOCD per fare il dump del firmware.
+
+**Cosa regge senza riserve**
+
+Tutto il resto è metodo intramontabile: il concetto di firmware field-upgradable come miniera di segreti, `strings` come primo comando (validissimo, anzi eterno), la forgiatura di connessioni SSL rubando chiavi dal filesystem, gli EEPROM programmer con `read`/`write`, l'Intel HEX (in uso dagli anni '70 e ancora oggi), la distinzione MCU/FPGA, ICE vs JTAG, il "one size does not fit all". Niente di deprecato qui — semmai il panorama si è arricchito.
+
+**Sintesi per la nota:** aggiungi `binwalk` come primo tool del workflow, affianca **Ghidra** a IDA Pro, affianca **SquashFS** a cramfs, segna **OpenOCD** come lo standard JTAG vivo (UrJTAG dormiente), correggi la frase su AES ("indovini dall'entropia e dai simboli, non decifri a occhio"), e valuta la backdoor D-Link 2013 come esempio moderno.
+
+
 
 > [!question] Domande di ripasso — Firmware Reversing
 > 1. Che tipo di informazioni sensibili si possono trovare dentro un firmware?
