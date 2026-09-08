@@ -20,6 +20,8 @@ Attaccare un dispositivo hardware richiede, ovviamente, **accesso fisico** ad es
 
 #### La chiave normale
 
+![[Pasted image 20260908121936.png]]
+
 > [!info] Come funziona una serratura
 > La serratura è una delle forme più antiche di sicurezza fisica: protegge porte, rack, case e praticamente tutto il resto. Blocca un meccanismo tramite una serie di **pin** disposti su due file:
 > - **Driver pin** (blu): sospesi da molle, spingono verso il basso.
@@ -28,6 +30,8 @@ Attaccare un dispositivo hardware richiede, ovviamente, **accesso fisico** ad es
 > Quando si inserisce la chiave corretta, i key pin spingono i driver pin fino ad allineare il gap tra le due file esattamente sul bordo del plug, chiamato **shear line** (linea di taglio, in giallo). A quel punto il meccanismo è libero e la serratura può ruotare.
 
 #### La bump key
+s
+<iframe width="560" height="315" src="https://www.youtube.com/embed/r3cuVPSySZw?si=oyrlZGhpbkL-XvCh" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 > [!example] Cos'è una bump key
 > È una chiave costruita appositamente, con i denti tutti alla **stessa altezza minima** (i key pin scendono al punto più basso). Sfrutta la fisica newtoniana:
@@ -68,7 +72,7 @@ Attaccare un dispositivo hardware richiede, ovviamente, **accesso fisico** ad es
 Molte strutture sicure richiedono una card di accesso oltre ad altre misure. Le card sono di due tipi: **magnetic stripe** (*magstripe*) o **RFID** (spesso dette *proximity card*). L'obiettivo dell'attacco: creare un clone della card e sostituire le informazioni chiave con dati custom per ottenere accesso fisico.
 
 #### Card a banda magnetica (Magstripe)
-
+![[Pasted image 20260908122036.png]]
 > [!info] Caratteristiche della magstripe
 > - Gli standard ISO (**7810, 7811, 7813**) definiscono dimensioni e specificano **tre tracce** di dati (track 1, 2, 3).
 > - Contengono dati come ID number, serial number, nome, indirizzo, SSN, saldi conto…
@@ -78,8 +82,8 @@ Molte strutture sicure richiedono una card di accesso oltre ad altre misure. Le 
 > *Esempio Track 1, Format B:* start sentinel (`%`), format code (`B`), Primary Account Number/PAN (fino a 19 caratteri), field separator (`^`), nome (2–26 caratteri), field separator, data di scadenza (YYMM).
 
 > [!example] Strumenti — Reader/Writer e Card Explorer
-> - Un **reader/writer per magstripe** (es. da makinterface.de) con connettore USB, costo ~**35$**. Chiunque può leggere, scrivere e clonare card.
-> - Software **Magnetic-Stripe Card Explorer**: mostra i dati in formato Char, Binary o ISO.
+> - Un **reader/writer per magstripe** (es. da makinterface.de) con connettore USB, costo ~**35$**. Chiunque può leggere, scrivere e clonare card. vedi immagine di sopra
+> - Software **Magnetic-Stripe Card Explorer**: mostra i dati in formato Char, Binary o ISO.![[Pasted image 20260908122608.png]]
 > - **Read**: leggere più card dello stesso tipo per individuare quali bit cambiano.
 > - **Write**: determinare quale checksum è usato → ricalcolare quello nuovo prima di scrivere. Alcune card hanno un checksum che però il reader non controlla.
 
@@ -158,6 +162,36 @@ Assunto che l'attaccante abbia già bypassato i controlli basati su serratura, l
 > - Fa parte della **specifica ATA** → non è legata a un brand o dispositivo specifico.
 > - **Non cifra** il disco: ne impedisce solo l'accesso → sicurezza minima. I contenuti restano leggibili se si aggira il controllo.
 
+L'ATA Security è una funzione di sicurezza che sta dentro il firmware dei dischi (sia SATA meccanici che SSD SATA e M.2 SATA). In pratica è una password che blocca il disco _a livello hardware_, cioè direttamente nel controller del disco, non nel sistema operativo e non nel BIOS.
+
+L'idea è semplice: se imposti questa password, all'accensione il disco parte in stato "bloccato" e rifiuta di leggere o scrivere qualsiasi dato finché non riceve la password corretta. Non è come una cartella protetta da password in Windows: qui è il disco stesso che si rifiuta di collaborare.
+
+**Come funziona a grandi linee**
+
+Ci sono due password possibili: una "User" (quella che serve per usare il disco tutti i giorni) e una "Master" (una specie di password di riserva/amministratore). E ci sono due livelli, "High" e "Maximum", che cambiano cosa puoi fare con la Master password se dimentichi quella User — nel livello Maximum, se perdi la User password, l'unico modo per riusare il disco è cancellarlo completamente.
+
+**Perché sul tuo desktop non l'hai mai visto**
+
+Due motivi principali. Primo: è disattivata di default. Nessuno la attiva a meno che tu non lo faccia di proposito con un programma apposta (tipo `hdparm` su Linux, o l'opzione "HDD Password" nel BIOS di molti portatili). Secondo, e più importante per te: la maggior parte delle schede madri desktop, all'avvio, manda al disco un comando chiamato **SECURITY FREEZE LOCK**. Questo "congela" lo stato della sicurezza per tutta la sessione, in modo che nessuno — nemmeno un malware — possa impostare una password a tua insaputa mentre il PC è acceso. Ecco perché nei desktop la cosa passa completamente inosservata: c'è, ma è congelata e nascosta.
+
+Sui portatili invece è molto più visibile, perché la voce "password del disco" nel BIOS sfrutta proprio l'ATA Security.
+
+**Il punto che ti interessa: gli adattatori USB**
+
+Qui c'è una cosa importante da sapere. I comandi dell'ATA Security sono comandi ATA "nativi". Quando colleghi un disco tramite un adattatore USB, non stai parlando direttamente in ATA: l'adattatore fa da traduttore tra USB e SATA (la traduzione si chiama SAT, SCSI/ATA Translation). Molti di questi ponticelli USB **non lasciano passare** i comandi di sicurezza ATA.
+
+Le conseguenze pratiche:
+
+- Tramite USB spesso non riesci a _gestire_ l'ATA Security (impostarla, toglierla, ecc.), anche volendo.
+- Se un disco è _già bloccato_ con ATA Security e lo colleghi via USB, rischia di apparire inaccessibile e non riesci a sbloccarlo, perché l'adattatore non trasmette il comando di sblocco. Per gestirlo devi collegarlo direttamente alla porta SATA/M.2 della scheda madre.
+- Alcuni adattatori di qualità supportano il "pass-through" dei comandi ATA, altri no. È molto variabile.
+
+Quindi il fatto che tu abbia sempre usato quei dischi via adattatore senza problemi è del tutto normale: erano dischi senza ATA Security attiva, e l'adattatore semplicemente leggeva e scriveva dati come al solito.
+
+Un'ultima nota utile: su molti SSD moderni l'ATA Security è collegata alla cifratura hardware. Questi dischi cifrano _sempre_ i dati internamente, e la password ATA serve a sbloccare la chiave di cifratura. Su un HDD meccanico più vecchio, invece, spesso è solo un "lucchetto" logico e i dati grezzi sul piatto restano in chiaro — motivo per cui su quei dischi la protezione è meno robusta di quanto sembri.
+
+Se ti interessa, posso mostrarti i comandi concreti per vedere lo stato dell'ATA Security del tuo disco (per esempio con `hdparm -I` su Linux) senza rischiare di attivarla per sbaglio.
+
 #### L'attacco Hot-Swap (Fool BIOS)
 
 > [!example] Hot-swap attack — passi
@@ -168,6 +202,8 @@ Assunto che l'attaccante abbia già bypassato i controlli basati su serratura, l
 > 4. Impostare la password hard-disk tramite il BIOS → il drive **accetta** la nuova password.
 > 5. Riavviare: il BIOS chiede di sbloccare il drive, e la nuova password funziona, **bypassando** quella vecchia.
 > 6. La password può poi essere rimossa dal sistema se non desiderata.
+> 
+> Un chiarimento tecnico: quell'attacco non sfruttava una proprietà universale dell'ATA security, ma un _bug di firmware_ di certi drive specifici, che accettavano `SECURITY SET PASSWORD` senza aver mai verificato quella corrente. Non tutti i drive erano vulnerabili nemmeno all'epoca. I drive moderni ben fatti non lo sono, ma "moderno" non è una garanzia — dipende dalla singola implementazione del firmware. Aggiungi che il SATA hot-plug fisico su hardware desktop è sempre stato rischioso (il libro stesso avvisa che puoi cuocere la scheda logica), il che lo rendeva più un trucco da laboratorio che una tecnica pulita.
 
 > [!caution] Rischi dell'hot-swap
 > Cortocircuitare i lead dell'hard disk tipicamente causa il reboot del computer e può danneggiare la scheda logica. L'hot-swap può danneggiare drive, file system, computer o l'operatore. Procedere a proprio rischio.
@@ -176,16 +212,51 @@ Assunto che l'attaccante abbia già bypassato i controlli basati su serratura, l
 > - ATA Security è usata su hard drive di Xbox e su laptop, **ma** il BIOS delle macchine desktop spesso **ignora** l'ATA security.
 > - Un attaccante potrebbe **attivare** ATA security e di fatto **distruggere** un hard drive o tenerlo in ostaggio (ransom): la macchina non farebbe boot e nessun comando BIOS potrebbe aiutare.
 > - Al momento è solo un **attacco teorico**.
+> - inoltre orami il mondo si è spostata alla tecnologia **nvme** perciò vaffanculo ai SATA
 
 > [!example] Bypass professionale — Vogon Password Cracker POD
 > - Cambia la password da una semplice **GUI**.
 > - Permette alle forze dell'ordine di **immaging** del drive e poi ripristinare la password originale, così il proprietario non si accorge di nulla.
 > - Funziona accedendo alla **drive service area**: area speciale del disco per firmware, informazioni sulla geometria, ecc., **inaccessibile all'utente**.
 
+Erano le **forze dell'ordine** (polizia forense) — le slide dicono "law enforcement". Lasciami cercare qualche dettaglio concreto, perché Vogon è un nome un po' di nicchia e voglio darti informazioni accurate.Confermato: era per **forze dell'ordine / investigazione forense**, non per i militari (anche se la loro pubblicità parlava di "lotta al crimine e al terrorismo globale", da qui forse la confusione).
+
+**Chi era Vogon**
+
+Vogon International era un'azienda britannica, nata nel recupero dati e poi specializzata in strumenti forensi per la polizia. La loro gamma andava da singoli moduli software fino a workstation forensi complete. Il Password Cracker POD è stato lanciato intorno al **2004**, quindi parliamo di roba pensata per gli hard disk meccanici dei portatili di vent'anni fa.
+
+**Cosa faceva e come**
+
+Il nome "Password Cracker" è in realtà fuorviante: non "craccava" niente per forza bruta. Identificava e rimuoveva le password dai dischi "platter-locked" dei laptop, e veniva presentato come un grosso risparmio di tempo nelle indagini sotto copertura. Il meccanismo è quello che hai già visto nelle slide: accedeva alla drive service area, l'area speciale del disco usata per firmware e informazioni sulla geometria, dove il disco stesso tiene memorizzata la password ATA. In pratica non indovinava la password: se la andava a _leggere_ direttamente dov'era scritta.
+
+**La password nella service area.** Il disco deve confrontare la password che digiti con qualcosa. Quel "qualcosa" è memorizzato nella service area. Il difetto non è che _esiste_ — è inevitabile che esista — ma che è memorizzata in chiaro o mal protetta, così chi ha lo strumento giusto la legge invece di indovinarla. È pigrizia ingegneristica e taglio dei costi, non una porta di servizio nascosta.
+
+**I firmware update non autenticati.** Il disco accetta un nuovo firmware senza verificare bene chi glielo manda. Anche questo è un problema di design vecchio stile (l'autenticazione crittografica del firmware costa progettazione e chip più capaci), non un canale segreto. Anzi, un vero backdoor governativo _non_ vorrebbe un meccanismo così, perché lo può usare chiunque, criminali compresi.
+
+**Il punto più vicino a un "backdoor": la Master password.** Qui la tua intuizione tocca qualcosa di reale, ma il colpo di scena è che _non è segreto_. La specifica ATA prevede ufficialmente una Master password, ed è documentata pubblicamente. Il problema è che molti produttori spedivano i dischi con Master password di default note o banali (a volte 32 spazi, o stringhe tipo il nome del vendor). Non è una porta nascosta per i governi: è una porta lasciata aperta _per tutti_, descritta nel manuale. Chiunque legga la spec la conosce.
+
+**Il dettaglio interessante (e inquietante) per un investigatore**
+
+La caratteristica di punta era la reversibilità silenziosa. Lo strumento si collegava tramite l'interfaccia nativa del disco, usava un piccolo database per conservare la password catturata mentre accedeva al drive, e dopo aver fatto l'immagine del disco poteva rimettere a posto le password originali "in maniera evidenzialmente valida", riportando il disco alle condizioni di partenza. Tutto questo senza dover avvisare l'utente che una password era stata bypassata.
+
+Il motivo per cui a un forense questo importa così tanto: la **catena di custodia**. Devono poter dimostrare in tribunale che non hanno alterato la prova. Come spiega bene un altro strumento moderno equivalente, riportare il disco a uno stato leggibile non cambia il suo valore di hash, perché la password ATA è tenuta nella service area del firmware, che non viene mai inclusa nel calcolo dell'hash. Quindi l'immagine del disco resta identica bit-per-bit e il sospettato, riavendo indietro il portatile, non si accorge di nulla.
+
+**Il collegamento con la tua tesi "è deprecato"**
+
+Qui torna il discorso di prima. Vogon come prodotto è effettivamente sparito da un pezzo, ma la _categoria_ è vivissima. Oggi lo stesso lavoro lo fa gente come **Atola Insight Forensic**: legge la credenziale che il disco stesso conserva nella sua area firmware e riporta il disco a uno stato leggibile in meno di due minuti, con pochi clic, sia per il livello High che Maximum. Il recupero automatico funziona per moltissimi drive Seagate, WD, Toshiba, Hitachi, Samsung, Fujitsu, Maxtor SATA e IDE.
+
+Il che conferma esattamente il punto: l'ATA security non è mai stata una barriera seria. Come riassume il centro sicurezza di UT Austin, la password ATA può essere aggirata in vari modi — firmware modificati che la rimuovono, dispositivi hardware e software che la superano con brute force o password backdoor dei produttori, o servizi di recupero dati che leggono direttamente i piatti del disco.
+
+Quindi il tuo istinto è giusto ma con una sfumatura: non è che l'ATA security _era_ vulnerabile e _ora_ è stata risolta. È sempre stata debole, e gli strumenti per sfruttarla si sono solo evoluti (da Vogon a Atola) mentre il mondo passava a difese vere come la full disk encryption. Vogon è il fossile; il predatore è ancora in circolazione.
+
 > [!success] Contromisure ATA
 > - **Miglior difesa**: *evitare* di affidarsi ad ATA security per proteggere i drive da manomissione o per proteggerne i contenuti — è banale da bypassare e dà un falso senso di sicurezza.
 > - **Alternativa**: usare **full disk encryption** per proteggere l'intero contenuto o le partizioni sensibili — **BitLocker**, **TrueCrypt**, **SecurStar**.
 > - (Nota: esiste anche l'attacco *cold boot*, trattato nel Cap. 4, che aggira certe implementazioni di disk encryption.)
+
+La lezione di fondo delle slide non solo regge, ma è persino peggiorata. Il punto della contromisura — "non affidarti all'ATA security, ti dà un falso senso di sicurezza" — è più vero che mai.
+
+E c'è un dettaglio importante che il libro del 2012 non poteva avere: nel 2018 Meijer e van Gastel ("Self-encrypting deception") hanno dimostrato che la cifratura hardware di molti SSD diffusi (anche marchi grossi) era implementata malissimo, bypassabile senza conoscere la password. E siccome BitLocker, di default, si _fidava_ della cifratura hardware quando il drive la dichiarava, in pratica migliaia di macchine "cifrate" erano scardinabili. Microsoft ha dovuto cambiare i default e spingere verso la cifratura software. Quindi la storia dei "lucchetti hardware che non sono vera protezione" non è finita nel 2012: è tornata più forte.
 
 > [!question] Domande di ripasso — ATA Password
 > 1. La ATA security cifra il disco? Cosa fa esattamente?
