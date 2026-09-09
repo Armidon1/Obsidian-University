@@ -1134,6 +1134,8 @@ Functional dependencies are crucial in dimensional hierarchies. If `month -> qua
 
 ![[Pasted image 20260904104418.png]]
 
+vedi anche [[Functional Dependency vs Key Constraint]]
+
 ## The Virtual-Mall Example
 
 ![[Pasted image 20260904100114.png]]
@@ -1175,6 +1177,58 @@ GROUP BY year, category, customer_region;
 
 ![[Pasted image 20260904100008.png]]
 ![[Pasted image 20260904100035.png]]
+
+#### Roll-Up as a Form of Aggregation
+
+Suppose sales are recorded for individual products:
+
+|Product|Type|Quantity|
+|---|---|--:|
+|Shiny|Detergent|10|
+|Bleachy|Detergent|15|
+
+A roll-up from `product` to `type` combines the product-level facts:
+
+```sql
+SELECT type, SUM(quantity)
+FROM SALES
+GROUP BY type;
+```
+
+The result is `Detergent = 25`. Therefore, roll-up is a form of aggregation because it combines several detailed facts into a coarser fact by following a dimensional hierarchy:
+
+```text
+product → type → category
+```
+
+Every roll-up is an aggregation, but an arbitrary aggregation is not necessarily a roll-up because it may not follow a defined hierarchy.
+
+#### Aggregation That Is Not a Roll-Up
+
+Assume the declared product hierarchy is:
+
+```text
+product → type → category
+```
+
+We can aggregate products according to the first letter of their name:
+
+```sql
+SELECT
+    SUBSTRING(product, 1, 1) AS initial,
+    SUM(quantity) AS total_quantity
+FROM SALES
+GROUP BY SUBSTRING(product, 1, 1);
+```
+
+For example, `Shiny` and `SoapX` are grouped because both names begin with `S`.
+
+This is an aggregation because several detailed facts are combined into totals. However, it is not a roll-up because `initial` is not a higher level in the declared product hierarchy.
+
+Therefore:
+
+> A roll-up is an aggregation that follows a defined dimensional hierarchy, while a generic aggregation may group data according to any criterion.
+
 ### Drill-Down
 
 ![[Pasted image 20260904100534.png]]
