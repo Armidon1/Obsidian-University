@@ -365,6 +365,34 @@ Utilizzando queste tabelle di metadati, un attaccante può mappare alla cieca l'
 > - Motori in modalità **sandbox**/logic-less (es. Mustache) dove possibile.
 > - Validazione/allowlist dei valori; isolare il rendering (container con privilegi minimi, niente `child_process`).
 
+### Come trovare un SSTi
+Buona domanda, perché "iniettare `#{1+1}` e vedere se torna `2`" è la versione riassunta di un ragionamento che ha diversi passaggi. Ti smonto il processo di identificazione in ordine.
+
+**Passo 1 — Trovare dove il mio input riappare (reflection).** Prima ancora di parlare di template, l'attaccante cerca punti in cui qualcosa che _lui_ inserisce viene poi _mostrato_ da qualche parte nell'applicazione. Nel caso Juice Shop è il campo Username: scrivo un nome, e quel nome ricompare nella pagina del profilo. Se il mio input non riappare da nessuna parte, non c'è nulla da testare. Questo passo è comune a molte vulnerabilità (anche XSS parte da qui).
+
+**Passo 2 — Distinguere SSTI da XSS.** Questo è il punto che le slide danno per scontato ma è concettualmente il cuore. Se inietto `<b>ciao</b>` e nella pagina vedo _ciao_ in grassetto, ho scoperto che il mio HTML viene interpretato — ma quello è **client-side**, è XSS: è il _browser_ a interpretare il tag. Per l'SSTI mi serve la prova che sia il **server** a _eseguire_ qualcosa prima di mandarmi la pagina. Ecco perché non si inietta HTML ma **sintassi di template con un'operazione**: l'HTML lo interpreta il browser, ma `{{7*7}}` lo può valutare _solo_ il motore di template sul server. Se torna `49`, quel `49` non l'ha calcolato nessun browser: l'ha prodotto il server. Questa è la firma inconfondibile del server-side.
+
+**Passo 3 — L'espressione matematica come sonda.** Il motivo per cui si usa proprio `7*7` (o `1+1`) e non, poniamo, `hello`, è che il risultato deve essere **inequivocabile e diverso dall'input**. Se inietto `{{7*7}}` e la pagina mi rimanda `{{7*7}}` tale e quale, l'input è stato trattato come dato (nessuna vulnerabilità). Se mi rimanda `49`, c'è stata valutazione. Il trucco è scegliere qualcosa che _non potrebbe mai_ comparire per caso: `49` come output di un input `7*7` non è una coincidenza. Si usa la moltiplicazione e non `7+7` proprio perché `14` è più "plausibile" come valore casuale, mentre `49` grida "è stato calcolato".
+
+**Passo 4 — Fingerprinting del motore.** Qui sta il ragionamento del tuo "punto d'esame". Una volta confermata la valutazione, devi capire _quale_ motore gira, perché ogni motore ha una sintassi e soprattutto un modo diverso di arrivare a RCE. Il metodo è provare payload polyglot o testare le sintassi una a una:
+
+```
+{{7*7}}     → se valuta: Jinja2 (Python), Twig (PHP)...
+#{7*7}      → se valuta: Pug (Node.js)
+${7*7}      → se valuta: alcuni motori Java (Freemarker/Velocity)...
+<%= 7*7 %>  → se valuta: ERB (Ruby), EJS (Node.js)
+```
+
+Il punto fine è che alcune sintassi si sovrappongono: sia Jinja che Twig usano `{{ }}`. Per disambiguare si usano payload che valutano _solo_ in un motore e non nell'altro. Esempio classico: `{{7*'7'}}` — in Jinja2 (Python) la moltiplicazione stringa×intero dà `7777777`, mentre in Twig (PHP) dà `49`. Stesso input, output diverso → il comportamento del linguaggio sottostante ti tradisce quale motore è. È l'albero decisionale che trovi nella ricerca di PortSwigger sull'SSTI, se vuoi vederlo per intero.
+
+E qui si innesta la logica della tua slide 5.3: parti da _quale stack conosci già_ (Juice Shop è Node.js) per restringere il campo prima ancora di sparare payload. Sapendo Node.js, i candidati sono Pug, Handlebars, EJS. Provi le loro sintassi e quella che valuta te lo conferma — nel caso Juice Shop, `#{}` → Pug.
+
+**Passo 5 — Conferma dell'esecuzione server-side "vera".** L'ultimo passaggio, che la slide accenna con `#{req.cookies['token']}`, è passare da "valuta aritmetica" a "esegue codice che tocca lo stato del server". Leggere un oggetto come `req` (la request Node.js) dimostra che non stai solo calcolando numeri: stai eseguendo JavaScript _nel contesto del processo server_, con accesso ai suoi oggetti. È il ponte verso l'RCE della sezione 5.4.
+
+Quindi in sintesi la catena di identificazione è: _il mio input riappare?_ → _è il server o il browser a interpretarlo?_ → _quale motore?_ → _quanto in profondità posso spingermi?_. La slide comprime i primi tre in un solo esempio, ma all'esame conviene saperli separare, perché la domanda "come distingui SSTI da XSS" è esattamente il tipo di trabocchetto che chiedono.
+
+Vuoi che ti prepari la nota Obsidian di ripasso su SSTI con questa scaletta di detection e l'albero di fingerprinting?
+
 ---
 
 ## 6. OS Command Injection

@@ -136,6 +136,87 @@ Il client VPN Cisco salva le impostazioni in file di profilo **`.pcf`**. Cercand
 > [!info] Contromisure PCF
 > User awareness, sanitizzazione delle informazioni sensibili sui siti e uso di **Google Alerts** per accorgersi quando materiale del genere finisce indicizzato. Collega al tema del riuso delle credenziali di [[ETHL - LAN Manager (LM) vs NTLM]].
 
+Il concetto di base è lo stesso di WireGuard: un dispositivo esterno stabilisce un tunnel cifrato verso un gateway aziendale. Cambiano soprattutto **negoziazione e autenticazione**.
+
+|WireGuard|Vecchie VPN Cisco IPsec|
+|---|---|
+|Peer identificato da una chiave pubblica|Client autenticato tramite IKE/IPsec|
+|Configurazione relativamente minimale|Numerosi parametri di negoziazione|
+|Chiave privata del singolo peer|Spesso segreto di gruppo più credenziali personali|
+|Tunnel di livello 3|Tunnel di livello 3|
+|File `.conf`|Profilo `.pcf`|
+
+### Confronto concreto
+
+Una configurazione WireGuard contiene concettualmente:
+
+```ini
+[Interface]
+PrivateKey = chiave_privata_del_client
+
+[Peer]
+PublicKey = chiave_pubblica_del_gateway
+Endpoint = vpn.azienda.it:51820
+AllowedIPs = 10.0.0.0/8
+```
+
+Un vecchio profilo Cisco PCF indicava invece elementi come:
+
+```ini
+Host=vpn.azienda.it
+GroupName=dipendenti
+GroupPwd=segreto_condiviso
+```
+
+Dopo aver importato il PCF, l’utente avviava il client Cisco e poteva dover inserire anche username, password o token personali.
+
+La differenza concettuale importante è:
+
+- in WireGuard ogni peer possiede normalmente una propria chiave privata;
+    
+- nelle vecchie VPN Cisco un’intera categoria di utenti poteva condividere una **group PSK**;
+    
+- oltre alla chiave di gruppo, l’utente poteva essere autenticato individualmente.
+    
+
+Quindi il PCF era simile a un file di configurazione WireGuard, ma non necessariamente sufficiente per entrare. In alcuni casi conteneva però un segreto condiviso recuperabile, rendendo l’esposizione molto grave. Un file WireGuard contenente la chiave privata del client sarebbe persino più direttamente sensibile.
+
+### E le VPN accessibili dal browser?
+
+“VPN via pagina web” può indicare due meccanismi.
+
+**Portale che avvia un client**
+
+L’utente apre una pagina HTTPS, effettua il login e il sito avvia o configura un software sul computer. Il software crea poi un vero tunnel di rete. La pagina è solamente il punto d’ingresso.
+
+**Clientless SSL VPN**
+
+L’utente entra in un portale HTTPS e accede soltanto a determinate applicazioni interne, per esempio:
+
+- posta aziendale;
+    
+- portale amministrativo;
+    
+- condivisioni di file;
+    
+- desktop o applicazioni remote.
+    
+
+In questo caso il browser non diventa necessariamente un peer completo della rete. È il gateway a fare da intermediario tra il browser e le applicazioni autorizzate.
+
+```mermaid
+flowchart TD
+    A["Computer remoto"] --> B{"Tipo di accesso"}
+    B --> C["Client VPN"]
+    C --> D["Tunnel IP verso la rete"]
+    B --> E["Portale HTTPS"]
+    E --> F["Solo applicazioni pubblicate"]
+```
+
+Citrix è ancora leggermente diverso: spesso non offre al computer remoto l’intera rete aziendale, ma gli mostra un **desktop o un’applicazione eseguita sul server**. Il “breakout” consiste nel partire da quell’applicazione limitata e riuscire ad aprire altri programmi o risorse dell’ambiente remoto.
+
+In sintesi: **WireGuard ti rende un peer IP della rete; un portale web può invece pubblicarti soltanto alcune risorse attraverso un intermediario.**
+
 ### Probing dei server [[IPsec]]
 
 **Basics of IPSec VPNs** 
