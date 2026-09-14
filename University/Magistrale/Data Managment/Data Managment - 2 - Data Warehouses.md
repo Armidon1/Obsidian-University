@@ -1544,6 +1544,8 @@ The final rule is especially important for drill-across: common names document c
 
 ## Descriptive Attributes
 
+![[Pasted image 20260914121559.png]]
+
 A **descriptive attribute** is functionally determined by a dimensional attribute but does not introduce a useful aggregation level. It provides contextual information rather than a coordinate for grouping.
 
 For example, a product may determine a package description, or a store may determine a telephone number. Grouping sales by a long textual description may be possible but is not normally a meaningful hierarchy level.
@@ -1552,7 +1554,11 @@ A descriptive attribute can also be attached directly to a fact when it describe
 
 The distinction is semantic, not merely based on data type. A string can be a dimensional level if users group by it, while a numeric value can be descriptive if it is not analysed quantitatively.
 
+in practice, we don  not care about aggregate by a descripptive attribute, but htere is an 1-1 [[Functional Dependency]] between those two vaules. in ED diagramcould be an additional attribute but without those extra info.
+
 ## Cross-Dimensional Attributes
+
+![[Pasted image 20260914121612.png]]
 
 A **cross-dimensional attribute** is a descriptive value determined by the combination of two or more dimensional attributes rather than by one hierarchy member alone.
 
@@ -1566,19 +1572,31 @@ Neither category nor country alone determines the tax rate. In an ER model this 
 
 ## Optional Attributes and Measures
 
+![[Pasted image 20260914121625.png]]
+
 An arc to a dimensional attribute may be optional. If `product -> diet` is optional, some products have no diet value. Attributes above that optional point may consequently also be undefined for those products.
 
 A measure may also be optional. For example, `shipmentCost` may be unavailable for certain shipment facts. DFM marks optional elements explicitly because missingness changes both queries and interpretation.
 
 `NULL` should not be treated as a single universal value. It may mean “not applicable,” “unknown,” “not yet available,” or “source error.” A warehouse design should preserve the intended meaning, often through explicit special dimension members or quality flags.
 
+let's say the we have a product, if it is commestibile, then it is possible to say if it is on a vegan diet, otherwise (if it is a device) well it won't have a diet value.
+
 ## Optional Dimensions
+
+![[Pasted image 20260914122013.png]]
 
 An optional dimension means that some primary events are identified by the other dimensions only. For example, a sale may or may not be associated with a promotion.
 
 This is stronger than an optional descriptive property: the absent value belongs to a coordinate that would normally help identify the fact. The logical design must prevent accidental loss of facts in joins and must decide how “no promotion” is represented.
 
+let's say we have christmas/easter/other promotions. in this case date, store, product identifie a key, while promotion could be something else.
+
 ## Coverage
+
+![[Pasted image 20260914122537.png]]
+
+![[Pasted image 20260914122827.png]]
 
 Coverage constrains two or more arcs leaving the same dimensional attribute. It combines two independent properties.
 
@@ -1605,6 +1623,10 @@ A P-O coverage is equivalent to independent optional branches. Coverage resemble
 
 ## Convergence
 
+![[Pasted image 20260914123209.png]]
+
+![[Pasted image 20260914123233.png]]
+
 **Convergence** occurs when different hierarchy paths lead to the same higher-level concept and must agree. Suppose a store determines a city, the city determines a state, and the store also determines a sales district whose hierarchy leads to a state. The state obtained through both paths must be identical.
 
 Convergence is an integrity constraint. It is not guaranteed merely because both paths have an attribute named `state`; the agreement must be enforced or validated.
@@ -1612,6 +1634,8 @@ Convergence is an integrity constraint. It is not guaranteed merely because both
 If one alternate path simply skips intermediate attributes and adds no distinct semantics, the convergence is redundant. Transitivity of functional dependencies already implies the direct relationship. The model should avoid drawing unnecessary duplicate paths.
 
 ## Shared Hierarchies
+
+![[Pasted image 20260914143436.png]]
 
 A **shared hierarchy** avoids replicating the same hierarchy portion several times in one or more fact schemata.
 
@@ -1621,13 +1645,23 @@ This idea anticipates a **role-playing dimension** in logical design: the same d
 
 ## Multiple Arcs
 
+![[Pasted image 20260914143510.png]]
+
+![[Pasted image 20260914143525.png]]
+
 Ordinary hierarchy arcs represent many-to-one relationships. A **multiple arc** represents a many-to-many relationship between dimensional attributes. A book can have several authors, and an author can write several books.
 
 When a multiple arc enters a root dimension, one fact coordinate may effectively be a group of values. A hospital admission, for example, can have several diagnoses. This complicates fact identification and aggregation because joining through the many-to-many relationship can multiply rows.
 
 In relational design, a multiple arc is represented through a bridge table. Optional allocation weights can distribute a fact measure across participants while preserving totals.
 
+In the ED diagrams is like not having the (1,1) cardinality in the relation between book and author but the (1,n) instead. This in practice has conseguences in the implementation 
+
 ## Additivity
+
+![[Pasted image 20260914143542.png]]
+
+![[Pasted image 20260914143557.png]]
 
 Aggregation requires a valid operator for combining measures from primary events into secondary events. `SUM` is not automatically meaningful for every measure or along every dimension.
 
@@ -1662,6 +1696,8 @@ Unit price is commonly non-additive across all dimensions. DFM records non-addit
 
 ## Empty Fact Schemata
 
+![[Pasted image 20260914143622.png]]
+
 A fact schema is **empty** when it has no measures. Its primary events record only that something occurred. Attendance, event participation, or the presence of a relationship can be analysed in this way.
 
 At higher aggregation levels, `COUNT` gives the number of primary events. An empty fact schema is therefore not useless: event occurrence itself is measurable.
@@ -1669,6 +1705,8 @@ At higher aggregation levels, `COUNT` gives the number of primary events. An emp
 The grain must still be clear. Counting rows is correct only if each row represents exactly one occurrence and duplicate loading is prevented.
 
 ## Overlapping Fact Schemata
+
+![[Pasted image 20260914143642.png]]
 
 Different fact schemata represent different event types, but users may need to compare their measures. A drill-across query might compare sales with inventory or shipments with orders.
 
@@ -1704,6 +1742,8 @@ Two principal alternatives are:
 The remainder of the course concentrates on ROLAP and on the relational structures that implement facts, measures, dimensions, and hierarchies.
 
 # ROLAP: The Star Schema
+
+![[Pasted image 20260914143722.png]]
 
 A **star schema** represents one fact schema through a central fact table surrounded by dimension tables. Its shape resembles a star because each dimension table connects directly to the fact table.
 
@@ -1747,6 +1787,8 @@ A **surrogate key** is an identifier generated for warehouse purposes rather tha
 The natural business key is normally retained as a dimension attribute for matching and audit. A surrogate key does not eliminate the need to understand real-world identity.
 
 ## Instances and Meaning
+
+![[Pasted image 20260914143801.png]]
 
 A fact-table tuple such as
 
