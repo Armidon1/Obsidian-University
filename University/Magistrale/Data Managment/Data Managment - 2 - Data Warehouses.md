@@ -1786,6 +1786,168 @@ A **surrogate key** is an identifier generated for warehouse purposes rather tha
 
 The natural business key is normally retained as a dimension attribute for matching and audit. A surrogate key does not eliminate the need to understand real-world identity.
 
+### Chiarimento
+
+Nel ROLAP, una **surrogate key** è una chiave artificiale creata dal data warehouse per identificare una specifica riga di una dimension table.
+
+Non descrive l’entità reale e non proviene dal sistema sorgente. Serve esclusivamente all’organizzazione interna del warehouse.
+
+### Esempio fondamentale
+
+Il sistema OLTP identifica un prodotto mediante il codice commerciale `P123`:
+
+```text
+productCode = P123
+name        = iPhone 12
+category    = Smartphones
+```
+
+Nel warehouse possiamo costruire:
+
+```sql
+DIM_PRODUCT(
+    product_sk,      -- surrogate key
+    product_code,    -- natural/business key
+    name,
+    category
+)
+```
+
+con questa riga:
+
+|product_sk|product_code|name|category|
+|--:|---|---|---|
+|101|P123|iPhone 12|Smartphones|
+
+Qui:
+
+- `P123` è la **natural key**, perché identifica il prodotto nel sistema aziendale;
+    
+- `101` è la **surrogate key**, generata internamente dal warehouse.
+    
+
+La fact table non conserva normalmente `P123`, ma la surrogate key:
+
+```sql
+FACT_SALE(
+    product_sk,
+    store_sk,
+    date_sk,
+    quantity,
+    revenue
+)
+```
+
+|product_sk|store_sk|date_sk|quantity|revenue|
+|--:|--:|--:|--:|--:|
+|101|14|20260915|2|1200|
+
+Quindi il collegamento è:
+
+$$FACT\_SALE.product\_sk \rightarrow DIM\_PRODUCT.product\_sk$$
+
+`product_sk` è primary key di `DIM_PRODUCT` e foreign key di `FACT_SALE`.
+
+### Perché non utilizzare direttamente `product_code`?
+
+Il motivo più importante è la gestione della storia.
+
+Supponiamo che nel 2027 il prodotto `P123` cambi categoria:
+
+```text
+Smartphones → Vintage Smartphones
+```
+
+Se modificassimo direttamente la vecchia riga, anche le vendite del 2026 sembrerebbero appartenere alla nuova categoria. Per conservare entrambe le versioni, creiamo una nuova riga con una nuova surrogate key:
+
+|product_sk|product_code|category|valid_from|valid_to|
+|--:|---|---|---|---|
+|101|P123|Smartphones|2022|2026|
+|205|P123|Vintage Smartphones|2027|…|
+
+Le vendite storiche continuano a puntare a `101`, mentre quelle nuove puntano a `205`:
+
+|sale period|product_sk|
+|---|--:|
+|2026|101|
+|2027|205|
+
+Il medesimo prodotto aziendale, identificato da `P123`, possiede quindi **diverse versioni storiche**, ciascuna identificata da una diversa surrogate key.
+
+Questa tecnica è alla base delle **Slowly Changing Dimensions di tipo 2**.
+
+### Integrazione di sorgenti differenti
+
+Immagina due sistemi:
+
+|Source|Product identifier|
+|---|---|
+|ERP|778|
+|E-commerce|PHONE-12|
+|Warehouse surrogate key|101|
+
+Il processo ETL stabilisce che `778` e `PHONE-12` rappresentano lo stesso prodotto e assegna alla corrispondente versione del prodotto la chiave `101`.
+
+La surrogate key fornisce così un identificatore interno uniforme, indipendente dai formati utilizzati dalle sorgenti.
+
+Tuttavia la chiave `101` non permette da sola di capire che i due codici rappresentino lo stesso prodotto: questa riconciliazione deve essere svolta dal processo di integrazione. Ecco perché:
+
+> A surrogate key does not eliminate the need to understand real-world identity.
+
+### Membri speciali
+
+Le surrogate key consentono anche di rappresentare casi particolari senza utilizzare `NULL`:
+
+|promotion_sk|meaning|
+|--:|---|
+|0|Unknown promotion|
+|-1|No promotion|
+|-2|Not applicable|
+
+È importante distinguere:
+
+- **unknown**: la promozione dovrebbe essere conosciuta, ma il dato non è disponibile;
+    
+- **no promotion**: la vendita è avvenuta senza promozione;
+    
+- **not applicable**: il concetto di promozione non si applica a quel fatto.
+    
+
+### Surrogate key e natural key
+
+|Natural key|Surrogate key|
+|---|---|
+|Nasce nel dominio aziendale|Nasce nel data warehouse|
+|Ha significato per l’azienda|Non ha significato aziendale|
+|Può cambiare o essere riutilizzata|Rimane stabile|
+|Identifica l’entità reale|Identifica una sua versione nel warehouse|
+|Esempio: `P123`|Esempio: `101`|
+
+La natural key viene comunque conservata nella dimension table perché serve al processo ETL per:
+
+- riconoscere l’entità proveniente dalla sorgente;
+    
+- cercare la corrispondente surrogate key;
+    
+- controllare e ricostruire l’origine dei dati.
+    
+
+Il flusso è quindi:
+
+```text
+Source product code P123
+        ↓ lookup nella dimension table
+Warehouse product_sk 101
+        ↓ inserimento nella fact table
+FACT_SALE.product_sk = 101
+```
+
+La frase da ricordare è:
+
+> In a ROLAP star schema, a surrogate key is a warehouse-generated identifier used as the primary key of a dimension table and as a foreign key in fact tables. The natural key identifies the business entity, while the surrogate key can identify a particular historical version of that entity.
+
+Infine, non va confusa con `transaction_id`: quest’ultimo può avere un significato aziendale e identificare una transazione reale; una surrogate key, invece, è generalmente priva di significato e serve all’implementazione interna del warehouse.
+
 ## Instances and Meaning
 
 ![[Pasted image 20260914143801.png]]
@@ -1808,11 +1970,114 @@ In a product dimension, dependencies such as
 product -> type -> category -> department
 ```
 
-create transitive dependencies, so the table is not in Third Normal Form. This is intentional in a star schema.
+create transitive dependencies, so the table is not in [[Third Normal Form 3NF]]. This is intentional in a star schema.
 
 Denormalization provides a major analytical advantage: one join reaches every attribute of a dimension. The cost is redundancy, because category and department values repeat for many products. The trade-off is often acceptable because dimension tables are much smaller than the fact table and are updated through controlled ETL rather than high-concurrency transactions.
 
 This does not mean normalization theory has become false. The design accepts known redundancy to optimize a different workload.
+
+
+> Nel data warehouse ripetiamo volontariamente alcune informazioni per rendere le query più semplici.
+
+### Esempio concreto
+
+Abbiamo questa dimension table:
+
+|product|type|category|department|
+|---|---|---|---|
+|iPhone|Smartphone|Electronics|Technology|
+|Galaxy|Smartphone|Electronics|Technology|
+|Pixel|Smartphone|Electronics|Technology|
+
+Le parole `Smartphone`, `Electronics` e `Technology` vengono ripetute.
+
+Questa ripetizione si chiama **ridondanza**.
+
+### Perché accettiamo la ripetizione?
+
+La fact table contiene:
+
+|product|revenue|
+|---|--:|
+|iPhone|900|
+|Galaxy|700|
+|Pixel|600|
+
+Se vogliamo calcolare i ricavi per `department`, colleghiamo:
+
+```text
+FACT_SALE → DIM_PRODUCT
+```
+
+Un solo join ci permette di raggiungere subito:
+
+- `type`;
+    
+- `category`;
+    
+- `department`.
+    
+
+### Cosa succederebbe normalizzando?
+
+Divideremmo la dimensione in più tabelle:
+
+```text
+PRODUCT → TYPE → CATEGORY → DEPARTMENT
+```
+
+Per raggiungere `department`, la query dovrebbe attraversare tutte queste tabelle:
+
+```text
+FACT_SALE
+    → PRODUCT
+    → TYPE
+    → CATEGORY
+    → DEPARTMENT
+```
+
+Avremmo meno ripetizioni, ma più join e query più complicate.
+
+### Perché la ridondanza è meno grave nel warehouse?
+
+Nel sistema OLTP gli utenti modificano continuamente i dati. Se `Technology` fosse ripetuto mille volte, una modifica dovrebbe aggiornare mille righe, con il rischio di ottenere valori incoerenti.
+
+Nel data warehouse, invece:
+
+- le dimension table sono generalmente molto più piccole della fact table;
+    
+- gli utenti eseguono principalmente letture e aggregazioni;
+    
+- le modifiche vengono effettuate da un processo ETL controllato.
+    
+
+Perciò possiamo accettare la ripetizione in cambio di query più semplici.
+
+### Il confronto da ricordare
+
+|OLTP|Data warehouse ROLAP|
+|---|---|
+|Molti inserimenti e aggiornamenti|Principalmente query analitiche|
+|Evitiamo la ridondanza|Possiamo accettare ridondanza|
+|Tabelle normalizzate|Dimensioni spesso denormalizzate|
+|Proteggiamo la coerenza durante gli aggiornamenti|Semplifichiamo le query OLAP|
+
+Quindi la frase:
+
+> “Normalization theory has not become false”
+
+significa semplicemente:
+
+> La normalizzazione continua a essere utile. Nel data warehouse scegliamo consapevolmente di non applicarla completamente, perché abbiamo un obiettivo diverso.
+
+L’obiettivo dell’OLTP è **aggiornare i dati in modo sicuro ed efficiente**.
+
+L’obiettivo del data warehouse è **leggere e aggregare grandi quantità di dati con query semplici**.
+
+Per ora ti basta ricordare questo:
+
+> **Star schema = ripeto informazioni nelle dimensioni, ma faccio meno join.**  
+> **Snowflake schema = evito le ripetizioni, ma faccio più join.**
 
 ## Fact-Table Size and Sparsity
 
@@ -1876,6 +2141,10 @@ The SQL operators have a clear multidimensional interpretation:
 
 # The Snowflake Schema
 
+![[Pasted image 20260915164049.png]]
+
+![[Pasted image 20260915164747.png]]
+
 A star dimension is deliberately denormalized. A **snowflake schema** reduces this denormalization by decomposing some or all transitive dependencies into separate relations.
 
 For example, a star dimension might contain:
@@ -1936,6 +2205,8 @@ The choice should be workload-driven. Snowflaking a small dimension purely for t
 
 ## Correct Snowflake Decomposition
 
+![[Pasted image 20260915170843.png]]
+
 When a dimension is decomposed at a hierarchy attribute, the new relation must include every attribute that directly or transitively depends on the natural key of that hierarchy level.
 
 In the store example, `storeCity`, `state`, and `country` belong together because:
@@ -1971,6 +2242,8 @@ The analytical request has not changed. Only its relational implementation is mo
 
 # Logical Design
 
+![[Pasted image 20260915171008.png]]
+
 Logical design transforms a conceptual fact schema into the schema of a data mart. It is not a mechanical translation based only on the diagram.
 
 Its inputs include:
@@ -1994,6 +2267,8 @@ The principal steps are:
 The steps interact. A materialized view is useful only for an important workload, and the workload can be estimated only after facts, grain, dimensions, and expected data volume are understood.
 
 ## Star versus Snowflake
+
+![[Pasted image 20260915191144.png]]
 
 There is no universal rule that one schema is always superior.
 
@@ -2028,6 +2303,8 @@ Similarly, when a dimension hierarchy is snowflaked, a description belongs only 
 
 ## Translating Cross-Dimensional Attributes
 
+![[Pasted image 20260915191246.png]]
+
 A cross-dimensional attribute determined by $a_1,\ldots,a_m$ becomes a new relation whose key contains the determining attributes and whose non-key columns contain the cross-dimensional values.
 
 For VAT determined by category and country:
@@ -2042,6 +2319,8 @@ The table represents a many-to-many association between the participating dimens
 The designer must decide whether to use the natural composite key or introduce a surrogate key. The choice depends on key width, reference frequency, clarity, and storage cost. A surrogate key should not obscure the uniqueness constraint on the natural determinant.
 
 ## Translating Shared Hierarchies
+
+![[Pasted image 20260915191312.png]]
 
 If two hierarchies contain exactly the same attributes, the dimension table should not be duplicated. Its key is imported into the fact table more than once, with role-specific foreign-key names.
 
@@ -2063,6 +2342,9 @@ JOIN NUMBER AS calling ON ft.callingNumberKey = calling.numberKey
 JOIN NUMBER AS called  ON ft.calledNumberKey  = called.numberKey
 ```
 
+
+![[Pasted image 20260915191353.png]]
+
 If two hierarchies share only a higher portion, the designer has two alternatives:
 
 1. duplicate the common attributes in separate denormalized dimensions;
@@ -2071,6 +2353,8 @@ If two hierarchies share only a higher portion, the designer has two alternative
 The first favours simple star queries; the second reduces redundancy and centralizes shared hierarchy maintenance.
 
 ## Translating Multiple Arcs
+
+![[Pasted image 20260915191422.png]]
 
 A many-to-many hierarchy relationship requires a **bridge table**. For books and authors:
 
@@ -2081,6 +2365,8 @@ BRIDGE_AUTHOR(bookKey, authorKey, weight)
 ```
 
 The bridge primary key is the combination of the connected keys. An optional `weight` allocates a percentage of the fact to each participant.
+
+![[Pasted image 20260915191438.png]]
 
 Suppose a sale of 100 monetary units concerns a book with two authors. Joining without a weighting rule produces two rows and can yield a total of 200 when grouped by author. With weights of 0.5 and 0.5, allocated revenue remains 100.
 
