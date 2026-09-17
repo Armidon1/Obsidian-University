@@ -2372,6 +2372,61 @@ Suppose a sale of 100 monetary units concerns a book with two authors. Joining w
 
 Weights are not always appropriate. If the analytical question is “How many authors are associated with sold books?”, allocation is different from revenue attribution. The measure semantics and intended aggregation must determine bridge usage.
 
+## Materialized View
+
+Immaginiamo che `FACT_SALE` contenga un miliardo di righe e che venga eseguita continuamente questa analisi:
+
+> Calcolare i ricavi mensili per categoria.
+
+Ogni volta il DBMS dovrebbe:
+
+1. leggere moltissime vendite;
+    
+2. collegarle a `PRODUCT` e `DATE_DIM`;
+    
+3. raggrupparle per categoria e mese;
+    
+4. calcolare `SUM(revenue)`.
+    
+
+Possiamo anticipare il lavoro creando una tabella con risultati già aggregati:
+
+```text
+MONTHLY_CATEGORY_SALES(
+    MonthKey,
+    CategoryKey,
+    TotalRevenue,
+
+    PRIMARY KEY(MonthKey, CategoryKey)
+)
+```
+
+Esempio:
+
+|MonthKey|CategoryKey|TotalRevenue|
+|---|--:|--:|
+|2026-09|Electronics|€950,000|
+|2026-09|Food|€420,000|
+
+Questa struttura può essere una **materialized view**: il risultato della query viene calcolato in anticipo e memorizzato fisicamente.
+
+La query diventa molto più veloce perché legge poche righe già aggregate.
+
+Il costo è che:
+
+- occupa spazio;
+    
+- deve essere aggiornata quando arrivano nuove vendite;
+    
+- potrebbe essere temporaneamente meno aggiornata della fact table.
+    
+
+Per questo il workload è importante:
+
+> Materializziamo soprattutto le aggregazioni richieste frequentemente e costose da calcolare.
+
+Domanda di controllo: avrebbe senso materializzare un’aggregazione molto costosa che viene richiesta una volta ogni cinque anni? Assolutamente No.
+
 # How the Whole Topic Fits Together
 
 The course follows one continuous design argument:
