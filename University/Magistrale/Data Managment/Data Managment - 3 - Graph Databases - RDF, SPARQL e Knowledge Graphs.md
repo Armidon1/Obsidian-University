@@ -109,7 +109,9 @@ Un Graph Database Management System offre operazioni **CRUD** (*Create, Read, Up
 
 Molti sistemi a grafo, come Neo4j, sono progettati anche per carichi transazionali e possono garantire le proprietà **ACID**. Essere NoSQL, quindi, non significa automaticamente rinunciare alle transazioni.
 
-Meglio evitare di usare null values in graph databases, però los i può fare in alcuni db come Neo4J, ma il motivo per cui non si usano è perchè non c'è alcun motivo di imporre un valore a null se puoi anche non inserirlo e basta, se non per una motivazione di migrare i dati uin un database relazionale
+Meglio evitare di usare null values in graph databases, però los i può fare in alcuni db come Neo4J, ma il motivo per cui non si usano è perchè non c'è alcun motivo di imporre un valore a null se puoi anche non inserirlo e basta, se non per una motivazione di migrare i dati uin un database relazionale.
+
+usare grapg databases solo se devi costruire complessi path interessanti da studiare. 
 ### Schemaless e flessibilità
 
 I graph database sono generalmente **schemaless**:
@@ -127,6 +129,8 @@ Un interessante osservazione che ha fatto il professore è la seguente: effettiv
 ### Le relazioni come elementi di prima classe
 
 Un graph database è adatto quando l'informazione è già naturalmente un grafo: social network, sistemi di raccomandazione, mappe, reti di computer, controllo degli accessi e rilevamento di frodi.
+
+![[Pasted image 20260918153733.png]]
 
 Nel modello relazionale una relazione viene rappresentata indirettamente mediante chiavi esterne e tabelle associative. Nel grafo, invece, la relazione è un oggetto esplicito e direttamente navigabile.
 
@@ -204,6 +208,8 @@ Nell'esperimento riportato nelle slide - un milione di persone, circa 50 amici c
 
 ### Tipo di dato astratto
 
+![[Pasted image 20260918160736.png]]
+
 Un grafo etichettato diretto è definito come:
 
 $$G=(V,E)$$
@@ -254,6 +260,8 @@ La stessa struttura logica può essere memorizzata in modi diversi. La scelta in
 
 ### Lista di adiacenza
 
+![[Pasted image 20260918160757.png]]
+
 Per ogni nodo si memorizza la lista dei vicini; in un grafo diretto, normalmente i vicini raggiunti dagli archi uscenti.
 
 - aggiungere un nodo è economico;
@@ -275,6 +283,8 @@ Nodi e archi sono oggetti espliciti:
 
 ### Matrice di adiacenza
 
+![[Pasted image 20260918160827.png]]
+
 Si usa una matrice $|V|\times|V|$:
 
 - le righe rappresentano le sorgenti;
@@ -292,6 +302,8 @@ Svantaggi:
 - aggiungere o eliminare un nodo richiede modificare righe e colonne.
 
 ### Matrice di incidenza
+
+![[Pasted image 20260918160850.png]]
 
 La matrice ha dimensione $|V|\times|E|$:
 
@@ -311,6 +323,8 @@ Le matrici sparse possono essere compresse evitando di memorizzare le celle vuot
 | Lista di incidenza | $O(V+E)$ circa | rapido | dipende dagli indici | archi come oggetti |
 | Matrice di adiacenza | $O(V^2)$ | scansione di riga | $O(1)$ | densi, nodi stabili |
 | Matrice di incidenza | $O(VE)$ | costoso | scansione archi | analisi strutturali specifiche |
+
+![[Pasted image 20260918161003.png]]
 
 ---
 
