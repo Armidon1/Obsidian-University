@@ -69,17 +69,29 @@ Il movimento **NoSQL** nasce per rispondere a questi problemi. Il nome è normal
 
 ### Principali famiglie NoSQL
 
-| Modello | Idea centrale | Esempio di utilizzo |
-|---|---|---|
-| **Graph-based** | Nodi e relazioni esplicite | Social network, recommendation, fraud detection |
-| **Key-value** | Una chiave identifica un valore opaco | Cache, sessioni, profili semplici |
-| **Document-based** | Documenti semi-strutturati, spesso JSON | Cataloghi, CMS, applicazioni web |
-| **Column-oriented** | Dati organizzati per famiglie di colonne | Dati sparsi e workload distribuiti |
+| Modello             | Idea centrale                            | Esempio di utilizzo                             |
+| ------------------- | ---------------------------------------- | ----------------------------------------------- |
+| **Graph-based**     | Nodi e relazioni esplicite               | Social network, recommendation, fraud detection |
+| **Key-value**       | Una chiave identifica un valore opaco    | Cache, sessioni, profili semplici               |
+| **Document-based**  | Documenti semi-strutturati, spesso JSON  | Cataloghi, CMS, applicazioni web                |
+| **Column-oriented** | Dati organizzati per famiglie di colonne | Dati sparsi e workload distribuiti              |
+![[Pasted image 20260917170803.png]]
+
+![[Pasted image 20260917170815.png]]
+semplicemente un dizionario: il sistema non sa niente riguardo questa roba, posso solamente ricevere il value puntato dal key corrispettivo. è molto comodo questo database se si vuole banalmente roba da salvare sul disco senza farci niente di complesso. il drawback è che non c'è nessuna sematica in questo database, quindi l'applicazione dedve sapere cosa farci con qel dato
+
+![[Pasted image 20260917170823.png]]
+il formato è tipicametne JSON document. dentro ho letteralmente gli attribut della tabella. la cosa interessante cè che i documetni possono essere innestati: più json document dentro un json document. si possono avere array, ed altra roba interessante, am questo è sempliemente un esempio. La cosa positiva è sempre la flessibilità: posso usare tutti i tipi che voglio assegnti agli attributi, e con MongoDB potrei anche impostarli se voglio dei vincoli di dominio. Ora qui, rispetto al key value database posso fare più roba: selection, projections ed altre operazioni.
+
+![[Pasted image 20260917170833.png]]
+essenzialmente è un key-value: volendo anche un documet based senza poter fare innesti. Molto spesso applicano il modello relazionale, ma non seguono esattamente SQL. Cassandra è un esempio di database usato in database distribuiti. questo DB non può fare JOIN tra varie tabelle: semplciemnte perchè sono su server differenti ed il join è molto expensive come procedura. In generale, NoSQL database sono molto usato in sistemi distribuiti.
 
 Il corso si concentra sui database orientati ai grafi, distinguendo:
 
 - **graph database**, spesso basati sul modello property graph;
 - **RDF database**, basati su triple e legati al Semantic Web.
+
+fa ridere perchè graph database si chiama come l'intera categoria di database ma è solo un applicazione. 
 
 ---
 
@@ -97,6 +109,7 @@ Un Graph Database Management System offre operazioni **CRUD** (*Create, Read, Up
 
 Molti sistemi a grafo, come Neo4j, sono progettati anche per carichi transazionali e possono garantire le proprietà **ACID**. Essere NoSQL, quindi, non significa automaticamente rinunciare alle transazioni.
 
+Meglio evitare di usare null values in graph databases, però los i può fare in alcuni db come Neo4J, ma il motivo per cui non si usano è perchè non c'è alcun motivo di imporre un valore a null se puoi anche non inserirlo e basta, se non per una motivazione di migrare i dati uin un database relazionale
 ### Schemaless e flessibilità
 
 I graph database sono generalmente **schemaless**:
@@ -108,6 +121,8 @@ I graph database sono generalmente **schemaless**:
 
 > [!note] Schemaless non significa “senza struttura”
 > La struttura esiste nei tipi di nodo, nelle etichette degli archi, nelle proprietà e negli eventuali vincoli. La differenza è che non deve essere necessariamente dichiarata tutta in anticipo come in uno schema relazionale.
+
+Un interessante osservazione che ha fatto il professore è la seguente: effettivamente noi potremmo anche usare un database relazionale come PostgreSQL senza inserire integrity constains, per non perdere flessibilità (cosa che è fondamentale nei database noSQL), delegando la responsabilità della correttezza dei dati al client (anzichè l'eventuale server con il DBMS). Quale sarebbe il problema di questa configurazione? Garantire la correttezza client side non è sempre facile, ma certe volte è possibile dover inserire entries manualmente al livello server side, e questa procedura potrebbe essere anche un attacco. inoltre non si ha nemmeno trasnaction control: a trancsaction is a set of SQL instruction that can be execute as if it were a single instruction. What happens if something happens meanwhile a transaction is happening (concurrency)? we have to roll-back. if we don't  have constraints, we may have some dirty data stored.
 
 ### Le relazioni come elementi di prima classe
 
