@@ -107,7 +107,7 @@ Un **graph database** rappresenta e memorizza i dati mediante:
 
 Un Graph Database Management System offre operazioni **CRUD** (*Create, Read, Update, Delete*) e, spesso, un linguaggio dichiarativo di query.
 
-Molti sistemi a grafo, come Neo4j, sono progettati anche per carichi transazionali e possono garantire le proprietà **ACID**. Essere NoSQL, quindi, non significa automaticamente rinunciare alle transazioni.
+Molti sistemi a grafo, come Neo4j, sono progettati anche per carichi transazionali e possono garantire le proprietà **[[ACID]]**. Essere NoSQL, quindi, non significa automaticamente rinunciare alle transazioni.
 
 Meglio evitare di usare null values in graph databases, però los i può fare in alcuni db come Neo4J, ma il motivo per cui non si usano è perchè non c'è alcun motivo di imporre un valore a null se puoi anche non inserirlo e basta, se non per una motivazione di migrare i dati uin un database relazionale.
 
@@ -332,13 +332,18 @@ Le matrici sparse possono essere compresse evitando di memorizzare le celle vuot
 
 ### Breadth-First Search e Depth-First Search
 
+
 **Breadth-First Search (BFS)** visita prima i nodi più vicini al nodo iniziale:
+
+![[Pasted image 20260919144458.png]]
 
 - usa una **coda FIFO**;
 - procede per livelli;
 - in un grafo non pesato trova cammini minimi in numero di archi.
 
 **Depth-First Search (DFS)** segue un ramo il più possibile prima di tornare indietro:
+
+![[Pasted image 20260919144514.png]]
 
 - usa uno **stack LIFO** o la ricorsione;
 - è utile per esplorazione, rilevamento di cicli e ordinamento topologico.
@@ -347,12 +352,14 @@ Entrambi, con liste di adiacenza, hanno costo $O(|V|+|E|)$ per una visita comple
 
 ### Cammini ed etichette
 
-Un cammino da $v_0$ a $v_m$ è una sequenza:
+notice that SQL is not turing-complete, this means that that language doesn't resolve the exact amount of problems of python for instance. The query language for graphn databases is way more expressive than sql. there is also the problem of the impossibility in relational algebra to express the transitive disclosure property: if A is friend of B and B is friend of C, then a is friend of C (not true in the real life). let's think recursivelly in this way (A-b-C-...-Z), we cannot implement in relational algebra such a thing (in sql it is, but because sql expands relatonal algebra). In graph database is simmple, because it is exactly the reason why graph databases are created of. 
+
+Un cammino (path) da $v_0$ a $v_m$ è una sequenza di archi (edges):
 
 $$
 \pi=(v_0,a_1,v_1)(v_1,a_2,v_2)\cdots(v_{m-1},a_m,v_m)
 $$
-
+notice that the destination node of an edge, is exactly the starting node in the next edge.
 La sua etichetta è la stringa:
 
 $$
@@ -363,9 +370,11 @@ Interrogare un grafo può quindi significare cercare coppie di nodi collegate da
 
 ### Espressioni regolari sui cammini
 
+Ricorda le [[Regular Expression]], qui vedremo solo gli operatori che ci interessano
 Sintassi di base:
 
 $$L ::= s \mid L\cdot L \mid L\mid L \mid L^* \mid L^+ \mid L? \mid (L)$$
+probably is better with an image because of latex probelms:![[Pasted image 20260919150015.png]]
 
 | Costrutto | Significato |
 |---|---|
@@ -379,11 +388,15 @@ $$L ::= s \mid L\cdot L \mid L\mid L \mid L^* \mid L^+ \mid L? \mid (L)$$
 
 Esempi:
 
-- antenati: `isChildOf+`;
+- antenati: `isChildOf+`, se isChildOf  recupera il nodo padre del figlio in questione, allore il `+` sono tutte le string che sono costruite di modo che un isChildOf è concatenato con un altro isChildOf e così via, per tante volte
 - con $\Sigma=\{a,b,c,d\}$, `ab*` riconosce $\{a,ab,abb,abbb,\ldots\}$;
 - `(a|(bc)+)?` riconosce $\{\varepsilon,a,bc,bcbc,bcbcbc,\ldots\}$.
 
+![[Pasted image 20260919150359.png]]
+
 ### Regular Path Query
+
+![[Pasted image 20260919151122.png]]
 
 Una **Regular Path Query (RPQ)** è un'espressione regolare $L$ sull'alfabeto delle etichette. La valutazione sul grafo $G$ è:
 
@@ -399,10 +412,14 @@ Esempio: per `d+(c|e)a` cerchiamo un cammino formato da:
 
 Possono quindi corrispondere sia il cammino `dca` sia `ddca`.
 
+![[Pasted image 20260919151610.png]]![[Pasted image 20260919151629.png]]
+
 > [!note] Cosa restituisce una RPQ
 > Una RPQ classica restituisce le **coppie di estremi** che soddisfano il vincolo, non necessariamente il cammino concreto e neppure le proprietà dei nodi. Linguaggi come Cypher e SPARQL estendono questa idea.
 
 #### Esercizio sulle RPQ
+
+![[Pasted image 20260919151700.png]]
 
 Alfabeto: `{isFriendOf, isChildOf, hasChild}`. Si assume che `isChildOf` sia l'inversa di `hasChild`.
 
