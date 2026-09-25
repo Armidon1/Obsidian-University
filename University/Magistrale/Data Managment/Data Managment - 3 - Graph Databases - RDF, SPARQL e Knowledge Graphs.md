@@ -366,11 +366,19 @@ $$
 \lambda(\pi)=a_1a_2\cdots a_m \in \Sigma^*
 $$
 
-Interrogare un grafo può quindi significare cercare coppie di nodi collegate da un cammino la cui sequenza di etichette rispetta una certa espressione.
+Interrogare un grafo può quindi significare cercare coppie di nodi collegate da un cammino la cui sequenza di etichette rispetta una certa espressione. 
+
+L'idea di partenza è questa: un **cammino** nel grafo è una sequenza di archi, e se leggi in fila le etichette di quegli archi ottieni una **stringa**. Per esempio il cammino da Alice a Carlo passando per Bob, con archi isFriendOf e poi hasChild, ha etichetta "isFriendOf hasChild". Una volta che i cammini sono stringhe, puoi descriverli con le espressioni regolari che conosci dai linguaggi formali.
+
+I costrutti sono quelli classici. Un'etichetta singola, tipo "a", indica un arco con quell'etichetta. Scrivere due espressioni una dopo l'altra è la concatenazione, un cammino fatto prima dall'una e poi dall'altra. La barra verticale è l'alternativa, o l'una o l'altra. L'asterisco significa zero o più ripetizioni, il più una o più, il punto interrogativo zero o una. Le parentesi raggruppano.
+
+Due esempi dalle slide. "isChildOf più" descrive gli antenati: uno o più passi figlio-di, quindi genitore, nonno, bisnonno e così via. E "a b asterisco" riconosce a, ab, abb, abbb, eccetera: l'asterisco si applica solo a b, non ad a.
+
+La **Regular Path Query** è proprio l'uso di una di queste espressioni come query: data l'espressione L, il risultato sono tutte le **coppie di nodi** u, v tali che esiste un cammino da u a v la cui etichetta appartiene al linguaggio di L. Attenzione al dettaglio da esame: una RPQ classica restituisce solo le coppie di estremi, non il cammino trovato e nemmeno le proprietà dei nodi. Cypher e SPARQL estendono l'idea proprio per superare questo limite.
 
 ### Espressioni regolari sui cammini
 
-Ricorda le [[Regular Expression]], qui vedremo solo gli operatori che ci interessano
+Ricorda le [[Regular Expressions]], qui vedremo solo gli operatori che ci interessano
 Sintassi di base:
 
 $$L ::= s \mid L\cdot L \mid L\mid L \mid L^* \mid L^+ \mid L? \mid (L)$$
@@ -420,6 +428,7 @@ Possono quindi corrispondere sia il cammino `dca` sia `ddca`.
 #### Esercizio sulle RPQ
 
 ![[Pasted image 20260919151700.png]]
+Nota di inglese: Ed è qui che probabilmente nasce il dubbio: in italiano "nipote" vale per entrambe le cose (io sono nipote di mia zia e io sono nipote di mia nonna), ma in inglese sono due parole diverse. "Grandchild" è il figlio del figlio, "nephew" è il figlio del fratello o della sorella. L'esercizio dice nephew, quindi c deve essere lo zio di b.
 
 Alfabeto: `{isFriendOf, isChildOf, hasChild}`. Si assume che `isChildOf` sia l'inversa di `hasChild`.
 
@@ -468,6 +477,14 @@ Esistono quindi due definizioni possibili:
 
 Le slide adottano la seconda.
 
+"Funzionale" non è una categoria di database contrapposta ai nativi. È una **definizione** di cosa chiamiamo graph database. La definizione stretta dice: è graph database solo chi ha index-free adjacency. La definizione funzionale dice: è graph database chiunque esponga all'utente un modello a grafo con operazioni CRUD, **indipendentemente da come memorizza i dati sotto**. Quindi la funzionale non esclude i nativi, li include insieme ai non nativi. È un insieme più grande che contiene l'altro, e le slide adottano quello.
+
+Index-free adjacency non significa "nodi e archi sono tipi di dato astratti ben definiti". Anche un sistema costruito su tabelle relazionali ti mostra nodi e archi come oggetti ben definiti, a livello logico. La differenza sta nel livello **fisico**: con index-free adjacency ogni nodo contiene riferimenti diretti, in pratica puntatori o indirizzi, ai suoi vicini o ai suoi archi. Seguire un collegamento costa un accesso diretto, e il costo di un passo non dipende dalla dimensione totale del grafo. In un sistema non nativo, per passare da un nodo al vicino devi invece interrogare un indice globale, tipicamente un B-tree sulla chiave, che costa circa logaritmico nel numero totale di elementi, e questo si paga a ogni singolo passo del traversal.
+
+Quindi le strutture che abbiamo visto prima stanno dalla parte dei nativi, non dei funzionali. Lista di adiacenza e lista di incidenza realizzate con puntatori sono proprio il modo in cui si ottiene l'index-free adjacency, e non serve per forza avere gli archi come oggetti: basta che ogni nodo punti direttamente ai vicini. La matrice di adiacenza è un caso un po' a sé: è una struttura pensata per i grafi, ma non incarna l'idea del nodo come piccolo indice dei propri vicini, e nei GDBMS reali non si usa come storage principale. Su questo le slide non si pronunciano, quindi all'esame io citerei liste di adiacenza e strutture di incidenza, come fa il testo.
+
+Riassumendo in una frase: nativo o non nativo riguarda come sono fisicamente memorizzati i collegamenti; stretta o funzionale riguarda quale sistema accettiamo di chiamare graph database.
+
 ---
 
 ## Property graph, hypergraph e triple store
@@ -494,14 +511,22 @@ Le proprietà permettono di memorizzare dati sia sulle entità sia sulle relazio
 
 Per trovare i nomi degli amici di Alice:
 
+![[Pasted image 20260919175916.png]]
+
 1. un indice globale trova i nodi con `name = "Alice"`, tipicamente in $O(\log n)$;
 2. si seguono i $k$ archi `friend` uscenti;
 3. si raggiungono i $k$ nodi destinazione;
 4. si leggono le loro proprietà `name`.
 
-In un RDBMS, dopo aver trovato Alice, occorre cercare le righe nella tabella associativa e poi fare ulteriori accessi indicizzati alla tabella `Person`. Il vantaggio del grafo è soprattutto nella fase ripetuta di navigazione.
+**Esempio di costo Query in GDBMS:** ![[Pasted image 20260919180106.png]]
 
+In un RDBMS, dopo aver trovato Alice, occorre cercare le righe nella tabella associativa e poi fare ulteriori accessi indicizzati alla tabella `Person`. **I costi delle stesse query dell'immagine precedente ma in un RDBMS:**![[Pasted image 20260919180200.png]]
+Nota che stiamo considerando il caso specifico in cui abbiamo indicizzato la tabella Person, e di conseguenza abbiamo una struttura ad albero e percorrerla costa $log_2(n)$. è anche vero che anche il graph database hl'ha indicizzato. E qui arriva il confronto vero, che ti invito a guardare nella slide. La differenza non sta nel trovare Alice, dove i due costano uguale, ma nel passare da Alice ai suoi amici. Nel GDBMS, dato un arco friend, raggiungi il nodo destinazione in tempo costante, quindi k amici costano O(k). Nel RDBMS, per ogni amico devi rifare una ricerca nell'indice person.identifier, quindi il passo 5 costa O(k log n). Quel fattore log n moltiplicato per ogni amico, e poi per ogni livello di profondità, è il prezzo di non avere index-free adjacency.
+
+Notiamo che in genere i costi sono migliori nei RDBMS, ma è anche vero che non abbiamo mai ragionato in maniera ricorsiva. la prprietà di chiusura transitiva non esiste nel modello relazionale e se propviamo ad applicarla, i costi diventano esponenziali a causa dei join anidati.  **Il vantaggio del grafo è soprattutto nella fase ripetuta di navigazione**
 ### Hypergraph
+
+![[Pasted image 20260921120929.png]]
 
 Un **ipergrafo** generalizza il grafo consentendo a un arco di collegare un numero arbitrario di nodi.
 
@@ -512,6 +537,8 @@ $$H=(V,E), \qquad E\subseteq \mathcal{P}(V)\setminus\{\varnothing\}$$
 Una relazione n-aria, ad esempio una fornitura che coinvolge `Supplier`, `Product` e `Department`, può essere rappresentata come un unico **iperarco**.
 
 Un iperarco diretto è una coppia ordinata $(T,H)$ di sottoinsiemi disgiunti di nodi, chiamati **tail** e **head**.
+
+![[Pasted image 20260921120912.png]]
 
 Vantaggio: rappresenta direttamente relazioni n-arie.  
 Svantaggio: può essere meno flessibile nell'associare ruoli o proprietà diverse a ciascun partecipante. Ogni ipergrafo può comunque essere codificato in un grafo introducendo un nodo che rappresenta la relazione.

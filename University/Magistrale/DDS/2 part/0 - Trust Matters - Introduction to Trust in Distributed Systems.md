@@ -2,19 +2,34 @@
 **Tags:** #computer_engineering #distributed_systems #blockchain #trust_models #client_server
 
 ## 1. The Dominant Paradigm: Client/Server
-The vast majority of online services we rely on today are built upon the **Client/Server Paradigm** ($C/S$). Even in modern distributed architectures, this fundamental relationship remains the standard.
+The vast majority of online services we rely on today are built upon the **Client/Server Paradigm** ($C/S$). Even in modern distributed architectures, this fundamental relationship remains the standard. Even if the server is bbeing decentralized, we have to trust to the server. 
 
 ### The "Black Box" Abstraction
 From an engineering perspective, the most critical concept to grasp is the visibility of operations.
 - **The Client:** Sends a request (Input).
 - **The Server:** Processes the request and returns a response (Output).
 
-**Crucially, the Server acts as a Black Box.**
+**Crucially, the Server acts as a Black Box.** We do not have a formal proof that google is deleting for real the photos that i want to delete in the cloud.
 
 ![[Pasted image 20251129160850.png]]
 > [!abstract] Visual Analysis
 > **What to look at:** The diagram shows the Client interacting with a dark cube (the Server). Inside the cube, a sequence of actions ($A_1, A_2, \dots, A_n$) occurs hidden from the Client's view.
 > **Meaning:** We only see the interface (Request/Response). We have **zero visibility** on the internal execution flow.
+
+**conseguences**:
+- Do we have any formal proof that our money deposited in a bank are not used for different proposes to the ones stated in the contract?
+- Do we have any formal proof that our data are deleted from a server when requested? 
+- Do we have any formal proof our data are not delivered to third parties? 
+- Do we have any formal proof …
+
+so we will talk about **verifiable** informations, but in another exam.
+![[Pasted image 20260924123350.png]]
+[https://www.statista.com/chart/18819/worldwide-market-share-of-leading-cloud-infrastructure-service-providers/](https://www.statista.com/chart/18819/worldwide-market-share-of-leading-cloud-infrastructure-service-providers/)
+60% of clouds are american. Status quo in centralized serviced:
+- We trust the server
+- We can trust a certification authority that certifies the process has been carried out as expected
+- Usually there is not a formal proof (e.g. mathematical w.h.p.). We simply trust the certification authority respect a contract in view of its reputation
+- Incentives to behave correctly are due to the possible loss of reputation
 
 ### Formal Definition of Server Actions
 We can model the server's internal behavior as a sequence of discrete operations. The user *assumes* the server performs the set of expected actions:
