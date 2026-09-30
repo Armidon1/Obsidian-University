@@ -224,8 +224,10 @@ In this course won't enhance the formal proof sometimes: we will see something t
 
 For a perfect link, **no creation** and **no duplication** are safety properties; **reliable delivery** is liveness. A run may be safe yet make no progress. Conversely, eventual delivery cannot excuse an earlier duplicate. “Eventually” imposes no numeric deadline unless timing assumptions provide one. A liveness claim usually depends on conditions such as correct processes, fair message delivery, and scheduling of enabled local actions.
 
-### Failure models (we will continue later here)
+### Failure models
 The lecture distinguishes the following behaviors:
+
+![[Pasted image 20260930103008.png]]
 
 | Failure behavior | What can go wrong |
 | --- | --- |
@@ -239,6 +241,8 @@ These are different contracts about faulty behavior, not interchangeable synonym
 
 ### Crash fault: the crash-stop abstraction
 
+![[Pasted image 20260930103045.png]]
+
 A process crashes at some time $t$ and **never recovers** within the crash-stop model. A process is **faulty** if it crashes during the execution. It is **correct** if it never crashes and executes infinitely many steps. Thus “correct” includes continuing to make progress, rather than merely having stayed alive up to the current instant.
 
 A property qualified by “correct process” does not necessarily promise delivery to a receiver that crashes or after a sender stops forever. This restriction is essential: no algorithm can force a permanently stopped receiver to execute a delivery event.
@@ -248,6 +252,8 @@ A property qualified by “correct process” does not necessarily promise deliv
 Fault tolerance is one way to obtain dependability: the algorithm should satisfy its stated properties despite allowed faults. Let $f$ be the assumed **upper bound** on faulty processes out of $N$. The relation between $f$ and $N$ is called the algorithm's **resilience** (often stated as a threshold or condition involving both). “At most $f$” includes all cases from zero through $f$ faults, with any permitted choice of failing processes. The actual threshold required depends on the problem and model; this lecture does not assert one universal value.
 
 ### Crash-stop versus crash-recovery
+
+![[Pasted image 20260930103104.png]]
 
 Physical machines can restart. Under the **crash-stop abstraction**, a restarted machine is not treated as the return of the original process for that algorithm. This does **not** ban restart in the deployment. It means that correctness and progress do not **rely on** a crashed process recovering. A higher layer might use the machine again under a new process identity or separate recovery protocol.
 
@@ -259,11 +265,44 @@ A recovered process may suffer **amnesia**: volatile local state disappears. Wit
 
 Durability is not automatic merely because a variable was assigned. A recovery-aware algorithm must decide what to persist and in what order relative to sending or confirming operations. This is why the failure model changes algorithm design rather than just the deployment procedure.
 
+##### la parola "Drift" in questo contesto
+Qui **drift** (deriva) indica quanto il clock fisico di una macchina **va più veloce o più lento** rispetto al tempo reale.
+
+**L'idea**
+Ogni computer misura il tempo con un oscillatore al quarzo, che dovrebbe vibrare a una frequenza precisa. In pratica non è mai perfetto: la frequenza varia per temperatura, qualità del cristallo, invecchiamento, tensione di alimentazione. Il risultato è che il clock "ticchetta" a un ritmo leggermente sbagliato.
+
+Il drift è proprio questo **errore di velocità**, e si esprime come tasso **ρ**: per ogni secondo reale, il clock locale conta un tempo compreso tra (1 − ρ) e (1 + ρ) secondi.
+
+**Esempio numerico:** un quarzo tipico ha ρ ≈ 10⁻⁵ (10 parti per milione). Sembra poco, ma:
+- in 1 secondo sbagli di 10 µs
+- in un giorno sbagli di circa 0,86 secondi
+- in un mese sbagli di circa 26 secondi
+
+**Drift e skew: non confonderli**
+- **Drift**: è una _velocità_, cioè di quanto un clock si allontana dal tempo reale per ogni unità di tempo.
+- **Skew** (o offset): è una _distanza_, cioè la differenza tra i valori letti da due clock in un certo istante ("il mio segna 12:00:00, il tuo 12:00:03").
+
+Il drift genera lo skew nel tempo: se due orologi partono sincronizzati ma derivano in versi opposti, la distanza tra loro cresce continuamente.
+
+**Perché conta nel modello sincrono**
+1. **I timeout si misurano col clock locale.** Se p aspetta "200 ms" col proprio orologio e quel clock va più veloce, in realtà ha aspettato meno. Conoscere ρ permette di allungare il timeout quanto serve per coprire l'errore, e per questo nelle slide il drift compare accanto a Φ e δ.
+2. **Sincronizzazione dei clock.** Sapendo che il drift è limitato, sai anche ogni quanto risincronizzare. Se vuoi che due clock non differiscano mai più di ε e ognuno deriva al massimo di ρ, la loro distanza cresce al massimo di 2ρ al secondo, quindi devi risincronizzarli almeno ogni ε / 2ρ secondi. È esattamente quello che fa NTP.
+
+**In sintesi:** il drift è la "velocità di errore" dell'orologio. Nel modello sincrono si assume che sia limitata e nota, così anche l'errore accumulato nel tempo resta prevedibile.
+
+
 ### Timing assumptions
+remember that the DS is Distributedd by definition, if i want to know what a system is doing in a specific moment, i have to ask him directly, i cannot see precicelly what is exactly doing anytime: he can somply reply but possibly is moving foward. 
+
+So timing is important: so we have to deal with those properties:
+
+![[Pasted image 20260930103120.png]]
 
 Timing determines what can be inferred from a delay. A slow response could indicate failure, a slow process, or a delayed message; without bounds, those cases cannot generally be distinguished by waiting a fixed amount of time.
 
 #### Synchronous systems
+
+![[Pasted image 20260930103353.png]]
 
 A synchronous model has **known upper bounds** on:
 
@@ -275,19 +314,91 @@ Together these support timed failure detection, measuring transit delays, time-b
 
 The hard engineering problem is **coverage**: do the assumed bounds actually hold for the components and operating conditions of the real system, with the needed confidence? A proof under synchronous bounds cannot rescue an execution in which a bound is violated.
 
+sinchronous systems are beautifull but you have to know exactly those timing upper bound: in LAN it is cool, over the internet is something else (asynchronous systems).
+
+##### spiegotto claude
+
+Il sistema sincrono è il modello più "comodo": si assume di sapere quanto tempo ci mette, al massimo, ogni cosa.
+###### Le tre garanzie
+In un sistema sincrono esistono limiti superiori **noti** (conosci il numero, non sai solo che esiste) su tre cose:
+
+1. **Calcolo**: un processo esegue un passo locale (ricevere un evento, aggiornare lo stato, fare trigger) in al massimo **Φ**.
+2. **Comunicazione**: un messaggio inviato arriva a destinazione in al massimo **δ**.
+3. **Drift del clock**: il clock fisico locale di ogni macchina si discosta dal tempo reale al massimo di un tasso **ρ**. Ogni orologio va un po' più veloce o più lento, ma entro un margine noto.
+
+###### Perché servono tutti e tre: il timeout
+Il punto centrale è che con questi limiti un **timeout ha significato**. Un esempio concreto: p manda un "ping" a q e aspetta la risposta.
+
+- il ping impiega al massimo δ ad arrivare
+- q impiega al massimo Φ a elaborarlo e rispondere
+- il "pong" impiega al massimo δ a tornare
+- p misura l'attesa col proprio clock, che può sbagliare di un fattore legato a ρ
+
+Quindi p può calcolare un timeout T ≈ (2δ + Φ) corretto per il drift. Se dopo T non ha ricevuto risposta, **q è sicuramente crashato**, perché un q vivo avrebbe risposto per forza entro quel tempo.
+
+Questo è esattamente ciò che in un sistema **asincrono** non puoi fare: lì un ritardo non ti dice nulla, perché q potrebbe essere morto oppure solo lentissimo. È il collegamento con la frase subito prima nelle tue note: _"a slow response could indicate failure, a slow process, or a delayed message"_.
+
+La frase _"A timeout is meaningful only when its bound covers processing, communication, and clock uncertainty"_ significa proprio questo: se nel timeout dimentichi uno dei tre termini (per esempio consideri δ ma non Φ, o ignori il drift), puoi dichiarare morto un processo che è solo in ritardo.
+
+###### Cosa ti permette di fare
+L'elenco delle slide (preso dal Cachin) si riduce tutto a "posso ragionare col tempo fisico":
+
+- **Failure detection temporizzata**: il ping/timeout appena visto, così rilevi i crash con certezza.
+- **Misurare i ritardi di transito**: sai quanto ci mette un messaggio, almeno nel caso peggiore.
+- **Coordinamento basato sul tempo**: per esempio "alle 12:00 tutti fanno X", oppure i lease ("sei leader per 10 secondi").
+- **Prestazioni nel caso peggiore**: puoi garantire "l'algoritmo termina entro X secondi", anche in presenza dei guasti previsti dal modello.
+- **Clock sincronizzati**: visto che il drift è limitato, puoi risincronizzare periodicamente i clock e mantenerli vicini tra loro.
+
+###### Il problema vero: la coverage
+Qui sta il messaggio "da ingegnere". Il modello sincrono è un'**assunzione**, e la domanda da farsi è: nel sistema reale quei limiti valgono davvero, e con quale probabilità?
+
+- Su Internet δ non è garantito: basta congestione o un router che perde pacchetti.
+- Φ può saltare per un garbage collector, uno swap su disco o una VM messa in pausa dall'hypervisor.
+- Se hai assunto δ = 100 ms e un messaggio ci mette 2 s, il tuo timeout dichiara morto un processo vivo. A quel punto la dimostrazione di correttezza non vale più, perché si basava su un'ipotesi violata.
+
+Da qui la frase _"a proof under synchronous bounds cannot rescue an execution in which a bound is violated"_: la dimostrazione è corretta **sotto le ipotesi**, ma se la realtà viola le ipotesi non ti protegge. Il rischio è pagare con la **safety**, per esempio con due leader contemporaneamente.
+
+Per questo si studiano anche il modello **asincrono** (nessuna assunzione, quindi più robusto ma più limitato) e quello **parzialmente sincrono** (i limiti valgono "prima o poi"), che è il compromesso usato in pratica, per esempio in Paxos e Raft.
+
+**In una riga:** sincrono = conosci i tempi massimi, quindi i timeout sono affidabili e puoi rilevare i crash con certezza. Il prezzo è che, se nella realtà quei limiti non reggono, le garanzie cadono.
+
 #### Asynchronous systems
+sometiems you don't know those upper bounds: consider for instance an machine learning training process. If also it is important to give to other tasks more resources, we cannot create such a bottleneck. 
 
 An asynchronous model makes **no timing assumptions** about processes or communication links. It does not mean that processes never run or that no message ever arrives; it means the model supplies **no known finite upper bound** on how long a step or delivery can take. Therefore, a timeout alone cannot conclusively distinguish a crash from extreme delay.
 
 One may still order events using communication: a local event precedes a later event at the same process, and sending a message precedes its receipt. **Logical time** records such causal relationships without claiming to measure seconds or a global physical time. This is the motivation for logical clocks.
 
 #### Partial (eventual) synchrony
+Un sistema reale **di solito** rispetta dei limiti di tempo: i messaggi arrivano in pochi ms e i processi rispondono in fretta. Ogni tanto però ci sono **periodi di instabilità**, come congestione di rete, un server sovraccarico o una pausa del garbage collector, in cui quei limiti saltano.
+
+Il modello cattura questo comportamento: il sistema può essere asincrono per un po', ma **prima o poi** si comporta in modo sincrono.
+
+Esiste un istante, detto **GST** (_Global Stabilization Time_), dopo il quale i limiti su Φ, δ e drift valgono. Il punto chiave è che **GST è sconosciuto**: non sai quando arriverà e l'algoritmo non può basarsi su una data precisa.
+
+Esiste anche una variante in cui i limiti valgono sempre ma **non conosci il loro valore**.
+
+Come avverte la tua slide, non va letto alla lettera come "prima c'è caos, poi tutto diventa sincrono per sempre". L'intuizione corretta è che prima o poi arriva **un periodo di stabilità abbastanza lungo** da permettere all'algoritmo di terminare.
+
+**Conseguenza per gli algoritmi**
+- **Safety sempre**: anche nei periodi "cattivi" l'algoritmo non deve mai fare nulla di sbagliato, per esempio decidere due valori diversi o eleggere due leader.
+- **Liveness solo quando il sistema è stabile**: il progresso può fermarsi durante l'instabilità, ma riprende quando i tempi tornano ragionevoli.
+
+Il trucco tipico sono i **timeout crescenti**. Se sospetti un processo che poi si rivela vivo, hai sbagliato, quindi raddoppi il timeout. Dato che i limiti prima o poi valgono, il timeout finisce per superarli e da lì in poi i sospetti diventano corretti. È il principio dietro l'**eventually perfect failure detector (◇P)**, che vedrai più avanti.
+
+**Perché è importante**
+In un sistema **puramente asincrono** il consenso è impossibile anche con un solo crash (teorema **FLP**, che probabilmente vedrete nel corso). La sincronia parziale è l'assunzione minima che rende il consenso risolvibile senza richiedere la sincronia totale, che nella realtà non è garantita. Per questo algoritmi come **Paxos** e **Raft** sono progettati per questo modello.
+
+**In una riga:** i limiti di tempo esistono ma valgono solo "prima o poi", quindi l'algoritmo deve essere sempre safe e garantisce il progresso quando il sistema si stabilizza.
 
 Partial synchrony models systems that sometimes behave within timing bounds and sometimes do not. One formal form, **eventual synchrony**, posits an **unknown** time after which the relevant synchrony bounds hold. The lecture warns against reading the simplified description as a literal prediction that all hardware, software, and network components become permanently synchronous at a known point, or that the execution neatly begins in a single asynchronous phase followed by a single synchronous phase.
 
+![[Pasted image 20260930104643.png]]
 Operationally, the desired progress argument is that there is a **sufficiently long period of synchrony for the algorithm to terminate**. Before such a period, retries or timeouts may be misleading; safety should still hold, while liveness may wait for favorable timing. Distinguish the exact eventual-synchrony assumption used in a formal theorem from this intuition of a long enough good interval.
 
 #### Summary of timing models
+
+![[Pasted image 20260930105021.png]]
 
 | Model | Computation / communication / clocks | Consequence for reasoning |
 | --- | --- | --- |
@@ -297,7 +408,7 @@ Operationally, the desired progress argument is that there is a **sufficiently l
 
 #### Reference for this part
 
-C. Cachin, R. Guerraoui, and L. Rodrigues, *Introduction to Reliable and Secure Distributed Programming*, Springer, 2011, Chapter 2, Sections 1, 2, and 5 (as cited in the lecture).
+C. Cachin, R. Guerraoui, and L. Rodrigues, *Introduction to Reliable and Secure Distributed Programming*, Springer, 2011, Chapter 2, Sections 1, 2, and 5 (as cited in the lecture). we have skipped the bizantyne problem, but we will recover it later.
 
 ## Lecture 4 — Abstracting Communications
 
