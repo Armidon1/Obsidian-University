@@ -451,6 +451,8 @@ Alfabeto: `{isFriendOf, isChildOf, hasChild}`. Si assume che `isChildOf` sia l'i
 
 ## Graph Database Management Systems
 
+![[Pasted image 20261007153437.png]]
+
 Un **GDBMS** è un sistema che memorizza, aggiorna e interroga database a grafo.
 
 ### Storage e processing nativi
@@ -465,6 +467,10 @@ Ogni nodo mantiene riferimenti diretti ai nodi o archi adiacenti. Per verificare
 
 > [!important] “Index-free” non significa “senza indici”
 > Un indice globale può comunque essere usato per trovare il punto di partenza, ad esempio il nodo con `name = "Alice"`. Una volta trovato il nodo, il traversal sfrutta i riferimenti locali.
+
+### Native graph storage e native graph processing
+
+Il **native graph storage** riguarda il modo in cui il database memorizza fisicamente i dati: utilizza strutture progettate per rappresentare grafi, come liste di adiacenza o strutture di incidenza. Si possono immaginare record di nodi e archi collegati tra loro, senza che debba necessariamente esistere un unico oggetto `Graph` interamente caricato in memoria. Il **native graph processing** riguarda invece il modo in cui il motore esegue le query: lavora direttamente sulla struttura del grafo mediante operazioni come seguire un arco, espandere i vicini di un nodo e percorrere un cammino. L’**index-free adjacency** supporta questa navigazione mantenendo riferimenti diretti ai record adiacenti: un indice globale può individuare il nodo iniziale, per esempio Alice tramite la proprietà `name`, mentre i successivi passaggi verso i suoi amici sfruttano i collegamenti locali. Storage nativo e processing nativo sono quindi concetti distinti ma spesso associati: il primo riguarda **come il grafo è memorizzato**, il secondo **come viene attraversato ed elaborato**.
 
 ### Storage non nativo
 
@@ -491,12 +497,16 @@ Riassumendo in una frase: nativo o non nativo riguarda come sono fisicamente mem
 
 ### Property graph
 
+![[Pasted image 20261007153552.png]]
+
 Un **property graph** è un multigrafo diretto ed etichettato in cui:
 
 - nodi e archi possono avere proprietà `<attributo, valore>`;
 - un nodo può avere una o più etichette/tipi;
 - l'etichetta di un arco esprime il tipo di relazione;
 - possono esistere più archi tra la stessa coppia di nodi.
+
+![[Pasted image 20261007153608.png]]
 
 ```mermaid
 flowchart LR
@@ -526,7 +536,7 @@ Nota che stiamo considerando il caso specifico in cui abbiamo indicizzato la tab
 Notiamo che in genere i costi sono migliori nei RDBMS, ma è anche vero che non abbiamo mai ragionato in maniera ricorsiva. la prprietà di chiusura transitiva non esiste nel modello relazionale e se propviamo ad applicarla, i costi diventano esponenziali a causa dei join anidati.  **Il vantaggio del grafo è soprattutto nella fase ripetuta di navigazione**
 ### Hypergraph
 
-![[Pasted image 20260921120929.png]]
+![[Pasted image 20261007153647.png]]
 
 Un **ipergrafo** generalizza il grafo consentendo a un arco di collegare un numero arbitrario di nodi.
 
@@ -535,9 +545,9 @@ Formalmente:
 $$H=(V,E), \qquad E\subseteq \mathcal{P}(V)\setminus\{\varnothing\}$$
 
 Una relazione n-aria, ad esempio una fornitura che coinvolge `Supplier`, `Product` e `Department`, può essere rappresentata come un unico **iperarco**.
+![[Pasted image 20261007153810.png]]
 
 Un iperarco diretto è una coppia ordinata $(T,H)$ di sottoinsiemi disgiunti di nodi, chiamati **tail** e **head**.
-
 ![[Pasted image 20260921120912.png]]
 
 Vantaggio: rappresenta direttamente relazioni n-arie.  
@@ -557,7 +567,7 @@ Il modello standard è **RDF** e il linguaggio di query standard è **SPARQL**. 
 
 ---
 
-## RDF - Resource Description Framework
+# RDF - Resource Description Framework
 
 ### Modello RDF
 
