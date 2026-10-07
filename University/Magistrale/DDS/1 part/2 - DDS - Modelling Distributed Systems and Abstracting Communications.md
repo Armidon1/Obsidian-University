@@ -229,12 +229,12 @@ The lecture distinguishes the following behaviors:
 
 ![[Pasted image 20260930103008.png]]
 
-| Failure behavior | What can go wrong |
-| --- | --- |
-| **Crash (crash-stop)** | A process stops executing permanently. |
-| **Omission** | An expected message is not sent or received. |
-| **Crash and recovery** | A process stops and later restarts, possibly repeatedly. |
-| **Eavesdropping** | Information learned in the algorithm leaks to an outside entity. |
+| Failure behavior          | What can go wrong                                                                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Crash (crash-stop)**    | A process stops executing permanently.                                                                      |
+| **Omission**              | An expected message is not sent or received.                                                                |
+| **Crash and recovery**    | A process stops and later restarts, possibly repeatedly.                                                    |
+| **Eavesdropping**         | Information learned in the algorithm leaks to an outside entity.                                            |
 | **Arbitrary / Byzantine** | A process may behave in ways not prescribed by its algorithm, including inconsistent or malicious behavior. |
 
 These are different contracts about faulty behavior, not interchangeable synonyms. An algorithm proved for crashes does not automatically tolerate arbitrary messages from a Byzantine process. The communication abstractions in the next lecture are stated under a **crash-failure** setting.
@@ -412,33 +412,46 @@ C. Cachin, R. Guerraoui, and L. Rodrigues, *Introduction to Reliable and Secure 
 
 ## Lecture 4 — Abstracting Communications
 
-### Link abstraction
+### Link abstractions
+we would like to build an overlay topology the helps to abstract us the idea of link (remember this is sommething on top of the actual network TCP/IP thing)
+
+![[Pasted image 20260930110754.png]]
 
 A **link** is the interface by which one process sends a message to another. At the abstract level, each pair of processes has a bidirectional link. This does **not** require one direct physical cable per pair: a routing algorithm may realize the apparent link over a more complex topology. The lecture illustrates both richly connected and sparser topologies to separate the client-facing communication abstraction from its physical realization.
 
 A bidirectional connection can be considered as two directed send paths for specifying behavior: guarantees about sending from $p$ to $q$ should be read for that direction. The abstraction lets higher layers reason about `Send` and `Deliver` instead of raw network buffers, packet routes, and retransmission details.
 
+a) complete: the most powerfull one
+b) boradcast: **fare domadna se ogni pacchetto è broadcast**
+c) ring: the most used one for mutual exclusion and for implementing algorithms.
+d) desecentralized one. 
 ### Link abstractions under crash failures
 
 The lecture builds three progressively stronger services:
 
-1. **Fair-loss link:** a message may be lost, but repeated sends between correct processes have a fairness guarantee; delivered copies can be duplicated finitely.
-2. **Stubborn link:** a one-time upper-level send is repeatedly attempted, so correct endpoints eventually see infinitely many deliveries of that message.
+1. **Fair-loss link:** a message may be lost, but repeated sends between correct processes have a fairness guarantee; delivered copies can be duplicated finitely. it is an unreliable one, a kind of **"best effort one**"
+2. **Stubborn link:** a one-time upper-level send is repeatedly attempted, so correct endpoints eventually see infinitely many deliveries of that message. they are useless in the real life: they do not exists.
 3. **Perfect link:** a one-time send eventually produces one upper-level delivery, without duplicates or invented messages.
 
 The strengthening is achieved by **composition**: retransmit over fair-loss to get stubborn delivery, then suppress duplicates over stubborn delivery to get a perfect link. “Stronger” means a stronger contract at the upper interface, not a change to the underlying network's physical behavior.
 
 ### System model for the links
 
+![[Pasted image 20260930111641.png]]
+
 The immediate picture has **two processes**, a sender and a receiver, communicating through a link. Messages can be lost and have an unpredictable delivery time. Processes may crash. A process's operation takes bounded time, although the bound may be **unknown**. This last distinction matters: a finite but unknown bound is not automatically a known timeout for detecting a crash. The specification below explicitly conditions progress on correct endpoints.
 
 ### Generic link interface: send versus deliver
+
+![[Pasted image 20260930111659.png]]
 
 A point-to-point link accepts `Send(q, m)` at the sender and emits `Deliver(p, m)` at the receiver, identifying the destination $q$ and source $p$. The upper-layer **delivery** is not the same event as a network-card **receipt**. A raw packet may arrive at a port and enter a buffer; link code may then validate, deduplicate, or otherwise process it before emitting `Deliver` to its client.
 
 This boundary is why one can receive the same packet many times internally yet deliver the identified message exactly once at the perfect-link interface. The lower and upper events in the pseudocode (`fl`, `sl`, `pl`) refer to different layers.
 
 ### Fair-loss point-to-point link: specification
+
+![[Pasted image 20260930112016.png]]
 
 The module is `FairLossPointToPointLinks`, instance `fl`:
 
@@ -463,6 +476,8 @@ These two issues motivate the next two abstractions: **stubborn links** solve th
 
 ### Stubborn point-to-point link: specification
 
+![[Pasted image 20260930112904.png]]
+
 The module is `StubbornPointToPointLinks`, instance `sl`, with request `⟨sl, Send | q, m⟩` and indication `⟨sl, Deliver | p, m⟩`.
 
 - **SL1 — Stubborn delivery:** if a **correct** $p$ sends $m$ **once** to a **correct** $q$, then $q$ delivers $m$ **infinitely many times** at the stubborn-link interface.
@@ -471,6 +486,8 @@ The module is `StubbornPointToPointLinks`, instance `sl`, with request `⟨sl, S
 “Infinite deliveries” is intentional, not an error: the service converts a single upper request into persistent attempts and passes the successful lower deliveries upward. This is useful as an intermediate abstraction, even though a client wanting one notification would not consume it directly.
 
 ### Stubborn point-to-point link: implementation by retransmitting forever
+
+![[Pasted image 20260930113958.png]]
 
 This algorithm implements `sl` using `fl`. At each process it keeps a set `sent` of destination-message pairs and periodically retries every stored pair:
 
@@ -495,6 +512,7 @@ upon event ⟨fl, Deliver | p, m⟩ do
 The first send is immediate; later timer expirations resend. `sent` is never cleared in this simple algorithm. If correct processes continue to take steps, the timer fires repeatedly and each stored message is sent infinitely often, **FLL1** yields infinitely many lower deliveries to a correct receiver, and forwarding gives **SL1**. **FLL3** plus the fact that only previously requested pairs are passed down gives **SL2**. These arguments need timer/scheduling progress; $\Delta$ determines retry cadence, not a reliable failure-detection deadline. Memory and traffic grow with the number of distinct stored messages, a limitation of this teaching implementation.
 
 ### Perfect point-to-point link: specification
+![[Pasted image 20260930114011.png]]
 
 The module is `PerfectPointToPointLinks`, instance `pl`, with request `⟨pl, Send | q, m⟩` and indication `⟨pl, Deliver | p, m⟩`.
 
@@ -507,6 +525,8 @@ The module is `PerfectPointToPointLinks`, instance `pl`, with request `⟨pl, Se
 “Exactly once” is a compact intuition for the specified correct-endpoint case: **at least once eventually** (PL1) plus **at most once** (PL2), with authenticity of origin in PL3. It does not impose a deadline, guarantee delivery to a process that has stopped forever, or claim that application processing and its side effects are exactly once.
 
 ### Perfect point-to-point link: implementation by eliminating duplicates
+
+![[Pasted image 20260930114026.png]]
 
 The perfect layer calls the stubborn layer and keeps a receiver-side set of messages already delivered to its client:
 
@@ -553,3 +573,50 @@ When you encounter a new distributed algorithm, ask:
 
 > [!tip] One-sentence synthesis
 > Model the environment, specify the promise, implement it with local event handlers and weaker components, then prove that every permitted execution respects the promise.
+
+## EXERCISE
+now the professor does an exercise: merge those layers into one single layer.
+
+in this case we want to construct an implementation of perfect p2p over the fair loss p2p without the stubborn:
+
+![[Pasted image 20260930115858.png]]
+
+This is the idea:![[Pasted image 20260930120336.png]]
+
+this is the implementation:
+```
+INIT:
+	sent= void
+	delivered = void
+	//suggestion: while implementing the init, leave some space to insert more variables in case OF later appends, in fact, after the implementation of pplp.sent(m):
+	set.timer(delta)   //where delta is a time
+	
+UPON EVENT PPLP.send(m)
+	TRIGGER FLPLLP.Send(m)
+	SENT = sent Union {m}
+	ACK_m = FALSE
+	
+//now i have to implement the handler
+UPON FL.Deliver(m)
+	TRIGGER FLPLP.send(ACK, m)
+	if (m not in delivered)
+		delivered = delivered UNION {m}
+		TRIGGER PP2P.Deliver(m)
+		
+UPON EVENT Timeout
+	for each m in sent AND not ACK_m
+		TRIGGER FLP2P.Send(m)     //retransmitt, 
+	set_timer(delta) //reset timer
+		
+UPON EVENT FL.Deliver(ACK,m)
+	ACK_m = TRUE
+```
+
+Notice that some variables are not global variables but local: this can be a stupid mistake in the exam. 
+
+
+now we see more in details what happens in practise, considerign that both p and q have its own variables:
+
+![[Pasted image 20260930122508.png]]
+
+DRAWING THOSE STUFF IS EXTREMMELY IMPORTANT TO UNDERSTAND HOW YOUR OWN CODE WORKS AND TRY TO EXPLOIT YOUR OWN DESIGN.
