@@ -12,6 +12,7 @@ tags:
 > [!abstract] Come usare questa mappa
 > Le **lezioni** sono note complete da cui studiare, nell'ordine del corso. I **concetti** sono note brevi per il ripasso: ognuna rimanda alle sezioni della lezione in cui l'argomento è spiegato nel dettaglio.
 > Molti concetti (processi, memoria virtuale, file system, system call) sono trattati anche in **Sistemi di Calcolo**, dal punto di vista del programmatore: [[MOC - Sistemi di Calcolo]].
+> Thread, sincronizzazione, deadlock e comunicazione tra processi sono approfonditi in [[MOC - Sistemi di Calcolo 2]].
 
 ## Lezioni
 

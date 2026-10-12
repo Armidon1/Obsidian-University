@@ -11,6 +11,7 @@ tags:
 
 > [!abstract] Come usare questa mappa
 > Le **lezioni** seguono i capitoli della *Dispensa Sistemi di Calcolo* (Demetrescu et al.): sono note complete da cui studiare. I **concetti** sono note brevi per il ripasso, ognuna con il link alle sezioni esatte delle lezioni. Molti concetti sono **condivisi con Sistemi Operativi**, che approfondisce il lato kernel degli stessi argomenti: le note atomiche di quel corso sono collegate anche da qui. Mappa dell'altro corso: [[MOC - Sistemi Operativi]].
+> Concorrenza, IPC, socket e sistemi distribuiti proseguono in [[MOC - Sistemi di Calcolo 2]].
 
 ## Lezioni (capitoli della dispensa)
 

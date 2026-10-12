@@ -60,6 +60,8 @@ for d, dirs, fs in os.walk(course):
                     print(f'BAD SECTION  {rel}: {m}'); problems += 1
                 continue
             if page not in notes:
+                if page in attachments and not sec:  # link a un allegato (es. [[file.pdf]])
+                    continue
                 print(f'BROKEN LINK  {rel}: {m}'); problems += 1
                 continue
             if len(notes[page]) > 1:
