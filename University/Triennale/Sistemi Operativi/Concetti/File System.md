@@ -19,9 +19,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[File Descriptor]] · [[Link Hard e Soft]] · [[Mount]] · [[Permessi e Ownership]] · [[Strutture Dati del File System]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[12 - SO - File System#Concetti base|Lezione 12 — Concetti base]]
 > - [[12 - SO - File System#File|Lezione 12 — File]]
 > - [[12 - SO - File System#Il FILE come tipo di dato astratto|Lezione 12 — Il FILE come tipo di dato astratto]]
+> - [[08 - SDC - Gestione dei file#File e directory|Sistemi di Calcolo, cap. 8 — File e directory]]

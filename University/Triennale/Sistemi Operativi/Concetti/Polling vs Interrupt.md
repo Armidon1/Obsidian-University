@@ -26,8 +26,9 @@ while (1) halt();   // sleep_cpu() su AVR
 ## Collegamenti
 
 - **Concetti correlati**: [[Interrupt]] · [[Timer AVR]] · [[Sistema Operativo]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Polling vs interrupt|Lezione 6 — Polling vs interrupt]]
 > - [[04 - SO - Hardware e AVR#Evitare il busy waiting|Lezione 4 — Evitare il busy waiting]]
+> - [[06 - SDC - Esecuzione dei programmi#Da waiting a ready: interrupt vs polling|Sistemi di Calcolo, cap. 6 — Da waiting a ready: interrupt vs polling]]

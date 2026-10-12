@@ -19,9 +19,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Memoria Virtuale]] · [[Eccezioni]] · [[Page Replacement]] · [[Effective Access Time]] · [[Thrashing e Working Set]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[11 - SO - Memoria Virtuale#Demand paging|Lezione 11 — Demand paging]]
 > - [[11 - SO - Memoria Virtuale#Gestione di un page fault|Lezione 11 — Gestione di un page fault]]
 > - [[11 - SO - Memoria Virtuale#Prestazioni|Lezione 11 — Prestazioni]]
+> - [[07 - SDC - Gestione dei dati in memoria centrale#Paginazione su richiesta|Sistemi di Calcolo, cap. 7 — Paginazione su richiesta]]

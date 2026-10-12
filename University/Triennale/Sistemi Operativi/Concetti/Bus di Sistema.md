@@ -25,9 +25,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Ciclo di Lettura e Scrittura in Memoria]] · [[Memory Mapped IO]] · [[DMA]] · [[Interrupt]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[04 - SO - Hardware e AVR#CPU e bus|Lezione 4 — CPU e bus]]
 > - [[04 - SO - Hardware e AVR#Esempio: una CPU a 8 bit (Z80)|Lezione 4 — Esempio: una CPU a 8 bit (Z80)]]
 > - [[01 - SO - Introduzione e Git#Organizzazione di un computer|Lezione 1 — Organizzazione di un computer]]
+> - [[01 - SDC - Cosa è un sistema di calcolo#Bus|Sistemi di Calcolo, cap. 1 — Bus]]

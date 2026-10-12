@@ -21,8 +21,9 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Scheduling Multiprocessore]] · [[CPU Scheduler e Dispatcher]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[01 - SO - Introduzione e Git#Multicore e Symmetric Multiprocessing|Lezione 1 — Multicore e Symmetric Multiprocessing]]
 > - [[09 - SO - CPU Scheduling#Scheduling multiprocessore|Lezione 9 — Scheduling multiprocessore]]
+> - [[05 - SDC - Ottimizzazione dei programmi#Quanto conta ottimizzare le prestazioni|Sistemi di Calcolo, cap. 5 — Quanto conta ottimizzare le prestazioni]]

@@ -20,7 +20,8 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[File System]] · [[Dual Mode]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[12 - SO - File System#Ownership e permessi|Lezione 12 — Ownership e permessi]]
+> - [[09 - SDC - Appendici#Permessi POSIX e chmod|Sistemi di Calcolo, cap. A–D — Permessi POSIX e chmod]]

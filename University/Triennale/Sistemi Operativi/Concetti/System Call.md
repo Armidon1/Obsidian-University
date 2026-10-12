@@ -28,9 +28,11 @@ graph LR
 ## Collegamenti
 
 - **Concetti correlati**: [[Dual Mode]] · [[Interrupt Vector]] · [[Puntatori a Funzione]] · [[vDSO]] · [[Architettura a Strati]] · [[disastrOS]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#System call|Lezione 6 — System call]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Tipi di syscall|Lezione 6 — Tipi di syscall]]
 > - [[08 - SO - disastrOS#Invocazione di una syscall|Lezione 8 — Invocazione di una syscall]]
+> - [[06 - SDC - Esecuzione dei programmi#System call con int $0x80|Sistemi di Calcolo, cap. 6 — System call con int $0x80]]
+> - [[04 - SDC - Librerie standard del C#Tracciare le system call: strace|Sistemi di Calcolo, cap. 4 — Tracciare le system call: strace]]

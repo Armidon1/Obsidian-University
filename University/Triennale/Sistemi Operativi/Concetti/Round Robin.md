@@ -18,10 +18,11 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[First Come First Served]] · [[Context Switch]] · [[Preemptive Multitasking su AVR]] · [[disastrOS]] · [[Code Multilivello]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[09 - SO - CPU Scheduling#Round Robin (RR)|Lezione 9 — Round Robin (RR)]]
 > - [[09 - SO - CPU Scheduling#Scelta del quanto|Lezione 9 — Scelta del quanto]]
 > - [[05 - SO - Stack e Context Switch#Lo scheduler|Lezione 5 — Lo scheduler]]
 > - [[08 - SO - disastrOS#preempt e scheduler|Lezione 8 — preempt e scheduler]]
+> - [[06 - SDC - Esecuzione dei programmi#Stati, scheduling, preemption, time-sharing|Sistemi di Calcolo, cap. 6 — Stati, scheduling, preemption, time-sharing]]

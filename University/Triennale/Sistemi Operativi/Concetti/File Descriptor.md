@@ -21,8 +21,9 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[File System]] · [[Strutture Dati del File System]] · [[Device File e ioctl]] · [[mmap]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[12 - SO - File System#File descriptor|Lezione 12 — File descriptor]]
 > - [[12 - SO - File System#Strutture dati|Lezione 12 — Strutture dati]]
+> - [[08 - SDC - Gestione dei file#Tabella dei descrittori di file di un processo|Sistemi di Calcolo, cap. 8 — Tabella dei descrittori di file di un processo]]

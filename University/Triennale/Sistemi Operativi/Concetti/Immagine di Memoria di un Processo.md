@@ -30,9 +30,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Program File e Processo]] · [[Contesto di un Processo]] · [[Memoria Virtuale]] · [[Loader ed ELF]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Immagine di memoria di un processo|Lezione 6 — Immagine di memoria di un processo]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Stack frame|Lezione 6 — Stack frame]]
 > - [[05 - SO - Stack e Context Switch#Processo e contesto|Lezione 5 — Processo e contesto]]
+> - [[06 - SDC - Esecuzione dei programmi#Immagine di memoria di un processo|Sistemi di Calcolo, cap. 6 — Immagine di memoria di un processo]]

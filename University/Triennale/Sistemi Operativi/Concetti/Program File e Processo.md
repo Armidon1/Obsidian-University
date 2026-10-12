@@ -22,9 +22,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Immagine di Memoria di un Processo]] · [[Loader ed ELF]] · [[Contesto di un Processo]] · [[Process Control Block]] · [[fork]] · [[exec e Variabili d'Ambiente]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[02 - SO - Programmi, Makefile e pkg-config#Program file e processo|Lezione 2 — Program file e processo]]
 > - [[05 - SO - Stack e Context Switch#Processo e contesto|Lezione 5 — Processo e contesto]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Processi|Lezione 6 — Processi]]
+> - [[06 - SDC - Esecuzione dei programmi#Processi|Sistemi di Calcolo, cap. 6 — Processi]]

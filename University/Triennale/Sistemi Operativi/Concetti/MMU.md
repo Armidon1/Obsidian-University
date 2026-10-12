@@ -20,9 +20,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Address Binding]] · [[Paging]] · [[Segmentazione]] · [[TLB]] · [[Dual Mode]] · [[Memoria Virtuale]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[10 - SO - Gestione della Memoria#Indirizzi logici e fisici, MMU|Lezione 10 — Indirizzi logici e fisici, MMU]]
 > - [[10 - SO - Gestione della Memoria#MMU con registri relocation e limit|Lezione 10 — MMU con registri relocation e limit]]
 > - [[10 - SO - Gestione della Memoria#Registri base e limit|Lezione 10 — Registri base e limit]]
+> - [[07 - SDC - Gestione dei dati in memoria centrale#MMU: da indirizzi virtuali a fisici|Sistemi di Calcolo, cap. 7 — MMU: da indirizzi virtuali a fisici]]

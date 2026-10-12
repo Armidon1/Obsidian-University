@@ -21,9 +21,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[TLB]] · [[Page Table Gerarchica]] · [[Effective Access Time]] · [[MMU]] · [[Memoria Virtuale]] · [[Frammentazione]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[10 - SO - Gestione della Memoria#Paging|Lezione 10 — Paging]]
 > - [[10 - SO - Gestione della Memoria#Protezione con il paging|Lezione 10 — Protezione con il paging]]
 > - [[10 - SO - Gestione della Memoria#Pagine condivise|Lezione 10 — Pagine condivise]]
+> - [[07 - SDC - Gestione dei dati in memoria centrale#Paginazione|Sistemi di Calcolo, cap. 7 — Paginazione]]

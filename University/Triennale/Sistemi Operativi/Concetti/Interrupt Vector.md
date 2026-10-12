@@ -26,8 +26,9 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Interrupt]] · [[Puntatori a Funzione]] · [[Eccezioni]] · [[System Call]] · [[Dual Mode]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Interrupt vector|Lezione 6 — Interrupt vector]]
 > - [[04 - SO - Hardware e AVR#Interrupt|Lezione 4 — Interrupt]]
+> - [[06 - SDC - Esecuzione dei programmi#Interruzioni|Sistemi di Calcolo, cap. 6 — Interruzioni]]

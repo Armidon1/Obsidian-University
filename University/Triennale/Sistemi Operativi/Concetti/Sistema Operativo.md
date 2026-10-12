@@ -21,9 +21,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Architettura a Strati]] · [[Kernel Monolitico e Microkernel]] · [[Interrupt]] · [[System Call]] · [[Dual Mode]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[01 - SO - Introduzione e Git#Che cos'è un sistema operativo|Lezione 1 — Che cos'è un sistema operativo]]
 > - [[01 - SO - Introduzione e Git#Servizi offerti da un OS|Lezione 1 — Servizi offerti da un OS]]
 > - [[01 - SO - Introduzione e Git#Componenti di un OS moderno|Lezione 1 — Componenti di un OS moderno]]
+> - [[01 - SDC - Cosa è un sistema di calcolo#Sistema operativo|Sistemi di Calcolo, cap. 1 — Sistema operativo]]

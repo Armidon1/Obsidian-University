@@ -19,8 +19,9 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[File System]] · [[Strutture Dati del File System]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[12 - SO - File System#Directory e link|Lezione 12 — Directory e link]]
 > - [[12 - SO - File System#Concetti base|Lezione 12 — Concetti base]]
+> - [[08 - SDC - Gestione dei file#Link|Sistemi di Calcolo, cap. 8 — Link]]

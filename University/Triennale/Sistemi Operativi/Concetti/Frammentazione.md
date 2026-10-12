@@ -23,9 +23,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[SLAB Allocator]] · [[Buddy Allocator]] · [[Allocazione Contigua]] · [[Paging]] · [[Segmentazione]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[07 - SO - Allocatori di Memoria#Il problema|Lezione 7 — Il problema]]
 > - [[10 - SO - Gestione della Memoria#Allocazione contigua: partizioni multiple|Lezione 10 — Allocazione contigua: partizioni multiple]]
 > - [[10 - SO - Gestione della Memoria#Paging|Lezione 10 — Paging]]
+> - [[07 - SDC - Gestione dei dati in memoria centrale#Frammentazione interna ed esterna|Sistemi di Calcolo, cap. 7 — Frammentazione interna ed esterna]]

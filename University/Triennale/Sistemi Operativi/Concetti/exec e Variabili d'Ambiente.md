@@ -21,9 +21,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[fork]] · [[Loader ed ELF]] · [[Program File e Processo]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Lanciare un nuovo programma: exec|Lezione 6 — Lanciare un nuovo programma: exec]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Variabili d'ambiente|Lezione 6 — Variabili d'ambiente]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#exit|Lezione 6 — exit]]
+> - [[06 - SDC - Esecuzione dei programmi#Caricare programmi: exec|Sistemi di Calcolo, cap. 6 — Caricare programmi: exec]]

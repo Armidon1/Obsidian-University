@@ -22,8 +22,9 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Array List]] · [[Buddy Allocator]] · [[Frammentazione]] · [[Process Control Block]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[07 - SO - Allocatori di Memoria#SLAB allocator|Lezione 7 — SLAB allocator]]
 > - [[07 - SO - Allocatori di Memoria#Implementazione del PoolAllocator|Lezione 7 — Implementazione del PoolAllocator]]
+> - [[07 - SDC - Gestione dei dati in memoria centrale#Allocazione dinamica|Sistemi di Calcolo, cap. 7 — Allocazione dinamica]]

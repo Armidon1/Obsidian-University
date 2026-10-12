@@ -26,7 +26,7 @@ Sulla reference string `7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1` con 3 frame:
 ## Collegamenti
 
 - **Concetti correlati**: [[Anomalia di Belady]] · [[Demand Paging]] · [[Thrashing e Working Set]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[11 - SO - Memoria Virtuale#Page replacement|Lezione 11 — Page replacement]]
@@ -34,3 +34,4 @@ Sulla reference string `7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1` con 3 frame:
 > - [[11 - SO - Memoria Virtuale#Optimal page replacement|Lezione 11 — Optimal page replacement]]
 > - [[11 - SO - Memoria Virtuale#LRU (Least Recently Used)|Lezione 11 — LRU (Least Recently Used)]]
 > - [[11 - SO - Memoria Virtuale#LRU approssimato|Lezione 11 — LRU approssimato]]
+> - [[07 - SDC - Gestione dei dati in memoria centrale#Politiche di rimpiazzo|Sistemi di Calcolo, cap. 7 — Politiche di rimpiazzo]]

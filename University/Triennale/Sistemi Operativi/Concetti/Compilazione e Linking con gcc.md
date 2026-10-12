@@ -32,8 +32,9 @@ gcc <opts> -o prog a.o b.o -lm  # collega
 ## Collegamenti
 
 - **Concetti correlati**: [[Makefile]] · [[pkg-config]] · [[CMake]] · [[Linking Statico e Dinamico]] · [[Loader ed ELF]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[02 - SO - Programmi, Makefile e pkg-config#Costruzione di un eseguibile|Lezione 2 — Costruzione di un eseguibile]]
 > - [[02 - SO - Programmi, Makefile e pkg-config#Tipi di file|Lezione 2 — Tipi di file]]
+> - [[02 - SDC - Programmazione di un sistema di calcolo#Stadi della compilazione di un programma C|Sistemi di Calcolo, cap. 2 — Stadi della compilazione di un programma C]]

@@ -1,5 +1,27 @@
 # Approfondimento Processi Linux
 
+## Collegamento con il PCB di Sistemi Operativi
+
+`task_struct` concretizza in Linux il concetto di **[[Process Control Block|Process Control Block (PCB)]]** studiato in Sistemi Operativi: la struttura con cui il kernel conserva le informazioni necessarie a gestire l'esecuzione e le risorse di un processo. Il PCB è il modello generale; `task_struct`, insieme alle strutture a cui punta, è la realizzazione di quel modello nel kernel Linux.
+
+| Informazione nel PCB teorico | Realizzazione in Linux |
+|---|---|
+| Identità | `pid`, `tgid` |
+| Stato di esecuzione | `__state`, `exit_state` |
+| Scheduling | Priorità, `policy`, entità di scheduling |
+| Memoria del processo | `mm` → `mm_struct` |
+| File aperti | `files` → `files_struct` → `fdtable` |
+| Credenziali e UID | `cred`, `real_cred` → `struct cred` |
+| Relazioni padre/figli | `real_parent`, `parent`, `children` |
+| Contesto della CPU | Strutture dipendenti dall'architettura e stack del kernel |
+
+> [!important] Una `task_struct` per ogni thread
+> In Linux ogni thread ha una propria `task_struct`: un processo con tre thread ha tre strutture, ciascuna con il proprio stato e contesto di esecuzione. I thread dello stesso processo condividono normalmente memoria e file aperti. `pid` identifica la singola task; `tgid` identifica il gruppo di thread del processo. Il collegamento con il PCB resta valido, ma bisogna tenere conto di questa granularità per thread.
+
+Durante un [[Context Switch]], il kernel salva il contesto della task uscente e ripristina quello della task entrante. `task_struct` e le strutture collegate permettono di ritrovare il contesto e le risorse associati a ciascuna task, svolgendo il ruolo descritto nel modello del PCB.
+
+Riferimento: [definizione di `task_struct` nel sorgente del kernel Linux](https://github.com/torvalds/linux/blob/master/include/linux/sched.h).
+
 Il codice è nel sorgente del kernel Linux, su GitHub. Le strutture chiave sono due:
 
 ---

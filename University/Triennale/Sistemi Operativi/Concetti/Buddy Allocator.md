@@ -22,10 +22,11 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[SLAB Allocator]] · [[Frammentazione]] · [[Paging]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[07 - SO - Allocatori di Memoria#Buddy allocator|Lezione 7 — Buddy allocator]]
 > - [[07 - SO - Allocatori di Memoria#L'albero binario|Lezione 7 — L'albero binario]]
 > - [[07 - SO - Allocatori di Memoria#getBuddy|Lezione 7 — getBuddy]]
 > - [[07 - SO - Allocatori di Memoria#Rilascio|Lezione 7 — Rilascio]]
+> - [[07 - SDC - Gestione dei dati in memoria centrale#malloc e free|Sistemi di Calcolo, cap. 7 — malloc e free]]

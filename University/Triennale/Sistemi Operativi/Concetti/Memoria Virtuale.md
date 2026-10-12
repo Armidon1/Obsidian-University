@@ -19,8 +19,9 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Demand Paging]] · [[Paging]] · [[Copy on Write]] · [[Page Replacement]] · [[MMU]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[11 - SO - Memoria Virtuale#Perché la memoria virtuale|Lezione 11 — Perché la memoria virtuale]]
 > - [[11 - SO - Memoria Virtuale#Lo spazio di indirizzi virtuale|Lezione 11 — Lo spazio di indirizzi virtuale]]
+> - [[07 - SDC - Gestione dei dati in memoria centrale#Memoria fisica e memoria virtuale|Sistemi di Calcolo, cap. 7 — Memoria fisica e memoria virtuale]]

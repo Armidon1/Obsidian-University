@@ -18,7 +18,8 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[File System]] · [[Driver e Block Device]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[12 - SO - File System#Mount e umount|Lezione 12 — Mount e umount]]
+> - [[08 - SDC - Gestione dei file#Mount e umount|Sistemi di Calcolo, cap. 8 — Mount e umount]]

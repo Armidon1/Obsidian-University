@@ -22,8 +22,9 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[System Call]] · [[Interrupt Vector]] · [[Eccezioni]] · [[MMU]] · [[Kernel Monolitico e Microkernel]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Dual mode|Lezione 6 — Dual mode]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Come entra in modalità privilegiata un programma utente?|Lezione 6 — Come entra in modalità privilegiata un programma utente?]]
+> - [[06 - SDC - Esecuzione dei programmi#System call con int $0x80|Sistemi di Calcolo, cap. 6 — System call con int $0x80]]

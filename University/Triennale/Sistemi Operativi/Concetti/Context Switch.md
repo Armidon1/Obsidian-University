@@ -25,9 +25,10 @@ Avviene **solo** a seguito di un interrupt o di un'eccezione (inclusa una syscal
 ## Collegamenti
 
 - **Concetti correlati**: [[Contesto di un Processo]] · [[Preemptive Multitasking su AVR]] · [[Process Control Block]] · [[Interrupt]] · [[CPU Scheduler e Dispatcher]] · [[Round Robin]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[05 - SO - Stack e Context Switch#Il context switch passo per passo|Lezione 5 — Il context switch passo per passo]]
 > - [[05 - SO - Stack e Context Switch#Il context switch in assembly|Lezione 5 — Il context switch in assembly]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Context switch nel kernel|Lezione 6 — Context switch nel kernel]]
+> - [[06 - SDC - Esecuzione dei programmi#Preemption e context switch|Sistemi di Calcolo, cap. 6 — Preemption e context switch]]

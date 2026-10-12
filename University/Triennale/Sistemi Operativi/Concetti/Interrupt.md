@@ -25,9 +25,10 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Interrupt Vector]] · [[Eccezioni]] · [[Polling vs Interrupt]] · [[Context Switch]] · [[Timer AVR]] · [[Interrupt Esterni AVR]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[04 - SO - Hardware e AVR#Interrupt|Lezione 4 — Interrupt]]
 > - [[04 - SO - Hardware e AVR#L'interrupt handler dal punto di vista software|Lezione 4 — L'interrupt handler dal punto di vista software]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Cosa succede quando arriva un interrupt|Lezione 6 — Cosa succede quando arriva un interrupt]]
+> - [[06 - SDC - Esecuzione dei programmi#Interruzioni|Sistemi di Calcolo, cap. 6 — Interruzioni]]

@@ -22,10 +22,11 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[fork]] · [[Segnali]] · [[Stati di un Processo]] · [[disastrOS]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Attesa della terminazione: wait|Lezione 6 — Attesa della terminazione: wait]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Processi zombie|Lezione 6 — Processi zombie]]
 > - [[08 - SO - disastrOS#La syscall wait|Lezione 8 — La syscall wait]]
 > - [[08 - SO - disastrOS#La syscall exit|Lezione 8 — La syscall exit]]
+> - [[06 - SDC - Esecuzione dei programmi#Attesa della terminazione di un figlio: wait|Sistemi di Calcolo, cap. 6 — Attesa della terminazione di un figlio: wait]]

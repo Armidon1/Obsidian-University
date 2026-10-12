@@ -24,8 +24,9 @@ void (*actions[10])(int);   // vettore di puntatori a funzione
 ## Collegamenti
 
 - **Concetti correlati**: [[Interrupt Vector]] · [[System Call]] · [[Virtual Method Table]] · [[ucontext]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[03 - SO - Programmazione OOP in C#Puntatori a funzione|Lezione 3 — Puntatori a funzione]]
 > - [[03 - SO - Programmazione OOP in C#Esempio: vettore di puntatori a funzione|Lezione 3 — Esempio: vettore di puntatori a funzione]]
+> - [[04 - SDC - Librerie standard del C#Ricerca e ordinamento: bsearch e qsort|Sistemi di Calcolo, cap. 4 — Ricerca e ordinamento: bsearch e qsort]]

@@ -24,8 +24,9 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Interrupt]] · [[Interrupt Vector]] · [[System Call]] · [[Demand Paging]] · [[Dual Mode]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Eccezioni|Lezione 6 — Eccezioni]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#INT vs CALL|Lezione 6 — INT vs CALL]]
+> - [[06 - SDC - Esecuzione dei programmi#Interruzioni|Sistemi di Calcolo, cap. 6 — Interruzioni]]

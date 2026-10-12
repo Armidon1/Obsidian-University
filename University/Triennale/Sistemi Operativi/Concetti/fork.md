@@ -28,9 +28,10 @@ else { /* errore */ }
 ## Collegamenti
 
 - **Concetti correlati**: [[exec e Variabili d'Ambiente]] · [[wait e Processi Zombie]] · [[Copy on Write]] · [[Process Control Block]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Creazione di un processo: fork|Lezione 6 — Creazione di un processo: fork]]
 > - [[08 - SO - disastrOS#La syscall fork|Lezione 8 — La syscall fork]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#vfork|Lezione 6 — vfork]]
+> - [[06 - SDC - Esecuzione dei programmi#Creare processi: fork|Sistemi di Calcolo, cap. 6 — Creare processi: fork]]

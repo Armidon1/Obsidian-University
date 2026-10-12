@@ -27,8 +27,9 @@ Strati, dal basso verso l'alto: **hardware → kernel → system standard (POSIX
 ## Collegamenti
 
 - **Concetti correlati**: [[Sistema Operativo]] · [[System Call]] · [[vDSO]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[01 - SO - Introduzione e Git#Organizzazione a strati|Lezione 1 — Organizzazione a strati]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Standard di linguaggio e standard di sistema|Lezione 6 — Standard di linguaggio e standard di sistema]]
+> - [[01 - SDC - Cosa è un sistema di calcolo#Panoramica del funzionamento|Sistemi di Calcolo, cap. 1 — Panoramica del funzionamento]]

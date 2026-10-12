@@ -29,8 +29,9 @@ stateDiagram-v2
 ## Collegamenti
 
 - **Concetti correlati**: [[Process Control Block]] · [[CPU Scheduler e Dispatcher]] · [[wait e Processi Zombie]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Stati di un processo|Lezione 6 — Stati di un processo]]
 > - [[06 - SO - Interrupt, Syscall, Dual Mode e Processi#Process scheduler|Lezione 6 — Process scheduler]]
+> - [[06 - SDC - Esecuzione dei programmi#Stati, scheduling, preemption, time-sharing|Sistemi di Calcolo, cap. 6 — Stati, scheduling, preemption, time-sharing]]

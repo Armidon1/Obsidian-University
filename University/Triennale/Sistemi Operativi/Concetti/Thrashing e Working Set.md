@@ -20,8 +20,9 @@ tags:
 ## Collegamenti
 
 - **Concetti correlati**: [[Page Replacement]] · [[Demand Paging]] · [[Memoria Virtuale]]
-- **Mappa**: [[MOC - Sistemi Operativi]]
+- **Mappa**: [[MOC - Sistemi Operativi]] · [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento
 > - [[11 - SO - Memoria Virtuale#Thrashing|Lezione 11 — Thrashing]]
 > - [[11 - SO - Memoria Virtuale#Località e working set|Lezione 11 — Località e working set]]
+> - [[07 - SDC - Gestione dei dati in memoria centrale#Paginazione con bit di validità|Sistemi di Calcolo, cap. 7 — Paginazione con bit di validità]]
