@@ -25,6 +25,7 @@ Base teorica di SQL; due espressioni sono **equivalenti** se danno lo stesso ris
 
 - **Concetti correlati**: [[Selezione e Proiezione]] · [[Join]] · [[Negazione in Algebra Relazionale]] · [[SQL]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Relational Algebra]] · [[Relational Calculus]] · [[Codd's Theorem]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Gli operatori|Lezione 2 — Gli operatori]]

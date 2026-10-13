@@ -21,6 +21,7 @@ $$\text{PROJ}_{\text{Matricola}, \text{Cognome}}(\text{SEL}_{\text{Stipendio} > 
 
 - **Concetti correlati**: [[Algebra Relazionale]] · [[Select SQL]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Selection in Relational Algebra]] · [[Projection in Relational Algebra]] · [[One-Pass Algorithms]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Selezione|Lezione 2 — Selezione]]

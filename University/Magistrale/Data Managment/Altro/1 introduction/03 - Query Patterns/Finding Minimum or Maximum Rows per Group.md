@@ -61,3 +61,6 @@ Use `RANK` to preserve ties. `ROW_NUMBER` would select exactly one row per schoo
 - [[Top-N per Group]]
 - [[SQL Query Granularity]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Relational algebra exercises|Lecture 1 — Relational algebra exercises]]
+> - Map: [[00 - Data Management MOC]]

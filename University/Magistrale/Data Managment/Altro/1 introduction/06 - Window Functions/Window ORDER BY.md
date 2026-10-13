@@ -51,3 +51,6 @@ Adding window ordering to an aggregate often changes a full-partition total into
 - [[ROW_NUMBER]]
 - [[Window Frames]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Window `ORDER BY`|Lecture 1 — Window ORDER BY]]
+> - Map: [[00 - Data Management MOC]]

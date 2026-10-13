@@ -54,3 +54,6 @@ Some systems or configurations may return an arbitrary group value instead of re
 - [[SQL Query Granularity]]
 - [[GROUP BY vs Window Functions]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Grouping and a homogeneous target list|Lecture 1 — Grouping and a homogeneous target list]]
+> - Map: [[00 - Data Management MOC]]

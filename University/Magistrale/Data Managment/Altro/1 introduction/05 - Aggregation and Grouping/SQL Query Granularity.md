@@ -63,3 +63,6 @@ Before writing a query, ask:
 - [[GROUP BY]]
 - [[SQL Window Functions]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Grouping and a homogeneous target list|Lecture 1 — Grouping and a homogeneous target list]]
+> - Map: [[00 - Data Management MOC]]

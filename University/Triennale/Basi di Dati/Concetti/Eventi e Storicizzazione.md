@@ -24,6 +24,7 @@ Eventi se interessa il fenomeno, stati se interessano gli effetti.
 
 - **Concetti correlati**: [[Reificazione]] · [[Metodologia di Progettazione Concettuale]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Data Warehouse]] · [[Multidimensional Data Model]]
 
 > [!info] Approfondimento
 > - [[05 - BD - Progettazione Concettuale#Pattern, rappresentazione di aspetti dinamici|Lezione 5 — Pattern, rappresentazione di aspetti dinamici]]

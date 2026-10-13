@@ -28,6 +28,7 @@ flowchart TD
 
 - **Concetti correlati**: [[Superchiave e Chiave]] · [[Chiave Primaria]] · [[Foreign Key]] · [[Vincolo Esterno]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Functional Dependency]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Introduzione|Lezione 2 — Introduzione]]

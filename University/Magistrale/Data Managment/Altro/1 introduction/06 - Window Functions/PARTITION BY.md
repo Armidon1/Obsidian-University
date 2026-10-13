@@ -63,3 +63,6 @@ Both identify groups, but their output behavior differs:
 - [[GROUP BY vs Window Functions]]
 - [[Aggregate Window Functions]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#`PARTITION BY`|Lecture 1 — PARTITION BY]]
+> - Map: [[00 - Data Management MOC]]

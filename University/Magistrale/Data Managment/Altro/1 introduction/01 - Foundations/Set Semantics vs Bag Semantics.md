@@ -60,3 +60,6 @@ Duplicate-looking rows are not necessarily duplicate base records: unselected ke
 - [[Union in Relational Algebra]]
 - [[SQL Query Granularity]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#SQL: Structured Query Language|Lecture 1 — SQL: Structured Query Language]]
+> - Map: [[00 - Data Management MOC]]

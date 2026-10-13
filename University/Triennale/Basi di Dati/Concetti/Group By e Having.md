@@ -25,6 +25,7 @@ having avg(f.reddito) > 20     -- gruppi
 
 - **Concetti correlati**: [[Operatori Aggregati]] · [[Select SQL]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[GROUP BY]] · [[WHERE vs HAVING]] · [[Homogeneous Target List]]
 
 > [!info] Approfondimento
 > - [[03 - BD - SQL#Raggruppamenti, group by|Lezione 3 — Raggruppamenti, group by]]

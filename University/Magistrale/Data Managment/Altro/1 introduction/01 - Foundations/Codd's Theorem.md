@@ -41,3 +41,6 @@ A user may express a query declaratively in SQL, while the DBMS constructs an in
 - [[Relational Calculus]]
 - [[SQL and Relational Algebra Correspondence]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Codd's theorem|Lecture 1 — Codd's theorem]]
+> - Map: [[00 - Data Management MOC]]

@@ -67,3 +67,6 @@ See [[Aggregate Window Functions]].
 - [[NULL and Aggregate Functions]]
 - [[GROUP BY]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Aggregation operators|Lecture 1 — Aggregation operators]]
+> - Map: [[00 - Data Management MOC]]

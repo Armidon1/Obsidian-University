@@ -9,8 +9,8 @@ tags:
   - transactions
   - data-warehousing
 related:
-  - "[[OLAP-Obsidian-Note]]"
-  - "[[Data-Warehousing-Complete-Notes]]"
+  - "[[OLAP]]"
+  - "[[02 - DM - Data Warehouses]]"
 ---
 
 # OLTP - Online Transaction Processing

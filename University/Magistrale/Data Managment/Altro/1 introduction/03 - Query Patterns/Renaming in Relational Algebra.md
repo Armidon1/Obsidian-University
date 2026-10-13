@@ -53,3 +53,6 @@ SQL table aliases rename a table reference for the current query. Column aliases
 - [[Finding Minimum or Maximum Rows per Group]]
 - [[Projection in Relational Algebra]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Renaming during projection|Lecture 1 — Renaming during projection]]
+> - Map: [[00 - Data Management MOC]]

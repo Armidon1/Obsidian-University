@@ -30,6 +30,7 @@ end;   -- commit; rollback disfa
 
 - **Concetti correlati**: [[Politiche di Reazione]] · [[Trigger]] · [[DBMS]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Transaction]] · [[ACID]] · [[Two-Phase Locking]] · [[SQL Isolation Levels]]
 
 > [!info] Approfondimento
 > - [[03 - BD - SQL#Transazioni|Lezione 3 — Transazioni]]

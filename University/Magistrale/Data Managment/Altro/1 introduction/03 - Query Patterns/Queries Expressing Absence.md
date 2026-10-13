@@ -69,3 +69,6 @@ This anti-join pattern works when the tested joined column cannot itself be `NUL
 - [[Universal Quantification in Databases]]
 - [[Difference in Relational Algebra]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Schools where no student graduated with 100|Lecture 1 — Schools where no student graduated with 100]]
+> - Map: [[00 - Data Management MOC]]

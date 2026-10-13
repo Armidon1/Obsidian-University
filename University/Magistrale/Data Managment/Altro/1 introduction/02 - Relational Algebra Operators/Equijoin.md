@@ -49,3 +49,6 @@ Joining only on a person's name may be insufficient if names are not globally un
 - [[Natural Join]]
 - [[SQL Aliases and Attribute Qualification]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Theta join|Lecture 1 — Theta join]]
+> - Map: [[00 - Data Management MOC]]

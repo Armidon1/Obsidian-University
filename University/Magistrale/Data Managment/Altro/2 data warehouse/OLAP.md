@@ -9,7 +9,7 @@ tags:
   - multidimensional-model
   - analytics
 related:
-  - "[[Data-Warehousing-Complete-Notes]]"
+  - "[[02 - DM - Data Warehouses]]"
 ---
 
 # OLAP - Online Analytical Processing

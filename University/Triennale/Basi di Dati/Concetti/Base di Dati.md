@@ -22,6 +22,7 @@ In senso tecnico: **schema** + **istanza** (vedi [[Schema e Istanza]]).
 
 - **Concetti correlati**: [[DBMS]] · [[Sistema Informativo]] · [[Schema e Istanza]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Data Warehouse]]
 
 > [!info] Approfondimento
 > - [[01 - BD - Introduzione#Base di dati|Lezione 1 — Base di dati]]

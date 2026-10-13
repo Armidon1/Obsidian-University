@@ -51,3 +51,6 @@ Peer groups are defined by the complete [[Window ORDER BY]]. Adding a unique `em
 - [[Top-N per Group]]
 - [[Finding Minimum or Maximum Rows per Group]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#`RANK()` and `DENSE_RANK()`|Lecture 1 — RANK() and DENSE_RANK()]]
+> - Map: [[00 - Data Management MOC]]

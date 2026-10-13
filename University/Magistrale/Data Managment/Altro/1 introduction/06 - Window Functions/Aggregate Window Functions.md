@@ -64,3 +64,6 @@ Aggregate windows inherit ordinary aggregate treatment of `NULL`: for example, `
 - [[Running Totals]]
 - [[Moving Averages]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#`SUM()` with `OVER(...)`|Lecture 1 — SUM() with OVER(...)]]
+> - Map: [[00 - Data Management MOC]]

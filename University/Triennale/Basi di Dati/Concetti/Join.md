@@ -24,6 +24,7 @@ $$R_1 \text{ JOIN } R_2 = \{ t \text{ su } X_1X_2 \mid t[X_1] \in R_1, t[X_2] \i
 
 - **Concetti correlati**: [[Theta-Join]] · [[Join Esterno]] · [[Algebra Relazionale]] · [[Select SQL]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Natural Join]] · [[Nested-Loop Join]] · [[Sort-Merge Join]] · [[Hash Join]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Join naturale|Lezione 2 — Join naturale]]

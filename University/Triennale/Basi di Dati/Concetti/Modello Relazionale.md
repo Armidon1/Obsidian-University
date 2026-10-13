@@ -21,6 +21,7 @@ tags:
 
 - **Concetti correlati**: [[Schema e Istanza]] · [[Algebra Relazionale]] · [[Vincolo di Integrità]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Relational Data Model]] · [[Set Semantics vs Bag Semantics]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Il modello relazionale|Lezione 2 — Il modello relazionale]]

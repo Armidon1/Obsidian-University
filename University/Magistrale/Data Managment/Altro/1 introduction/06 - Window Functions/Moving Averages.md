@@ -59,3 +59,6 @@ restarts independently for each product.
 - [[ROWS vs RANGE]]
 - [[Running Totals]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Running totals and moving statistics|Lecture 1 — Running totals and moving statistics]]
+> - Map: [[00 - Data Management MOC]]

@@ -73,3 +73,6 @@ FROM Employee;
 - [[Set Semantics vs Bag Semantics]]
 - [[Renaming in Relational Algebra]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Projection|Lecture 1 — Projection]]
+> - Map: [[00 - Data Management MOC]]

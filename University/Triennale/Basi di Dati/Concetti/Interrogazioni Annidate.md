@@ -30,6 +30,7 @@ where not exists (select * from paternita p join persone f on p.figlio = f.nome
 
 - **Concetti correlati**: [[Select SQL]] · [[Negazione in Algebra Relazionale]] · [[Vista]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Existential Queries in Databases]] · [[Universal Quantification in Databases]]
 
 > [!info] Approfondimento
 > - [[03 - BD - SQL#Interrogazioni annidate|Lezione 3 — Interrogazioni annidate]]

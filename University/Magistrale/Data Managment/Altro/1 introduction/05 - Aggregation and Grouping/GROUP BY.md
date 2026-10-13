@@ -55,3 +55,6 @@ Every selected expression must have one value per group. It should be grouped, a
 - [[WHERE vs HAVING]]
 - [[SQL Query Granularity]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Aggregation and grouping|Lecture 1 — Aggregation and grouping]]
+> - Map: [[00 - Data Management MOC]]

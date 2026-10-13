@@ -30,6 +30,7 @@ db.orders.aggregate({$lookup: {from: "products", localField: "item", foreignFiel
 
 - **Concetti correlati**: [[NoSQL]] · [[JSON]] · [[Graph Database]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Document Database]] · [[BSON]] · [[MongoDB Aggregation Pipeline]]
 
 > [!info] Approfondimento
 > - [[07 - BD - NoSQL#7.2 Document-oriented database, MongoDB|Lezione 7 — 7.2 Document-oriented database, MongoDB]]

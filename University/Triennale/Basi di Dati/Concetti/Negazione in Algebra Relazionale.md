@@ -22,6 +22,7 @@ $$\{x \in S \mid \forall y\, (R(x,y) \to A(y))\} = S - \{x \mid \exists y\, R(x,
 
 - **Concetti correlati**: [[Algebra Relazionale]] · [[Assunzione di Mondo Chiuso]] · [[Interrogazioni Annidate]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Queries Expressing Absence]] · [[Difference in Relational Algebra]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Il problema della negazione|Lezione 2 — Il problema della negazione]]

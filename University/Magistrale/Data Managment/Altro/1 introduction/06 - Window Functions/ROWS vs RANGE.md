@@ -60,3 +60,6 @@ Supported `RANGE` offsets and data types vary. Always check the target DBMS when
 - [[Window ORDER BY]]
 - [[Running Totals]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#`ROWS` versus `RANGE`|Lecture 1 — ROWS versus RANGE]]
+> - Map: [[00 - Data Management MOC]]

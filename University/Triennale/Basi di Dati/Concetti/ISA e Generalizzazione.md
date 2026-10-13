@@ -21,6 +21,7 @@ tags:
 
 - **Concetti correlati**: [[Entità ER]] · [[Eliminazione delle ISA]] · [[Vincoli di Cardinalità]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[RDFS Knowledge Graph]]
 
 > [!info] Approfondimento
 > - [[05 - BD - Progettazione Concettuale#La relazione ISA tra entità|Lezione 5 — La relazione ISA tra entità]]

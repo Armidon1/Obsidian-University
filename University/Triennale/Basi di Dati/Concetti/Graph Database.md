@@ -20,6 +20,7 @@ tags:
 
 - **Concetti correlati**: [[Regular Path Query]] · [[NoSQL]] · [[Join]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Graph Database Management System]] · [[Property Graph]] · [[Index-Free Adjacency]]
 
 > [!info] Approfondimento
 > - [[07 - BD - NoSQL#7.3 Graph database|Lezione 7 — 7.3 Graph database]]

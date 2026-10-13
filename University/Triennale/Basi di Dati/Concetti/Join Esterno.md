@@ -24,6 +24,7 @@ Esempio: padre di ogni persona e, se nota, la madre → `paternita left join mat
 
 - **Concetti correlati**: [[Join]] · [[Valore Nullo]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[MongoDB Aggregation Pipeline]] · [[03 - DM - Graph Databases - RDF, SPARQL e Knowledge Graphs#OPTIONAL|SPARQL OPTIONAL]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Join esterno|Lezione 2 — Join esterno]]

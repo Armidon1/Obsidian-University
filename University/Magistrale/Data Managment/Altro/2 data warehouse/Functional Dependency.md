@@ -11,9 +11,9 @@ tags:
   - normalization
   - rolap
 related:
-  - "[[Data-Warehousing-Complete-Notes]]"
-  - "[[OLAP-Obsidian-Note]]"
-  - "[[OLTP-Obsidian-Note]]"
+  - "[[02 - DM - Data Warehouses]]"
+  - "[[OLAP]]"
+  - "[[OLTP]]"
 ---
 
 # Functional Dependencies

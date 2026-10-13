@@ -62,3 +62,6 @@ Relational algebra provides:
 - [[Codd's Theorem]]
 - [[SQL and Relational Algebra Correspondence]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Relational algebra|Lecture 1 — Relational algebra]]
+> - Map: [[00 - Data Management MOC]]

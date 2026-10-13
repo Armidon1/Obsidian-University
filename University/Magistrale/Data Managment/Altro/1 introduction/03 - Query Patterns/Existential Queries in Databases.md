@@ -60,3 +60,6 @@ WHERE EXISTS (
 - [[Universal Quantification in Databases]]
 - [[SQL and Relational Algebra Correspondence]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Cities with at least one school having a student who graduated with 100|Lecture 1 — Cities with at least one school having a student who graduated with 100]]
+> - Map: [[00 - Data Management MOC]]

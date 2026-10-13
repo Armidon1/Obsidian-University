@@ -22,3 +22,7 @@ Da qui l'architettura tipica: sorgenti operazionali → **ETL** (estrazione, pul
 **Nota terminologica**
 
 Vedrai spesso "DSS" usato anche come sinonimo del _tipo di carico di lavoro_ più che del sistema: si parla di "query DSS" per intendere query analitiche pesanti. È il senso in cui compare, per esempio, nei benchmark TPC-H e TPC-DS.
+
+> [!info] In depth
+> - [[02 - DM - Data Warehouses#Decision Support Systems|Lecture 2 — Decision Support Systems]]
+> - Map: [[00 - Data Management MOC]]

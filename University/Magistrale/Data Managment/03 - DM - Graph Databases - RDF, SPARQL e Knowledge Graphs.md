@@ -20,6 +20,8 @@ status: "completo"
 
 > [!abstract] Obiettivo della nota
 > Questa nota segue l'ordine concettuale delle slide del corso: motivazione NoSQL -> graph database -> modello e interrogazione dei grafi -> RDF -> SPARQL -> Knowledge Graph e RDFS. I punti molto sintetici delle slide sono espansi con intuizioni, esempi e collegamenti tra i concetti.
+>
+> Mappa del corso: [[00 - Data Management MOC]]. Base triennale: NoSQL, MongoDB e graph database sono introdotti in [[07 - BD - NoSQL]] di Basi di Dati (vedi [[MOC - Basi di Dati]]); le righe "Base triennale:" rimandano alla sezione o al concetto corrispondente.
 
 ## Indice
 
@@ -43,6 +45,8 @@ status: "completo"
 
 ### Perché nasce NoSQL
 
+Base triennale: [[NoSQL]] · [[07 - BD - NoSQL#7.1 Introduzione ai sistemi NoSQL|BD 7.1 — Introduzione ai sistemi NoSQL]]
+
 Per molti anni i database relazionali sono stati il backend dominante dei sistemi informativi. Nel frattempo sono cambiate molte tecnologie applicative - client, frontend, middleware e framework - mentre il modello relazionale è rimasto sostanzialmente stabile.
 
 Con i Big Data si incontrano però dati caratterizzati da:
@@ -54,6 +58,8 @@ Con i Big Data si incontrano però dati caratterizzati da:
 Il movimento **NoSQL** nasce per rispondere a questi problemi. Il nome è normalmente interpretato come **Not Only SQL**: non implica che SQL o il modello relazionale siano inutili, ma che non rappresentino sempre la scelta migliore.
 
 ### Limiti del modello relazionale nel contesto Big Data
+
+Base triennale: [[Modello Relazionale]] · [[Normalizzazione e Denormalizzazione]]
 
 1. **Schema rigido**  
    Lo schema deve essere progettato in anticipo. Se la struttura dei dati cambia frequentemente, ogni cambiamento può richiedere migrazioni e modifiche applicative.
@@ -68,6 +74,8 @@ Il movimento **NoSQL** nasce per rispondere a questi problemi. Il nome è normal
 > I database relazionali rimangono ottimi per dati ben strutturati, vincoli forti e query tabellari. I graph database diventano particolarmente interessanti quando **le relazioni e i cammini sono il centro del problema**.
 
 ### Principali famiglie NoSQL
+
+Base triennale: [[Database Documentale MongoDB]] · [[Graph Database]]
 
 | Modello             | Idea centrale                            | Esempio di utilizzo                             |
 | ------------------- | ---------------------------------------- | ----------------------------------------------- |
@@ -99,6 +107,10 @@ fa ridere perchè graph database si chiama come l'intera categoria di database m
 
 ### Definizione
 
+Vedi [[Graph Database Management System]].
+
+Base triennale: [[Graph Database]] · [[07 - BD - NoSQL#7.3 Graph database|BD 7.3 — Graph database]]
+
 Un **graph database** rappresenta e memorizza i dati mediante:
 
 - **nodi** (*nodes* o *vertices*), che rappresentano entità;
@@ -128,6 +140,8 @@ Un interessante osservazione che ha fatto il professore è la seguente: effettiv
 
 ### Le relazioni come elementi di prima classe
 
+Base triennale: [[Foreign Key]] · [[Join]]
+
 Un graph database è adatto quando l'informazione è già naturalmente un grafo: social network, sistemi di raccomandazione, mappe, reti di computer, controllo degli accessi e rilevamento di frodi.
 
 ![[Pasted image 20260918153733.png]]
@@ -144,6 +158,8 @@ flowchart LR
 Le relazioni sono orientate: `Alice -> Bob` non implica necessariamente `Bob -> Alice`.
 
 ### Graph database e database relazionale: amici e amici-di-amici
+
+Base triennale: [[07 - BD - NoSQL#Esempio, amici e amici degli amici|BD — Amici e amici degli amici]] · [[04 - BD - Accesso ai Dati da Software#Esempio, chiusura transitiva di un grafo|BD — Chiusura transitiva in PL/pgSQL]]
 
 In un database relazionale si potrebbero usare:
 
@@ -194,6 +210,8 @@ Nell'esperimento riportato nelle slide - un milione di persone, circa 50 amici c
 > È un esempio storico, non una legge universale. Le prestazioni dipendono da implementazione, indici, distribuzione dei dati e query. Il messaggio importante è che una query di navigazione profonda può essere molto più naturale ed efficiente quando l'adiacenza è memorizzata esplicitamente.
 
 ### Join contro traversal
+
+Base triennale: [[Join]] · [[02 - BD - Modello Relazionale#Self-join|BD — Self-join]]
 
 | Database relazionale | Graph database |
 |---|---|
@@ -378,6 +396,8 @@ La **Regular Path Query** è proprio l'uso di una di queste espressioni come que
 
 ### Espressioni regolari sui cammini
 
+Vedi [[Regular Expressions]] · [[Finite Automaton]].
+
 Ricorda le [[Regular Expressions]], qui vedremo solo gli operatori che ci interessano
 Sintassi di base:
 
@@ -403,6 +423,8 @@ Esempi:
 ![[Pasted image 20260919150359.png]]
 
 ### Regular Path Query
+
+Base triennale: [[Regular Path Query]] · [[07 - BD - NoSQL#Interrogare un graph database|BD — Interrogare un graph database]]
 
 ![[Pasted image 20260919151122.png]]
 
@@ -463,6 +485,8 @@ Questo si accompagna spesso a **native graph processing** e **index-free adjacen
 
 ### Index-free adjacency
 
+Vedi [[Index-Free Adjacency]].
+
 Ogni nodo mantiene riferimenti diretti ai nodi o archi adiacenti. Per verificare o seguire un collegamento locale non è necessario consultare un indice globale: il nodo funziona come un piccolo indice dei propri vicini.
 
 > [!important] “Index-free” non significa “senza indici”
@@ -496,6 +520,8 @@ Riassumendo in una frase: nativo o non nativo riguarda come sono fisicamente mem
 ## Property graph, hypergraph e triple store
 
 ### Property graph
+
+Vedi [[Property Graph]].
 
 ![[Pasted image 20261007153552.png]]
 
@@ -569,6 +595,8 @@ Il modello standard è **RDF** e il linguaggio di query standard è **SPARQL**. 
 
 # RDF - Resource Description Framework
 
+Vedi [[RDF]].
+
 ### Modello RDF
 
 RDF è un modello di dati neutrale rispetto al dominio e all'applicazione. Un database RDF è un insieme di triple:
@@ -589,6 +617,14 @@ Esempio:
 ```
 
 L'intero dataset può essere visto come un grafo diretto etichettato: soggetti e oggetti sono nodi, i predicati sono archi.
+
+![[DM-L03-p062.png]]
+
+La slide mostra il passaggio da una singola tripla al grafo: la risorsa `http://www.w3.org/TR/rdf-syntax-grammar` (rettangolo, perché è una URI) è collegata dall'arco `dc:title` al literal `"RDF 1.1 XML Syntax"`. Un database RDF è l'insieme di tutte queste triple, quindi **un grafo**.
+
+![[DM-L03-p063.png]]
+
+Aggiungendo altre triple sullo stesso soggetto (`dc:publisher "W3C"`, `dc:date "2014-02-25"`) il nodo diventa il centro di una piccola stella: ogni proprietà è un arco uscente. I literal compaiono solo come nodi terminali (in posizione di oggetto), come spiega la tabella qui sotto.
 
 ### URI, literal e blank node
 
@@ -644,6 +680,8 @@ Il prefisso è solo un'abbreviazione sintattica. Ad esempio:
 
 ### Blank node
 
+Vedi [[Blank Node]].
+
 Un **blank node** rappresenta una risorsa di cui non si vuole o non si può fornire una URI.
 
 ```turtle
@@ -653,10 +691,16 @@ _:x foaf:birthDate "01-06" .
 
 Sappiamo che Marco conosce qualcuno nato il 6 gennaio, ma non identifichiamo globalmente quella persona.
 
+![[DM-L03-p068.png]]
+
+Nel disegno il blank node è il cerchio rosso senza etichetta: è un nodo vero del grafo (ha archi entranti e uscenti), ma non ha una URI. Sotto, la stessa informazione in forma di triple con `_:X`.
+
 > [!warning] Blank node non è una variabile
 > In un dataset RDF denota una specifica risorsa anonima locale al grafo. In una query SPARQL, invece, `?x` è una variabile che può essere associata a risorse diverse.
 
 ### Relazioni n-arie in RDF
+
+Base triennale: [[Reificazione]] (la stessa idea nel modello ER) · [[05 - BD - Progettazione Concettuale#Pattern, relazioni binarie vs n-arie|BD — Relazioni binarie vs n-arie]]
 
 RDF usa triple, quindi una relazione con proprietà proprie viene spesso trasformata in una risorsa intermedia.
 
@@ -681,7 +725,13 @@ Poiché una URI può essere sia predicato sia soggetto, possiamo descrivere una 
 :Marco :knows :Maria .
 ```
 
+![[DM-L03-p071.png]]
+
+La figura evidenzia in rosso che `:knows` compare **due volte con ruoli diversi**: come etichetta dell'arco `:Marco → Maria` e come nodo, soggetto delle triple `rdf:type rdf:Property`, `rdfs:domain :Person` e `rdfs:range :Person`. È questo che permette a RDF di descrivere il proprio schema con lo stesso modello dei dati (idea ripresa in [[#Knowledge Graph e RDFS]]).
+
 ### Reification e affermazioni di ordine superiore
+
+Vedi [[RDF Reification]].
 
 La **reification** rappresenta una tripla come una risorsa, così da poter fare affermazioni sulla tripla stessa.
 
@@ -699,6 +749,10 @@ Poi si può aggiungere chi sostiene l'affermazione:
 ```turtle
 _:stmt :claimedBy :NewYorkTimes .
 ```
+
+![[DM-L03-p076.png]]
+
+Nelle slide la stessa idea è disegnata così: il blank node (cerchio rosso) rappresenta l'affermazione intera; gli archi `rdf:subject`, `rdf:predicate`, `rdf:object` puntano ai suoi tre componenti (`:ABC`, `dc:creator`, `"Joe"`), `rdf:type` la classifica come `rdf:Statement`, e l'arco aggiuntivo `dc:creator → "The New York Times"` dice **chi ha fatto l'affermazione**. Le slide usano quindi `dc:creator` dove la nota usa `:claimedBy`: il significato è lo stesso (la fonte della dichiarazione).
 
 > [!important] Reification non implica automaticamente la tripla reificata
 > Le quattro triple descrivono un'affermazione, ma nello standard RDF non rendono necessariamente vero anche `:ABC dc:creator "Joe"`. Se si vuole asserire il fatto, la tripla originale va aggiunta esplicitamente.
@@ -747,6 +801,10 @@ In Turtle:
 
 RDF/XML è più verboso ma sfrutta la sintassi e i namespace XML.
 
+![[DM-L03-p084.png]]
+
+La slide mette a confronto il grafo (in alto) e la sua serializzazione RDF/XML (in basso): il nodo soggetto diventa un elemento `rdf:Description` con attributo `rdf:about`, l'arco `dc:title` diventa un sotto-elemento `<dc:title>`, e il literal ne è il contenuto testuale.
+
 ---
 
 ## Memorizzazione di RDF
@@ -756,6 +814,8 @@ Le slide distinguono tre prospettive: **relazionale**, **entity-centric** e **gr
 ### Prospettiva relazionale
 
 #### Rappresentazione verticale
+
+Base triennale: [[02 - BD - Modello Relazionale#Self-join|BD — Self-join]] · [[03 - BD - SQL#Indici|BD — Indici]]
 
 Tutte le triple sono memorizzate in una tabella:
 
@@ -776,6 +836,8 @@ Memorizzare più ordinamenti accelera le query ma aumenta spazio e costo di aggi
 
 #### Rappresentazione orizzontale
 
+Base triennale: [[Valore Nullo]]
+
 Si crea una tabella larga:
 
 - una riga per soggetto;
@@ -787,7 +849,13 @@ Problemi:
 - tabella molto **sparsa**, perché pochi soggetti hanno tutti i predicati;
 - una cella può dover contenere più oggetti se una proprietà è multivalore.
 
+![[DM-L03-p089.png]]
+
+L'esempio delle slide (un piccolo dataset musicale) mostra entrambi i problemi: in alto le triple, in basso la tabella orizzontale con una colonna per predicato (`FileType`, `Composer`, …, `phone`, `friendOf`, `style`). Quasi tutte le celle sono vuote, e `user8604` ha **due** numeri di telefono nella stessa cella, mentre `Debussy` ha due valori di `style`.
+
 #### Property tables
+
+Base triennale: [[06 - BD - Progettazione Logica#Decomposizione verticale|BD — Decomposizione verticale]]
 
 La tabella larga viene divisa in tabelle più piccole contenenti proprietà correlate, ad esempio `Works`, `Fans`, `Artists`.
 
@@ -795,6 +863,8 @@ Vantaggio: meno celle vuote.
 Svantaggio: occorre decidere come raggruppare le proprietà e le query trasversali possono richiedere join.
 
 #### Vertical partitioning
+
+Base triennale: [[06 - BD - Progettazione Logica#Decomposizione verticale|BD — Decomposizione verticale]]
 
 È l'estremo opposto della tabella larga: per ogni predicato $p$ si crea una tabella binaria:
 
@@ -823,6 +893,18 @@ Ogni risorsa viene vista come un'entità con un insieme di coppie attributo-valo
 
 È vicina alla prospettiva dell'information retrieval, ma può nascondere la struttura dei cammini globali.
 
+Formalmente, la risorsa $r$ di un grafo $G$ viene vista come l'entità
+
+$$
+entity(r)=\{(p,o)\mid(r,p,o)\in G\}\cup\{(p^{-1},o)\mid(o,p,r)\in G\}
+$$
+
+cioè l'insieme delle sue proprietà uscenti più quelle entranti, marcate come inverse ($p^{-1}$).
+
+![[DM-L03-p095.png]]
+
+A destra della slide c'è la **entity view** dello stesso dataset musicale: ogni risorsa (`work5678`, `user8604`, `Debussy`, …) diventa una scheda attributo-valore che raccoglie anche gli archi entranti, come `Composer⁻¹: work5678` nella scheda di `Debussy`. Così `user8604` si trova cercando "entità con `birthdate` 1975", oppure "entità con amici che amano la musica impressionista": sono le **entity-centric queries**.
+
 ### Prospettiva graph-based
 
 RDF viene memorizzato nativamente come grafo:
@@ -833,9 +915,15 @@ RDF viene memorizzato nativamente come grafo:
 
 La sfida principale è memorizzare e indicizzare in modo efficiente la struttura implicita del grafo.
 
+![[DM-L03-p098.png]]
+
+Lo stesso dataset disegnato come grafo: le opere (`work5678`, `work1234`), gli utenti, i compositori e i valori sono nodi, e le triple sono archi etichettati (`likes`, `Composer`, `friendOf`, …). Una domanda come "esiste un cammino da `user3789` a un compositore impressionista?" in questa prospettiva è una semplice visita del grafo.
+
 ---
 
 ## SPARQL
+
+Vedi [[SPARQL]].
 
 **SPARQL** (*SPARQL Protocol and RDF Query Language*) è il linguaggio standard W3C per interrogare RDF ed è progettato anche per l'accesso remoto tramite endpoint HTTP.
 
@@ -862,6 +950,8 @@ Ordine logico delle parti:
 
 ### Basic Graph Pattern
 
+Base triennale: [[Select SQL]] · [[Theta-Join]] (ogni `.` tra triple pattern equivale a un join sulle variabili condivise)
+
 Il `WHERE` contiene normalmente un **Basic Graph Pattern (BGP)**, cioè un insieme di triple pattern. Il punto `.` funziona come congiunzione logica: tutti i pattern devono essere soddisfatti dalla stessa soluzione.
 
 ```sparql
@@ -878,7 +968,13 @@ WHERE {
 
 Le variabili iniziano con `?` o `$`. `SELECT *` restituisce tutte le variabili del pattern.
 
+![[DM-L03-p104.png]]
+
+La slide visualizza la valutazione: a sinistra la **query** disegnata come grafo con nodi-variabile tratteggiati (`?x`, `?y`, `?author`); a destra il **grafo interrogato** della British Library. Ci sono due modi di "sovrapporre" il pattern al grafo (due libri intitolati "Romeo and Juliet"), quindi il risultato ha due righe: *Richard Appignanesi* e *William Shakespeare*. Ogni sovrapposizione è un omomorfismo, come formalizzato subito sotto.
+
 ### Semantica tramite omomorfismi
+
+Vedi [[Basic Graph Pattern]].
 
 Sia $B$ un BGP e $G$ un grafo RDF. Un **omomorfismo** $h:B\to G$:
 
@@ -907,6 +1003,8 @@ I risultati di `SELECT` sono **solution mappings**, visualizzabili come tabelle 
 > Non ogni risultato SPARQL è un insieme di triple: `SELECT` restituisce associazioni variabile-valore; `ASK` restituisce un booleano; `CONSTRUCT` restituisce un grafo RDF.
 
 ### FILTER
+
+Base triennale: [[03 - BD - SQL#L'operatore like|BD — L'operatore like]] (l'analogo SQL di `regex`)
 
 `FILTER` conserva solo le soluzioni che soddisfano una condizione.
 
@@ -942,6 +1040,8 @@ FILTER (
 
 ### OPTIONAL
 
+Base triennale: [[Join Esterno]] · [[Valore Nullo]]
+
 `OPTIONAL` è simile a un left outer join: la soluzione principale resta valida anche se il pattern opzionale non trova corrispondenza.
 
 ```sparql
@@ -958,6 +1058,8 @@ Se il nome manca, `?name` rimane **unbound**, ma la mailbox viene comunque resti
 > Se due triple sono racchiuse nello stesso blocco `OPTIONAL`, il blocco ha successo solo quando entrambe sono soddisfatte. Se le proprietà sono indipendenti, usare due blocchi `OPTIONAL` separati.
 
 ### Negazione come fallimento
+
+Base triennale: [[Negazione in Algebra Relazionale]] · [[Assunzione di Mondo Chiuso]]
 
 SPARQL opera tipicamente secondo l'idea “non trovo una corrispondenza nel dataset interrogato”, non “la proposizione è logicamente falsa nel mondo”.
 
@@ -1031,7 +1133,13 @@ WHERE { ?x foaf:knows+ ?y . }
 
 Questa query calcola le coppie collegate da uno o più archi `foaf:knows`, cioè una chiusura transitiva non riflessiva.
 
+![[DM-L03-p120.png]]
+
+Nell'esempio delle slide il grafo contiene `_:a knows _:b`, `_:b knows _:c`, `_:a knows _:c`, `_:f knows _:a` e `_:c knows _:d`: il risultato contiene sia le coppie dirette sia quelle ottenute componendo archi, ad esempio `(_:a, _:d)` tramite `_:c` e `(_:f, _:c)` tramite `_:a`. È la versione SPARQL delle [[#Regular Path Query|RPQ]] viste prima.
+
 ### UNION
+
+Base triennale: [[03 - BD - SQL#Unione, intersezione e differenza|BD — Unione, intersezione e differenza]]
 
 ```sparql
 SELECT ?x ?y
@@ -1046,6 +1154,8 @@ WHERE {
 
 ### Aggregazione
 
+Base triennale: [[Group By e Having]] · [[Operatori Aggregati]]
+
 ```sparql
 SELECT ?x (COUNT(?y) AS ?count)
 WHERE { ?x foaf:knows ?y . }
@@ -1053,6 +1163,10 @@ GROUP BY ?x
 ```
 
 Operatori comuni: `COUNT`, `SUM`, `MIN`, `MAX`, `AVG`.
+
+![[DM-L03-p124.png]]
+
+Sullo stesso grafo `foaf:knows`, il conteggio per `?x` restituisce un numero per ogni persona che conosce qualcuno: `_:a` conosce due persone, `_:b`, `_:c` e `_:f` una sola. I valori sono literal tipizzati `xsd:integer`.
 
 ```sparql
 SELECT ?provinceName (COUNT(DISTINCT ?city) AS ?count)
@@ -1081,6 +1195,8 @@ WHERE {
 Questa query restituisce tutte le proprietà usate per descrivere la risorsa.
 
 ### Aggiornamenti
+
+Base triennale: [[DDL e DML]] · [[03 - BD - SQL#3.3 Manipolazione dei dati|BD 3.3 — Manipolazione dei dati]]
 
 Inserimento esplicito:
 
@@ -1206,6 +1322,8 @@ Si assumono `dct:creator`, `dct:created` e `foaf:name`; se il dataset usa propri
 
 ## Knowledge Graph e RDFS
 
+Vedi [[RDFS Knowledge Graph]].
+
 ### Da dati a conoscenza
 
 Un **Knowledge Graph (KG)** estende l'idea di graph database: non vuole rappresentare solo dati, ma anche la **semantica del dominio**.
@@ -1224,6 +1342,8 @@ Le ontologie, spesso espresse in linguaggi logici, forniscono il vocabolario e l
 Sintatticamente un KG RDF rimane un insieme di triple. Nelle slide viene studiata una versione controllata di **RDFS-based Knowledge Graph**, definita tramite **alfabeto, sintassi e semantica**.
 
 ### Alfabeto RDFS
+
+Base triennale: [[ISA e Generalizzazione]] (`rdfs:subClassOf` corrisponde alla ISA dell'ER)
 
 Vocabolario predefinito:
 
@@ -1275,6 +1395,10 @@ Una risorsa è in **posizione di proprietà** quando compare:
 
 Un KG è **legale** se rispetta le categorie stabilite. Un simbolo usato come classe non può essere usato altrove in modo incompatibile, e lo stesso vale per le proprietà.
 
+![[DM-L03-p152.png]]
+
+L'esempio di KG **non legale** delle slide mostra gli errori tipici: `Person` è in posizione di classe nella prima tripla ma poi compare come individuo (`Person rdf:type Species`); `hasSupervisor` è dichiarata proprietà ma poi viene usata come soggetto di una tripla applicativa; `concerns` è usato come predicato e poi come classe (oggetto di `rdfs:domain`); `Student` compare come soggetto di `rdfs:domain`, cioè in posizione di proprietà, pur essendo una classe.
+
 ### Triple immediatamente deducibili
 
 Da un KG legale sono immediatamente deducibili, tra le altre:
@@ -1316,6 +1440,14 @@ flowchart TB
 
 La dichiarazione di `domain` implica che ogni soggetto di `hasSupervisor` sia uno `Student`; `range` implica che ogni oggetto sia un `Researcher`.
 
+![[DM-L03-p158.png]]
+
+Le slide costruiscono l'esempio passo passo: prima i fatti sugli individui (verde), poi lo schema (rosso), e infine le **triple immediatamente deducibili** (in viola, a sinistra): ogni simbolo in posizione di classe diventa `rdf:type rdfs:Class`, `hasSupervisor` diventa `rdf:type rdf:Property`, `Frank` e `Jeen` diventano `rdf:type rdfs:Resource`, più le triple fisse del vocabolario RDFS.
+
+![[DM-L03-p160.png]]
+
+La versione completa del grafo, con la legenda: individui (verde scuro), asserzioni di schema (rosso scuro), parte predefinita di RDFS (verde acqua) e, in blu, gli archi immediatamente deducibili. Si vede che il grafo "cresce" molto anche senza nessuna inferenza vera e propria: è tutta conoscenza strutturale.
+
 #### Esercizio sull'organizzazione
 
 ```turtle
@@ -1356,6 +1488,8 @@ La dichiarazione di `domain` implica che ogni soggetto di `hasSupervisor` sia un
 
 ### Semantica: interpretazioni e modelli
 
+Base triennale: [[Schema e Istanza]]
+
 Un'**interpretazione** $I$ rappresenta un possibile mondo compatibile con l'alfabeto del KG.
 
 È composta da:
@@ -1377,6 +1511,14 @@ Un'interpretazione è un **modello** di $K$ se soddisfa tutte le triple di $K$.
 | `P rdfs:subPropertyOf Q` | $I(P)\subseteq I(Q)$ |
 | `a P b` | $(a,b)\in I(P)$ |
 
+![[DM-L03-p162.png]]
+
+Esempio di **interpretazione che non è un modello**: $I(Student)=\{Frank, Paul\}$, $I(Person)=\{Jeen, Bob\}$, $I(Researcher)=\emptyset$. Soddisfa `Frank rdf:type Student`, ma viola ad esempio `Student rdfs:subClassOf Person` (perché $I(Student)\not\subseteq I(Person)$) e `Jeen rdf:type Researcher`.
+
+![[DM-L03-p166.png]]
+
+Correggendo le estensioni ($I(Person)=\{Jeen,Bob,Frank,Paul\}$, $I(Researcher)=\{Jeen,Bob\}$) tutte le triple sono soddisfatte e $I$ diventa un **modello**. Si noti che contiene anche individui (`Paul`, `Bob`) che il KG non nomina: è proprio la libertà che rende i modelli tanti.
+
 > [!warning] Attenzione alla notazione
 > Nella slide sulla soddisfacibilità, le formule di `domain` e `range` appaiono con classe e proprietà scambiate. La tabella qui sopra riporta la forma semanticamente corretta.
 
@@ -1395,6 +1537,10 @@ Le classi corrispondono a predicati unari; le proprietà a predicati binari.
 
 ### Closed World e Open World
 
+Vedi [[Open World Assumption]].
+
+Base triennale: [[Assunzione di Mondo Chiuso]] · [[02 - BD - Modello Relazionale#Il problema del mondo chiuso|BD — Il problema del mondo chiuso]]
+
 Un database tradizionale viene normalmente interpretato con **Closed World Assumption (CWA)**:
 
 > ciò che non è memorizzato è considerato falso o non valido nella risposta del database.
@@ -1404,6 +1550,10 @@ Un Knowledge Graph usa invece **Open World Assumption (OWA)**:
 > ciò che non è noto non è automaticamente falso; può essere vero in alcuni modelli e falso in altri.
 
 Per questo un database viene trattato come una singola struttura/modello, mentre un KG rappresenta in generale **molti modelli possibili**.
+
+![[DM-L03-p169.png]]
+
+Lo schema delle slide riassume la differenza: un graph database $D$, grazie alla CWA, ha **un solo** modello $M$; un Knowledge Graph $K$, grazie alla OWA, ne ha molti ($M_1, M_2, \ldots$). La CWA è la stessa assunzione del modello relazionale vista nella triennale: vedi [[Assunzione di Mondo Chiuso]].
 
 ---
 
@@ -1435,6 +1585,8 @@ In ogni modello:
 Sono inoltre implicate `P rdfs:subPropertyOf R` e, nel formalismo delle slide, `P rdfs:range C`.
 
 ### Instance-Based Completion
+
+Vedi [[Instance-Based Completion]].
 
 La **Instance-Based Completion**, $IBC(K)$, materializza le conseguenze sulle istanze.
 
@@ -1507,6 +1659,8 @@ Questo consente di collegare la semantica logica alla normale valutazione di pat
 
 ### Certain answers
 
+Vedi [[Certain Answers]].
+
 Su un graph database, un BGP viene valutato sull'unico grafo disponibile. Su un KG, che rappresenta molti modelli, una tupla è una **certain answer** se è risposta in **ogni modello** del KG.
 
 Formalmente, per una query $Q$ e un KG $K$:
@@ -1516,6 +1670,14 @@ A\text{ è certa} \iff \forall I\in Models(K),\ A\in ans(Q,G_I)
 $$
 
 Le certain answers contengono quindi solo ciò che è garantito dalla conoscenza disponibile, indipendentemente da come si completa il mondo.
+
+![[DM-L03-p181.png]]
+
+Interrogare un graph database significa cercare il pattern **in un solo grafo** (l'unico modello). Un KG invece "rappresenta" l'insieme dei grafi $G^{M_1}, G^{M_2}, \ldots$ corrispondenti ai suoi modelli, quindi interrogarlo significa cercare il pattern **in molti grafi**.
+
+![[DM-L03-p183.png]]
+
+Da qui le due definizioni affiancate: $A$ è una *DB answer* su $D$ se si ottiene con un omomorfismo da $Q$ all'unico modello; $A$ è una *certain answer* su $K$ se si ottiene con un omomorfismo verso $G^{M_1}$, **e anche** verso $G^{M_2}$, **e anche** verso $G^{M_3}$, e così via per tutti i modelli.
 
 ### Completion completa
 
@@ -1577,6 +1739,10 @@ Frank
 ```
 
 Infatti Frank partecipa come soggetto alla relazione `hasSupervisor`, è dedotto `Student` e quindi `Person`; Jeen è `Researcher`, una sottoclasse di `Person`.
+
+![[DM-L03-p187.png]]
+
+La slide finale mostra $comp(K)$ disegnato: agli archi originali si aggiungono `Frank rdf:type Student`, `Jeen rdf:type Researcher` e i due `rdf:type Person` (archi esterni). Valutando la query su questo grafo come su un normale graph database si ottiene la certain answer `{ Frank }`.
 
 ---
 

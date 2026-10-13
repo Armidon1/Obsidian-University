@@ -54,3 +54,6 @@ SELECT code, name, age FROM Director;
 - [[Intersection in Relational Algebra]]
 - [[Set Semantics vs Bag Semantics]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Union|Lecture 1 — Union]]
+> - Map: [[00 - Data Management MOC]]

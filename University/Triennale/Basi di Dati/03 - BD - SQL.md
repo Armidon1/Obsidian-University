@@ -23,7 +23,7 @@ source: 3-sql.pdf
 > 4. **interrogazioni complesse**: query annidate, correlate, viste inline;
 > 5. **ulteriori aspetti**: `case`, `check` e asserzioni, viste, privilegi, transazioni, politiche di reazione sulle foreign key, vincoli *deferred*.
 >
-> Il DBMS di riferimento è **PostgreSQL**. Per superare l'esame serve prima il **test SQL** (vedi [[01 - BD - Introduzione#Informazioni generali|Introduzione]]). Come si usa SQL da un programma è l'argomento di [[04 - BD - Accesso ai Dati da Software]]. Il corso magistrale [[Data Managment - 1 - Introduction|Data Management]] riprende e approfondisce molti di questi argomenti.
+> Il DBMS di riferimento è **PostgreSQL**. Per superare l'esame serve prima il **test SQL** (vedi [[01 - BD - Introduzione#Informazioni generali|Introduzione]]). Come si usa SQL da un programma è l'argomento di [[04 - BD - Accesso ai Dati da Software]]. Il corso magistrale [[01 - DM - Introduction|Data Management]] riprende e approfondisce molti di questi argomenti.
 >
 > Indice dei concetti: [[MOC - Basi di Dati]].
 

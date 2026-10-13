@@ -26,6 +26,7 @@ tags:
 
 - **Concetti correlati**: [[Entità ER]] · [[Relazione ER]] · [[ISA e Generalizzazione]] · [[Metodologia di Progettazione Concettuale]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Dimensional Fact Model]]
 
 > [!info] Approfondimento
 > - [[05 - BD - Progettazione Concettuale#Un modello di dati|Lezione 5 — Un modello di dati]]

@@ -66,3 +66,6 @@ The optimizer may reorder joins, use indexes, or transform subqueries as long as
 - [[WHERE vs HAVING]]
 - [[SQL Window Functions]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#SQL: Structured Query Language|Lecture 1 — SQL: Structured Query Language]]
+> - Map: [[00 - Data Management MOC]]

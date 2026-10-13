@@ -21,6 +21,7 @@ $$R_1 \text{ JOIN}_{cond}\, R_2 = \text{SEL}_{cond}(R_1 \text{ JOIN } R_2)$$
 
 - **Concetti correlati**: [[Join]] · [[Algebra Relazionale]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Theta Join]] · [[Equijoin]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Theta-join ed equi-join|Lezione 2 — Theta-join ed equi-join]]

@@ -22,6 +22,7 @@ Valori non atomici (array, documenti): impossibili nel modello relazionale.
 
 - **Concetti correlati**: [[Database Documentale MongoDB]] · [[NoSQL]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[JSON Tree]] · [[BSON]]
 
 > [!info] Approfondimento
 > - [[07 - BD - NoSQL#JSON|Lezione 7 — JSON]]

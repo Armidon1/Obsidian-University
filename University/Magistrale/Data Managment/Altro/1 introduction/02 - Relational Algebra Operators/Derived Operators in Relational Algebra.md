@@ -50,3 +50,6 @@ At the logical level, a join can be expanded into product and selection. At the 
 - [[Theta Join]]
 - [[Natural Join]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Derived operations|Lecture 1 — Derived operations]]
+> - Map: [[00 - Data Management MOC]]

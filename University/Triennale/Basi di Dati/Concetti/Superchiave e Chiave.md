@@ -21,6 +21,7 @@ tags:
 
 - **Concetti correlati**: [[Chiave Primaria]] · [[Vincolo di Integrità]] · [[Identificatore ER]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Database Index]] · [[Functional Dependency vs Key Constraint]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Condizioni di superchiave e chiave|Lezione 2 — Condizioni di superchiave e chiave]]

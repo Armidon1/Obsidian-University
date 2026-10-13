@@ -48,3 +48,6 @@ Unrestricted logical formulas could describe infinite sets unrelated to the fini
 - [[Existential Queries in Databases]]
 - [[Universal Quantification in Databases]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Relational calculus|Lecture 1 — Relational calculus]]
+> - Map: [[00 - Data Management MOC]]

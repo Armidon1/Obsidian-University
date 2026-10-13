@@ -58,3 +58,6 @@ The schema describes the meaning and structure of the table. The two displayed r
 - [[Set Semantics vs Bag Semantics]]
 - [[SQL and Relational Algebra Correspondence]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#The relational data model|Lecture 1 — The relational data model]]
+> - Map: [[00 - Data Management MOC]]

@@ -72,3 +72,6 @@ SUM(CASE WHEN mark = 100 THEN 1 ELSE 0 END)
 - [[NULL and Aggregate Functions]]
 - [[NULL and Three-Valued Logic]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#`COUNT`|Lecture 1 — COUNT]]
+> - Map: [[00 - Data Management MOC]]

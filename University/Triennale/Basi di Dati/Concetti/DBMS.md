@@ -25,6 +25,7 @@ tags:
 
 - **Concetti correlati**: [[Base di Dati]] · [[Modello Relazionale]] · [[Transazione]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Buffer Pool]] · [[05 - DM - Concurrency Control#Architecture of a DBMS|Architecture of a DBMS]]
 
 > [!info] Approfondimento
 > - [[01 - BD - Introduzione#Il DBMS|Lezione 1 — Il DBMS]]

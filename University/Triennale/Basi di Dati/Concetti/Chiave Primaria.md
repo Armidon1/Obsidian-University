@@ -20,6 +20,7 @@ tags:
 
 - **Concetti correlati**: [[Superchiave e Chiave]] · [[Foreign Key]] · [[Identificatore Principale]] · [[Create Table]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Surrogate Key]] · [[Database Index]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Chiave primaria|Lezione 2 — Chiave primaria]]

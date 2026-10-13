@@ -26,6 +26,7 @@ tags:
 
 - **Concetti correlati**: [[Chiave Primaria]] · [[Foreign Key]] · [[Operatori Aggregati]] · [[Join Esterno]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[NULL and Three-Valued Logic]] · [[NULL and Aggregate Functions]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Informazione incompleta e valori nulli|Lezione 2 — Informazione incompleta e valori nulli]]

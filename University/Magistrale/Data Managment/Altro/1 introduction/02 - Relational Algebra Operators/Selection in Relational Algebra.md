@@ -71,3 +71,6 @@ Classical algebra uses two-valued logic. SQL uses three-valued logic when `NULL`
 - [[Theta Join]]
 - [[SQL and Relational Algebra Correspondence]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Selection|Lecture 1 — Selection]]
+> - Map: [[00 - Data Management MOC]]

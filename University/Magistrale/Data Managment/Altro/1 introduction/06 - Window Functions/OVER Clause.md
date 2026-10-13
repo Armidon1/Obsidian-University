@@ -74,3 +74,6 @@ Named windows reduce repetition, but confirm whether a frame is appropriate for 
 - [[Window ORDER BY]]
 - [[Window Frames]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#`OVER(...)`|Lecture 1 — OVER(...)]]
+> - Map: [[00 - Data Management MOC]]

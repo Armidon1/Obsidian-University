@@ -63,3 +63,6 @@ SUM(amount) OVER (
 - [[Window Frames]]
 - [[Moving Averages]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Running total|Lecture 1 — Running total]]
+> - Map: [[00 - Data Management MOC]]

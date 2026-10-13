@@ -19,6 +19,7 @@ tags:
 
 - **Concetti correlati**: [[Negazione in Algebra Relazionale]] · [[Valore Nullo]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Open World Assumption]] · [[Certain Answers]]
 
 > [!info] Approfondimento
 > - [[02 - BD - Modello Relazionale#Il problema del mondo chiuso|Lezione 2 — Il problema del mondo chiuso]]

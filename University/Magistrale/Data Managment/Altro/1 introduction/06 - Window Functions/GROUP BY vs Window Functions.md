@@ -74,3 +74,6 @@ The window formulation is usually clearer and supports ranking, navigation, and 
 - [[GROUP BY]]
 - [[Aggregate Window Functions]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Why `GROUP BY` cannot return the same shape directly|Lecture 1 — Why GROUP BY cannot return the same shape directly]]
+> - Map: [[00 - Data Management MOC]]

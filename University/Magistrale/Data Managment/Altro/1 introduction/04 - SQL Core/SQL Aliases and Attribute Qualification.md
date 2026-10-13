@@ -61,3 +61,6 @@ A column alias names an output expression. Because of [[Logical Order of SQL Que
 - [[Equijoin]]
 - [[Renaming in Relational Algebra]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#SQL: Structured Query Language|Lecture 1 — SQL: Structured Query Language]]
+> - Map: [[00 - Data Management MOC]]

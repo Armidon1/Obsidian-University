@@ -65,3 +65,6 @@ Window functions are evaluated after `WHERE`, grouping, and `HAVING` in the same
 - [[Window ORDER BY]]
 - [[Window Frames]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#The notion of a window|Lecture 1 — The notion of a window]]
+> - Map: [[00 - Data Management MOC]]

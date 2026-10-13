@@ -51,3 +51,6 @@ Moving `age < 30` into `HAVING` does not simply delay the same filter. It is eit
 - [[Logical Order of SQL Query Evaluation]]
 - [[SQL Query Granularity]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Conditions on groups: `HAVING`|Lecture 1 — Conditions on groups: HAVING]]
+> - Map: [[00 - Data Management MOC]]

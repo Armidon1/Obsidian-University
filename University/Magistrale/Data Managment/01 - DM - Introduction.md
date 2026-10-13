@@ -18,6 +18,8 @@ source: "[[1-Introduction.pdf]]"
 
 > [!abstract] Purpose of this note
 > This note follows the same conceptual order as the source material: course context, relational model, relational algebra, SQL, aggregation, grouping, and window functions. It expands definitions, makes implicit reasoning explicit, and adds worked examples so that the material can be read as a self-contained explanation rather than as presentation prompts.
+>
+> Course map: [[00 - Data Management MOC]]. Base triennale: this lecture recaps [[02 - BD - Modello Relazionale]] and [[03 - BD - SQL]] from the undergraduate course Basi di Dati (see [[MOC - Basi di Dati]]); window functions are new. Lines starting with "Base triennale:" point to the matching undergraduate section or concept.
 
 ## Course context
 
@@ -88,6 +90,8 @@ A data warehouse is designed primarily for analytical workloads. It integrates h
 
 #### NoSQL databases
 
+Base triennale: [[NoSQL]] · [[07 - BD - NoSQL]]
+
 - document-oriented databases;
 - graph databases;
 - the relationship between OLAP and OLTP workloads.
@@ -102,12 +106,16 @@ NoSQL does not mean that relational databases are obsolete. It groups several mo
 
 #### DBMS modules
 
+Base triennale: [[DBMS]] · [[01 - BD - Introduzione#Il DBMS|BD — Il DBMS]]
+
 - overall DBMS architecture;
 - buffer manager.
 
 The buffer manager moves database pages between persistent storage and main memory. Because disk and memory have very different costs and persistence properties, buffer management is fundamental to performance and correctness.
 
 #### Transaction management
+
+Base triennale: [[Transazione]] · [[03 - BD - SQL#Transazioni|BD — Transazioni]]
 
 - the concept of transaction;
 - concurrency control.
@@ -122,6 +130,8 @@ A transaction represents a logical unit of work. Concurrency control permits mul
 Recovery mechanisms use information such as logs to restore a valid state after failures. The system must distinguish, for example, a transaction failure from a process, system, or storage failure because each requires a different response.
 
 #### Physical database structures
+
+Base triennale: [[03 - BD - SQL#Indici|BD — Indici]] · [[06 - BD - Progettazione Logica#6.1 Introduzione alla progettazione logica|BD — progettazione fisica "non in questo corso"]]
 
 - file organizations for database management;
 - principles of physical database design.
@@ -140,6 +150,10 @@ A SQL query describes the desired result. The query processor transforms it into
 ## Recap: relational databases
 
 ## The relational data model
+
+Vedi [[Relational Data Model]].
+
+Base triennale: [[Modello Relazionale]] · [[02 - BD - Modello Relazionale#2.1 Struttura dei dati relazionali|BD 2.1 — Struttura dei dati relazionali]]
 
 The relational model was introduced by E. F. Codd in 1970. Its central idea is to represent data through **relations**, a mathematical concept that can be visualized as a table.
 
@@ -166,6 +180,8 @@ where each value $a_i$ belongs to the corresponding domain $D_i$.
 
 ### Essential terminology
 
+Base triennale: [[Schema e Istanza]] · [[Superchiave e Chiave]] · [[Chiave Primaria]]
+
 | Term | Meaning |
 |---|---|
 | Relation schema | The relation name and its attributes, such as `Account(branch_name, account_no, customer_name, balance)` |
@@ -185,13 +201,21 @@ Codd introduced two foundational query formalisms.
 
 ### Relational algebra
 
+Vedi [[Relational Algebra]].
+
+Base triennale: [[Algebra Relazionale]] · [[02 - BD - Modello Relazionale#2.2 Algebra relazionale|BD 2.2 — Algebra relazionale]]
+
 Relational algebra is **procedural** in the formal sense: a query is an expression that specifies a sequence or composition of operations over relations. Each operator consumes one or more relations and returns another relation. Because input and output share the same kind of object, operators can be nested freely; this property is called **closure**.
 
 ### Relational calculus
 
+Vedi [[Relational Calculus]].
+
 Relational calculus is **declarative**: a query states the logical property that result tuples must satisfy, using first-order logic, rather than prescribing a sequence of relational operators.
 
 ### Codd's theorem
+
+Vedi [[Codd's Theorem]].
 
 Codd's theorem establishes that relational algebra and the safe forms of relational calculus have essentially the same expressive power. The important lesson is that a procedural algebraic description and a declarative logical description can characterize the same class of relational queries.
 
@@ -220,9 +244,13 @@ Any syntactically valid composition of these operators is a relational algebra e
 
 ## Union and difference
 
+Base triennale: [[02 - BD - Modello Relazionale#Operatori insiemistici|BD — Operatori insiemistici]]
+
 Let $R$ and $S$ be $k$-ary relations.
 
 ### Union
+
+Vedi [[Union in Relational Algebra]].
 
 The union contains every tuple that occurs in at least one input:
 
@@ -231,6 +259,8 @@ R \cup S = \{t \mid t \in R \lor t \in S\}
 $$
 
 ### Difference
+
+Vedi [[Difference in Relational Algebra]].
 
 The difference contains tuples in the first input but not in the second:
 
@@ -287,6 +317,10 @@ Difference is not commutative: in this example, $Director - Employee$ would inst
 
 ## Cartesian product
 
+Vedi [[Cartesian Product]].
+
+Base triennale: [[02 - BD - Modello Relazionale#Prodotto cartesiano|BD — Prodotto cartesiano]]
+
 Let $R$ have arity $m$ and $S$ have arity $n$. Their Cartesian product combines every tuple of $R$ with every tuple of $S$:
 
 $$
@@ -334,6 +368,10 @@ The product by itself often creates many combinations that have no business mean
 
 ## Projection
 
+Vedi [[Projection in Relational Algebra]].
+
+Base triennale: [[Selezione e Proiezione]] · [[02 - BD - Modello Relazionale#Proiezione|BD — Proiezione]]
+
 Projection selects, reorders, and possibly renames attributes. The common notation is:
 
 $$
@@ -380,6 +418,10 @@ The two occurrences of `(Rossi, Roma)` collapse into one tuple. In SQL, `SELECT 
 
 ### Renaming during projection
 
+Vedi [[Renaming in Relational Algebra]].
+
+Base triennale: [[02 - BD - Modello Relazionale#Ridenominazione|BD — Ridenominazione]]
+
 A notation such as:
 
 $$
@@ -405,6 +447,10 @@ $$
 Named attributes are usually clearer and less fragile: positional references change meaning if the schema's column order changes.
 
 ## Selection
+
+Vedi [[Selection in Relational Algebra]].
+
+Base triennale: [[Selezione e Proiezione]] · [[02 - BD - Modello Relazionale#Selezione|BD — Selezione]]
 
 Selection filters tuples while preserving the relation's attributes:
 
@@ -469,6 +515,8 @@ When attributes are referenced by component number, a notation such as `$4 > 100
 
 ## Relational algebra expressions
 
+Base triennale: [[02 - BD - Modello Relazionale#Equivalenza di espressioni|BD — Equivalenza di espressioni]]
+
 A relational algebra expression is obtained by recursively combining relation schemas and operators. A simplified grammar is:
 
 $$
@@ -493,9 +541,13 @@ first selects well-paid employees and then keeps their names. The closure proper
 
 ## Derived operations
 
+Vedi [[Derived Operators in Relational Algebra]].
+
 An operation is **derived** when it can be expressed using the five basic operators. Derived operators do not necessarily add expressive power, but they make queries much easier to write and understand.
 
 ## Intersection
+
+Vedi [[Intersection in Relational Algebra]].
 
 For union-compatible relations $R$ and $S$:
 
@@ -519,6 +571,10 @@ For the `Employee` and `Director` relations used earlier:
 These are exactly the tuples occurring in both relations.
 
 ## Theta join
+
+Vedi [[Theta Join]] · [[Equijoin]].
+
+Base triennale: [[Theta-Join]] · [[02 - BD - Modello Relazionale#Theta-join ed equi-join|BD — Theta-join ed equi-join]]
 
 A theta join combines two relations and retains only pairs that satisfy a condition $\Theta$:
 
@@ -588,6 +644,10 @@ This is not an equijoin because the predicate includes `F.salary > C.salary`.
 
 ## Natural join
 
+Vedi [[Natural Join]].
+
+Base triennale: [[Join]] · [[02 - BD - Modello Relazionale#Join naturale|BD — Join naturale]] · [[Join Esterno]]
+
 The natural join matches tuples on **all attributes that have the same name** and includes one copy of each common attribute in the result.
 
 Suppose:
@@ -653,6 +713,10 @@ This explains the semantics, not necessarily the implementation. A DBMS may inst
 
 ## Relational algebra exercises
 
+Vedi [[Universal Quantification in Databases]] · [[Finding Minimum or Maximum Rows per Group]].
+
+Base triennale: [[02 - BD - Modello Relazionale#Self-join|BD — Self-join]] · [[08 - BD - Esami Svolti]]
+
 Consider:
 
 $$
@@ -666,6 +730,8 @@ $$
 `Graduated` records a student code, graduation mark, and school code. `School` stores every school, including schools for which there may be no matching `Graduated` tuple.
 
 ### Cities with at least one school having a student who graduated with 100
+
+Vedi [[Existential Queries in Databases]].
 
 The phrase **at least one** is existential: finding one matching graduation tuple is sufficient.
 
@@ -685,6 +751,10 @@ $$
 Projection removes duplicate city names, so a city with several qualifying schools still appears once.
 
 ### Schools where no student graduated with 100
+
+Vedi [[Queries Expressing Absence]].
+
+Base triennale: [[Negazione in Algebra Relazionale]] · [[Assunzione di Mondo Chiuso]]
 
 Begin with all schools, then subtract the schools that have at least one mark of 100:
 
@@ -795,6 +865,10 @@ The strict comparison `>` is essential. If two students share the smallest mark,
 
 ## SQL: Structured Query Language
 
+Vedi [[Set Semantics vs Bag Semantics]] · [[SQL Aliases and Attribute Qualification]] · [[Logical Order of SQL Query Evaluation]].
+
+Base triennale: [[SQL]] · [[Select SQL]] · [[03 - BD - SQL#3.1 Interrogazioni semplici|BD 3.1 — Interrogazioni semplici]]
+
 SQL is the standard language family for relational database systems. The core query form considered here is:
 
 ```sql
@@ -820,6 +894,10 @@ then:
 The keyword `DISTINCT` is important when relating SQL to classical relational algebra. SQL normally preserves duplicates, whereas classical relational algebra eliminates them.
 
 ## SQL and relational algebra
+
+Vedi [[SQL and Relational Algebra Correspondence]].
+
+Base triennale: [[03 - BD - SQL#SQL e algebra relazionale|BD — SQL e algebra relazionale]]
 
 The basic correspondence is:
 
@@ -865,6 +943,8 @@ WHERE g.mark = 100;
 `DISTINCT` is needed if the requested answer is a set of cities: multiple qualifying graduates or schools may otherwise repeat a city.
 
 ### Schools with no student who graduated with 100
+
+Base triennale: [[Interrogazioni Annidate]] · [[03 - BD - SQL#Differenza e intersezione mediante annidamento|BD — Differenza mediante annidamento]]
 
 A direct translation using `NOT IN` is:
 
@@ -939,6 +1019,10 @@ The inner query computes the minimum only among rows belonging to the current st
 
 ## Aggregation operators
 
+Vedi [[SQL Aggregate Functions]].
+
+Base triennale: [[Operatori Aggregati]] · [[03 - BD - SQL#Operatori aggregati|BD — Operatori aggregati]]
+
 An aggregate function maps a set or multiset of input rows to a single value. Common aggregates include:
 
 - `COUNT`;
@@ -956,6 +1040,8 @@ aggregate_function([DISTINCT] expression)
 Without `GROUP BY`, the filtered query result is treated as one group. With `GROUP BY`, the input is partitioned and the aggregate is computed independently for each group.
 
 ## `COUNT`
+
+Vedi [[COUNT in SQL]].
 
 The three important forms are:
 
@@ -1001,6 +1087,8 @@ The logical order is important: `WHERE` first retains Franco's two rows, and `CO
 
 ### `COUNT` and `NULL`
 
+Base triennale: [[Valore Nullo]] · [[03 - BD - SQL#Valori nulli, is null e is not null|BD — Valori nulli]]
+
 Consider:
 
 | name | age | income |
@@ -1041,6 +1129,8 @@ WHERE f.father = 'Franco';
 ```
 
 ### Aggregation and `NULL`
+
+Vedi [[NULL and Aggregate Functions]] · [[NULL and Three-Valued Logic]].
 
 For incomes `30, NULL, 36, 36`:
 
@@ -1085,6 +1175,10 @@ Both expressions return one value for the same global group.
 ---
 
 ## Aggregation and grouping
+
+Vedi [[GROUP BY]].
+
+Base triennale: [[Group By e Having]] · [[03 - BD - SQL#Raggruppamenti, group by|BD — Raggruppamenti]]
 
 Without grouping, an aggregate is evaluated over all rows that survive `FROM` and `WHERE`. `GROUP BY` instead partitions those rows according to one or more grouping expressions:
 
@@ -1132,6 +1226,10 @@ GROUP BY age;
 
 ## Conditions on groups: `HAVING`
 
+Vedi [[WHERE vs HAVING]].
+
+Base triennale: [[03 - BD - SQL#Condizioni sui gruppi, having|BD — Condizioni sui gruppi]]
+
 `WHERE` filters individual input rows. `HAVING` filters groups after grouping and aggregation.
 
 Example: fathers whose children's average income exceeds 25:
@@ -1170,6 +1268,8 @@ Moving the age condition to `HAVING` would either be invalid or change the meani
 
 ## Summary of `SELECT` syntax
 
+Base triennale: [[03 - BD - SQL#Sintassi riassuntiva della select|BD — Sintassi riassuntiva della select]]
+
 A useful simplified grammar is:
 
 ```sql
@@ -1198,6 +1298,10 @@ The written order is not the conceptual evaluation order. A useful logical model
 This model explains, for example, why a window function can operate on grouped query results but cannot usually be referenced directly in `WHERE` of the same query block.
 
 ## Grouping and a homogeneous target list
+
+Vedi [[Homogeneous Target List]] · [[SQL Query Granularity]].
+
+Base triennale: [[03 - BD - SQL#Raggruppamenti e target list|BD — Raggruppamenti e target list]]
 
 In a grouped query, each output expression must have one well-defined value per group. It should therefore be:
 
@@ -1230,6 +1334,8 @@ PostgreSQL normally rejects a selected non-aggregated column that is neither gro
 ---
 
 ## The notion of a window
+
+Vedi [[SQL Window Functions]].
 
 A **window function** performs a calculation over rows related to the current result row while preserving that row in the output.
 
@@ -1297,6 +1403,8 @@ Notice that:
 
 ### Why `GROUP BY` cannot return the same shape directly
 
+Vedi [[GROUP BY vs Window Functions]].
+
 The following query is invalid in a strict SQL system:
 
 ```sql
@@ -1353,6 +1461,8 @@ The function determines the kind of value to compute: a sum, average, sequence n
 
 ### `OVER(...)`
 
+Vedi [[OVER Clause]].
+
 `OVER` marks the expression as a window function. An empty specification:
 
 ```sql
@@ -1363,6 +1473,8 @@ uses all rows available to the current query block as one partition.
 
 ### `PARTITION BY`
 
+Vedi [[PARTITION BY]].
+
 `PARTITION BY` divides rows into independent groups for the window calculation. It is optional. If omitted, all rows form one partition.
 
 ```sql
@@ -1372,6 +1484,8 @@ SUM(salary) OVER (PARTITION BY department_id)
 The result restarts independently for each department, but rows are not collapsed.
 
 ### Window `ORDER BY`
+
+Vedi [[Window ORDER BY]].
 
 The `ORDER BY` inside `OVER` defines the logical sequence used by functions such as `ROW_NUMBER`, `LAG`, `LEAD`, and running aggregates:
 
@@ -1393,6 +1507,8 @@ ORDER BY name;
 The window can rank by salary while the final output is displayed alphabetically.
 
 ### Window frame
+
+Vedi [[Window Frames]].
 
 For many ordered aggregate windows, the frame identifies which rows around the current row contribute to the calculation. Common boundaries include:
 
@@ -1423,6 +1539,8 @@ AVG(amount) OVER (
 ```
 
 ### `ROWS` versus `RANGE`
+
+Vedi [[ROWS vs RANGE]].
 
 `ROWS` counts physical row positions in the window order. `RANGE` groups rows according to ordering values and treats rows with equal ordering values as peers when applying boundaries such as `CURRENT ROW`.
 
@@ -1475,6 +1593,8 @@ The window version is shorter, expresses the analytic intent directly, and allow
 ---
 
 ## `ROW_NUMBER()`
+
+Vedi [[ROW_NUMBER]].
 
 `ROW_NUMBER()` assigns the integers `1, 2, 3, ...` to rows in the window order, independently inside each partition.
 
@@ -1532,6 +1652,8 @@ The extra query level is needed because window functions are evaluated after `WH
 
 ## `RANK()` and `DENSE_RANK()`
 
+Vedi [[RANK vs DENSE_RANK vs ROW_NUMBER]].
+
 Both functions assign the same rank to peers - rows tied on all window `ORDER BY` expressions. They differ in the number assigned after a tie.
 
 ```sql
@@ -1578,6 +1700,8 @@ The key distinction is:
 
 ## `SUM()` with `OVER(...)`
 
+Vedi [[Aggregate Window Functions]].
+
 An aggregate function becomes a windowed aggregate when followed by `OVER`. It computes an aggregate value without collapsing the detail rows.
 
 ### Partition total
@@ -1617,6 +1741,8 @@ salary * 100.0
 
 ### Running total
 
+Vedi [[Running Totals]].
+
 ```sql
 SUM(salary) OVER (
     PARTITION BY department
@@ -1633,6 +1759,8 @@ Here, `ORDER BY` and the frame change the meaning. The function no longer return
 ---
 
 ## `LAG()` and `LEAD()`
+
+Vedi [[LAG and LEAD]].
 
 `LAG` accesses a value from a preceding row in the window order. `LEAD` accesses a value from a following row.
 
@@ -1702,6 +1830,8 @@ For each employee, this subtracts the previous recorded salary from the current 
 
 ### Pagination
 
+Base triennale: [[03 - BD - SQL#Limite al risultato, limit|BD — limit]] · [[03 - BD - SQL#Ordinamento, order by|BD — order by]]
+
 `ROW_NUMBER()` can assign stable positions to an ordered result. For user-facing pagination, the ordering must be unique and stable; otherwise records may move between pages. Keyset pagination can be preferable for large, frequently changing datasets.
 
 ### Ranking
@@ -1714,6 +1844,8 @@ For each employee, this subtracts the previous recorded salary from the current 
 
 ### Running totals and moving statistics
 
+Vedi [[Moving Averages]].
+
 Windowed `SUM`, `AVG`, `MIN`, and `MAX` can calculate cumulative totals, moving averages, rolling minima, and other time-oriented statistics.
 
 ### Percentile and distribution analysis
@@ -1721,6 +1853,8 @@ Windowed `SUM`, `AVG`, `MIN`, and `MAX` can calculate cumulative totals, moving 
 Functions such as `PERCENT_RANK`, `CUME_DIST`, `NTILE`, and ordered-set aggregates can locate a row within a distribution. Their exact availability and syntax depend on the DBMS.
 
 ### Top-N per group
+
+Vedi [[Top-N per Group]].
 
 Rank rows inside each category and filter the rank from an outer query. This is a common reporting task that is awkward with a single ordinary `GROUP BY`.
 

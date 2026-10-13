@@ -153,3 +153,7 @@ Quindi:
 |Ottimizzato per OLAP|Più vicino alla progettazione relazionale tradizionale|
 
 La teoria della normalizzazione rimane valida: lo star schema accetta consapevolmente alcune anomalie e ridondanze perché il warehouse è prevalentemente letto tramite query analitiche e viene aggiornato attraverso processi ETL controllati, non tramite numerose transazioni concorrenti.
+
+> [!info] In depth
+> - [[02 - DM - Data Warehouses#Why Dimension Tables Are Denormalized|Lecture 2 — Why Dimension Tables Are Denormalized]]
+> - Map: [[00 - Data Management MOC]]

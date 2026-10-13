@@ -10,8 +10,8 @@ tags:
   - vincoli-integrita
   - rolap
 related:
-  - "[[Functional-Dependencies-Relational-and-ROLAP]]"
-  - "[[Data-Warehousing-Complete-Notes]]"
+  - "[[Functional Dependency]]"
+  - "[[02 - DM - Data Warehouses]]"
 ---
 
 # Functional Dependency vs Key Constraint

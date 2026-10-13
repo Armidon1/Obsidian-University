@@ -67,7 +67,7 @@ Linguaggi **non** regolari (dimostrabile col *pumping lemma*):
 > [!warning] Conseguenza pratica
 > Non si può fare il parsing "corretto" di HTML, JSON o espressioni annidate con una regex pura. Serve un parser (grammatiche context-free).
 
-Collegamenti: [[Automi a stati finiti]], [[Linguaggi formali]], [[Pumping lemma]]
+Collegamenti: [[Finite Automaton|Automi a stati finiti]], [[Formal Language|Linguaggi formali]], [[Pumping Lemma|Pumping lemma]]
 
 ---
 
@@ -338,3 +338,8 @@ ipv4_octet = re.compile(r"""
 - Russ Cox — *Regular Expression Matching Can Be Simple And Fast* (swtch.com/~rsc/regexp)
 - Jeffrey Friedl — *Mastering Regular Expressions*
 - OWASP — *Regular expression Denial of Service (ReDoS)*
+
+> [!info] Approfondimento
+> - [[03 - DM - Graph Databases - RDF, SPARQL e Knowledge Graphs#Espressioni regolari sui cammini|Lezione 3 — Espressioni regolari sui cammini]]
+> - [[03 - DM - Graph Databases - RDF, SPARQL e Knowledge Graphs#Regular Path Query|Lezione 3 — Regular Path Query]]
+> - Map: [[00 - Data Management MOC]]

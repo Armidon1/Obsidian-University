@@ -23,6 +23,7 @@ Molte tuple o molti attributi o molti NULL → molte pagine → decomporre; join
 
 - **Concetti correlati**: [[Ristrutturazione dello Schema Logico]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Cost Model for File Organizations]]
 
 > [!info] Approfondimento
 > - [[06 - BD - Progettazione Logica#Modello di costo|Lezione 6 — Modello di costo]]

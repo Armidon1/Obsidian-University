@@ -24,6 +24,7 @@ Si sacrificano rigidità, join e ACID per scalabilità e flessibilità.
 
 - **Concetti correlati**: [[Database Documentale MongoDB]] · [[Graph Database]] · [[JSON]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Aggregate Data Model]] · [[Sharding]] · [[CAP Theorem]]
 
 > [!info] Approfondimento
 > - [[07 - BD - NoSQL#7.1 Introduzione ai sistemi NoSQL|Lezione 7 — 7.1 Introduzione ai sistemi NoSQL]]

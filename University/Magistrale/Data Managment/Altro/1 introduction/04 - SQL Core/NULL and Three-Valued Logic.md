@@ -64,3 +64,6 @@ Most aggregate functions ignore `NULL` inputs, while `COUNT(*)` counts rows. `PA
 - [[NULL and Aggregate Functions]]
 - [[Queries Expressing Absence]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Aggregation and `NULL`|Lecture 1 — Aggregation and NULL]]
+> - Map: [[00 - Data Management MOC]]

@@ -20,6 +20,7 @@ tags:
 
 - **Concetti correlati**: [[Select SQL]] · [[DDL e DML]] · [[Algebra Relazionale]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[SQL and Relational Algebra Correspondence]] · [[Logical Order of SQL Query Evaluation]]
 
 > [!info] Approfondimento
 > - [[03 - BD - SQL#Introduzione a SQL|Lezione 3 — Introduzione a SQL]]

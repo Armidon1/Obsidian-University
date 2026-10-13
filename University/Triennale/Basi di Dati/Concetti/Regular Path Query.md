@@ -20,6 +20,7 @@ tags:
 
 - **Concetti correlati**: [[Graph Database]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Regular Expressions]] · [[Finite Automaton]] · [[SPARQL]]
 
 > [!info] Approfondimento
 > - [[07 - BD - NoSQL#Interrogare un graph database|Lezione 7 — Interrogare un graph database]]

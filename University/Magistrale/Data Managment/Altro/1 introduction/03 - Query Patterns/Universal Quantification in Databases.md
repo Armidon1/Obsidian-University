@@ -64,3 +64,6 @@ A universal statement over an empty set is logically true. Database questions of
 - [[Queries Expressing Absence]]
 - [[Relational Calculus]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Relational algebra exercises|Lecture 1 — Relational algebra exercises]]
+> - Map: [[00 - Data Management MOC]]

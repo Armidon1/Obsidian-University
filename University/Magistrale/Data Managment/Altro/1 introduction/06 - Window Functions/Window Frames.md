@@ -55,3 +55,6 @@ With a window `ORDER BY`, the default frame may end at the current row or its pe
 - [[Running Totals]]
 - [[Moving Averages]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Window frame|Lecture 1 — Window frame]]
+> - Map: [[00 - Data Management MOC]]

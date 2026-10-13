@@ -26,6 +26,7 @@ Le relazioni in ISA con quella reificata vanno trasformate anch'esse. Serve, ad 
 
 - **Concetti correlati**: [[Relazione ER]] · [[Eventi e Storicizzazione]] · [[Ristrutturazione dello Schema ER]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[RDF Reification]]
 
 > [!info] Approfondimento
 > - [[05 - BD - Progettazione Concettuale#Trasformazioni dello schema|Lezione 5 — Trasformazioni dello schema]]

@@ -67,3 +67,6 @@ Use `RANK` or `DENSE_RANK` when ties should share a position. See [[RANK vs DENS
 - [[Window ORDER BY]]
 - [[PARTITION BY]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#`ROW_NUMBER()`|Lecture 1 — ROW_NUMBER()]]
+> - Map: [[00 - Data Management MOC]]

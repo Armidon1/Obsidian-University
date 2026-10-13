@@ -60,3 +60,6 @@ After a left join, `COUNT(*)` counts the preserved row even without a match, whi
 - [[COUNT in SQL]]
 - [[SQL Aggregate Functions]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Aggregation and `NULL`|Lecture 1 — Aggregation and NULL]]
+> - Map: [[00 - Data Management MOC]]

@@ -57,3 +57,6 @@ These constructs require an extended algebra or additional semantic rules.
 - [[Logical Order of SQL Query Evaluation]]
 - [[SQL Aliases and Attribute Qualification]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#SQL and relational algebra|Lecture 1 — SQL and relational algebra]]
+> - Map: [[00 - Data Management MOC]]

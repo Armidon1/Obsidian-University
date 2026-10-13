@@ -38,9 +38,15 @@ Implementata con **Write-Ahead Logging (WAL)** e checkpoint.
 
 > [!tip] Contrappunto: BASE
 > Nei sistemi distribuiti/NoSQL: *Basically Available, Soft state, Eventual consistency*.
-> Rilassa le garanzie ACID per scalabilità e disponibilità → vedi [[Teorema CAP]].
+> Rilassa le garanzie ACID per scalabilità e disponibilità → vedi [[CAP Theorem|Teorema CAP]].
 
 ## Collegamenti
-- [[Transazioni]]
-- [[Teorema CAP]]
+- [[Transaction|Transazioni]]
+- [[CAP Theorem|Teorema CAP]]
 - [[MVCC]]
+
+> [!info] Approfondimento
+> - [[05 - DM - Concurrency Control#ACID properties|Lezione 5 — ACID properties]]
+> - [[04 - DM - Document Databases#Main NoSQL characteristics|Lezione 4 — Main NoSQL characteristics]]
+> - [[03 - DM - Graph Databases - RDF, SPARQL e Knowledge Graphs#Graph database|Lezione 3 — Graph database]]
+> - Map: [[00 - Data Management MOC]]

@@ -50,3 +50,6 @@ If both tables later gain an unrelated column called `status`, the natural join 
 - [[Theta Join]]
 - [[SQL Aliases and Attribute Qualification]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Natural join|Lecture 1 — Natural join]]
+> - Map: [[00 - Data Management MOC]]

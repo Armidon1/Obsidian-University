@@ -49,3 +49,6 @@ The algebraic definition uses [[Cartesian Product]] followed by [[Selection in R
 - [[Natural Join]]
 - [[Cartesian Product]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Theta join|Lecture 1 — Theta join]]
+> - Map: [[00 - Data Management MOC]]

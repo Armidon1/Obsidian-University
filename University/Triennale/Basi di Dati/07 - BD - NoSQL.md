@@ -19,7 +19,7 @@ source: 7-NoSQL.pdf
 > 2. **document-oriented database**: **MongoDB**, i documenti JSON, le operazioni CRUD, `find` e il confronto con [[03 - BD - SQL|SQL]], le correlazioni tra collezioni e `$lookup`;
 > 3. **graph database**: nodi e archi etichettati, confronto con le basi relazionali (amici e amici degli amici), **regular path query**.
 >
-> Il confronto costante è con il [[02 - BD - Modello Relazionale|modello relazionale]]: rigidità dello schema, join, proprietà [[03 - BD - SQL#Transazioni|ACID]]. Una parte delle slide si basa sul materiale del prof. Marco Di Felice (Università di Bologna). Il corso magistrale riprende i grafi in [[Data Managment - 3 - Graph Databases - RDF, SPARQL e Knowledge Graphs]].
+> Il confronto costante è con il [[02 - BD - Modello Relazionale|modello relazionale]]: rigidità dello schema, join, proprietà [[03 - BD - SQL#Transazioni|ACID]]. Una parte delle slide si basa sul materiale del prof. Marco Di Felice (Università di Bologna). Il corso magistrale riprende i grafi in [[03 - DM - Graph Databases - RDF, SPARQL e Knowledge Graphs]].
 >
 > Indice dei concetti: [[MOC - Basi di Dati]].
 

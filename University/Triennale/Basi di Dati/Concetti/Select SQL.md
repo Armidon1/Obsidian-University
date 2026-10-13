@@ -28,6 +28,7 @@ $$\text{PROJ}_{\text{target}}(\text{SEL}_{\text{cond}}(R_1 \times \dots \times R
 
 - **Concetti correlati**: [[SQL]] · [[Join]] · [[Group By e Having]] · [[Interrogazioni Annidate]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Logical Order of SQL Query Evaluation]] · [[SQL Aliases and Attribute Qualification]]
 
 > [!info] Approfondimento
 > - [[03 - BD - SQL#L'istruzione select|Lezione 3 — L'istruzione select]]

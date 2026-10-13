@@ -56,3 +56,6 @@ Modern SQL makes intentional products explicit with `CROSS JOIN`.
 - [[Equijoin]]
 - [[Natural Join]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Cartesian product|Lecture 1 — Cartesian product]]
+> - Map: [[00 - Data Management MOC]]

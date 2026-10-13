@@ -63,3 +63,6 @@ In PostgreSQL, `LAG` and `LEAD` navigate by partition position rather than by th
 - [[PARTITION BY]]
 - [[Running Totals]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#`LAG()` and `LEAD()`|Lecture 1 — LAG() and LEAD()]]
+> - Map: [[00 - Data Management MOC]]

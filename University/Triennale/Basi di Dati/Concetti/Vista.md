@@ -23,6 +23,7 @@ create view etaReddito(eta, totaleReddito) as
 
 - **Concetti correlati**: [[Interrogazioni Annidate]] · [[Ristrutturazione dello Schema Logico]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[ROLAP and MOLAP]] · [[02 - DM - Data Warehouses#Materialized View|Materialized views]]
 
 > [!info] Approfondimento
 > - [[03 - BD - SQL#Query annidate nella from, viste inline|Lezione 3 — Query annidate nella from, viste inline]]

@@ -22,6 +22,7 @@ Accorpamento per denormalizzazione: si accetta la ridondanza per evitare join fr
 
 - **Concetti correlati**: [[Ristrutturazione dello Schema Logico]] · [[Superchiave e Chiave]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[Third Normal Form 3NF]] · [[Star Schema]] · [[Snowflake Schema]]
 
 > [!info] Approfondimento
 > - [[06 - BD - Progettazione Logica#Normalizzazione e denormalizzazione|Lezione 6 — Normalizzazione e denormalizzazione]]

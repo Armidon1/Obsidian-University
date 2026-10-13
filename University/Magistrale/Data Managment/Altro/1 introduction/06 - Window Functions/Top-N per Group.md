@@ -69,3 +69,6 @@ That decision determines the ranking function.
 - [[RANK vs DENSE_RANK vs ROW_NUMBER]]
 - [[Finding Minimum or Maximum Rows per Group]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Top-N per group|Lecture 1 — Top-N per group]]
+> - Map: [[00 - Data Management MOC]]

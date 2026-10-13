@@ -58,3 +58,6 @@ See [[Queries Expressing Absence]] and [[NULL and Three-Valued Logic]].
 - [[Universal Quantification in Databases]]
 - [[Queries Expressing Absence]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Difference|Lecture 1 — Difference]]
+> - Map: [[00 - Data Management MOC]]

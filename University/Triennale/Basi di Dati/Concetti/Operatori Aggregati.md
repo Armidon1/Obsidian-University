@@ -25,6 +25,7 @@ tags:
 
 - **Concetti correlati**: [[Group By e Having]] · [[Valore Nullo]] · [[Select SQL]]
 - **Mappa**: [[MOC - Basi di Dati]]
+- **Data Management (magistrale)**: [[SQL Aggregate Functions]] · [[COUNT in SQL]] · [[SQL Window Functions]]
 
 > [!info] Approfondimento
 > - [[03 - BD - SQL#Operatori aggregati|Lezione 3 — Operatori aggregati]]

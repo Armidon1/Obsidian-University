@@ -22,6 +22,8 @@ reference: M. Golfarelli and S. Rizzi, Data Warehouse Design - Modern Principles
 [[Data Warehouse Intro.excalidraw]]
 > [!abstract]
 > Data warehousing is the discipline concerned with collecting data from heterogeneous operational sources, reconciling it, preserving its history, and organizing it for analysis and decision support. A data warehouse does not replace operational databases. It complements them by serving a different workload: instead of efficiently recording individual business events, it makes large collections of historical events easy to explore, compare, and aggregate.
+>
+> Course map: [[00 - Data Management MOC]]. Base triennale: the undergraduate course Basi di Dati does not cover data warehousing, but this lecture builds on its design and SQL material — ER modelling ([[05 - BD - Progettazione Concettuale]]), logical design and denormalization ([[06 - BD - Progettazione Logica]]), grouping and aggregation ([[03 - BD - SQL]]). Lines starting with "Base triennale:" point to the matching section or concept.
 
 The central idea of this course is that **running an organization** and **understanding an organization** are different computational problems. Operational systems record what is happening: an order is placed, an examination is registered, a payment is received, or a patient is admitted. Decision-support systems use many such events to answer broader questions: How are sales changing? Which programmes are growing? What is the average waiting time? Which customer groups are most profitable?
 
@@ -31,14 +33,14 @@ The relational model, SQL, functional dependencies, keys, constraints, and norma
 
 - [[#From Data to Information|From data to information and decision support]]
 - [[#Data Warehouse Architectures|Data warehouse architectures]]
-- [[#ETL Extraction Cleansing Transformation and Loading|ETL]]
+- [[#ETL: Extraction, Cleansing, Transformation, and Loading|ETL]]
 - [[#The Multidimensional Data Model|The multidimensional data model]]
 - [[#Accessing a Data Warehouse|Reports, dashboards, data mining, and OLAP]]
 - [[#Implementing the Multidimensional Model|ROLAP, MOLAP, and hybrid implementation]]
 - [[#The Need for a Design Methodology|Facts, grain, and design methodology]]
 - [[#Conceptual Modelling for Data Warehouses|Conceptual modelling and DFM]]
 - [[#Logical Models for Data Marts|Logical models for data marts]]
-- [[#ROLAP The Star Schema|Star schemas]]
+- [[#ROLAP: The Star Schema|Star schemas]]
 - [[#The Snowflake Schema|Snowflake schemas]]
 - [[#Logical Design|Logical design and DFM translation]]
 - [[#How the Whole Topic Fits Together|Final synthesis]]
@@ -63,6 +65,10 @@ As we move from raw data to strategic knowledge, **volume normally decreases whi
 > A university operational database may contain one row for every examination attempt. From those rows, an analytical system can derive the average grade by course, the pass rate by academic year, and long-term trends in student performance. The individual examination is data; the trend is information that may support a decision.
 
 ## Decision Support Systems
+
+Vedi [[DSS]].
+
+Base triennale: [[Sistema Informativo]] · [[01 - BD - Introduzione#Il ciclo di gestione dei dati|BD — Il ciclo di gestione dei dati]]
 
 A **Decision Support System ([[DSS]])** is a set of interactive information technologies and analytical techniques designed to help people make decisions. The DSS is broader than the data warehouse:
 
@@ -105,6 +111,10 @@ Decision-support operations ask a different kind of question:
 The examples are domain-specific, but the distinction is general. A commercial organization records orders and later analyses demand. A hospital records admissions and later analyses outcomes and costs. A transport company records journeys and later analyses capacity and delays.
 
 ## OLTP and OLAP
+
+Vedi [[OLTP]] · [[OLAP]].
+
+Base triennale: [[Transazione]] · [[01 - BD - Introduzione#Il DBMS|BD — Il DBMS]]
 
 **On-Line Transactional Processing (OLTP)** supports day-to-day operations. A typical OLTP request reads or writes a small number of tuples, often through a predefined application operation.
 
@@ -167,6 +177,8 @@ Consequently, data warehousing emphasizes accessibility for non-specialists, int
 
 ## Definition and Fundamental Properties of a Data Warehouse
 
+Vedi [[Data Warehouse]].
+
 A data warehouse is a collection of data designed to support decision-making processes. According to the classical definition, it is **subject-oriented, integrated, time-variant, and non-volatile**. When we say "Integrated" we mean that the source of information/data comes from different databases and are being manipulated in a way to be more useful for a possible analysis. 
 
 ### Subject-Oriented Analysis
@@ -178,6 +190,8 @@ A warehouse is instead organized around stable **subjects of analysis**, such as
 This shift allows information about the same subject to be combined across operational boundaries. For example, customer information may be distributed among sales, support, billing, and marketing systems. A subject-oriented warehouse reconciles those fragments so that the customer can be analysed as a coherent entity.
 
 ### Integrated and Consistent Data
+
+Base triennale: [[Vincolo di Integrità]] · [[Base di Dati]]
 
 Warehouse data comes from multiple operational databases and possibly external sources. Integration produces a unified view by resolving heterogeneity in:
 
@@ -193,6 +207,8 @@ Integration does not usually add new observations about reality. It mainly **rea
 Notice that **External Sources** comes from open databases or, in general, open data that are available Online. Never understimate how powerfull are those data and how easy are accessible. Many people don't know that they even exists and where to find them.
 
 ### Evolution over Time
+
+Base triennale: [[Eventi e Storicizzazione]] · [[05 - BD - Progettazione Concettuale#Pattern, rappresentazione di aspetti dinamici|BD — Aspetti dinamici]]
 
 Operational databases normally focus on current state. When a value changes, the previous value may be overwritten. A warehouse must support historical analysis, so it stores observations covering a longer time interval and grows through periodic loading.
 
@@ -318,6 +334,8 @@ But what about the Meta-Data? By meta data here we mean those extra tables/datab
 
 # ETL: Extraction, Cleansing, Transformation, and Loading
 
+Vedi [[ETL]].
+
 ETL is very massive concept, there are massive tools sold by vendors like Oracles or many opensource. There is another course that talks only about this. We are just going to talk what actually this fucking thing is. 
 
 **ETL** is the process that extracts data from sources, improves and integrates it, converts it to the target representation, and loads it into the warehouse. At an abstract level, ETL aims to produce a single, high-quality, detailed view of relevant source data. This process is also called **reconciliation**.
@@ -368,6 +386,8 @@ Cleansing rules may reject a record, repair it, standardize it, flag it for revi
 
 ## Transformation
 
+Base triennale: [[Valore Nullo]] · [[Vincolo di Integrità]]
+
 ![[Pasted image 20260902161324.png]]
 
 Transformation maps heterogeneous source representations into the warehouse representation. The mapping can be difficult because sources may contain different schemas, units, encodings, and levels of granularity, as well as unstructured text that hides useful information.
@@ -409,6 +429,8 @@ Loading is not just insertion. A reliable load must coordinate referential integ
 
 **WE WILL CONCENTRATE MORE IN THE ETL PART IN THE O-LAB PART**. Howewer Loading we have the problem of "when do you move data": We have to decide something like "everynight", and the decision is up to the company.
 # The Multidimensional Data Model
+
+Vedi [[Multidimensional Data Model]].
 
 The question now is: Well, now what do we have in the data warehouse? a multidimensional data: what it is? See the Three dimensional sales cube example later.
 
@@ -565,6 +587,10 @@ Notice: every cell can be interpreted as a tuple (product, store, date): i could
 Now when we see a cube, we should also be able to see the hierarchie behind of it.
 
 ## Hierarchies and Functional Dependencies
+
+Vedi [[Functional Dependency]] · [[Functional Dependency vs Key Constraint]].
+
+Base triennale: [[Superchiave e Chiave]] · [[Normalizzazione e Denormalizzazione]]
 
 ![[Pasted image 20260902172412.png]]
 
@@ -799,6 +825,8 @@ All products
 
 #### Traduzione del roll-up in SQL
 
+Base triennale: [[Group By e Having]] · [[03 - BD - SQL#Raggruppamenti, group by|BD — Raggruppamenti]]
+
 In uno star schema potremmo avere:
 
 ```text
@@ -1002,6 +1030,8 @@ These operations correspond to familiar relational ideas, but are expressed in a
 
 ## Aggregation
 
+Base triennale: [[Operatori Aggregati]] · [[Group By e Having]]
+
 ![[Pasted image 20260903181625.png]]
 ![[Pasted image 20260903181652.png]]
 
@@ -1121,6 +1151,8 @@ An OLAP session is a **navigation path** through a fact. The user changes viewpo
 Results are multidimensional even when displayed as two-dimensional tables. Multiple headers, nested rows and columns, colours, and interactive controls preserve the dimensional structure in a form a screen can display.
 
 ## Functional Dependencies Revisited
+
+Base triennale: [[Superchiave e Chiave]] · [[Normalizzazione e Denormalizzazione]]
 
 For a relation schema $R(A_1,\ldots,A_n)$, a functional dependency
 
@@ -1281,6 +1313,10 @@ The multidimensional model is a conceptual and user-facing abstraction. It can b
 
 ## ROLAP
 
+Vedi [[ROLAP and MOLAP]].
+
+Base triennale: [[Modello Relazionale]] · [[SQL]]
+
 ![[Pasted image 20260904102624.png]]
 
 **Relational OLAP (ROLAP)** implements multidimensional analysis on a **relational DBM**S. It benefits from mature relational technology, SQL, established administration experience, scalability, and broad availability.
@@ -1436,6 +1472,8 @@ The table illustrates that facts are events or evolving observations. The partic
 
 # Conceptual Modelling for Data Warehouses
 
+Base triennale: [[Modello Entità-Relazione]] · [[Metodologia di Progettazione Concettuale]]
+
 Conceptual modelling documents the meaning of warehouse data independently of physical tables or a specific OLAP product. Accurate conceptual design is necessary for completeness, communication, and later logical design.
 
 Although the Entity-Relationship model can technically represent relevant entities and relationships, it does not treat facts, dimensions, measures, hierarchies, and aggregation behaviour as first-class concepts. A large ER schema often hides the analytical structure users need to discuss.
@@ -1443,6 +1481,8 @@ Although the Entity-Relationship model can technically represent relevant entiti
 The course therefore adopts the **Dimensional Fact Model (DFM)**.
 
 ## The Dimensional Fact Model (DMF)
+
+Vedi [[Dimensional Fact Model]].
 
 DFM is a graphical conceptual model for data marts. It is intended to:
 
@@ -1501,6 +1541,8 @@ product -> type -> category -> department
 defines progressively coarser aggregation levels. Hierarchies are not arbitrary drawing conventions: their arcs encode functional dependencies that must hold in the data.
 
 ## Relationship with ER Diagrams
+
+Base triennale: [[Modello Entità-Relazione]] · [[Relazione ER]] · [[Vincoli di Cardinalità]]
 
 ![[Pasted image 20260904170330.png]]
 
@@ -1571,6 +1613,8 @@ $$
 Neither category nor country alone determines the tax rate. In an ER model this corresponds naturally to an attribute of a relationship between the participating concepts. In a relational implementation it usually becomes a separate table keyed by the determining attributes.
 
 ## Optional Attributes and Measures
+
+Base triennale: [[Valore Nullo]] · [[05 - BD - Progettazione Concettuale#Vincoli di cardinalità sugli attributi|BD — Cardinalità sugli attributi]]
 
 ![[Pasted image 20260914121625.png]]
 
@@ -1659,6 +1703,8 @@ In the ED diagrams is like not having the (1,1) cardinality in the relation betw
 
 ## Additivity
 
+Vedi [[Additivity of Measures]].
+
 ![[Pasted image 20260914143542.png]]
 
 ![[Pasted image 20260914143557.png]]
@@ -1720,6 +1766,8 @@ In practical terms, facts must be brought to a common grain before comparison. J
 
 ## Integrity Constraints in DFM
 
+Base triennale: [[Vincolo di Integrità]] · [[Vincolo Esterno]]
+
 Not every relevant rule can be represented by the diagram. Additional integrity constraints may be documented as explicit sentences. Common examples include:
 
 - conditions governing missing dimensional values;
@@ -1732,6 +1780,8 @@ These constraints are part of the model, not optional commentary. They guide ETL
 
 # Logical Models for Data Marts
 
+Base triennale: [[Traduzione Diretta]] · [[06 - BD - Progettazione Logica#6.3 Traduzione diretta nel modello relazionale|BD 6.3 — Traduzione diretta]]
+
 Conceptual modelling is independent of the technology chosen during architectural design. Logical modelling is not: it must translate the conceptual facts and dimensions into structures supported by the target system.
 
 Two principal alternatives are:
@@ -1742,6 +1792,8 @@ Two principal alternatives are:
 The remainder of the course concentrates on ROLAP and on the relational structures that implement facts, measures, dimensions, and hierarchies.
 
 # ROLAP: The Star Schema
+
+Vedi [[Star Schema]].
 
 ![[Pasted image 20260914143722.png]]
 
@@ -1775,6 +1827,10 @@ SALES(keyD, keyS, keyP, quantity, receipts, numberOfCustomers)
 The dimension keys in the fact table define the cube coordinates. Joining a fact row to the dimensions reconstructs its multidimensional context.
 
 ## Surrogate Keys
+
+Vedi [[Surrogate Key]].
+
+Base triennale: [[Chiave Primaria]] · [[Identificatore Principale]] · [[Foreign Key]]
 
 A **surrogate key** is an identifier generated for warehouse purposes rather than inherited directly from a source business system. Surrogate keys are useful because:
 
@@ -1964,6 +2020,10 @@ This separation keeps repeated descriptive values out of the very large fact tab
 
 ## Why Dimension Tables Are Denormalized
 
+Vedi [[Third Normal Form 3NF]].
+
+Base triennale: [[Normalizzazione e Denormalizzazione]] · [[06 - BD - Progettazione Logica#Accorpamento caso 4, per denormalizzazione|BD — Accorpamento per denormalizzazione]]
+
 In a product dimension, dependencies such as
 
 ```text
@@ -2087,6 +2147,8 @@ Unlike a dense multidimensional array, a ROLAP fact table stores only dimensiona
 
 ## Integrity Constraints in a Star Schema
 
+Base triennale: [[Foreign Key]] · [[02 - BD - Modello Relazionale#Integrità referenziale|BD — Integrità referenziale]]
+
 The relational representation inherits the semantic constraints of the conceptual model.
 
 - Dimension and measure attributes are non-null by default in the course notation; optional attributes are marked explicitly.
@@ -2098,6 +2160,8 @@ The relational representation inherits the semantic constraints of the conceptua
 A warehouse often uses an “unknown” dimension member instead of a null foreign key so that an incomplete fact remains joinable and visible in quality analysis.
 
 ## OLAP Queries over a Star Schema
+
+Base triennale: [[Join]] · [[Group By e Having]]
 
 Joining the fact table to all dimension tables produces a multidimensional view:
 
@@ -2140,6 +2204,8 @@ The SQL operators have a clear multidimensional interpretation:
 | Selected columns | Determine the visible dimensions and measures. |
 
 # The Snowflake Schema
+
+Vedi [[Snowflake Schema]].
 
 ![[Pasted image 20260915164049.png]]
 
@@ -2205,6 +2271,8 @@ The choice should be workload-driven. Snowflaking a small dimension purely for t
 
 ## Correct Snowflake Decomposition
 
+Base triennale: [[06 - BD - Progettazione Logica#Decomposizione verticale|BD — Decomposizione verticale]] · [[Normalizzazione e Denormalizzazione]]
+
 ![[Pasted image 20260915170843.png]]
 
 When a dimension is decomposed at a hierarchy attribute, the new relation must include every attribute that directly or transitively depends on the natural key of that hierarchy level.
@@ -2241,6 +2309,8 @@ GROUP BY c.storeCity, d.week, t.type;
 The analytical request has not changed. Only its relational implementation is more elaborate.
 
 # Logical Design
+
+Base triennale: [[Ristrutturazione dello Schema Logico]] · [[Modello di Costo]]
 
 ![[Pasted image 20260915171008.png]]
 
@@ -2320,6 +2390,8 @@ The designer must decide whether to use the natural composite key or introduce a
 
 ## Translating Shared Hierarchies
 
+Base triennale: [[ISA e Generalizzazione]] · [[Eliminazione delle ISA]]
+
 ![[Pasted image 20260915191312.png]]
 
 If two hierarchies contain exactly the same attributes, the dimension table should not be duplicated. Its key is imported into the fact table more than once, with role-specific foreign-key names.
@@ -2373,6 +2445,8 @@ Suppose a sale of 100 monetary units concerns a book with two authors. Joining w
 Weights are not always appropriate. If the analytical question is “How many authors are associated with sold books?”, allocation is different from revenue attribution. The measure semantics and intended aggregation must determine bridge usage.
 
 ## Materialized View
+
+Base triennale: [[Vista]] · [[03 - BD - SQL#Viste|BD — Viste]]
 
 Immaginiamo che `FACT_SALE` contenga un miliardo di righe e che venga eseguita continuamente questa analisi:
 

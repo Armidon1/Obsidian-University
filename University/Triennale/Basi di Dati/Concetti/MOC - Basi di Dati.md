@@ -73,4 +73,4 @@ flowchart LR
 - **I vincoli che il diagramma non esprime**: [[Vincolo Esterno]] → [[Vincolo di Integrità]] → [[Trigger]].
 - **Oltre il relazionale**: [[Join]] (costoso) → [[Graph Database]] → [[Regular Path Query]]; [[Modello Relazionale]] (rigido) → [[Database Documentale MongoDB]].
 
-Collegamenti con altri corsi: [[Data Managment - 1 - Introduction|Data Management]] (magistrale), [[SQL Injection]] (Ethical Hacking), [[12 - SO - File System]] (Sistemi Operativi).
+Collegamenti con altri corsi: [[01 - DM - Introduction|Data Management]] (magistrale, mappa: [[00 - Data Management MOC]]), [[SQL Injection]] (Ethical Hacking), [[12 - SO - File System]] (Sistemi Operativi).

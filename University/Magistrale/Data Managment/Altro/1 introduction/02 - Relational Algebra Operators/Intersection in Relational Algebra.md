@@ -49,3 +49,6 @@ The exact support for `INTERSECT ALL` is DBMS-specific. Standard `INTERSECT` fol
 - [[Equijoin]]
 - [[Derived Operators in Relational Algebra]]
 
+> [!info] In depth
+> - [[01 - DM - Introduction#Intersection|Lecture 1 — Intersection]]
+> - Map: [[00 - Data Management MOC]]
