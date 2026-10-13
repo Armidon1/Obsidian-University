@@ -429,12 +429,12 @@ f:  movl $2, %eax     # void f() { eax = 2; }
 
 Con il codice agli indirizzi `00001f86 call 00001f94`, `00001f8b imull`, `00001f94 movl`, `00001f99 ret`:
 
-| # | %eip prima | %eax prima | istruzione | %eip dopo | %eax dopo |
-| --- | --- | --- | --- | --- | --- |
-| 1 | 00001f86 | – | `call 00001f94` | 00001f94 | – |
-| 2 | 00001f94 | – | `movl $2,%eax` | 00001f99 | 2 |
-| 3 | 00001f99 | 2 | `ret` | 00001f8b | 2 |
-| 4 | 00001f8b | 2 | `imull $3,%eax` | 00001f8e | 6 |
+| #   | %eip prima | %eax prima | istruzione      | %eip dopo | %eax dopo |
+| --- | ---------- | ---------- | --------------- | --------- | --------- |
+| 1   | 00001f86   | –          | `call 00001f94` | 00001f94  | –         |
+| 2   | 00001f94   | –          | `movl $2,%eax`  | 00001f99  | 2         |
+| 3   | 00001f99   | 2          | `ret`           | 00001f8b  | 2         |
+| 4   | 00001f8b   | 2          | `imull $3,%eax` | 00001f8e  | 6         |
 
 ![[SDC-p054-1.png]]
 
@@ -460,7 +460,25 @@ Usa le stesse condizioni di `Jcc`, ma invece di saltare **copia**. Riduce il num
 | --- | --- |
 | `TEST S,D` | calcola S & D, aggiorna i condition code e scarta il risultato |
 
-È a `AND` quello che `CMP` è a `SUB`. Uso tipico: `testl %eax,%eax` + `jz L` (equivale a `cmpl $0,%eax` + `jz L`), perché l'AND di un valore con sé stesso è zero se e solo se il valore è zero.
+test eax, eax serve a chiedere "EAX vale zero?" per poter decidere il salto jnz subito dopo. Qui, però, è un'istruzione ridondante.
+
+**Cosa fa test**
+Il parallelo giusto è questo:
+
+| Istruzione  | Calcola | Salva il risultato? | Aggiorna i flag? |
+| ----------- | ------- | ------------------- | ---------------- |
+| `sub a, b`  | a − b   | sì                  | sì               |
+| `cmp a, b`  | a − b   | **no**              | sì               |
+| `and a, b`  | a & b   | sì                  | sì               |
+| `test a, b` | a & b   | **no**              | sì               |
+
+Quindi test sta ad and come cmp sta a sub: fa l'operazione, aggiorna i flag e butta via il risultato. Non aggiorna "i flag della cmp": aggiorna gli stessi flag (ZF, SF, …) usando un AND al posto di una sottrazione.
+
+Con test eax, eax si fa l'AND di EAX con sé stesso, e il risultato è EAX stesso. Quindi:
+- ZF = 1 se e solo se EAX = 0;
+- SF = bit di segno di EAX.
+
+In pratica è un modo idiomatico di scrivere cmp eax, 0. I compilatori lo preferisc
 
 ### SETcc
 
