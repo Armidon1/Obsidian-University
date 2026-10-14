@@ -608,7 +608,7 @@ $$
 - **subject**: la risorsa descritta;
 - **predicate**: la proprietà o relazione; the object can be a value of the property
 - **object**: un'altra risorsa oppure un valore letterale.
-
+ 
 Notice that we are focussing a lot on **resources** and don't confuse **objects** and **values**. Values can be strings into attributes while objects are something that regards OOP (object oriented programming) where an object can contain some attribute expressed as a value. Impeded mismatch problem = you have to understand when you deal with objects instead of values.
 
 The idea is to describe everything about resources then you can spread it over the semantic web. 
@@ -655,6 +655,40 @@ for isntance ISBN system identifies a specific book, however you cannot find the
 - una **URN** fornisce un nome persistente senza specificare dove recuperare la risorsa, ad esempio `urn:isbn:0-486-27557-4`;
 - una **IRI** estende le URI permettendo caratteri dell'Universal Character Set.
 
+#### Differenze ed esempi
+
+Tutti questi termini riguardano l'**identificazione delle risorse**, ma hanno ruoli diversi:
+
+| Termine | Significato | Esempio |
+|---|---|---|
+| **URI — Uniform Resource Identifier** | Termine generale: identifica una risorsa. | `https://example.org/Marco` oppure `urn:isbn:9780140328721` |
+| **URL — Uniform Resource Locator** | Identifica una risorsa indicando anche **come e dove accedervi**. | `https://example.org/documento.pdf` |
+| **URN — Uniform Resource Name** | Identifica una risorsa mediante un **nome**, senza indicare dove recuperarla. | `urn:isbn:9780140328721` |
+| **IRI — Internationalized Resource Identifier** | Estende la sintassi delle URI consentendo anche caratteri Unicode, come lettere accentate. | `https://example.org/città` |
+
+> [!important] Relazione tra i termini
+> **URI è la categoria generale**: URL e URN sono forme di URI. IRI estende il modo in cui si può scrivere un identificatore, consentendo anche caratteri Unicode oltre ai caratteri ASCII ammessi nelle URI.
+
+Consideriamo un libro:
+
+- La **URN** `urn:isbn:9780140328721` identifica una determinata edizione del libro, ma non indica da dove scaricarla.
+- Una **URL** come `https://biblioteca.example/libro.pdf` indica un punto di accesso a un file.
+- Entrambe sono **URI**.
+- Un identificatore con caratteri come `à` può essere scritto direttamente come **IRI**; nella corrispondente URI quei caratteri vengono codificati, per esempio `à` come `%C3%A0`: `https://example.org/citt%C3%A0`.
+
+#### Il ruolo delle IRI in RDF
+
+In RDF, l'IRI serve soprattutto a **dare un'identità alla risorsa**:
+
+```turtle
+<https://example.org/Marco> <https://example.org/conosce> <https://example.org/Maria> .
+```
+
+Queste IRI identificano rispettivamente Marco, la proprietà “conosce” e Maria.
+
+> [!note] Identificare una risorsa non richiede una pagina web
+> Anche se le IRI dell'esempio hanno la forma di indirizzi HTTPS, **RDF non richiede che esista una pagina web a quegli indirizzi**. Possono identificare persone, luoghi o proprietà, senza che sia necessario recuperarne una rappresentazione sul Web.
+
 
 ### Literal
 
@@ -673,18 +707,166 @@ Un literal può essere:
 
 ### Vocabolari e namespace
 
-I vocabolari assegnano un significato condiviso a URI note:
+#### A cosa serve un vocabolario
 
-- `rdf:` - vocabolario base RDF;
-- `rdfs:` - classi, proprietà, sottoclassi, dominio e codominio;
-- `dc:` / `dcterms:` - Dublin Core;
-- `foaf:` - persone e relazioni sociali.
+RDF stabilisce la struttura delle affermazioni — **soggetto, predicato, oggetto** — ma per descrivere un dominio servono anche termini che indichino *quali* classi e proprietà stiamo usando. Un **vocabolario RDF** (*vocabulary*) raccoglie questi termini, identificati da IRI, e ne documenta il significato; può anche esprimere relazioni e condizioni semantiche tramite RDF Schema.
 
-Il prefisso è solo un'abbreviazione sintattica. Ad esempio:
+Consideriamo due applicazioni che scrivono:
+
+```turtle
+app1:Marco app1:conosce app1:Maria .
+app2:Marco app2:knows app2:Maria .
+```
+
+Un lettore umano può intuire che le proprietà sono simili, ma **IRI diverse non sono automaticamente riconosciute come equivalenti**. Per condividere i dati, le applicazioni possono riutilizzare una proprietà comune, come `foaf:knows`.
+
+> [!important] Perché riutilizzare un vocabolario
+> Usare gli stessi identificatori per classi e proprietà rende esplicito un significato condiviso e facilita l'integrazione dei dati. Per riconoscere anche le stesse persone fra dataset occorre inoltre condividere, o collegare opportunamente, gli identificatori degli individui: usare `foaf:knows` da solo non risolve questo secondo problema.
+
+#### Vocabolario, namespace e prefisso
+
+Sono concetti collegati, ma distinti:
+
+| Concetto | Funzione | Esempio |
+|---|---|---|
+| **Vocabolario** | Definisce termini e significati per descrivere un dominio. | FOAF descrive persone e relazioni sociali. |
+| **Namespace** | Fornisce una base comune alle IRI dei termini. | `http://xmlns.com/foaf/0.1/` |
+| **Prefisso** | Abbrevia quella base nel documento. | `foaf:` |
+| **Termine** | Identifica una particolare classe o proprietà. | `foaf:Person` oppure `foaf:knows` |
+
+In Turtle la dichiarazione:
 
 ```turtle
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 ```
+
+permette di scrivere `foaf:knows` al posto di `<http://xmlns.com/foaf/0.1/knows>`. Si concatena la base del namespace con il nome locale `knows`.
+
+> [!note] Conta l'IRI completa
+> Il nome del prefisso è una scelta locale: dichiarando `@prefix sociale: <http://xmlns.com/foaf/0.1/> .`, anche `sociale:knows` identifica la stessa proprietà. Viceversa, due termini scritti entrambi `foaf:knows` in documenti con associazioni diverse del prefisso possono identificare proprietà diverse. La dichiarazione del prefisso abbrevia le IRI; non importa un vocabolario e non attiva un motore di inferenza.
+
+#### I principali vocabolari della lezione
+
+| Vocabolario | Prefisso usuale | Namespace | Scopo |
+|---|---|---|---|
+| **RDF** | `rdf:` | `http://www.w3.org/1999/02/22-rdf-syntax-ns#` | Termini fondamentali: appartenenza a classi, proprietà e descrizione di affermazioni. |
+| **RDF Schema** | `rdfs:` | `http://www.w3.org/2000/01/rdf-schema#` | Descrivere classi, gerarchie, dominio e codominio delle proprietà. |
+| **Dublin Core** | `dc:` / `dcterms:` | `http://purl.org/dc/elements/1.1/` / `http://purl.org/dc/terms/` | Metadati delle risorse, come titolo e autore. |
+| **FOAF — Friend of a Friend** | `foaf:` | `http://xmlns.com/foaf/0.1/` | Persone, nomi, conoscenze e altre informazioni sociali. |
+
+> [!warning] Correzione — namespace RDFS nelle slide
+> La slide “Vocabularies” riporta `https://www.w3.org/2000/01/rdf-schema`. Il namespace standard dei termini RDFS è invece **`http://www.w3.org/2000/01/rdf-schema#`**: protocollo e `#` finale fanno parte dell'identificatore e non vanno cambiati arbitrariamente.
+
+#### RDF: il vocabolario di base
+
+Il vocabolario `rdf:` comprende i termini già incontrati o introdotti nelle sezioni successive:
+
+| Termine | Significato |
+|---|---|
+| `rdf:type` | Proprietà che collega una risorsa a una classe di cui è istanza. |
+| `rdf:Property` | Classe delle proprietà RDF. |
+| `rdf:Statement` | Classe delle risorse che rappresentano affermazioni reificate. |
+| `rdf:subject`, `rdf:predicate`, `rdf:object` | Proprietà che descrivono i tre componenti di un'affermazione reificata. |
+
+```turtle
+ex:Marco rdf:type foaf:Person .
+ex:conosce rdf:type rdf:Property .
+```
+
+La prima tripla dice che **Marco è una persona**; la seconda che **`ex:conosce` è una proprietà**. `rdf:Property` è una classe, mentre `rdf:type` è il predicato delle due affermazioni.
+
+In Turtle si può abbreviare `rdf:type` con `a`: `ex:Marco a foaf:Person .` esprime esattamente la stessa tripla. La reificazione è spiegata in [[#Reification e affermazioni di ordine superiore]].
+
+#### RDFS: descrivere il vocabolario stesso
+
+RDFS offre termini per descrivere le classi e le proprietà che usiamo nei dati:
+
+| Termine | Lettura intuitiva |
+|---|---|
+| `rdfs:Resource` | Classe di tutte le risorse. |
+| `rdfs:Class` | Classe delle classi. |
+| `rdfs:subClassOf` | Ogni istanza della prima classe è anche istanza della seconda. |
+| `rdfs:subPropertyOf` | Ogni coppia collegata dalla prima proprietà è collegata anche dalla seconda. |
+| `rdfs:domain` | Indica una classe di appartenenza dei soggetti della proprietà. |
+| `rdfs:range` | Indica una classe, eventualmente un datatype, di appartenenza degli oggetti della proprietà. |
+
+Ad esempio, possiamo definire una classe del nostro dominio riutilizzando una classe FOAF:
+
+```turtle
+ex:Studente rdf:type rdfs:Class .
+ex:Studente rdfs:subClassOf foaf:Person .
+ex:Marco rdf:type ex:Studente .
+```
+
+Le triple dichiarano che Studente è una classe, che ogni studente è una persona e che Marco è uno studente. Con la semantica RDFS si può quindi dedurre `ex:Marco rdf:type foaf:Person .`.
+
+> [!warning] Dominio e codominio non sono controlli SQL
+> Una dichiarazione `ex:conosce rdfs:domain foaf:Person .`, insieme a `ex:Marco ex:conosce ex:Maria .`, permette di **dedurre che Marco è una persona**. Non richiede che il tipo fosse già dichiarato per accettare la tripla. RDFS descrive conseguenze logiche; la validazione dei dati è un problema distinto.
+
+Le regole e il modello formale sono approfonditi in [[#Knowledge Graph e RDFS]].
+
+#### Dublin Core: metadati delle risorse
+
+I **metadati** sono informazioni che descrivono una risorsa: titolo, autore, data, argomento e così via. Dublin Core fornisce termini condivisi per esprimerli.
+
+```turtle
+@prefix ex: <https://example.org/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:AppuntiRDF dcterms:title "Introduzione a RDF"@it .
+ex:AppuntiRDF dcterms:creator ex:Marco .
+ex:AppuntiRDF dcterms:created "2026-10-14"^^xsd:date .
+```
+
+Le triple indicano il titolo in italiano, il creatore della risorsa e la data di creazione. `xsd:date` identifica il tipo del literal, riprendendo la sezione [[#Literal]].
+
+> [!note] `dc:` e `dcterms:`: controllare sempre la dichiarazione
+> Per convenzione `dc:` indica spesso gli elementi Dublin Core originali e `dcterms:` il vocabolario DCMI Terms più ampio. I due namespace hanno termini distinti, anche quando il nome locale coincide: con queste associazioni, `dc:title` e `dcterms:title` hanno IRI diverse. Nelle slide e in alcuni esempi di questa nota `dc:` abbrevia invece `http://purl.org/dc/terms/`: è valido, perché è la dichiarazione a determinare l'IRI completa.
+
+#### FOAF: persone e relazioni sociali
+
+FOAF fornisce, fra gli altri, la classe `foaf:Person` e le proprietà `foaf:name`, `foaf:knows`, `foaf:homepage` e `foaf:mbox`.
+
+```turtle
+@prefix ex: <https://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+ex:Marco rdf:type foaf:Person .
+ex:Marco foaf:name "Marco" .
+ex:Marco foaf:knows ex:Maria .
+ex:Marco foaf:homepage <https://example.org/marco/> .
+ex:Marco foaf:mbox <mailto:marco@example.org> .
+```
+
+Leggiamo: Marco è una persona, ha nome “Marco”, conosce Maria, ha una homepage e una casella di posta. Il nome è un **literal**; Maria, la homepage e la casella di posta sono identificate da **IRI**. `foaf:knows` esprime una conoscenza fra persone: non implica da sola che la relazione sia transitiva.
+
+#### Combinare vocabolari e termini propri
+
+Uno stesso grafo può riutilizzare più vocabolari e aggiungere termini definiti dall'applicazione:
+
+```turtle
+@prefix ex: <https://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+ex:Studente rdf:type rdfs:Class .
+ex:Studente rdfs:subClassOf foaf:Person .
+ex:Marco rdf:type ex:Studente .
+ex:Marco foaf:name "Marco" .
+ex:AppuntiRDF dcterms:title "Appunti di Data Management" .
+ex:AppuntiRDF dcterms:creator ex:Marco .
+```
+
+`ex:` identifica risorse e termini nostri; `rdf:` e `rdfs:` descrivono tipi e schema; `foaf:` descrive la persona; `dcterms:` descrive gli appunti. Tutto rimane un unico insieme di triple RDF.
+
+> [!summary] Come leggere un termine
+> Per leggere `foaf:Person`, espandi il prefisso e cerca il significato del termine nel vocabolario. Poi considera il ruolo nella tripla: in `ex:Marco rdf:type foaf:Person`, Marco è l'individuo, `rdf:type` è la proprietà e `foaf:Person` è la classe. Il prefisso da solo non stabilisce se un termine sia una classe o una proprietà.
+
+Riferimenti per l'approfondimento: [W3C — RDF Vocabularies](https://www.w3.org/TR/rdf11-primer/#section-vocabulary), [RDF Schema 1.1](https://www.w3.org/TR/rdf-schema/), [DCMI Metadata Terms](https://www.dublincore.org/specifications/dublin-core/dcmi-terms/) e [FOAF Vocabulary Specification](https://xmlns.com/foaf/spec/).
 
 ### Blank node
 
@@ -706,6 +888,36 @@ Nel disegno il blank node è il cerchio rosso senza etichetta: è un nodo vero d
 > [!warning] Blank node non è una variabile
 > In un dataset RDF denota una specifica risorsa anonima locale al grafo. In una query SPARQL, invece, `?x` è una variabile che può essere associata a risorse diverse.
 
+### Exercise
+
+Write an RDF dataset expressing the follwing facts:
+- John is friend of Mary 
+- Mary is friend of Ann since '2019-03-12'
+Use the URI that you like (you can assume an empty prefix)
+
+```
+@prefic ex: <http://www.example.com/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+ex:John foaf:knows ex:Mary
+ex:Mary foaf:isFriendOf _:x
+_:x foaf:date '2019-03-12'
+_:x foaf:name ex:Ann 
+```
+
+sol 6.1 solution:
+```
+@prefix : <http://www.example.com/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:John :isFriendOf :Mary .
+
+:Mary :isFriendOf :Ann .
+
+_:friendship1 :from :Mary .
+_:friendship1 :to :Ann .
+_:friendship1 :since "2019-03-12"^^xsd:date .
+```
 ### Relazioni n-arie in RDF
 
 Base triennale: [[Reificazione]] (la stessa idea nel modello ER) · [[05 - BD - Progettazione Concettuale#Pattern, relazioni binarie vs n-arie|BD — Relazioni binarie vs n-arie]]
