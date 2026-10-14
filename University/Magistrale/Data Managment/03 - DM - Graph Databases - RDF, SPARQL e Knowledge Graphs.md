@@ -596,7 +596,7 @@ Il modello standard è **RDF** e il linguaggio di query standard è **SPARQL**. 
 # RDF - Resource Description Framework
 
 Vedi [[RDF]].
-
+it is usefull becaue it works well with machines: web semantics. create a network of resources. using XML as a basic launguage over expressing informations. XML in fact was created with the idea to use a standard data exchange.
 ### Modello RDF
 
 RDF è un modello di dati neutrale rispetto al dominio e all'applicazione. Un database RDF è un insieme di triple:
@@ -606,8 +606,12 @@ $$
 $$
 
 - **subject**: la risorsa descritta;
-- **predicate**: la proprietà o relazione;
+- **predicate**: la proprietà o relazione; the object can be a value of the property
 - **object**: un'altra risorsa oppure un valore letterale.
+
+Notice that we are focussing a lot on **resources** and don't confuse **objects** and **values**. Values can be strings into attributes while objects are something that regards OOP (object oriented programming) where an object can contain some attribute expressed as a value. Impeded mismatch problem = you have to understand when you deal with objects instead of values.
+
+The idea is to describe everything about resources then you can spread it over the semantic web. 
 
 Esempio:
 
@@ -626,6 +630,7 @@ La slide mostra il passaggio da una singola tripla al grafo: la risorsa `http://
 
 Aggiungendo altre triple sullo stesso soggetto (`dc:publisher "W3C"`, `dc:date "2014-02-25"`) il nodo diventa il centro di una piccola stella: ogni proprietà è un arco uscente. I literal compaiono solo come nodi terminali (in posizione di oggetto), come spiega la tabella qui sotto.
 
+
 ### URI, literal e blank node
 
 | Elemento | Soggetto | Predicato | Oggetto | Significato |
@@ -643,10 +648,13 @@ Una **URI** identifica una risorsa logica o fisica:
 ```text
 scheme:[//authority]path[?query][#fragment]
 ```
+Examples of scheme: https, ldap, mailto, tel, [[FTP]]
 
+for isntance ISBN system identifies a specific book, however you cannot find the actual location of that resource,
 - una **URL** identifica e indica anche come localizzare una risorsa;
 - una **URN** fornisce un nome persistente senza specificare dove recuperare la risorsa, ad esempio `urn:isbn:0-486-27557-4`;
 - una **IRI** estende le URI permettendo caratteri dell'Universal Character Set.
+
 
 ### Literal
 
