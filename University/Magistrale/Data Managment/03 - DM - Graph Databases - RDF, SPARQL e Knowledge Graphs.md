@@ -934,6 +934,7 @@ _:friendship1 :since "2019-03-12"^^xsd:date .
 
 Questo pattern è utile quando la relazione deve possedere attributi, come la data di inizio.
 
+è una [[Reificazione]] perché ovviamente abbiamo costruito una risorsa nuova come punto intermedio.
 ### Predicati anche come soggetti
 
 Poiché una URI può essere sia predicato sia soggetto, possiamo descrivere una proprietà:
@@ -948,6 +949,10 @@ Poiché una URI può essere sia predicato sia soggetto, possiamo descrivere una 
 ![[DM-L03-p071.png]]
 
 La figura evidenzia in rosso che `:knows` compare **due volte con ruoli diversi**: come etichetta dell'arco `:Marco → Maria` e come nodo, soggetto delle triple `rdf:type rdf:Property`, `rdfs:domain :Person` e `rdfs:range :Person`. È questo che permette a RDF di descrivere il proprio schema con lo stesso modello dei dati (idea ripresa in [[#Knowledge Graph e RDFS]]).
+
+quindi possiamo costruire i nostri predicati in questo modo: li rendo soggetti, uso rdf: come prefisso e credo delle regole.
+
+quindi la parte superiore è chiamata "intentional level"   mentre la parte inferiore "instance-level" (cioè quello che popola il database).
 
 ### Reification e affermazioni di ordine superiore
 
@@ -970,6 +975,8 @@ Poi si può aggiungere chi sostiene l'affermazione:
 _:stmt :claimedBy :NewYorkTimes .
 ```
 
+è estremamente **potente** questa cosa perché possiamo modellare anche **la provenienza dei dati**: tutti chiedono "chi è che ha detto questa cosa?" ed in questo modo abbiamo questo tool.
+
 ![[DM-L03-p076.png]]
 
 Nelle slide la stessa idea è disegnata così: il blank node (cerchio rosso) rappresenta l'affermazione intera; gli archi `rdf:subject`, `rdf:predicate`, `rdf:object` puntano ai suoi tre componenti (`:ABC`, `dc:creator`, `"Joe"`), `rdf:type` la classifica come `rdf:Statement`, e l'arco aggiuntivo `dc:creator → "The New York Times"` dice **chi ha fatto l'affermazione**. Le slide usano quindi `dc:creator` dove la nota usa `:claimedBy`: il significato è lo stesso (la fonte della dichiarazione).
@@ -980,6 +987,11 @@ Nelle slide la stessa idea è disegnata così: il blank node (cerchio rosso) rap
 #### Esercizio: credenza e data
 
 “John crede che Mary sia amica di Ann dal 12 marzo 2019”. Se la data descrive la relazione di amicizia, conviene prima trasformare l'amicizia in una risorsa e poi reificare o descrivere l'affermazione su quella risorsa. Una singola reificazione della tripla `Mary isFriendOf Ann` con una proprietà `since` rischia di confondere la data del fatto con la data della credenza.
+
+```
+ex:Mary feaf:isInFriendship _:x
+_x feaf:
+```
 
 ### Sintassi RDF
 
