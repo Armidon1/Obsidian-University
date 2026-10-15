@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="it">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RDF · Scheda di riferimento</title><link rel="stylesheet" href="../assets/teaching.css"></head>
+<body><main>
+<header><div class="eyebrow">Data Management / riferimento 01</div><h1>RDF, a colpo d’occhio.</h1><p class="intro">Il lessico e la sintassi necessari per scrivere le prime triple.</p><nav><a href="../lessons/0001-rdf-dalle-frasi-alle-triple.html">Apri la lezione e gli esercizi</a><a href="#glossario">Glossario</a><a href="#sintassi">Sintassi</a></nav></header>
+<section id="glossario"><h2>Glossario essenziale</h2><table><thead><tr><th>Termine</th><th>Significato</th><th>Esempio</th></tr></thead><tbody>
+<tr><td>Risorsa</td><td>Qualcosa che descrivi: persona, documento, classe, proprietà…</td><td>Mary, la classe Persona</td></tr>
+<tr><td>IRI</td><td>Identificatore di una risorsa. Usarlo in RDF non scarica automaticamente nulla.</td><td><code>https://example.org/Mary</code></td></tr>
+<tr><td>Literal</td><td>Un valore, per esempio una stringa o una data tipizzata.</td><td><code>"Mary"</code></td></tr>
+<tr><td>Tripla</td><td>Affermazione composta da soggetto, predicato e oggetto.</td><td><code>:John :isFriendOf :Mary .</code></td></tr>
+<tr><td>Predicato</td><td>IRI della proprietà che collega soggetto e oggetto.</td><td><code>:isFriendOf</code></td></tr>
+<tr><td>Grafo RDF</td><td>Insieme di triple; ripetere una tripla non aggiunge informazione.</td><td>Le tre righe dell’esempio sotto</td></tr>
+<tr><td>Dataset RDF</td><td>Organizza un grafo predefinito e zero o più grafi con nome.</td><td>In questa lezione lavoriamo su un solo grafo.</td></tr>
+<tr><td>Turtle</td><td>Sintassi testuale per scrivere un grafo RDF.</td><td><code>@prefix : &lt;https://example.org/&gt; .</code></td></tr>
+<tr><td>Prefisso</td><td>Abbrevia una base IRI nel documento.</td><td><code>:</code> è il prefisso vuoto.</td></tr>
+<tr><td>Namespace</td><td>Base comune usata per formare le IRI dei termini.</td><td><code>https://example.org/</code></td></tr>
+<tr><td>Vocabolario</td><td>Termini condivisi con definizioni, e talvolta relazioni formali.</td><td><code>rdf:type</code> viene dal vocabolario RDF.</td></tr>
+<tr><td>Classe / istanza</td><td>Una categoria e una risorsa che le appartiene.</td><td><code>:Mary rdf:type :Person .</code></td></tr>
+<tr><td>Blank node</td><td>Rappresenta qualcosa senza nominarlo con una IRI. Lo studieremo dopo.</td><td><code>_:x</code></td></tr>
+</tbody></table><p class="meta">Fonte: <a href="https://www.w3.org/TR/rdf11-concepts/">W3C, RDF 1.1 Concepts</a>, §§ 1, 3 e 4.</p></section>
+<section id="sintassi"><h2>Uno schema da riusare</h2><pre><code>@prefix : &lt;https://example.org/&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+
+:John :isFriendOf :Mary .
+:Mary :name "Mary" .
+:Mary rdf:type :Person .</code></pre><p><code>:Mary</code> abbrevia <code>&lt;https://example.org/Mary&gt;</code>. <code>a</code> può sostituire <code>rdf:type</code> nella posizione del predicato.</p><table><thead><tr><th>Posizione</th><th>Elementi ammessi in RDF 1.1</th></tr></thead><tbody><tr><td>Soggetto</td><td>IRI o blank node</td></tr><tr><td>Predicato</td><td>IRI</td></tr><tr><td>Oggetto</td><td>IRI, blank node o literal</td></tr></tbody></table><p>Una stringa non può fare da soggetto o predicato. Un termine che rappresenta una classe può essere l’oggetto di <code>rdf:type</code>.</p><p class="meta">Fonti: <a href="https://www.w3.org/TR/rdf11-concepts/#section-triples">W3C, triple</a>; <a href="https://www.w3.org/TR/turtle/#prefixed-name">Turtle, prefissi</a>; <a href="https://www.w3.org/TR/turtle/#abbrev">Turtle, abbreviazioni</a>.</p></section>
+<section><h2>Prima di consegnare un esercizio</h2><ul class="checklist"><li>Sto collegando la persona oppure il suo nome testuale?</li><li>La relazione punta nella direzione richiesta?</li><li>Ogni prefisso è dichiarato e ogni tripla termina con un punto?</li><li>Il predicato è una IRI? Ho scelto il termine del vocabolario giusto?</li><li>La data riguarda una persona o una relazione? Quest’ultimo caso richiede un passaggio di modellazione ulteriore.</li></ul><p>Questa scheda non sostituisce la specifica completa di Turtle. Riparti dalla <a href="../lessons/0001-rdf-dalle-frasi-alle-triple.html#esercizi">pratica guidata</a> e chiedimi in chat di spiegare i passaggi incerti.</p></section>
+<footer>Lessico comune alle prossime lezioni. Stampabile dal browser.</footer>
+</main></body></html>

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="it">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RDF · Dalle frasi alle triple</title><style id="lesson-styles">
+:root{color-scheme:light;--ink:#22332f;--muted:#566861;--paper:#faf8f2;--line:#d6ddd4;--green:#17664f;--tint:#edf2e9;--red:#a0332e;--gold:#e5be66;font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.65}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}main{max-width:900px;margin:auto;padding:48px 30px 70px}header{padding-bottom:30px;border-bottom:1px solid var(--line)}.eyebrow,nav,.meta,button,label,select,.tag,figcaption{font-family:system-ui,sans-serif}.eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:.7rem;color:var(--green);font-weight:700}h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.12;letter-spacing:-.035em;margin:.5em 0}h2{font-size:1.6rem;line-height:1.25;margin:0 0 20px}h3{font-size:1.13rem;line-height:1.3}.intro{font-size:1.15rem;max-width:690px}.meta,figcaption{font-size:.78rem;color:var(--muted)}nav{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:22px;font-size:.8rem}a{color:var(--green);text-underline-offset:3px}section{padding-top:36px;margin-top:14px}p{max-width:740px}code,pre,textarea{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{font-size:.84em}pre{background:#edf0e8;border:1px solid var(--line);border-radius:8px;padding:20px;overflow:auto;font-size:.8rem;line-height:1.7}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-family:system-ui,sans-serif;font-size:.73rem;text-transform:uppercase;letter-spacing:.04em}.callout{padding:16px 22px;border-left:3px solid var(--green);background:var(--tint);margin:24px 0}.callout p{margin:4px 0}.exercise{border:1px solid var(--line);border-radius:12px;padding:25px;margin:24px 0;background:#fffefa}.exercise h3{margin-top:0}.options{display:grid;gap:10px;border:0;padding:0;margin:20px 0}.options label{display:flex;align-items:baseline;gap:12px;border:1px solid var(--line);padding:12px 15px;border-radius:6px;font-size:.88rem;cursor:pointer}.options label:has(input:checked){border-color:var(--green);background:var(--tint)}button{background:var(--green);border:1px solid var(--green);border-radius:6px;color:white;padding:10px 18px;cursor:pointer;font-size:.84rem}button:hover{filter:brightness(.92)}button.secondary{background:transparent;color:var(--green)}button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.feedback{margin-top:16px;font-size:.94rem}.feedback[data-state=correct]{color:var(--green)}.feedback[data-state=incorrect]{color:var(--red)}.feedback:empty{display:none}textarea{display:block;width:100%;padding:16px;border:1px solid #8c9d91;border-radius:6px;min-height:145px;background:white;color:var(--ink);font-size:.82rem;line-height:1.8;margin:12px 0}details{margin-top:20px}summary{cursor:pointer;color:var(--green)}.actions{display:flex;gap:12px;flex-wrap:wrap}.graph{background:var(--tint);padding:22px;border-radius:8px;overflow:auto}.graph svg{display:block;width:100%;min-width:420px;height:auto}.graph text{font-family:system-ui,sans-serif;fill:var(--ink)}.graph line{stroke:var(--green);stroke-width:2}.graph rect{fill:var(--paper);stroke:var(--green)}footer{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;font-size:.82rem;color:var(--muted)}.progress{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--green);margin:18px 0}noscript{display:block;border:1px solid var(--red);padding:16px}.checklist li{margin:8px 0}@media(max-width:550px){main{padding:28px 18px}.exercise{padding:18px}th,td{padding:10px 5px;font-size:.8rem}}@media print{body{background:white;color:black}main{max-width:none;padding:0;font-size:11pt}.exercise{break-inside:avoid}button,nav,.progress{display:none}pre,.callout,.graph{background:white}a{color:inherit}details>*{display:block}textarea{min-height:110px}header{padding-bottom:10px}section{padding-top:20px;margin:0}h1{font-size:28pt}}
+
+</style></head>
+<body><main>
+<header><div class="eyebrow">Data Management / lezione 01 / 8–10 minuti</div><h1>Dalle frasi<br>alle triple.</h1><p class="intro">Alla fine saprai tradurre tre fatti in RDF e spiegare perché una persona e il suo nome si scrivono diversamente.</p><div class="meta">Obiettivo: capire le slide e svolgere gli esercizi del corso · Prima scrivi, poi controlla.</div><nav><a href="#idea">1. L’idea</a><a href="#identita">2. Identità e valori</a><a href="#esercizi">3. Mettiti alla prova</a><a href="../reference/rdf-primi-passi.html">Scheda di ripasso ↗</a></nav></header>
+<noscript>Per la correzione automatica abilita JavaScript. Le spiegazioni e le soluzioni espandibili restano leggibili anche senza.</noscript>
+<section id="idea"><h2>Una frase, tre pezzi.</h2><p>«John è amico di Mary» descrive un collegamento. RDF lo rappresenta con una <strong>tripla</strong>: soggetto, predicato, oggetto.</p><pre><code>:John      :isFriendOf      :Mary .
+ soggetto   predicato        oggetto</code></pre><p>Il soggetto è il punto di partenza; il predicato identifica la proprietà; l’oggetto è ciò a cui arrivi. In Turtle il punto chiude l’affermazione. <code>:isFriendOf</code> è una proprietà definita per questi esempi.</p>
+<figure class="graph"><svg viewBox="0 0 650 125" role="img" aria-label="John, soggetto, è collegato a Mary, oggetto, da un arco orientato etichettato isFriendOf"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#17664f"/></marker></defs><rect x="12" y="40" width="150" height="52" rx="12"/><text x="87" y="73" text-anchor="middle" font-size="20">:John</text><line x1="162" y1="66" x2="478" y2="66" marker-end="url(#arrow)"/><text x="320" y="44" text-anchor="middle" font-size="17">:isFriendOf</text><rect x="487" y="40" width="150" height="52" rx="12"/><text x="562" y="73" text-anchor="middle" font-size="20">:Mary</text></svg><figcaption>Il predicato etichetta l’arco. La freccia dà la direzione dell’affermazione.</figcaption></figure>
+<p>Più triple formano un <strong>grafo RDF</strong>. Turtle è il modo in cui lo scriviamo nel file; RDF è il modello. Senza dichiarazioni ulteriori, non aggiungiamo automaticamente né la relazione inversa né amicizie indirette.</p><p class="meta">Fonte: <a href="https://www.w3.org/TR/rdf11-concepts/#section-rdf-graph">W3C, RDF 1.1 Concepts — grafi e triple</a>.</p></section>
+<section id="identita"><h2>La persona e il suo nome.</h2><pre><code>:John :isFriendOf :Mary .
+:Mary :name "Mary" .</code></pre><p><strong><code>:Mary</code> identifica una persona.</strong> <strong><code>"Mary"</code> è un literal</strong>: qui, il valore testuale del suo nome. John è amico della persona; la stringa serve a scrivere come si chiama.</p><div class="callout"><p>Una IRI può identificare anche classi e proprietà. Non significa «pagina da scaricare»: nella tripla funziona come identificatore.</p></div>
+<h3>Perché i due punti?</h3><pre><code>@prefix : &lt;https://example.org/&gt; .</code></pre><p>Questa dichiarazione introduce il <strong>prefisso vuoto</strong>. <code>:Mary</code> abbrevia <code>&lt;https://example.org/Mary&gt;</code>. Serve solo a scrivere meno; l’identificatore completo rimane lo stesso.</p>
+<h3>Come dico che Mary è una persona?</h3><pre><code>@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+
+:Mary rdf:type :Person .</code></pre><p><code>rdf:type</code> significa «è un’istanza di». <code>:Person</code> è la classe, <code>:Mary</code> l’individuo. In Turtle puoi scrivere anche <code>:Mary a :Person .</code></p><p class="meta">Riferimenti: <a href="https://www.w3.org/TR/turtle/#prefixed-name">Turtle — prefissi</a>, <a href="https://www.w3.org/TR/turtle/#literals">literal</a> e <a href="https://www.w3.org/TR/turtle/#abbrev">abbreviazione a</a>; <a href="https://www.w3.org/TR/rdf-schema/#ch_type">significato di rdf:type</a>.</p></section>
+<section id="esercizi"><h2>Ora prova tu.</h2><p>Non cercare subito la soluzione: rispondi, controlla e usa il feedback per correggerti. Puoi riprovare ogni esercizio.</p><p class="progress" data-progress aria-live="polite">0 / 4 esercizi completati correttamente in questa apertura.</p>
+<form onsubmit="return false" class="exercise" id="esercizio-1" data-quiz><h3>01 / Segui la freccia</h3><p>Che cosa afferma <code>:Mary :isFriendOf :Ann .</code>?</p><fieldset class="options"><legend class="meta">Scegli la lettura corrispondente.</legend>
+<label><input type="radio" name="q1" data-feedback="Hai invertito soggetto e oggetto. La tripla parte da Mary e arriva ad Ann.">Ann è amica di Mary.</label>
+<label><input type="radio" name="q1" data-correct="true" data-feedback="Corretto. Mary è il soggetto, isFriendOf il predicato e Ann l’oggetto. Non stiamo aggiungendo una seconda tripla inversa.">Mary è amica di Ann.</label>
+<label><input type="radio" name="q1" data-feedback="John non compare nella tripla. Leggi solo il collegamento espresso, senza aggiungere fatti.">John è amico di Ann.</label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div><details><summary>Soluzione ragionata</summary><p>Mary è amica di Ann. La tripla esprime il collegamento orientato <code>:Mary → :Ann</code>; un eventuale inverso richiede altre informazioni.</p></details></form>
+<form onsubmit="return false" class="exercise" id="esercizio-2" data-quiz><h3>02 / Identità oppure valore?</h3><p>In <code>:Mary :name "Mary" .</code>, quale ruolo ha <code>"Mary"</code>?</p><fieldset class="options"><legend class="meta">Scegli il tipo dell’oggetto.</legend>
+<label><input type="radio" name="q2" data-feedback="Una proprietà occuperebbe qui la posizione del predicato, :name. L’oggetto tra virgolette è un valore.">Proprietà</label>
+<label><input type="radio" name="q2" data-feedback="La persona è identificata da :Mary, senza virgolette. Le virgolette indicano qui una stringa.">Individuo</label>
+<label><input type="radio" name="q2" data-correct="true" data-feedback="Corretto: è il literal che contiene il nome. :Mary identifica invece la risorsa di cui stiamo parlando.">Literal</label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div><details><summary>Soluzione ragionata</summary><p><code>"Mary"</code> è un literal: il nome testuale. La risorsa identificata da <code>:Mary</code> può avere altri nomi e altre proprietà senza cambiare identificatore.</p></details></form>
+<form onsubmit="return false" class="exercise" id="esercizio-3" data-quiz><h3>03 / Espandi il prefisso</h3><p>Con <code>@prefix : &lt;https://example.org/&gt; .</code>, a quale IRI corrisponde <code>:Ann</code>?</p><fieldset class="options"><legend class="meta">Scegli l’identificatore completo.</legend>
+<label><input type="radio" name="q3" data-correct="true" data-feedback="Corretto: base https://example.org/ più nome locale Ann. Non hai fatto nessuna richiesta HTTP."><code>https://example.org/Ann</code></label>
+<label><input type="radio" name="q3" data-feedback="Hai cambiato la A maiuscola. Non modificare i caratteri dell’identificatore durante l’espansione."><code>https://example.org/ann</code></label>
+<label><input type="radio" name="q3" data-feedback="Il namespace termina con /, non con #. Il separatore fa parte dell’identificatore."><code>https://example.org#Ann</code></label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div><details><summary>Soluzione ragionata</summary><p><code>&lt;https://example.org/Ann&gt;</code>. L’espansione concatena esattamente la base dichiarata e il nome locale.</p></details></form>
+<form onsubmit="return false" class="exercise" id="esercizio-4" data-writing><h3>04 / Scrivi il tuo primo grafo</h3><p>Rappresenta questi tre fatti:</p><ol><li>John è amico di Mary.</li><li>Mary ha nome “Mary”.</li><li>Mary è una persona.</li></ol><p>Usa <code>:John</code>, <code>:Mary</code>, <code>:isFriendOf</code>, <code>:name</code>, <code>:Person</code> e <code>rdf:type</code> (oppure <code>a</code>).</p><pre><code># Prefissi già disponibili per questo esercizio:
+@prefix : &lt;https://example.org/&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .</code></pre><label for="triples">Scrivi le tre triple, una per riga.</label><textarea id="triples" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="writing-hint" placeholder="Scrivi qui soggetto, predicato e oggetto…"></textarea><p class="meta" id="writing-hint">Correttore guidato: accetta i termini assegnati e stringhe semplici tra virgolette singole o doppie. Usa un punto finale per riga. Niente dichiarazioni di prefisso, commenti, ; o , nel campo: non è un parser Turtle completo.</p><button type="submit">Controlla il grafo</button><div class="feedback" data-feedback role="status" aria-live="polite"></div><details><summary>Mostra una soluzione, dopo aver provato</summary><pre><code>:John :isFriendOf :Mary .
+:Mary :name "Mary" .
+:Mary rdf:type :Person .</code></pre><p>La prima relazione arriva alla persona; la seconda al suo nome testuale; la terza alla classe. Puoi cambiare l’ordine delle righe e usare <code>a</code> al posto di <code>rdf:type</code>.</p></details></form>
+</section>
+<section id="richiamo"><h2>Fai un ultimo passo, a memoria.</h2><p>Chiudi gli esempi e scrivi su un foglio: «Ann conosce John e ha nome Anna», usando <code>:knows</code> e <code>:name</code>. Poi spiega perché Ann e Anna non devono essere lo stesso termine.</p><details><summary>Confronta dopo aver scritto</summary><pre><code>:Ann :knows :John .
+:Ann :name "Anna" .</code></pre><p>L’identificatore <code>:Ann</code> resta uguale nelle due triple; il suo nome è il valore <code>"Anna"</code>. Qui <code>:knows</code> è una proprietà nostra.</p></details><div class="callout"><p><strong>Ripasso domani · 2 minuti.</strong> Riscrivi i tre fatti dell’esercizio 04 senza guardare. Cambia il nome testuale di Mary in “Maria” mantenendo <code>:Mary</code> come identificatore.</p></div><p>Il prossimo passo sarà rappresentare «Mary è amica di Ann dal 12 marzo 2019»: dovremo dare una rappresentazione alla relazione stessa per associarle la data.</p><p><strong>Porta in chat il risultato o le triple che hai scritto.</strong> Il contatore misura gli esercizi corretti in questa apertura; non certifica la memorizzazione. Le risposte non vengono inviate automaticamente. Chiedimi di spiegare qualsiasi passaggio poco chiaro.</p></section>
+<section id="fonti"><h2>Per leggere la fonte.</h2><p>Fonte primaria consigliata: <a href="https://www.w3.org/TR/rdf11-concepts/#section-triples">W3C — RDF 1.1 Concepts, § 3.1 “Triples”</a>. Cerca quali elementi possono occupare ciascuna posizione, senza leggere tutta la specifica. Per la scrittura: <a href="https://www.w3.org/TR/turtle/#simple-triples">Turtle, § 2.1 “Simple Triples”</a>.</p><p>Per il ripasso veloce usa la <a href="../reference/rdf-primi-passi.html#glossario">scheda con glossario</a>. Lezione pensata per affiancare la nota <em>03 — Graph Databases, RDF, SPARQL e Knowledge Graphs</em>.</p></section>
+<footer>Lezione 01 · Funziona offline · Nessun invio delle risposte · Stampa disponibile dal browser</footer>
+</main><script id="lesson-practice">
+'use strict';
+// Small exercises with a deliberately restricted Turtle input grammar.
+// No network, tracking, persistence, external libraries, or full Turtle parser.
+const RDF_TYPE = 'rdf:type';
+const expectedTriples = [
+  [':John', ':isFriendOf', ':Mary'],
+  [':Mary', ':name', '"Mary"'],
+  [':Mary', RDF_TYPE, ':Person']
+];
+
+function normalizeTerm(term) {
+  if (term === 'a') return RDF_TYPE;
+  if (/^'[^'\n]*'$/.test(term)) return JSON.stringify(term.slice(1, -1));
+  if (/^"[^"\\\n]*"$/.test(term)) return JSON.stringify(term.slice(1, -1));
+  return term;
+}
+
+function checkTriples(source) {
+  const lines = source.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+  if (!lines.length) return {ok:false, message:'Scrivi le tre triple prima di controllare.'};
+  const term = '(?:rdf:type|:[A-Za-z][A-Za-z0-9_]*|a|"[^"\\\\\\n]*"|\'[^\'\\\\\\n]*\')';
+  const pattern = new RegExp('^(' + term + ')\\s+(' + term + ')\\s+(' + term + ')\\s*\\.$');
+  const triples = [];
+  for (let i = 0; i < lines.length; i++) {
+    const match = lines[i].match(pattern);
+    if (!match) return {ok:false, message:`Riga ${i+1}: usa tre termini separati da spazi e un punto finale. Una tripla per riga; i prefissi sono già dichiarati. Questo correttore guidato non analizza tutta la sintassi Turtle.`};
+    const triple = match.slice(1).map(normalizeTerm);
+    if (triple[0].startsWith('"')) return {ok:false,message:`Riga ${i+1}: il soggetto non può essere un literal. Usa una IRI come :Mary.`};
+    if (triple[1].startsWith('"')) return {ok:false,message:`Riga ${i+1}: il predicato deve essere una IRI, non una stringa tra virgolette.`};
+    if (match[1] === 'a' || match[3] === 'a') return {ok:false,message:`Riga ${i+1}: l'abbreviazione a si usa qui solo come predicato; per la classe usa :Person.`};
+    triples.push(triple);
+  }
+  const key = x => JSON.stringify(x);
+  const actual = new Set(triples.map(key));
+  const target = new Set(expectedTriples.map(key));
+  const extra = triples.find(x => !target.has(key(x)));
+  if (extra) {
+    if (extra[1] === ':name' && extra[2] === ':Mary') return {ok:false,message:'Nella tripla sul nome, :Mary identifica la persona; "Mary" è il valore testuale richiesto come oggetto.'};
+    if (extra[1] === ':isFriendOf' && extra[2] === '"Mary"') return {ok:false,message:'John è amico della persona :Mary, non della stringa "Mary". Togli le virgolette dall’oggetto di questa relazione.'};
+    if (extra[1] === RDF_TYPE && extra[2] === '"Person"') return {ok:false,message:'La classe è identificata da :Person; "Person" sarebbe una stringa.'};
+    return {ok:false,message:`Rileggi questa tripla: ${extra.join(' ')} . Non esprime uno dei tre fatti richiesti con i termini assegnati. Controlla verso della relazione e scelta del predicato.`};
+  }
+  if (actual.size !== target.size) return {ok:false,message:`Hai rappresentato ${actual.size} dei 3 fatti richiesti. Una tripla ripetuta non aggiunge un fatto nuovo.`};
+  return {ok:true,message:'Corretto: hai espresso tutti e tre i fatti. L’ordine delle triple non conta; a e rdf:type sono equivalenti. Ora spiega a voce perché :Mary e "Mary" compaiono in ruoli diversi.'};
+}
+
+if (typeof module !== 'undefined') module.exports = {checkTriples};
+if (typeof document !== 'undefined') {
+  const solved = new Set();
+  const report = (form, ok, message) => {
+    const output = form.querySelector('[data-feedback]');
+    output.textContent = message;
+    output.dataset.state = ok ? 'correct' : 'incorrect';
+    if (ok) solved.add(form.id); else solved.delete(form.id);
+    const progress = document.querySelector('[data-progress]');
+    if (progress) progress.textContent = `${solved.size} / 4 esercizi completati correttamente in questa apertura.`;
+  };
+  document.querySelectorAll('form[data-quiz]').forEach(form => {
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      const choice = form.querySelector('input:checked');
+      if (!choice) return report(form, false, 'Scegli una risposta e poi controlla.');
+      report(form, choice.dataset.correct === 'true', choice.dataset.feedback);
+    });
+  });
+  const writing = document.querySelector('form[data-writing]');
+  if (writing) writing.addEventListener('submit', event => {
+    event.preventDefault();
+    const result = checkTriples(writing.querySelector('textarea').value);
+    report(writing, result.ok, result.message);
+  });
+  document.querySelectorAll('form[data-quiz],form[data-writing]').forEach(form => {
+    form.addEventListener('input', () => {
+      solved.delete(form.id);
+      form.querySelector('[data-feedback]').textContent = '';
+      const progress = document.querySelector('[data-progress]');
+      if (progress) progress.textContent = `${solved.size} / 4 esercizi completati correttamente in questa apertura.`;
+    });
+  });
+}
+
+</script>
+</body></html>
