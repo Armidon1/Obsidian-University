@@ -989,8 +989,9 @@ Nelle slide la stessa idea è disegnata così: il blank node (cerchio rosso) rap
 “John crede che Mary sia amica di Ann dal 12 marzo 2019”. Se la data descrive la relazione di amicizia, conviene prima trasformare l'amicizia in una risorsa e poi reificare o descrivere l'affermazione su quella risorsa. Una singola reificazione della tripla `Mary isFriendOf Ann` con una proprietà `since` rischia di confondere la data del fatto con la data della credenza.
 
 ```
-ex:Mary feaf:isInFriendship _:x
-_x feaf:
+ex:Mary feaf:isFriend _:x
+ex:Ann feaf:hasFriend _:x
+ex:John feaf:author _:x
 ```
 
 ### Sintassi RDF
