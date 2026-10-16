@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -I *)",
+      "Bash(pdftotext *)",
+      "Bash(pdfinfo *)",
+      "Bash(pdfimages *)",
+      "Bash(pdftoppm *)",
+      "Bash(magick *)"
+    ]
+  }
+}
