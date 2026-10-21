@@ -1,0 +1,1000 @@
+{
+  "nodes": [
+    {
+      "id": "22e69612a17dfcc5",
+      "type": "text",
+      "text": "# 04 · Document Databases\n\n**5 sezioni · 30 concetti distinti.**\nSegui i gruppi numerati lungo le frecce. Ogni freccia interna forma una frase: concetto → relazione → concetto. I link «Nella lezione» aprono la sezione di origine.\n\n**Figure originali:** 10 immagini della lezione, collegate ai concetti illustrati.",
+      "x": 0,
+      "y": -750,
+      "width": 6294.0,
+      "height": 260
+    },
+    {
+      "id": "a5b347681b1f6f2f",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases.md",
+      "x": 0,
+      "y": -400,
+      "width": 3022.0,
+      "height": 100
+    },
+    {
+      "id": "0bb561610a7720a7",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/canvas/00 - DM - MOC dei canvas.canvas",
+      "x": 3272.0,
+      "y": -400,
+      "width": 3022.0,
+      "height": 100
+    },
+    {
+      "id": "bca7750b3e9310e1",
+      "type": "text",
+      "text": "## Percorso della mappa\n\n- 01 · Perché organizzare i dati in aggregati\n- 02 · Tre modelli aggregate-oriented\n- 03 · JSON, albero e BSON\n- 04 · Struttura e controlli in MongoDB\n- 05 · CRUD e pipeline di aggregazione",
+      "x": 0,
+      "y": -250,
+      "width": 6294.0,
+      "height": 260
+    },
+    {
+      "id": "d9ec908840e321d2",
+      "type": "text",
+      "text": "## Ripasso attivo\n\nScegli un nodo e spiegalo senza leggere. Poi segui una freccia e giustifica il rapporto con il nodo successivo.\nRicostruisci un esempio, indica un limite e apri la sezione della lezione per formule, figure o esercizi.\n\n**I gruppi sono numerati e seguono un percorso a serpentina:** prima riga da sinistra a destra, seconda da destra a sinistra, poi si ripete.\n\nPer le figure: descrivi prima ciò che vedi, poi spiega quale concetto esemplifica. Aprile per leggerle alla risoluzione originale.",
+      "x": 0,
+      "y": 14160.0,
+      "width": 6294.0,
+      "height": 310
+    },
+    {
+      "id": "66a710a694d5e326",
+      "type": "group",
+      "label": "01 · Perché organizzare i dati in aggregati",
+      "color": "4",
+      "x": 0.0,
+      "y": 120,
+      "width": 3022.0,
+      "height": 4095.0
+    },
+    {
+      "id": "2b47de142876a5c7",
+      "type": "text",
+      "text": "## 01 · Perché organizzare i dati in aggregati\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Why the relational model was challenged|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 170,
+      "width": 2902.0,
+      "height": 105
+    },
+    {
+      "id": "8fba6677035c64ac",
+      "type": "text",
+      "text": "## Scale up\n\nAumenta risorse della stessa macchina: CPU, RAM, dischi. Semplifica il coordinamento ma incontra limiti tecnici ed economici.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Why the relational model was challenged|Nella lezione ↗]]",
+      "x": 731,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "203c3ff58ea389d6",
+      "type": "text",
+      "text": "## Scale out\n\nAggiunge macchine e distribuisce il carico. Richiede di decidere collocazione dei dati, comunicazioni e operazioni tra nodi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Why the relational model was challenged|Nella lezione ↗]]",
+      "x": 731,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "d0073ec7deef4c79",
+      "type": "text",
+      "text": "## Sharding\n\nPartiziona il database in shard su nodi diversi. È distribuzione di parti differenti, non duplicazione dell’intero dataset come nella replica.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Why the relational model was challenged|Nella lezione ↗]]",
+      "x": 731,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "64ec723a823e7fa9",
+      "type": "text",
+      "text": "## Impedance mismatch\n\nGli oggetti applicativi sono spesso annidati; le tabelle sono piatte. Convertire e ricostruire strutture complesse può richiedere molti join.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Why the relational model was challenged|Nella lezione ↗]]",
+      "x": 1572,
+      "y": 1723,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "c809715304f6ad8a",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L04-p011.png",
+      "x": 1471,
+      "y": 2154,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "4cebcb1943117083",
+      "type": "text",
+      "text": "**Figura · Impedance mismatch**\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases|Dalla lezione 04]]",
+      "x": 1471,
+      "y": 2784,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "0590f6034b0c1102",
+      "type": "text",
+      "text": "## Evitare ricomposizioni frequenti\n\nDati letti insieme possono essere memorizzati insieme. Un join su nodi diversi richiede trasferimenti; il costo dipende dall’accesso richiesto.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Why the relational model was challenged|Nella lezione ↗]]",
+      "x": 731,
+      "y": 2128,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "a57544ebb5fc3947",
+      "type": "text",
+      "text": "## Aggregato\n\nRecord complesso con liste e record annidati, trattato come unità di gestione. Il confine si sceglie sulle letture, sugli aggiornamenti e sulla distribuzione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Why the relational model was challenged|Nella lezione ↗]]",
+      "x": 1151,
+      "y": 2994,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "da55912eea10ef40",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L04-p016.png",
+      "x": 1050,
+      "y": 3425,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "5ad0485962390f05",
+      "type": "text",
+      "text": "**Figura · Aggregato**\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases|Dalla lezione 04]]",
+      "x": 1050,
+      "y": 4055,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "a7429b5cdbfea593",
+      "type": "group",
+      "label": "02 · Tre modelli aggregate-oriented",
+      "color": "5",
+      "x": 3272.0,
+      "y": 120,
+      "width": 3022.0,
+      "height": 6525.0
+    },
+    {
+      "id": "0c2db9b955c93d4b",
+      "type": "text",
+      "text": "## 02 · Tre modelli aggregate-oriented\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Aggregate data models|Apri la sezione della lezione]]",
+      "x": 3332.0,
+      "y": 170,
+      "width": 2902.0,
+      "height": 105
+    },
+    {
+      "id": "a65c94b40172cddb",
+      "type": "text",
+      "text": "## Key-value\n\nLa chiave identifica un valore generalmente opaco al linguaggio del database. L’applicazione deve sapere come interpretarne il contenuto.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Aggregate data models|Nella lezione ↗]]",
+      "x": 4523,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "b4c39d223755ca36",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L04-p021.png",
+      "x": 4423,
+      "y": 771,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "85e233d96585ab1b",
+      "type": "text",
+      "text": "**Figura · Key-value**\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases|Dalla lezione 04]]",
+      "x": 4423,
+      "y": 1401,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "3635b0e04df41cad",
+      "type": "text",
+      "text": "## Column-family\n\nUna row key identifica un aggregato con colonne organizzate in famiglie. Righe diverse possono avere colonne diverse; non equivale semplicemente a uno storage analitico colonnare.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Aggregate data models|Nella lezione ↗]]",
+      "x": 4523,
+      "y": 1611,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "467b8912de2ee938",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L04-p023.png",
+      "x": 4423,
+      "y": 2042,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "517fa8107b23db35",
+      "type": "text",
+      "text": "**Figura · Column-family**\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases|Dalla lezione 04]]",
+      "x": 4423,
+      "y": 2672,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "58271dbbe4251dcc",
+      "type": "text",
+      "text": "## Document database\n\nIl database comprende i campi interni del documento, anche annidati: può filtrarli, proiettarli e indicizzarli.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Aggregate data models|Nella lezione ↗]]",
+      "x": 4523,
+      "y": 2882,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "35b30e71000129f0",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L04-p028.png",
+      "x": 4423,
+      "y": 3313,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "c3ef65fff682cd68",
+      "type": "text",
+      "text": "**Figura · Document database**\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases|Dalla lezione 04]]",
+      "x": 4423,
+      "y": 3943,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "bd8c67728ddc7691",
+      "type": "text",
+      "text": "## Embedding\n\nInserisce ordini e dettagli dentro lo stesso documento del cliente. Favorisce letture locali, ma crescita e duplicazioni possono complicare gli aggiornamenti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Aggregate data models|Nella lezione ↗]]",
+      "x": 4103,
+      "y": 4153,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "10dbccc5601696d4",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L04-p038.png",
+      "x": 4003,
+      "y": 4584,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "7643801d78e8e9aa",
+      "type": "text",
+      "text": "**Figura · Embedding**\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases|Dalla lezione 04]]",
+      "x": 4003,
+      "y": 5214,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "fc302eaaa6e25fc9",
+      "type": "text",
+      "text": "## Riferimenti tra aggregati\n\nDocumenti separati possono riferirsi tramite ID. Riduce copie e dimensioni, ma richiede più accessi o ricomposizione dei risultati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Aggregate data models|Nella lezione ↗]]",
+      "x": 4103,
+      "y": 5424,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "859e62f2411e258d",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L04-p039.png",
+      "x": 4003,
+      "y": 5855,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "27980214e64d5dc5",
+      "type": "text",
+      "text": "**Figura · Riferimenti tra aggregati**\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases|Dalla lezione 04]]",
+      "x": 4003,
+      "y": 6485,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "d0c440ea9512f911",
+      "type": "text",
+      "text": "## Schemaless\n\nNon impone che tutti i documenti abbiano gli stessi campi. La struttura resta una scelta progettuale e può essere accompagnata da validazione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Aggregate data models|Nella lezione ↗]]",
+      "x": 4944,
+      "y": 4558,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "251cb20f05384726",
+      "type": "group",
+      "label": "03 · JSON, albero e BSON",
+      "color": "3",
+      "x": 3272.0,
+      "y": 6895.0,
+      "width": 3022.0,
+      "height": 3634.0
+    },
+    {
+      "id": "ce06f0ad199d8f5b",
+      "type": "text",
+      "text": "## 03 · JSON, albero e BSON\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#JSON|Apri la sezione della lezione]]",
+      "x": 3332.0,
+      "y": 6945.0,
+      "width": 2902.0,
+      "height": 105
+    },
+    {
+      "id": "388e7efc70a7b09e",
+      "type": "text",
+      "text": "## Valori JSON\n\nOggetti con coppie chiave–valore, array ordinati e valori atomici. L’annidamento rappresenta strutture complesse senza distribuirle subito in tabelle.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#JSON|Nella lezione ↗]]",
+      "x": 4474,
+      "y": 7115,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "4b51a552ada82a65",
+      "type": "text",
+      "text": "## Oggetto JSON\n\nLe chiavi nominano i campi: {\"name\":\"Anna\",\"age\":23}. Il significato dipende dal contratto applicativo, non solo dalla sintassi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#JSON|Nella lezione ↗]]",
+      "x": 3732,
+      "y": 7576,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "922dc7a7bfc0686c",
+      "type": "text",
+      "text": "## Array JSON\n\nSequenza di valori raggiunti per posizione. Può contenere documenti: un ordine può avere un array di righe di acquisto.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#JSON|Nella lezione ↗]]",
+      "x": 4474,
+      "y": 7576,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "ae41dac97358a2a0",
+      "type": "text",
+      "text": "## JSON tree\n\nGli oggetti hanno archi etichettati dalle chiavi; gli array archi etichettati dalle posizioni; i valori atomici diventano foglie.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#JSON|Nella lezione ↗]]",
+      "x": 4102,
+      "y": 8037,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "8a8c9839b74ba804",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L04-p031.png",
+      "x": 4002,
+      "y": 8468,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "d974a45f589d8353",
+      "type": "text",
+      "text": "**Figura · JSON tree**\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases|Dalla lezione 04]]",
+      "x": 4002,
+      "y": 9098,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "040a4702e5305c1b",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L04-p032.png",
+      "x": 4002,
+      "y": 9278,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "2aeba25a95889bb2",
+      "type": "text",
+      "text": "**Figura · JSON tree**\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases|Dalla lezione 04]]",
+      "x": 4002,
+      "y": 9908,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "79336ce052932903",
+      "type": "text",
+      "text": "## Percorso annidato\n\ncustomer.address.city attraversa più livelli. Il database documentale può usare percorsi per condizioni e proiezioni sui campi interni.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#JSON|Nella lezione ↗]]",
+      "x": 4102,
+      "y": 10118,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "fd3d7f076c702539",
+      "type": "text",
+      "text": "## BSON\n\nFormato binario usato da MongoDB; aggiunge tipi come ObjectId, date e numeri con rappresentazioni specifiche. Non è solo testo JSON compresso.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#JSON|Nella lezione ↗]]",
+      "x": 5214,
+      "y": 7576,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "9d2dca00463d903d",
+      "type": "group",
+      "label": "04 · Struttura e controlli in MongoDB",
+      "color": "6",
+      "x": 0.0,
+      "y": 6895.0,
+      "width": 3022.0,
+      "height": 1553.0
+    },
+    {
+      "id": "71f24679de70fda9",
+      "type": "text",
+      "text": "## 04 · Struttura e controlli in MongoDB\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Databases and collections|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 6945.0,
+      "width": 2902.0,
+      "height": 105
+    },
+    {
+      "id": "cfc4cc97b145a767",
+      "type": "text",
+      "text": "## Database\n\nContenitore di collezioni. L’applicazione sceglie quali dati raggruppare e con quali responsabilità di accesso e gestione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Databases and collections|Nella lezione ↗]]",
+      "x": 1201,
+      "y": 7115,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "4ff50cada3e48d0a",
+      "type": "text",
+      "text": "## Collection\n\nInsieme di documenti. È il termine corrispondente alla tabella nella traduzione introduttiva SQL/MongoDB, ma i documenti possono avere struttura variabile.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Databases and collections|Nella lezione ↗]]",
+      "x": 1201,
+      "y": 7576,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "5f41cd7d7b35abe3",
+      "type": "text",
+      "text": "## Documento e _id\n\nUn documento contiene campi e un identificatore _id univoco nella collezione. Identificatore tecnico e campi del dominio non sono la stessa cosa.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Databases and collections|Nella lezione ↗]]",
+      "x": 90,
+      "y": 8037,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "07b8e26095ac6453",
+      "type": "text",
+      "text": "## Capped collection\n\nCollezione con spazio limitato e comportamento di riuso dei dati più vecchi. È una scelta speciale, non la proprietà di ogni collezione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Databases and collections|Nella lezione ↗]]",
+      "x": 831,
+      "y": 8037,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "b25e4abba9dba176",
+      "type": "text",
+      "text": "## Schema validator\n\nPuò imporre tipi, campi richiesti e altri requisiti. Schemaless permette flessibilità ma non impedisce un contratto esplicito sui dati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Databases and collections|Nella lezione ↗]]",
+      "x": 1572,
+      "y": 8037,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "02a25ed79d64a813",
+      "type": "text",
+      "text": "## Indici\n\nAccelerano accessi a campi e percorsi frequenti, al costo di spazio e manutenzione nelle scritture. Il filtro deve essere adatto all’indice.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#Databases and collections|Nella lezione ↗]]",
+      "x": 2313,
+      "y": 8037,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "9578c10fddc0ba21",
+      "type": "group",
+      "label": "05 · CRUD e pipeline di aggregazione",
+      "color": "2",
+      "x": 0.0,
+      "y": 10779.0,
+      "width": 3022.0,
+      "height": 3131.0
+    },
+    {
+      "id": "28838fc9fd4a8845",
+      "type": "text",
+      "text": "## 05 · CRUD e pipeline di aggregazione\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#CRUD operations|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 10829.0,
+      "width": 2902.0,
+      "height": 105
+    },
+    {
+      "id": "95bb3cc12f694d7d",
+      "type": "text",
+      "text": "## Create e Delete\n\nInserimento crea documenti; eliminazione rimuove quelli che soddisfano il filtro. Distinguere operazione su un documento da operazione su più documenti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#CRUD operations|Nella lezione ↗]]",
+      "x": 1151,
+      "y": 10999,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "9a41223039a6854c",
+      "type": "text",
+      "text": "## Read: find\n\nIl filtro sceglie documenti e la proiezione sceglie campi. Percorsi annidati permettono di interrogare parti della struttura.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#CRUD operations|Nella lezione ↗]]",
+      "x": 1151,
+      "y": 11460,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "aa572c8600c41836",
+      "type": "text",
+      "text": "## Update\n\nModifica campi tramite operatori come $set e $inc. La modifica parziale e la sostituzione dell’intero documento hanno effetti diversi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#CRUD operations|Nella lezione ↗]]",
+      "x": 731,
+      "y": 12249,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "614ea6a872553770",
+      "type": "text",
+      "text": "## Aggregation pipeline\n\nOgni stadio riceve l’output del precedente. L’ordine conta: filtrare prima di aggregare non equivale a filtrare gruppi già prodotti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#CRUD operations|Nella lezione ↗]]",
+      "x": 1572,
+      "y": 11921,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "933427f4ce4cd8fa",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L04-mongo-p023.png",
+      "x": 1471,
+      "y": 12352,
+      "width": 820,
+      "height": 461
+    },
+    {
+      "id": "89f7a3edc4c28545",
+      "type": "text",
+      "text": "**Figura · Aggregation pipeline**\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases|Dalla lezione 04]]",
+      "x": 1471,
+      "y": 12828,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "f28ee3e37e393cac",
+      "type": "text",
+      "text": "## $match, $project, $group, $sort\n\n$match filtra; $project rimodella; $group raggruppa e accumula; $sort ordina. Dopo $group cambia il significato di ogni documento.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#CRUD operations|Nella lezione ↗]]",
+      "x": 1572,
+      "y": 13038,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "0b946b831228a089",
+      "type": "text",
+      "text": "## $lookup\n\nRicompone informazioni tra collezioni. La presenza di join non annulla il modello documentale: embedding e riferimenti restano scelte da valutare sul workload.\n\n[[Obsidian-University/University/Magistrale/Data Managment/04 - DM - Document Databases#CRUD operations|Nella lezione ↗]]",
+      "x": 1572,
+      "y": 13499,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    }
+  ],
+  "edges": [
+    {
+      "id": "9292ca93ec975927",
+      "fromNode": "64ec723a823e7fa9",
+      "toNode": "c809715304f6ad8a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "33700b98e8defd54",
+      "fromNode": "a57544ebb5fc3947",
+      "toNode": "da55912eea10ef40",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "d48dafa2ca5378a1",
+      "fromNode": "8fba6677035c64ac",
+      "toNode": "203c3ff58ea389d6",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "alternativa orizzontale è"
+    },
+    {
+      "id": "b96cb386fb0eb94b",
+      "fromNode": "203c3ff58ea389d6",
+      "toNode": "d0073ec7deef4c79",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può realizzarsi tramite"
+    },
+    {
+      "id": "b7ba8f8504841e2d",
+      "fromNode": "64ec723a823e7fa9",
+      "toNode": "a57544ebb5fc3947",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "motiva l’uso di"
+    },
+    {
+      "id": "3572013d6540f7c2",
+      "fromNode": "d0073ec7deef4c79",
+      "toNode": "0590f6034b0c1102",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "rende rilevante il costo di"
+    },
+    {
+      "id": "25048261e008d640",
+      "fromNode": "0590f6034b0c1102",
+      "toNode": "a57544ebb5fc3947",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si può ridurre con"
+    },
+    {
+      "id": "b73564cf873d248b",
+      "fromNode": "a65c94b40172cddb",
+      "toNode": "b4c39d223755ca36",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "2c4d86a562a53cf5",
+      "fromNode": "3635b0e04df41cad",
+      "toNode": "467b8912de2ee938",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "6bcc5fad686ee517",
+      "fromNode": "58271dbbe4251dcc",
+      "toNode": "35b30e71000129f0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "d985e48144852250",
+      "fromNode": "bd8c67728ddc7691",
+      "toNode": "10dbccc5601696d4",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "c2ac6ba804eea69e",
+      "fromNode": "fc302eaaa6e25fc9",
+      "toNode": "859e62f2411e258d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "9a644b692285342f",
+      "fromNode": "a65c94b40172cddb",
+      "toNode": "3635b0e04df41cad",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "confronta unità opaca con struttura di"
+    },
+    {
+      "id": "58c1d3c15217706c",
+      "fromNode": "3635b0e04df41cad",
+      "toNode": "58271dbbe4251dcc",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "confronta con documento annidato di"
+    },
+    {
+      "id": "d869a417dc055a06",
+      "fromNode": "58271dbbe4251dcc",
+      "toNode": "bd8c67728ddc7691",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si può modellare tramite"
+    },
+    {
+      "id": "d02fb5e323653e06",
+      "fromNode": "bd8c67728ddc7691",
+      "toNode": "fc302eaaa6e25fc9",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "scelta alternativa di modellazione è"
+    },
+    {
+      "id": "a3c58b6c2f87fc8a",
+      "fromNode": "58271dbbe4251dcc",
+      "toNode": "d0c440ea9512f911",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "permette flessibilità dello"
+    },
+    {
+      "id": "aa4b9dee2a9edf91",
+      "fromNode": "ae41dac97358a2a0",
+      "toNode": "8a8c9839b74ba804",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "3"
+    },
+    {
+      "id": "a5d98ab1060b5634",
+      "fromNode": "8a8c9839b74ba804",
+      "toNode": "040a4702e5305c1b",
+      "fromSide": "right",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "altro passaggio dello stesso esempio",
+      "color": "3"
+    },
+    {
+      "id": "032e6c217b07b3db",
+      "fromNode": "388e7efc70a7b09e",
+      "toNode": "4b51a552ada82a65",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "comprende"
+    },
+    {
+      "id": "00a02df7d1f71cf0",
+      "fromNode": "388e7efc70a7b09e",
+      "toNode": "922dc7a7bfc0686c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "comprende"
+    },
+    {
+      "id": "e6a52237e98384a9",
+      "fromNode": "4b51a552ada82a65",
+      "toNode": "ae41dac97358a2a0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si rappresenta nel"
+    },
+    {
+      "id": "29567b0587850ff6",
+      "fromNode": "922dc7a7bfc0686c",
+      "toNode": "ae41dac97358a2a0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si rappresenta nel"
+    },
+    {
+      "id": "60a0a6197a456cf5",
+      "fromNode": "ae41dac97358a2a0",
+      "toNode": "79336ce052932903",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "consente di individuare un campo con"
+    },
+    {
+      "id": "122680b4e2069449",
+      "fromNode": "388e7efc70a7b09e",
+      "toNode": "fd3d7f076c702539",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si confronta con il formato di storage"
+    },
+    {
+      "id": "ea78c03753f05d6c",
+      "fromNode": "cfc4cc97b145a767",
+      "toNode": "4ff50cada3e48d0a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "contiene"
+    },
+    {
+      "id": "1c7c25e49cc0d44d",
+      "fromNode": "4ff50cada3e48d0a",
+      "toNode": "5f41cd7d7b35abe3",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "contiene"
+    },
+    {
+      "id": "46062f916f655b6a",
+      "fromNode": "4ff50cada3e48d0a",
+      "toNode": "07b8e26095ac6453",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "ha come variante speciale"
+    },
+    {
+      "id": "674eef0c94c42496",
+      "fromNode": "4ff50cada3e48d0a",
+      "toNode": "b25e4abba9dba176",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può applicare un"
+    },
+    {
+      "id": "49d97c17a7c3b2c5",
+      "fromNode": "4ff50cada3e48d0a",
+      "toNode": "02a25ed79d64a813",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può essere interrogata tramite"
+    },
+    {
+      "id": "b897e885e648ae89",
+      "fromNode": "614ea6a872553770",
+      "toNode": "933427f4ce4cd8fa",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "1c83e0044386f3e5",
+      "fromNode": "95bb3cc12f694d7d",
+      "toNode": "9a41223039a6854c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "CRUD include anche"
+    },
+    {
+      "id": "c2032c7731829600",
+      "fromNode": "9a41223039a6854c",
+      "toNode": "aa572c8600c41836",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "CRUD include anche"
+    },
+    {
+      "id": "3e207925e6725313",
+      "fromNode": "9a41223039a6854c",
+      "toNode": "614ea6a872553770",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "interrogazione più articolata tramite"
+    },
+    {
+      "id": "3615fb6c1faa079b",
+      "fromNode": "614ea6a872553770",
+      "toNode": "f28ee3e37e393cac",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si compone di"
+    },
+    {
+      "id": "a556c8a1c2c872a7",
+      "fromNode": "f28ee3e37e393cac",
+      "toNode": "0b946b831228a089",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può includere"
+    },
+    {
+      "id": "9c4959efe908ad3b",
+      "fromNode": "66a710a694d5e326",
+      "toNode": "a7429b5cdbfea593",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 02",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "79e89adb1af7a834",
+      "fromNode": "a7429b5cdbfea593",
+      "toNode": "251cb20f05384726",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 03",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "d836da2be178d61c",
+      "fromNode": "251cb20f05384726",
+      "toNode": "9d2dca00463d903d",
+      "fromSide": "left",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "continua: sezione 04",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "2ecac5b71ec1674e",
+      "fromNode": "9d2dca00463d903d",
+      "toNode": "9578c10fddc0ba21",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 05",
+      "color": "#8a8a8a"
+    }
+  ]
+}

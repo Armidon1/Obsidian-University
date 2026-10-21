@@ -344,7 +344,7 @@ _:simoneStatement rdf:object "2018"^^xsd:gYear .
 
 ## 12 — John crede all'amicizia con data
 
-- [ ] Svolto
+- [x] Svolto
 
 Rappresenta: **“John crede che Mary sia amica di Ann dal 12 marzo 2019”**.
 

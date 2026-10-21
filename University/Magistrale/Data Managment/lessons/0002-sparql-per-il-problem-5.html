@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPARQL per il Problem 5</title>
+<style id="lesson-styles">
+:root{color-scheme:light;--ink:#22332f;--muted:#566861;--paper:#faf8f2;--line:#d6ddd4;--green:#17664f;--tint:#edf2e9;--red:#a0332e;--gold:#e5be66;font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.65}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}main{max-width:900px;margin:auto;padding:48px 30px 70px}header{padding-bottom:30px;border-bottom:1px solid var(--line)}.eyebrow,nav,.meta,button,label,select,.tag,figcaption{font-family:system-ui,sans-serif}.eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:.7rem;color:var(--green);font-weight:700}h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.12;letter-spacing:-.035em;margin:.5em 0}h2{font-size:1.6rem;line-height:1.25;margin:0 0 20px}h3{font-size:1.13rem;line-height:1.3}.intro{font-size:1.15rem;max-width:690px}.meta,figcaption{font-size:.78rem;color:var(--muted)}nav{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:22px;font-size:.8rem}a{color:var(--green);text-underline-offset:3px}section{padding-top:36px;margin-top:14px}p{max-width:740px}code,pre,textarea{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{font-size:.84em}pre{background:#edf0e8;border:1px solid var(--line);border-radius:8px;padding:20px;overflow:auto;font-size:.8rem;line-height:1.7}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-family:system-ui,sans-serif;font-size:.73rem;text-transform:uppercase;letter-spacing:.04em}.callout{padding:16px 22px;border-left:3px solid var(--green);background:var(--tint);margin:24px 0}.callout p{margin:4px 0}.exercise{border:1px solid var(--line);border-radius:12px;padding:25px;margin:24px 0;background:#fffefa}.exercise h3{margin-top:0}.options{display:grid;gap:10px;border:0;padding:0;margin:20px 0}.options label{display:flex;align-items:baseline;gap:12px;border:1px solid var(--line);padding:12px 15px;border-radius:6px;font-size:.88rem;cursor:pointer}.options label:has(input:checked){border-color:var(--green);background:var(--tint)}button{background:var(--green);border:1px solid var(--green);border-radius:6px;color:white;padding:10px 18px;cursor:pointer;font-size:.84rem}button:hover{filter:brightness(.92)}button.secondary{background:transparent;color:var(--green)}button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.feedback{margin-top:16px;font-size:.94rem}.feedback[data-state=correct]{color:var(--green)}.feedback[data-state=incorrect]{color:var(--red)}.feedback:empty{display:none}textarea{display:block;width:100%;padding:16px;border:1px solid #8c9d91;border-radius:6px;min-height:145px;background:white;color:var(--ink);font-size:.82rem;line-height:1.8;margin:12px 0}details{margin-top:20px}summary{cursor:pointer;color:var(--green)}.actions{display:flex;gap:12px;flex-wrap:wrap}.graph{background:var(--tint);padding:22px;border-radius:8px;overflow:auto}.graph svg{display:block;width:100%;min-width:420px;height:auto}.graph text{font-family:system-ui,sans-serif;fill:var(--ink)}.graph line{stroke:var(--green);stroke-width:2}.graph rect{fill:var(--paper);stroke:var(--green)}footer{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;font-size:.82rem;color:var(--muted)}.progress{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--green);margin:18px 0}noscript{display:block;border:1px solid var(--red);padding:16px}.checklist li{margin:8px 0}@media(max-width:550px){main{padding:28px 18px}.exercise{padding:18px}th,td{padding:10px 5px;font-size:.8rem}}@media print{body{background:white;color:black}main{max-width:none;padding:0;font-size:11pt}.exercise{break-inside:avoid}button,nav,.progress{display:none}pre,.callout,.graph{background:white}a{color:inherit}details>*{display:block}textarea{min-height:110px}header{padding-bottom:10px}section{padding-top:20px;margin:0}h1{font-size:28pt}}
+
+</style>
+</head>
+<body><main>
+<header><div class="eyebrow">Data Management / lezione 02 / 12–15 minuti</div><h1>SPARQL, solo quello<br>che chiede l’esame.</h1><p class="intro">Alla fine saprai scrivere la query del Problem 5 e dare le due risposte, «graph database» e «Knowledge Graph», con la giustificazione.</p><div class="meta">Obiettivo: esame del 28 ottobre · Prima rispondi, poi controlla.</div><nav><a href="#query">1. La query</a><a href="#due-letture">2. Due letture di G</a><a href="#regole">3. Le 4 regole</a><a href="#esercizi">4. Prova tu</a><a href="../reference/sparql-problema-5.html">Scheda di ripasso ↗</a></nav></header>
+<noscript>Per la correzione automatica abilita JavaScript. Le soluzioni espandibili restano leggibili anche senza.</noscript>
+
+<section id="perche"><h2>Perché così poco SPARQL.</h2><p>Negli appelli disponibili (giugno A, giugno B, settembre) il Problem 5 chiede sempre la stessa cosa: <em>«Write the SPARQL query Q that retrieves all &lt;classe&gt;»</em>, poi le risposte di Q su G letto in due modi diversi. A luglio il Problem 5 era sul Data Warehouse.</p>
+<table><thead><tr><th>Appello</th><th>Query richiesta</th><th>Classe</th></tr></thead><tbody>
+<tr><td>Giugno A</td><td>all works of art</td><td><code>:WorkOfArt</code></td></tr>
+<tr><td>Giugno B</td><td>all artifacts</td><td><code>:Artifact</code></td></tr>
+<tr><td>Settembre</td><td>all Lecturers</td><td><code>:Lecturer</code></td></tr></tbody></table>
+<div class="callout"><p><strong>Cosa puoi rimandare.</strong> OPTIONAL, MINUS, UNION, aggregati e property path non sono mai comparsi in questi appelli. Non è una garanzia: se il 27 ti resta tempo, ripassali dalla nota 03, sezione <em>SPARQL</em>.</p></div></section>
+
+<section id="query"><h2>La query è una tripla con un buco.</h2><pre><code>SELECT ?x
+WHERE {
+  ?x  rdf:type  :Lecturer .
+}</code></pre><p><code>?x</code> è una <strong>variabile</strong>: un posto vuoto. Il motore cerca nel grafo ogni tripla che ha <code>rdf:type</code> come predicato e <code>:Lecturer</code> come oggetto; per ciascuna mette il soggetto in <code>?x</code>. <code>SELECT ?x</code> dice quale posto vuoto restituire.</p>
+<table><thead><tr><th>Tripla nel grafo</th><th>Combacia con <code>?x rdf:type :Lecturer</code>?</th></tr></thead><tbody>
+<tr><td><code>:Maurizio rdf:type :Lecturer .</code></td><td>Sì → <code>?x = :Maurizio</code></td></tr>
+<tr><td><code>:Maurizio rdf:type :Professor .</code></td><td>No: oggetto diverso</td></tr>
+<tr><td><code>:Roberto :teaches :Databases2026 .</code></td><td>No: predicato diverso</td></tr></tbody></table>
+<p>Nel corso questo «far combaciare» si chiama <strong>omomorfismo</strong> dal pattern al grafo: le costanti restano uguali, le variabili prendono valori del grafo. Ogni modo di farlo combaciare dà una riga del risultato.</p>
+<p class="meta">Fonte: <a href="https://www.w3.org/TR/sparql11-query/#WritingSimpleQueries">W3C, SPARQL 1.1 Query, § 2.1 «Writing a Simple Query»</a> e <a href="https://www.w3.org/TR/sparql11-query/#BasicGraphPatterns">§ 5.1 Basic Graph Patterns</a>.</p></section>
+
+<section id="due-letture"><h2>Stessa query, due risposte.</h2><p>Il punto 5.3 dà <strong>lo stesso G</strong> e chiede di valutare Q in due modi.</p>
+<table><thead><tr><th></th><th>G come graph database</th><th>G come RDFS Knowledge Graph</th></tr></thead><tbody>
+<tr><td><strong>Su quali triple</strong></td><td>Solo quelle <strong>scritte</strong> in G</td><td>Quelle scritte <strong>più quelle dedotte</strong> con le regole RDFS</td></tr>
+<tr><td><strong><code>rdfs:domain</code> ecc.</strong></td><td>Triple come le altre, senza effetto</td><td>Regole che producono nuove triple</td></tr>
+<tr><td><strong>Nel corso si chiama</strong></td><td>DB answer</td><td>certain answer = risposta su <code>comp(G)</code></td></tr>
+<tr><td><strong>Di solito all’esame</strong></td><td><code>Q(G) = ∅</code></td><td>Uno o più individui</td></tr></tbody></table>
+<p>Esempio di settembre. G contiene, tra le altre:</p>
+<pre><code>:Roberto  :teaches     :Databases2026 .
+:teaches  rdfs:domain  :Lecturer .</code></pre>
+<figure class="graph"><svg viewBox="0 0 650 190" role="img" aria-label="Roberto è collegato da teaches a Databases2026. La tripla teaches domain Lecturer fa dedurre l’arco tratteggiato Roberto rdf:type Lecturer."><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#17664f"/></marker><marker id="arrow-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b8860b"/></marker></defs><rect x="12" y="30" width="150" height="50" rx="12"/><text x="87" y="61" text-anchor="middle" font-size="18">:Roberto</text><line x1="162" y1="55" x2="458" y2="55" marker-end="url(#arrow)"/><text x="310" y="42" text-anchor="middle" font-size="16">:teaches</text><rect x="467" y="30" width="170" height="50" rx="12"/><text x="552" y="61" text-anchor="middle" font-size="18">:Databases2026</text><line x1="87" y1="80" x2="87" y2="128" stroke-dasharray="6 5" style="stroke:#b8860b" marker-end="url(#arrow-d)"/><text x="100" y="110" font-size="15">rdf:type (dedotta)</text><rect x="12" y="132" width="150" height="50" rx="12"/><text x="87" y="163" text-anchor="middle" font-size="18">:Lecturer</text><text x="330" y="160" font-size="15">perché :teaches rdfs:domain :Lecturer</text></svg><figcaption>Linea continua: tripla scritta in G. Tratteggio: tripla che esiste solo nella lettura come Knowledge Graph.</figcaption></figure>
+<p><strong>Graph database:</strong> in G non c’è nessuna tripla <code>… rdf:type :Lecturer</code>, quindi <code>Q(G) = ∅</code>. <strong>Knowledge Graph:</strong> la regola del dominio aggiunge <code>:Roberto rdf:type :Lecturer</code> (e lo stesso per Maurizio), quindi <code>Q(G) = {:Roberto, :Maurizio}</code>. È la soluzione ufficiale di settembre.</p>
+<p class="meta">Teorema delle slide (nota 03, <em>Completion completa</em>): per una query BGP, le certain answers su K coincidono con le risposte normali calcolate su <code>comp(K)</code>.</p></section>
+
+<section id="regole"><h2>Le quattro regole che usi davvero.</h2><p>Per il 5.3 ti serve la <em>Instance-Based Completion</em>: applichi queste regole finché non aggiungono più niente (punto fisso).</p>
+<table><thead><tr><th>Regola</th><th>Se in G hai…</th><th>…aggiungi</th></tr></thead><tbody>
+<tr><td><strong>subClassOf</strong></td><td><code>x rdf:type C</code> e <code>C rdfs:subClassOf D</code></td><td><code>x rdf:type D</code></td></tr>
+<tr><td><strong>subPropertyOf</strong></td><td><code>x P y</code> e <code>P rdfs:subPropertyOf R</code></td><td><code>x R y</code></td></tr>
+<tr><td><strong>domain</strong></td><td><code>x P y</code> e <code>P rdfs:domain C</code></td><td><code>x rdf:type C</code> → il <strong>soggetto</strong></td></tr>
+<tr><td><strong>range</strong></td><td><code>x P y</code> e <code>P rdfs:range C</code></td><td><code>y rdf:type C</code> → l’<strong>oggetto</strong></td></tr></tbody></table>
+<div class="callout"><p><strong>Per non confondere domain e range:</strong> domain sta <em>davanti</em> alla freccia (soggetto), range <em>alla fine</em> (oggetto). «Everything that is created is a work of art» parla di chi <em>riceve</em> l’azione: è l’oggetto di <code>:creates</code>, oppure il soggetto di <code>:createdBy</code>. Guarda sempre il verso della proprietà che hai scelto.</p></div>
+<p class="meta">Fonti: <a href="https://www.w3.org/TR/rdf-schema/#ch_domain">RDFS 1.1, rdfs:domain</a>, <a href="https://www.w3.org/TR/rdf-schema/#ch_range">rdfs:range</a>, <a href="https://www.w3.org/TR/rdf-schema/#ch_subclassof">rdfs:subClassOf</a>, <a href="https://www.w3.org/TR/rdf-schema/#ch_subpropertyof">rdfs:subPropertyOf</a>; le regole corrispondono a <a href="https://www.w3.org/TR/rdf11-mt/#patterns-of-rdfs-entailment-informative">rdfs2, rdfs3, rdfs7 e rdfs9 di RDF 1.1 Semantics</a>.</p></section>
+
+<section id="esercizi"><h2>Ora prova tu.</h2><p>Rispondi prima di aprire le soluzioni. Ogni esercizio si può ripetere.</p><p class="progress" data-progress aria-live="polite"></p>
+
+<form onsubmit="return false" class="exercise" id="es-1" data-quiz><h3>01 / Solo ciò che è scritto</h3><pre><code>:Leo      rdf:type    :Artist .
+:Leo      :name       "Leonardo" .
+:Gioconda :paintedBy  :Leo .</code></pre><p>Risposta di <code>SELECT ?x WHERE { ?x rdf:type :Artist . }</code> su G come <strong>graph database</strong>?</p><fieldset class="options"><legend class="meta">Scegli l’insieme delle risposte.</legend>
+<label><input type="radio" name="q1" data-feedback="&quot;Leonardo&quot; è il nome, un literal. La tripla con rdf:type ha come soggetto :Leo."><code>{ "Leonardo" }</code></label>
+<label><input type="radio" name="q1" data-correct="true" data-feedback="Corretto: una sola tripla combacia con il pattern, e ha soggetto :Leo."><code>{ :Leo }</code></label>
+<label><input type="radio" name="q1" data-feedback="Su un graph database :Gioconda non ha nessuna tripla rdf:type :Artist. Non stai deducendo niente."><code>{ :Gioconda }</code></label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div></form>
+
+<form onsubmit="return false" class="exercise" id="es-2" data-quiz><h3>02 / Domain: chi diventa Lecturer?</h3><pre><code>:Roberto  :teaches     :DB2026 .
+:teaches  rdfs:domain  :Lecturer .</code></pre><p>Risposta di «tutti i Lecturer» su G come <strong>Knowledge Graph</strong>?</p><fieldset class="options"><legend class="meta">Scegli l’insieme delle risposte.</legend>
+<label><input type="radio" name="q2" data-feedback="Il dominio riguarda il soggetto della proprietà. :DB2026 è l’oggetto: varrebbe con rdfs:range."><code>{ :DB2026 }</code></label>
+<label><input type="radio" name="q2" data-feedback="Il dominio tipizza solo il soggetto. Per :DB2026 non c’è nessuna regola che lo renda Lecturer."><code>{ :Roberto, :DB2026 }</code></label>
+<label><input type="radio" name="q2" data-correct="true" data-feedback="Corretto: :Roberto è il soggetto di :teaches, e il dominio di :teaches è :Lecturer."><code>{ :Roberto }</code></label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div></form>
+
+<form onsubmit="return false" class="exercise" id="es-3" data-quiz><h3>03 / Stesso G, lettura da database</h3><p>Stesso G dell’esercizio 02. Risposta su G come <strong>graph database</strong>?</p><fieldset class="options"><legend class="meta">Scegli l’insieme delle risposte.</legend>
+<label><input type="radio" name="q3" data-correct="true" data-feedback="Corretto: nessuna tripla scritta ha la forma ?x rdf:type :Lecturer. Su un graph database rdfs:domain non produce niente."><code>∅</code></label>
+<label><input type="radio" name="q3" data-feedback="Questa è la risposta del Knowledge Graph. Il graph database usa solo le triple scritte."><code>{ :Roberto }</code></label>
+<label><input type="radio" name="q3" data-feedback="Il pattern chiede triple con rdf:type. :Lecturer è oggetto di rdfs:domain, non il soggetto di un rdf:type."><code>{ :teaches }</code></label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div></form>
+
+<form onsubmit="return false" class="exercise" id="es-4" data-quiz><h3>04 / Una catena di due regole (giugno B)</h3><pre><code>:David             :sculptedBy         :Michelangelo .
+:sculptedBy        rdfs:subPropertyOf  :craftedBy .
+:craftedBy         rdfs:domain         :Artifact .
+:craftedBy         rdfs:range          :Artisan .
+:MichelangeloVirus rdf:type            :ComputerVirus .
+:MichelangeloVirus :name               "Michelangelo" .</code></pre><p>Risposta di «tutti gli Artifact» su G come <strong>Knowledge Graph</strong>?</p><fieldset class="options"><legend class="meta">Scegli l’insieme delle risposte.</legend>
+<label><input type="radio" name="q4" data-feedback="Il range di :craftedBy rende :Michelangelo un :Artisan, non un :Artifact. Hai scambiato soggetto e oggetto."><code>{ :David, :Michelangelo }</code></label>
+<label><input type="radio" name="q4" data-feedback="Il virus è un individuo diverso che ha solo lo stesso nome. Non partecipa a :craftedBy."><code>{ :David, :MichelangeloVirus }</code></label>
+<label><input type="radio" name="q4" data-correct="true" data-feedback="Corretto. subPropertyOf dà :David :craftedBy :Michelangelo; poi il dominio di :craftedBy dà :David rdf:type :Artifact."><code>{ :David }</code></label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div><details><summary>Soluzione ragionata</summary><ol><li>subPropertyOf: <code>:David :sculptedBy :Michelangelo</code> → <code>:David :craftedBy :Michelangelo</code>.</li><li>domain: <code>:David :craftedBy …</code> → <code>:David rdf:type :Artifact</code>.</li><li>range: <code>… :craftedBy :Michelangelo</code> → <code>:Michelangelo rdf:type :Artisan</code> (non serve per Q).</li></ol><p>Come graph database invece <code>Q(G) = ∅</code>. Il virus esiste nel testo per controllare che tu usi due IRI diverse per due cose diverse con lo stesso nome.</p></details></form>
+
+<form onsubmit="return false" class="exercise" id="es-5" data-quiz><h3>05 / La trappola della frase riportata (giugno A)</h3><p>«Some journalist has announced that the Mona Lisa was bought by someone…» si modella con la <strong>reificazione</strong>: si descrive la tripla, non la si afferma.</p><pre><code>_:s  rdf:type      rdf:Statement .
+_:s  rdf:subject   :MonaLisa .
+_:s  rdf:predicate :boughtBy .
+_:s  rdf:object    _:buyer .
+_:j  rdf:type      :Journalist .
+_:j  :announced    _:s .</code></pre><p>Se G contenesse anche <code>:boughtBy rdfs:domain :WorkOfArt</code>, il KG dedurrebbe <code>:MonaLisa rdf:type :WorkOfArt</code>?</p><fieldset class="options"><legend class="meta">Scegli la risposta corretta.</legend>
+<label><input type="radio" name="q5" data-feedback="rdf:subject dice solo di chi parla l’affermazione descritta. Non la rende vera.">Sì: rdf:subject la rende già vera</label>
+<label><input type="radio" name="q5" data-feedback="Nel modello il giornalista annuncia, ma G non afferma che l’acquisto sia avvenuto.">Sì: il giornalista la rende vera</label>
+<label><input type="radio" name="q5" data-correct="true" data-feedback="Corretto: in G non c’è la tripla :MonaLisa :boughtBy _:buyer, quindi la regola del dominio non si attiva.">No: la tripla non è asserita</label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div><details><summary>Perché conta all’esame</summary><p>Nel giugno A <code>:MonaLisa</code> diventa <code>:WorkOfArt</code> grazie a <code>:paintedBy</code> → <code>:createdBy</code> (subPropertyOf) e al dominio di <code>:createdBy</code>, <strong>non</strong> grazie all’acquisto annunciato. Se nella giustificazione citi l’acquisto, la motivazione è sbagliata anche se l’insieme è giusto. Vedi nota 03, <em>Reification e affermazioni di ordine superiore</em>, e <a href="https://www.w3.org/TR/rdf11-mt/#reification">RDF 1.1 Semantics, § Reification</a>.</p></details></form>
+
+<form onsubmit="return false" class="exercise" id="es-6" data-sparql=":Artifact"><h3>06 / Scrivi Q (giugno B, 5.2)</h3><p>Scrivi la query SPARQL che recupera <strong>tutti gli artifacts</strong>. La classe è <code>:Artifact</code>; i prefissi sono già dichiarati.</p><label for="q6">La tua query</label><textarea id="q6" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="SELECT …"></textarea><button type="submit">Controlla la query</button><div class="feedback" data-feedback role="status" aria-live="polite"></div><details><summary>Mostra la soluzione, dopo aver provato</summary><pre><code>SELECT ?x
+WHERE { ?x rdf:type :Artifact . }</code></pre></details></form>
+</section>
+
+<section id="richiamo"><h2>Ultimo passo, su carta e a memoria.</h2><p>Chiudi questa pagina e scrivi la risposta al <strong>5.4 di settembre</strong> come la consegneresti: due risposte e le giustificazioni. Poi confronta.</p><details><summary>Confronta con lo schema di risposta</summary><pre><code>(a) Graph database: Q(G) = ∅.
+    G non contiene nessuna tripla esplicita della forma
+    x rdf:type :Lecturer, e un graph database risponde
+    solo con le triple presenti.
+
+(b) RDFS Knowledge Graph: Q(G) = {:Roberto, :Maurizio}.
+    Da :Roberto :teaches :Databases2026 . e
+    :teaches rdfs:domain :Lecturer . segue, per la regola
+    del dominio, :Roberto rdf:type :Lecturer .
+    Allo stesso modo da :Maurizio :teaches :Databases2025 .</code></pre><p>Schema fisso: <strong>risposta → regola → triple usate</strong>. Vale per tutti e tre gli appelli.</p></details>
+<div class="callout"><p><strong>Errore nella soluzione ufficiale di settembre.</strong> In <code>exams/september/Sol.pdf</code> trovi <code>:Databases2024 . :edition_of :Databases .</code>: il primo punto è un refuso. La tripla corretta è <code>:Databases2024 :edition_of :Databases .</code></p></div>
+<div class="callout"><p><strong>Ripasso domani, 2 minuti.</strong> Senza guardare, riscrivi la tabella delle quattro regole e indica per domain e range quale estremo della freccia viene tipizzato.</p></div>
+<p><strong>Prossimo passo:</strong> il 5.1, cioè costruire G dal testo (reificazione, «is also the name of», «everyone who…» → domain/range). Vale più punti della query.</p>
+<p><strong>Scrivimi in chat</strong> quanti esercizi hai fatto giusti al primo tentativo e la tua risposta al 5.4. Le risposte nella pagina non arrivano a me. Chiedimi qualsiasi passaggio non chiaro.</p></section>
+
+<section id="fonti"><h2>Per leggere la fonte.</h2><p>Fonte primaria consigliata: <a href="https://www.w3.org/TR/sparql11-query/#WritingSimpleQueries">W3C SPARQL 1.1 Query, § 2.1</a>, una pagina sola. Poi, per le regole, <a href="https://www.w3.org/TR/rdf-schema/#ch_domain">RDFS 1.1 § 3.3–3.4</a>. Per l’esame contano più la nota 03 (sezioni <em>Instance-Based Completion</em> e <em>Certain answers</em>) e le soluzioni in <code>exams/</code>.</p><p>Ripasso veloce: <a href="../reference/sparql-problema-5.html">scheda Problem 5</a> · lezione precedente: <a href="0001-rdf-dalle-frasi-alle-triple.html">Dalle frasi alle triple</a>.</p></section>
+<footer>Lezione 02 · Funziona offline · Nessun invio delle risposte · Stampa disponibile dal browser</footer>
+</main><script id="lesson-practice">
+'use strict';
+// Shared practice widgets: radio quizzes and a checker for one-pattern SPARQL class queries.
+// No network, tracking or persistence: answers stay in the open page.
+
+function checkClassQuery(source, cls) {
+  const q = source.replace(/^\s*PREFIX[^\n]*$/gim, '').replace(/\s+/g, ' ').trim();
+  if (!q) return {ok:false, message:'Scrivi la query prima di controllare.'};
+  if (!/^SELECT\b/i.test(q)) return {ok:false, message:'Una query di interrogazione inizia con SELECT, seguito dalle variabili da restituire.'};
+  if (!/\bWHERE\s*\{/i.test(q) || !q.endsWith('}')) return {ok:false, message:'Manca il blocco WHERE { … }: le triple da cercare vanno tra graffe.'};
+  const m = q.match(/^SELECT\s+(?:DISTINCT\s+)?(\*|\?\w+)\s+WHERE\s*\{\s*(\S+)\s+(\S+)\s+(\S+?)\s*\.?\s*\}$/i);
+  if (!m) return {ok:false, message:'Basta un solo triple pattern: SELECT ?v WHERE { soggetto predicato oggetto . }. Controlla spazi e graffe.'};
+  const [, out, s, p, o] = m;
+  if (!s.startsWith('?')) return {ok:false, message:`Il soggetto ${s} è una costante: vuoi lasciarlo libero, quindi serve una variabile come ?x.`};
+  if (out !== '*' && out !== s) return {ok:false, message:`Nel SELECT restituisci ${out}, ma nel pattern la variabile è ${s}. Devono coincidere.`};
+  if (p !== 'rdf:type' && p !== 'a') return {ok:false, message:`Il predicato ${p} non esprime l’appartenenza a una classe: usa rdf:type (oppure a).`};
+  if (/^["']/.test(o)) return {ok:false, message:'La classe è una IRI, non una stringa: niente virgolette.'};
+  if (o !== cls) return {ok:false, message:`Classe sbagliata: hai scritto ${o}, la classe richiesta è ${cls} (il prefisso vuoto e le maiuscole contano).`};
+  return {ok:true, message:'Corretto. È esattamente la forma attesa all’esame: un solo triple pattern con rdf:type. Il lavoro vero è al punto successivo, dove decidi su quali triple valutarla.'};
+}
+
+if (typeof module !== 'undefined') module.exports = {checkClassQuery};
+if (typeof document !== 'undefined') {
+  const forms = document.querySelectorAll('form[data-quiz],form[data-sparql]');
+  const solved = new Set();
+  const progress = () => {
+    const el = document.querySelector('[data-progress]');
+    if (el) el.textContent = `${solved.size} / ${forms.length} esercizi completati correttamente in questa apertura.`;
+  };
+  const report = (form, ok, message) => {
+    const output = form.querySelector('[data-feedback]');
+    output.textContent = message;
+    output.dataset.state = ok ? 'correct' : 'incorrect';
+    if (ok) solved.add(form.id); else solved.delete(form.id);
+    progress();
+  };
+  forms.forEach(form => {
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      if (form.hasAttribute('data-sparql')) {
+        const r = checkClassQuery(form.querySelector('textarea').value, form.dataset.sparql);
+        return report(form, r.ok, r.message);
+      }
+      const choice = form.querySelector('input:checked');
+      if (!choice) return report(form, false, 'Scegli una risposta e poi controlla.');
+      report(form, choice.dataset.correct === 'true', choice.dataset.feedback);
+    });
+    form.addEventListener('input', () => {
+      solved.delete(form.id);
+      form.querySelector('[data-feedback]').textContent = '';
+      progress();
+    });
+  });
+  progress();
+}
+
+</script>
+</body>
+</html>

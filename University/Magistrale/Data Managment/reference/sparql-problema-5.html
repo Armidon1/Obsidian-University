@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scheda Problem 5</title>
+<link rel="stylesheet" href="../assets/teaching.css">
+</head>
+<body><main>
+<header><div class="eyebrow">Data Management / scheda di ripasso</div><h1>Problem 5:<br>query e due risposte.</h1><p class="intro">Una pagina da stampare. Lezione completa: <a href="../lessons/0002-sparql-per-il-problem-5.html">SPARQL per il Problem 5</a>.</p></header>
+
+<section id="query"><h2>La query (5.2)</h2><pre><code>SELECT ?x
+WHERE { ?x rdf:type :Classe . }</code></pre><p><code>?x</code> = posto vuoto. Ogni tripla del grafo che combacia dà una riga (omomorfismo pattern → grafo). <code>a</code> equivale a <code>rdf:type</code>.</p></section>
+
+<section id="letture"><h2>Due letture di G (5.3)</h2><table><thead><tr><th>Lettura</th><th>Valuta Q su</th><th>Risposta tipica</th></tr></thead><tbody>
+<tr><td>Graph database</td><td>solo le triple scritte in G</td><td><code>∅</code></td></tr>
+<tr><td>RDFS Knowledge Graph</td><td><code>comp(G)</code> = scritte + dedotte (certain answers)</td><td>individui dedotti</td></tr></tbody></table></section>
+
+<section id="regole"><h2>Le 4 regole (punto fisso)</h2><table><thead><tr><th>Regola</th><th>Da</th><th>Deduci</th></tr></thead><tbody>
+<tr><td>subClassOf</td><td><code>x type C</code>, <code>C subClassOf D</code></td><td><code>x type D</code></td></tr>
+<tr><td>subPropertyOf</td><td><code>x P y</code>, <code>P subPropertyOf R</code></td><td><code>x R y</code></td></tr>
+<tr><td>domain</td><td><code>x P y</code>, <code>P domain C</code></td><td><code>x type C</code> (soggetto)</td></tr>
+<tr><td>range</td><td><code>x P y</code>, <code>P range C</code></td><td><code>y type C</code> (oggetto)</td></tr></tbody></table></section>
+
+<section id="schema"><h2>Schema della giustificazione</h2><ol class="checklist"><li><strong>(a)</strong> <code>Q(G) = ∅</code>: G non contiene triple esplicite <code>x rdf:type :C</code>; il graph database usa solo le triple presenti.</li><li><strong>(b)</strong> <code>Q(G) = {…}</code>: per ogni individuo, cita le triple usate e la regola applicata.</li></ol></section>
+
+<section id="trappole"><h2>Trappole viste negli appelli</h2><ul class="checklist"><li><strong>Domain e range scambiati:</strong> il dominio tipizza il soggetto, il range l’oggetto.</li><li><strong>Frase riportata</strong> («X has announced that…»): reificazione. La tripla descritta non è asserita, quindi non attiva regole.</li><li><strong>«is also the name of»</strong> (aeroporto, virus): IRI diversa per ciascun individuo, stesso literal in <code>:name</code>.</li><li><strong>«For every x, y, if x is painted by y, then x is created by y»</strong>: <code>rdfs:subPropertyOf</code>.</li><li><strong>«Everyone who teaches is a Lecturer»</strong>: <code>rdfs:domain</code> sulla proprietà.</li></ul></section>
+<footer>Fonti: nota 03 (Instance-Based Completion, Certain answers) · <a href="https://www.w3.org/TR/sparql11-query/#WritingSimpleQueries">SPARQL 1.1 § 2.1</a> · <a href="https://www.w3.org/TR/rdf-schema/#ch_domain">RDFS 1.1</a></footer>
+</main></body>
+</html>

@@ -1,0 +1,1651 @@
+{
+  "nodes": [
+    {
+      "id": "0050046bf2709cf1",
+      "type": "text",
+      "text": "# 02 · Data Warehouses\n\n**7 sezioni · 42 concetti distinti.**\nSegui i gruppi numerati lungo le frecce. Ogni freccia interna forma una frase: concetto → relazione → concetto. I link «Nella lezione» aprono la sezione di origine.\n\n**Figure originali:** 24 immagini della lezione, collegate ai concetti illustrati.",
+      "x": 0,
+      "y": -750,
+      "width": 9714.0,
+      "height": 260
+    },
+    {
+      "id": "480d71b935787be6",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses.md",
+      "x": 0,
+      "y": -400,
+      "width": 4732.0,
+      "height": 100
+    },
+    {
+      "id": "eaab8620b3a87d7c",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/canvas/00 - DM - MOC dei canvas.canvas",
+      "x": 4982.0,
+      "y": -400,
+      "width": 4732.0,
+      "height": 100
+    },
+    {
+      "id": "f94c2c845e025fd5",
+      "type": "text",
+      "text": "## Percorso della mappa\n\n- 01 · Dal dato operativo alle decisioni\n- 02 · Architettura e alimentazione\n- 03 · Cubo, fatti e gerarchie\n- 04 · Navigare l’analisi OLAP\n- 05 · Progettare con il DFM\n- 06 · Dallo schema concettuale alle tabelle\n- 07 · Implementazioni e precomputazione",
+      "x": 0,
+      "y": -250,
+      "width": 9714.0,
+      "height": 320
+    },
+    {
+      "id": "b3c42d875707fc63",
+      "type": "text",
+      "text": "## Ripasso attivo\n\nScegli un nodo e spiegalo senza leggere. Poi segui una freccia e giustifica il rapporto con il nodo successivo.\nRicostruisci un esempio, indica un limite e apri la sezione della lezione per formule, figure o esercizi.\n\n**I gruppi sono numerati e seguono un percorso a serpentina:** prima riga da sinistra a destra, seconda da destra a sinistra, poi si ripete.\n\nPer le figure: descrivi prima ciò che vedi, poi spiega quale concetto esemplifica. Aprile per leggerle alla risoluzione originale.",
+      "x": 0,
+      "y": 19558.0,
+      "width": 9714.0,
+      "height": 310
+    },
+    {
+      "id": "558d4c50d7759f99",
+      "type": "group",
+      "label": "01 · Dal dato operativo alle decisioni",
+      "color": "4",
+      "x": 0.0,
+      "y": 120,
+      "width": 4732.0,
+      "height": 2014.0
+    },
+    {
+      "id": "e94a57abdb0f9632",
+      "type": "text",
+      "text": "## 01 · Dal dato operativo alle decisioni\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Definition and Fundamental Properties of a Data Warehouse|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 170,
+      "width": 4612.0,
+      "height": 105
+    },
+    {
+      "id": "710255fe46742076",
+      "type": "text",
+      "text": "## Decision Support System\n\nAnalizza dati per scegliere: trend, confronti e scenari. Deve trasformare sorgenti operative frammentate in informazione coerente.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Definition and Fundamental Properties of a Data Warehouse|Nella lezione ↗]]",
+      "x": 1686,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "433fe718b8f0365e",
+      "type": "text",
+      "text": "## OLTP\n\nTransazioni brevi e frequenti su dati correnti: acquisti, prenotazioni, aggiornamenti. Richiede affidabilità e concorrenza.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Definition and Fundamental Properties of a Data Warehouse|Nella lezione ↗]]",
+      "x": 2427,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "b7f625503aa0bcb0",
+      "type": "text",
+      "text": "## OLAP\n\nQuery ampie, storiche e aggregate: fatturato per mese, area e prodotto. È un modo di analizzare, non un sinonimo del contenitore warehouse.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Definition and Fundamental Properties of a Data Warehouse|Nella lezione ↗]]",
+      "x": 1686,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "2fa050521b059311",
+      "type": "text",
+      "text": "## Data warehouse\n\nRaccolta subject-oriented, integrated, time-variant e non-volatile. Integra soggetti aziendali e conserva l’evoluzione nel tempo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Definition and Fundamental Properties of a Data Warehouse|Nella lezione ↗]]",
+      "x": 2056,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "cc81cfce0f7351d6",
+      "type": "text",
+      "text": "## Storia e non volatilità\n\nIl caricamento aggiunge e aggiorna dati secondo processi controllati. L’analista consulta una base stabile; non è il carico di aggiornamenti puntuali del gestionale.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Definition and Fundamental Properties of a Data Warehouse|Nella lezione ↗]]",
+      "x": 1686,
+      "y": 1723,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "a291905e967b3a32",
+      "type": "text",
+      "text": "## Separazione fisica\n\nIsola query pesanti dai sistemi operativi e permette schemi ottimizzati per analisi. I benefici richiedono processi di alimentazione e introducono latenza.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Definition and Fundamental Properties of a Data Warehouse|Nella lezione ↗]]",
+      "x": 2427,
+      "y": 1723,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "6d6b892235167e41",
+      "type": "group",
+      "label": "02 · Architettura e alimentazione",
+      "color": "5",
+      "x": 4982.0,
+      "y": 120,
+      "width": 4732.0,
+      "height": 6975.0
+    },
+    {
+      "id": "2114497b7df62866",
+      "type": "text",
+      "text": "## 02 · Architettura e alimentazione\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Two-Layer Architecture|Apri la sezione della lezione]]",
+      "x": 5042.0,
+      "y": 170,
+      "width": 4612.0,
+      "height": 105
+    },
+    {
+      "id": "3bdcdfa23060a2ba",
+      "type": "text",
+      "text": "## Due e tre livelli\n\nDue livelli: sorgenti operative e warehouse. Tre: aggiunge un livello riconciliato intermedio che integra dati prima dell’organizzazione analitica.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Two-Layer Architecture|Nella lezione ↗]]",
+      "x": 6668,
+      "y": 4228,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "bd97812db3f43d46",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260902131526.png",
+      "x": 6568,
+      "y": 4659,
+      "width": 820,
+      "height": 557
+    },
+    {
+      "id": "4b4706dfde5ea1ec",
+      "type": "text",
+      "text": "**Figura · Due e tre livelli**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 6568,
+      "y": 5231,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "e314a1a370b160e2",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260902131543.png",
+      "x": 6568,
+      "y": 5411,
+      "width": 820,
+      "height": 544
+    },
+    {
+      "id": "e4e21c377358a553",
+      "type": "text",
+      "text": "**Figura · Due e tre livelli**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 6568,
+      "y": 5970,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "12b479c2ed843b71",
+      "type": "text",
+      "text": "## Data mart\n\nPorzione orientata a un’area o dipartimento: vendite, finanza, produzione. L’integrazione evita definizioni incompatibili dello stesso indicatore.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Two-Layer Architecture|Nella lezione ↗]]",
+      "x": 7088,
+      "y": 6180,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "3fcd027c05e299c1",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260902151752.png",
+      "x": 6988,
+      "y": 6611,
+      "width": 820,
+      "height": 309
+    },
+    {
+      "id": "9edbfdc7e8f51e7c",
+      "type": "text",
+      "text": "**Figura · Data mart**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 6988,
+      "y": 6935,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "200d614fe31d4415",
+      "type": "text",
+      "text": "## Estrazione\n\nAcquisisce dati dalle sorgenti, in modo completo o incrementale. Il processo deve riconoscere quali cambiamenti trasportare.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Two-Layer Architecture|Nella lezione ↗]]",
+      "x": 7509,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "4619e323da6c22bc",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260902160712.png",
+      "x": 7644,
+      "y": 771,
+      "width": 349,
+      "height": 640
+    },
+    {
+      "id": "54d2514e987bdd2b",
+      "type": "text",
+      "text": "**Figura · Estrazione**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 7509,
+      "y": 1426,
+      "width": 619,
+      "height": 80
+    },
+    {
+      "id": "2f919395cf0b45dc",
+      "type": "text",
+      "text": "## Cleansing\n\nGestisce errori, duplicati e valori incoerenti: «RM» e «Roma» potrebbero richiedere una codifica comune.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Two-Layer Architecture|Nella lezione ↗]]",
+      "x": 7509,
+      "y": 1636,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "dd465e7427f99857",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260902161314.png",
+      "x": 7647,
+      "y": 2067,
+      "width": 344,
+      "height": 640
+    },
+    {
+      "id": "6e55a2311ce9e1d2",
+      "type": "text",
+      "text": "**Figura · Cleansing**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 7509,
+      "y": 2722,
+      "width": 619,
+      "height": 80
+    },
+    {
+      "id": "7c7b4c86572a16b1",
+      "type": "text",
+      "text": "## Trasformazione\n\nAllinea formati, unità e significati; combina sorgenti. Una valuta comune o un identificatore unico sono scelte semantiche oltre che tecniche.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Two-Layer Architecture|Nella lezione ↗]]",
+      "x": 7509,
+      "y": 2932,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "4955879c31328da1",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260902161324.png",
+      "x": 7647,
+      "y": 3363,
+      "width": 344,
+      "height": 640
+    },
+    {
+      "id": "3516520bbc76b0e1",
+      "type": "text",
+      "text": "**Figura · Trasformazione**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 7509,
+      "y": 4018,
+      "width": 619,
+      "height": 80
+    },
+    {
+      "id": "6c8b1529bfe158f3",
+      "type": "text",
+      "text": "## Caricamento\n\nInserisce i dati integrati nel warehouse secondo la politica di aggiornamento. Controlli di consistenza e gestione della storia precedono l’uso analitico.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Two-Layer Architecture|Nella lezione ↗]]",
+      "x": 7509,
+      "y": 4974,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "2a6950c558c174c4",
+      "type": "group",
+      "label": "03 · Cubo, fatti e gerarchie",
+      "color": "3",
+      "x": 4982.0,
+      "y": 7345.0,
+      "width": 4732.0,
+      "height": 3602.0
+    },
+    {
+      "id": "f04fb9071afd1d94",
+      "type": "text",
+      "text": "## 03 · Cubo, fatti e gerarchie\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#A Three-Dimensional Sales Cube|Apri la sezione della lezione]]",
+      "x": 5042.0,
+      "y": 7395.0,
+      "width": 4612.0,
+      "height": 105
+    },
+    {
+      "id": "2439823f03a3dc20",
+      "type": "text",
+      "text": "## Fatto\n\nFenomeno di interesse, come la vendita. Gli eventi osservati sono descritti tramite misure e coordinate dimensionali.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#A Three-Dimensional Sales Cube|Nella lezione ↗]]",
+      "x": 6988,
+      "y": 7565,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "2f9fc06782d5af0b",
+      "type": "text",
+      "text": "## Grana\n\nPrecisazione dell’evento elementare: una riga per vendita, oppure per prodotto–negozio–giorno. Senza grana precisa le misure possono essere contate due volte.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#A Three-Dimensional Sales Cube|Nella lezione ↗]]",
+      "x": 6568,
+      "y": 8410,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "52b6256bb0fe211a",
+      "type": "text",
+      "text": "## Misura\n\nValore da analizzare: quantità, ricavo, saldo, prezzo. Il tipo di misura determina quali aggregazioni hanno significato.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#A Three-Dimensional Sales Cube|Nella lezione ↗]]",
+      "x": 6568,
+      "y": 9664,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "dea553e92b8e34cf",
+      "type": "text",
+      "text": "## Dimensione\n\nAsse di lettura del fatto: tempo, prodotto, luogo. Le combinazioni di coordinate individuano le celle del cubo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#A Three-Dimensional Sales Cube|Nella lezione ↗]]",
+      "x": 7409,
+      "y": 8026,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "80f16f9dc1c2bfcc",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260902161522.png",
+      "x": 7308,
+      "y": 8457,
+      "width": 820,
+      "height": 572
+    },
+    {
+      "id": "3162490f530f05a9",
+      "type": "text",
+      "text": "**Figura · Dimensione**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 7308,
+      "y": 9044,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "604934fdd05bfbd6",
+      "type": "text",
+      "text": "## Gerarchia\n\nLivelli più o meno dettagliati: città → regione → paese. Consente aggregazioni coerenti passando dal dettaglio a un livello superiore.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#A Three-Dimensional Sales Cube|Nella lezione ↗]]",
+      "x": 7409,
+      "y": 9254,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "e9cfca5ea8b55ca7",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260902172412.png",
+      "x": 7308,
+      "y": 9685,
+      "width": 820,
+      "height": 626
+    },
+    {
+      "id": "f13f97d0af173fde",
+      "type": "text",
+      "text": "**Figura · Gerarchia**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 7308,
+      "y": 10326,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "6750737fc1351975",
+      "type": "text",
+      "text": "## Dipendenza funzionale\n\nCittà → regione indica un solo valore di regione per ogni città, nella modellazione scelta. Una FD non rende automaticamente il determinante una chiave dell’intera relazione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#A Three-Dimensional Sales Cube|Nella lezione ↗]]",
+      "x": 7409,
+      "y": 10536,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "262cd19cfd9d487b",
+      "type": "group",
+      "label": "04 · Navigare l’analisi OLAP",
+      "color": "6",
+      "x": 0.0,
+      "y": 7345.0,
+      "width": 4732.0,
+      "height": 5459.0
+    },
+    {
+      "id": "ce5bc35c0d95238f",
+      "type": "text",
+      "text": "## 04 · Navigare l’analisi OLAP\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#OLAP Operators|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 7395.0,
+      "width": 4612.0,
+      "height": 105
+    },
+    {
+      "id": "2bedd2c9f0b33d83",
+      "type": "text",
+      "text": "## Roll-up\n\nAggrega lungo una gerarchia, ad esempio giorno → mese. Riduce il dettaglio usando un operatore valido per la misura.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#OLAP Operators|Nella lezione ↗]]",
+      "x": 2056,
+      "y": 9556,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "69cc52ec2cfb3ac1",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260904100459.png",
+      "x": 1956,
+      "y": 9987,
+      "width": 820,
+      "height": 385
+    },
+    {
+      "id": "5ed09055c9852e28",
+      "type": "text",
+      "text": "**Figura · Roll-up**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 1956,
+      "y": 10387,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "d5644961a1cb2312",
+      "type": "text",
+      "text": "## Drill-down\n\nScende al dettaglio. Per ricostruire i giorni non basta il solo totale mensile: devono essere disponibili dati o strutture più dettagliate.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#OLAP Operators|Nella lezione ↗]]",
+      "x": 1586,
+      "y": 10597,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "c6215b043f14e2fc",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260904100534.png",
+      "x": 1485,
+      "y": 11028,
+      "width": 820,
+      "height": 416
+    },
+    {
+      "id": "ebbb33f72d091066",
+      "type": "text",
+      "text": "**Figura · Drill-down**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 1485,
+      "y": 11459,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "1b787cf503aedf75",
+      "type": "text",
+      "text": "## Slice\n\nFissa una coordinata, come anno=2025, selezionando una sezione del cubo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#OLAP Operators|Nella lezione ↗]]",
+      "x": 2528,
+      "y": 10662,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "1021923d3e4e746f",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260904100752.png",
+      "x": 2427,
+      "y": 11094,
+      "width": 820,
+      "height": 285
+    },
+    {
+      "id": "befd0f23f2c1fac8",
+      "type": "text",
+      "text": "**Figura · Slice**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 2427,
+      "y": 11394,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "9fa0b2b0c9957459",
+      "type": "text",
+      "text": "## Dice\n\nSeleziona un sottoinsieme multidimensionale: più prodotti, aree e intervalli temporali. Restringe l’analisi senza necessariamente aggregare.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#OLAP Operators|Nella lezione ↗]]",
+      "x": 2528,
+      "y": 11669,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "88b522f756e567f6",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260904100814.png",
+      "x": 2427,
+      "y": 12100,
+      "width": 820,
+      "height": 529
+    },
+    {
+      "id": "112863d75245822a",
+      "type": "text",
+      "text": "**Figura · Dice**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 2427,
+      "y": 12644,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "f98ad416842eb92f",
+      "type": "text",
+      "text": "## Pivot\n\nCambia la disposizione degli assi nella presentazione: mesi sulle colonne e prodotti sulle righe, o viceversa. Non crea nuovi fatti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#OLAP Operators|Nella lezione ↗]]",
+      "x": 2056,
+      "y": 7565,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "f808bb844baa9ef6",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260904101057.png",
+      "x": 1956,
+      "y": 7996,
+      "width": 820,
+      "height": 246
+    },
+    {
+      "id": "e16d8c3be5273ec1",
+      "type": "text",
+      "text": "**Figura · Pivot**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 1956,
+      "y": 8257,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "6035bfa0be14f075",
+      "type": "text",
+      "text": "## Drill-across\n\nConfronta misure di fatti differenti su dimensioni compatibili, per esempio vendite e scorte. Prima va allineata la granularità.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#OLAP Operators|Nella lezione ↗]]",
+      "x": 2056,
+      "y": 8467,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "1fd4dd92cf583183",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260904101504.png",
+      "x": 1956,
+      "y": 8898,
+      "width": 820,
+      "height": 433
+    },
+    {
+      "id": "ca8ef96d48f7dea4",
+      "type": "text",
+      "text": "**Figura · Drill-across**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 1956,
+      "y": 9346,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "46c36677a9e6d741",
+      "type": "group",
+      "label": "05 · Progettare con il DFM",
+      "color": "2",
+      "x": 0.0,
+      "y": 13054.0,
+      "width": 4732.0,
+      "height": 2426.0
+    },
+    {
+      "id": "53ce06b4ca8c3342",
+      "type": "text",
+      "text": "## 05 · Progettare con il DFM\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#The Dimensional Fact Model (DMF)|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 13104.0,
+      "width": 4612.0,
+      "height": 105
+    },
+    {
+      "id": "cadcde1344aab153",
+      "type": "text",
+      "text": "## Dimensional Fact Model\n\nSchema concettuale: un fatto con misure, dimensioni e gerarchie. Descrive significato e aggregazioni prima di scegliere le tabelle.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#The Dimensional Fact Model (DMF)|Nella lezione ↗]]",
+      "x": 2038,
+      "y": 13274,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "8e7a84cfac39c1f5",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260904170116.png",
+      "x": 1938,
+      "y": 13705,
+      "width": 820,
+      "height": 304
+    },
+    {
+      "id": "282b3807ef24ea81",
+      "type": "text",
+      "text": "**Figura · Dimensional Fact Model**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 1938,
+      "y": 14024,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "7aea8f279207cd9f",
+      "type": "text",
+      "text": "## Attributo descrittivo\n\nInformazione utile da mostrare, non un livello per aggregare: per esempio un indirizzo descrittivo. Non ogni attributo definisce una dimensione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#The Dimensional Fact Model (DMF)|Nella lezione ↗]]",
+      "x": 182,
+      "y": 14234,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "c3a7d5bcb2f24b95",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260914121559.png",
+      "x": 90,
+      "y": 14665,
+      "width": 802,
+      "height": 640
+    },
+    {
+      "id": "d17ca4a8dce082a7",
+      "type": "text",
+      "text": "**Figura · Attributo descrittivo**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 90,
+      "y": 15320,
+      "width": 802,
+      "height": 80
+    },
+    {
+      "id": "10009b605af4a6a1",
+      "type": "text",
+      "text": "## Attributo cross-dimensionale\n\nDipende dalla combinazione di più dimensioni o livelli. Collocarlo sotto una sola gerarchia può esprimere una dipendenza sbagliata.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#The Dimensional Fact Model (DMF)|Nella lezione ↗]]",
+      "x": 1106,
+      "y": 14234,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "20f70dc0aa970d27",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260914121612.png",
+      "x": 1014,
+      "y": 14665,
+      "width": 802,
+      "height": 640
+    },
+    {
+      "id": "b097c7fd3e64e6f0",
+      "type": "text",
+      "text": "**Figura · Attributo cross-dimensionale**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 1014,
+      "y": 15320,
+      "width": 802,
+      "height": 80
+    },
+    {
+      "id": "1bcad8c3f091596e",
+      "type": "text",
+      "text": "## Opzionalità e coverage\n\nAttributi o dimensioni possono non applicarsi a tutti gli eventi. Coverage esplicita l’esistenza di combinazioni anche quando non è osservato un evento.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#The Dimensional Fact Model (DMF)|Nella lezione ↗]]",
+      "x": 2038,
+      "y": 14449,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "153e8bd6ad954d61",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260914122537.png",
+      "x": 1938,
+      "y": 14880,
+      "width": 820,
+      "height": 210
+    },
+    {
+      "id": "478f89045a50964a",
+      "type": "text",
+      "text": "**Figura · Opzionalità e coverage**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 1938,
+      "y": 15105,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "c60d7c852bce04ea",
+      "type": "text",
+      "text": "## Convergenze e gerarchie condivise\n\nPiù percorsi possono convergere allo stesso livello; gerarchie riusabili evitano significati incompatibili tra fatti. Archi multipli distinguono ruoli diversi della stessa struttura.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#The Dimensional Fact Model (DMF)|Nella lezione ↗]]",
+      "x": 2980,
+      "y": 14440,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "0225c24dd3a1e3dc",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260914123209.png",
+      "x": 2880,
+      "y": 14870,
+      "width": 820,
+      "height": 229
+    },
+    {
+      "id": "abad30c1502ef678",
+      "type": "text",
+      "text": "**Figura · Convergenze e gerarchie condivise**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 2880,
+      "y": 15114,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "0c35d9850aaed28d",
+      "type": "text",
+      "text": "## Additività\n\nUna misura è sommabile soltanto lungo dimensioni appropriate. Ricavo: spesso additivo; saldo: non nel tempo; prezzo unitario: non sommabile come ricavo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#The Dimensional Fact Model (DMF)|Nella lezione ↗]]",
+      "x": 3922,
+      "y": 14386,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "df39222593187729",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260914143542.png",
+      "x": 3822,
+      "y": 14818,
+      "width": 820,
+      "height": 335
+    },
+    {
+      "id": "1e01ad9c6af557ce",
+      "type": "text",
+      "text": "**Figura · Additività**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 3822,
+      "y": 15168,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "692e2bfcaa06ed49",
+      "type": "group",
+      "label": "06 · Dallo schema concettuale alle tabelle",
+      "color": "4",
+      "x": 4982.0,
+      "y": 13054.0,
+      "width": 4732.0,
+      "height": 3061.0
+    },
+    {
+      "id": "f68a9f899f3f2e3c",
+      "type": "text",
+      "text": "## 06 · Dallo schema concettuale alle tabelle\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Star versus Snowflake|Apri la sezione della lezione]]",
+      "x": 5042.0,
+      "y": 13104.0,
+      "width": 4612.0,
+      "height": 105
+    },
+    {
+      "id": "0092b80eeedbad38",
+      "type": "text",
+      "text": "## Star schema\n\nTabella dei fatti con foreign key e misure, collegata a dimensioni denormalizzate. Le gerarchie sono spesso appiattite in ogni dimensione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Star versus Snowflake|Nella lezione ↗]]",
+      "x": 6988,
+      "y": 13735,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "0943c3528bca5565",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260914143722.png",
+      "x": 6888,
+      "y": 14166,
+      "width": 820,
+      "height": 560
+    },
+    {
+      "id": "4f4b518802049eda",
+      "type": "text",
+      "text": "**Figura · Star schema**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 6888,
+      "y": 14741,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "308a2cc87db60fd9",
+      "type": "text",
+      "text": "## Surrogate key\n\nIdentificatore artificiale della riga dimensionale. Separa identità tecnica da chiavi sorgente, collisioni tra sistemi e versioni storiche dello stesso oggetto.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Star versus Snowflake|Nella lezione ↗]]",
+      "x": 5827,
+      "y": 15328,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "00d3168f6b20532e",
+      "type": "text",
+      "text": "## Denormalizzare le dimensioni\n\nRipete città, regione e paese per ridurre join e rendere semplici le aggregazioni. La ridondanza è gestita nei caricamenti controllati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Star versus Snowflake|Nella lezione ↗]]",
+      "x": 6568,
+      "y": 15328,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "b462657bbd8d7b1c",
+      "type": "text",
+      "text": "## Snowflake\n\nDecompone gerarchie in tabelle normalizzate. Riduce ridondanza ma introduce più join; la decomposizione deve preservare dipendenze e significato.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Star versus Snowflake|Nella lezione ↗]]",
+      "x": 7409,
+      "y": 14951,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "2ac332d54dbef36b",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260915164049.png",
+      "x": 7308,
+      "y": 15382,
+      "width": 820,
+      "height": 558
+    },
+    {
+      "id": "b414adea002636be",
+      "type": "text",
+      "text": "**Figura · Snowflake**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 7308,
+      "y": 15955,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "5455070b7fa8dcaa",
+      "type": "text",
+      "text": "## Fatti e sparsità\n\nLa tabella dei fatti contiene combinazioni effettivamente osservate. Il prodotto delle cardinalità dimensionali è un limite di celle possibili, non il numero reale di eventi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Star versus Snowflake|Nella lezione ↗]]",
+      "x": 8250,
+      "y": 15328,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "bb22e67b2bbabc8b",
+      "type": "text",
+      "text": "## Traduzione del DFM\n\nOccorre gestire attributi descrittivi, cross-dimensionali, gerarchie condivise e archi multipli. Due ruoli della dimensione tempo possono richiedere foreign key distinte.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#Star versus Snowflake|Nella lezione ↗]]",
+      "x": 6988,
+      "y": 13274,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "c4871085e904c0a8",
+      "type": "group",
+      "label": "07 · Implementazioni e precomputazione",
+      "color": "5",
+      "x": 4982.0,
+      "y": 16365.0,
+      "width": 4732.0,
+      "height": 2943.0
+    },
+    {
+      "id": "9973671c365ccd18",
+      "type": "text",
+      "text": "## 07 · Implementazioni e precomputazione\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#MOLAP|Apri la sezione della lezione]]",
+      "x": 5042.0,
+      "y": 16415.0,
+      "width": 4612.0,
+      "height": 105
+    },
+    {
+      "id": "6e4f5cfde929fff7",
+      "type": "text",
+      "text": "## ROLAP\n\nImplementa il cubo su tabelle relazionali. SQL e join delle dimensioni calcolano filtri, grouping e aggregati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#MOLAP|Nella lezione ↗]]",
+      "x": 7038,
+      "y": 16585,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "4c00f9c9d624ed1d",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260904102624.png",
+      "x": 6938,
+      "y": 17016,
+      "width": 820,
+      "height": 360
+    },
+    {
+      "id": "89e0cf827a3000d5",
+      "type": "text",
+      "text": "**Figura · ROLAP**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 6938,
+      "y": 17391,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "8b9d47d1f2a536c7",
+      "type": "text",
+      "text": "## MOLAP\n\nUsa strutture multidimensionali native, adatte ad accessi per coordinate e aggregazioni precomputate.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#MOLAP|Nella lezione ↗]]",
+      "x": 6298,
+      "y": 17601,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "d92c8e5058d8075d",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/Pasted image 20260904102456.png",
+      "x": 6328,
+      "y": 18032,
+      "width": 559,
+      "height": 640
+    },
+    {
+      "id": "632053962dce0466",
+      "type": "text",
+      "text": "**Figura · MOLAP**\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses|Dalla lezione 02]]",
+      "x": 6298,
+      "y": 18687,
+      "width": 619,
+      "height": 80
+    },
+    {
+      "id": "abc8b63ae719de60",
+      "type": "text",
+      "text": "## Sparsità\n\nMolte celle del cubo teorico sono vuote. Allocare tutte le combinazioni può sprecare molto spazio; compressione e rappresentazioni sparse diventano decisive.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#MOLAP|Nella lezione ↗]]",
+      "x": 6298,
+      "y": 18897,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "8d1f22a04781b6aa",
+      "type": "text",
+      "text": "## HOLAP\n\nCombina componente relazionale e multidimensionale: il compromesso dipende da volume, dettaglio e aggregazioni richieste.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#MOLAP|Nella lezione ↗]]",
+      "x": 7038,
+      "y": 18018,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "ce2add171282edd9",
+      "type": "text",
+      "text": "## Vista materializzata\n\nConserva un risultato calcolato, per esempio vendite mensili per regione. Evita lavoro ripetuto ma occupa spazio e richiede aggiornamento.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#MOLAP|Nella lezione ↗]]",
+      "x": 7780,
+      "y": 18018,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "3ff3a1c5208e243f",
+      "type": "text",
+      "text": "## Costo contro freschezza\n\nPiù precomputazione accelera letture previste, ma aumenta mantenimento e può introdurre ritardo. Bisogna conoscere le query e la frequenza dei caricamenti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/02 - DM - Data Warehouses#MOLAP|Nella lezione ↗]]",
+      "x": 7780,
+      "y": 18897,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "d1cb2631365aa8ef",
+      "fromNode": "710255fe46742076",
+      "toNode": "b7f625503aa0bcb0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "richiede analisi"
+    },
+    {
+      "id": "9c3e6594ea02a3a1",
+      "fromNode": "433fe718b8f0365e",
+      "toNode": "2fa050521b059311",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "alimenta il"
+    },
+    {
+      "id": "1dcf11807d3efe1a",
+      "fromNode": "2fa050521b059311",
+      "toNode": "cc81cfce0f7351d6",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "conserva"
+    },
+    {
+      "id": "ea1ac706856a5d3f",
+      "fromNode": "b7f625503aa0bcb0",
+      "toNode": "2fa050521b059311",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si appoggia al"
+    },
+    {
+      "id": "50f7ff416bfb54c3",
+      "fromNode": "2fa050521b059311",
+      "toNode": "a291905e967b3a32",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "motiva la"
+    },
+    {
+      "id": "46178cdd0ca83f55",
+      "fromNode": "3bdcdfa23060a2ba",
+      "toNode": "bd97812db3f43d46",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "e77c9df46ba7e455",
+      "fromNode": "bd97812db3f43d46",
+      "toNode": "e314a1a370b160e2",
+      "fromSide": "right",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "altro passaggio dello stesso esempio",
+      "color": "5"
+    },
+    {
+      "id": "600c6614a8b8b613",
+      "fromNode": "12b479c2ed843b71",
+      "toNode": "3fcd027c05e299c1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "2c8966095ef5b2c0",
+      "fromNode": "200d614fe31d4415",
+      "toNode": "4619e323da6c22bc",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "c53abe33090f7a77",
+      "fromNode": "2f919395cf0b45dc",
+      "toNode": "dd465e7427f99857",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "ae8df29fd20ac4bc",
+      "fromNode": "7c7b4c86572a16b1",
+      "toNode": "4955879c31328da1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "bde4403e381a6f0e",
+      "fromNode": "3bdcdfa23060a2ba",
+      "toNode": "12b479c2ed843b71",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può esporre"
+    },
+    {
+      "id": "0c4ae16e0d5f204b",
+      "fromNode": "200d614fe31d4415",
+      "toNode": "2f919395cf0b45dc",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "seguito da"
+    },
+    {
+      "id": "c8330aa10fbe934e",
+      "fromNode": "2f919395cf0b45dc",
+      "toNode": "7c7b4c86572a16b1",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "prepara la"
+    },
+    {
+      "id": "be1c6066c323eb1d",
+      "fromNode": "7c7b4c86572a16b1",
+      "toNode": "6c8b1529bfe158f3",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "prepara il"
+    },
+    {
+      "id": "1340e1de18e333b6",
+      "fromNode": "6c8b1529bfe158f3",
+      "toNode": "12b479c2ed843b71",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "rende dati disponibili al"
+    },
+    {
+      "id": "fd20136e613f3e5f",
+      "fromNode": "dea553e92b8e34cf",
+      "toNode": "80f16f9dc1c2bfcc",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "3"
+    },
+    {
+      "id": "76ec236b8ce7b13d",
+      "fromNode": "604934fdd05bfbd6",
+      "toNode": "e9cfca5ea8b55ca7",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "3"
+    },
+    {
+      "id": "7458b56302852691",
+      "fromNode": "2439823f03a3dc20",
+      "toNode": "2f9fc06782d5af0b",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "richiede di fissare la"
+    },
+    {
+      "id": "a71743b308cdda57",
+      "fromNode": "2f9fc06782d5af0b",
+      "toNode": "52b6256bb0fe211a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "determina il significato della"
+    },
+    {
+      "id": "a37b1c6b0672ff25",
+      "fromNode": "2439823f03a3dc20",
+      "toNode": "dea553e92b8e34cf",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si analizza lungo una"
+    },
+    {
+      "id": "76a76b617ddeb84d",
+      "fromNode": "dea553e92b8e34cf",
+      "toNode": "604934fdd05bfbd6",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si articola in"
+    },
+    {
+      "id": "55c17822a7938848",
+      "fromNode": "604934fdd05bfbd6",
+      "toNode": "6750737fc1351975",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si fonda su"
+    },
+    {
+      "id": "132bdfdbbb073cc8",
+      "fromNode": "2bedd2c9f0b33d83",
+      "toNode": "69cc52ec2cfb3ac1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "8f148f082597d1a8",
+      "fromNode": "d5644961a1cb2312",
+      "toNode": "c6215b043f14e2fc",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "81e44b2c9c980d57",
+      "fromNode": "1b787cf503aedf75",
+      "toNode": "1021923d3e4e746f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "d45c05c5669f99d7",
+      "fromNode": "9fa0b2b0c9957459",
+      "toNode": "88b522f756e567f6",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "9c3a7f134c1a21dd",
+      "fromNode": "f98ad416842eb92f",
+      "toNode": "f808bb844baa9ef6",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "9e7d4d6327f1d0e0",
+      "fromNode": "6035bfa0be14f075",
+      "toNode": "1fd4dd92cf583183",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "545a2a37acfdc93c",
+      "fromNode": "2bedd2c9f0b33d83",
+      "toNode": "d5644961a1cb2312",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "movimento inverso di dettaglio rispetto a"
+    },
+    {
+      "id": "d492b23b6ea8368d",
+      "fromNode": "1b787cf503aedf75",
+      "toNode": "9fa0b2b0c9957459",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "generalizza la restrizione in"
+    },
+    {
+      "id": "f7b7ac1d87f6528e",
+      "fromNode": "2bedd2c9f0b33d83",
+      "toNode": "1b787cf503aedf75",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "aggregazione distinta dalla restrizione di"
+    },
+    {
+      "id": "959cc5681ca6eb5e",
+      "fromNode": "f98ad416842eb92f",
+      "toNode": "6035bfa0be14f075",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "cambia presentazione, mentre il confronto tra fatti usa"
+    },
+    {
+      "id": "86ac1c8cba0b20d6",
+      "fromNode": "6035bfa0be14f075",
+      "toNode": "2bedd2c9f0b33d83",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può richiedere allineamento tramite"
+    },
+    {
+      "id": "c104793ce3881ed9",
+      "fromNode": "cadcde1344aab153",
+      "toNode": "8e7a84cfac39c1f5",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "dadc9fb6ecffce3f",
+      "fromNode": "7aea8f279207cd9f",
+      "toNode": "c3a7d5bcb2f24b95",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "cccdd3595debe9b4",
+      "fromNode": "10009b605af4a6a1",
+      "toNode": "20f70dc0aa970d27",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "8b98e8c8ab1dcb34",
+      "fromNode": "1bcad8c3f091596e",
+      "toNode": "153e8bd6ad954d61",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "b7d218ca6a97b6ef",
+      "fromNode": "c60d7c852bce04ea",
+      "toNode": "0225c24dd3a1e3dc",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "f7741ed5841a5535",
+      "fromNode": "0c35d9850aaed28d",
+      "toNode": "df39222593187729",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "81d47850b8be1e53",
+      "fromNode": "cadcde1344aab153",
+      "toNode": "7aea8f279207cd9f",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "distingue livelli da"
+    },
+    {
+      "id": "bef426dbf254328a",
+      "fromNode": "cadcde1344aab153",
+      "toNode": "10009b605af4a6a1",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "rappresenta dipendenze multiple con"
+    },
+    {
+      "id": "908ee6de764a4887",
+      "fromNode": "cadcde1344aab153",
+      "toNode": "1bcad8c3f091596e",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "deve specificare"
+    },
+    {
+      "id": "e36c02f0cad82b53",
+      "fromNode": "cadcde1344aab153",
+      "toNode": "c60d7c852bce04ea",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "organizza percorsi con"
+    },
+    {
+      "id": "ff80ccec848c59bb",
+      "fromNode": "cadcde1344aab153",
+      "toNode": "0c35d9850aaed28d",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "deve verificare"
+    },
+    {
+      "id": "e9decadafbce60d3",
+      "fromNode": "0092b80eeedbad38",
+      "toNode": "0943c3528bca5565",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "1b0d37865691044d",
+      "fromNode": "b462657bbd8d7b1c",
+      "toNode": "2ac332d54dbef36b",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "4ece6ffe958ff4ff",
+      "fromNode": "0092b80eeedbad38",
+      "toNode": "308a2cc87db60fd9",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "identifica dimensioni mediante"
+    },
+    {
+      "id": "15a3fb54ec6cf1ec",
+      "fromNode": "0092b80eeedbad38",
+      "toNode": "00d3168f6b20532e",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "riduce join grazie a"
+    },
+    {
+      "id": "fdb2627b9d0e275e",
+      "fromNode": "0092b80eeedbad38",
+      "toNode": "b462657bbd8d7b1c",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "alternativa normalizzata è"
+    },
+    {
+      "id": "b3af41d4f6a8b61f",
+      "fromNode": "0092b80eeedbad38",
+      "toNode": "5455070b7fa8dcaa",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "contiene una"
+    },
+    {
+      "id": "8eb22a9595f8d341",
+      "fromNode": "bb22e67b2bbabc8b",
+      "toNode": "0092b80eeedbad38",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "produce lo"
+    },
+    {
+      "id": "7305747587a67757",
+      "fromNode": "6e4f5cfde929fff7",
+      "toNode": "4c00f9c9d624ed1d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "94ab129c5dc56b39",
+      "fromNode": "8b9d47d1f2a536c7",
+      "toNode": "d92c8e5058d8075d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "64afa0276ff0e8a3",
+      "fromNode": "6e4f5cfde929fff7",
+      "toNode": "8b9d47d1f2a536c7",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si confronta con"
+    },
+    {
+      "id": "fecdfd6f92d2a188",
+      "fromNode": "8b9d47d1f2a536c7",
+      "toNode": "abc8b63ae719de60",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "deve gestire"
+    },
+    {
+      "id": "bbbde419080ed4c4",
+      "fromNode": "6e4f5cfde929fff7",
+      "toNode": "8d1f22a04781b6aa",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si combina con MOLAP in"
+    },
+    {
+      "id": "ba068d793ff96dc0",
+      "fromNode": "6e4f5cfde929fff7",
+      "toNode": "ce2add171282edd9",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può accelerare tramite"
+    },
+    {
+      "id": "93459bf8b8da9533",
+      "fromNode": "ce2add171282edd9",
+      "toNode": "3ff3a1c5208e243f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "richiede di bilanciare"
+    },
+    {
+      "id": "1634cad42afa2ba9",
+      "fromNode": "558d4c50d7759f99",
+      "toNode": "6d6b892235167e41",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 02",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "4e1038c8080dea8a",
+      "fromNode": "6d6b892235167e41",
+      "toNode": "2a6950c558c174c4",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 03",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "809a6de30ad59e04",
+      "fromNode": "2a6950c558c174c4",
+      "toNode": "262cd19cfd9d487b",
+      "fromSide": "left",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "continua: sezione 04",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "ed03093fcc9496ff",
+      "fromNode": "262cd19cfd9d487b",
+      "toNode": "46c36677a9e6d741",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 05",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "a803b08fa9797010",
+      "fromNode": "46c36677a9e6d741",
+      "toNode": "692e2bfcaa06ed49",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 06",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "a4a4776902327169",
+      "fromNode": "692e2bfcaa06ed49",
+      "toNode": "c4871085e904c0a8",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 07",
+      "color": "#8a8a8a"
+    }
+  ]
+}

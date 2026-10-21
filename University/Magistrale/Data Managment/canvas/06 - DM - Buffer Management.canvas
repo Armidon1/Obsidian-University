@@ -1,0 +1,642 @@
+{
+  "nodes": [
+    {
+      "id": "1a096ce1f6f1f8d3",
+      "type": "text",
+      "text": "# 06 · Buffer Management\n\n**4 sezioni · 24 concetti distinti.**\nSegui i gruppi numerati lungo le frecce. Ogni freccia interna forma una frase: concetto → relazione → concetto. I link «Nella lezione» aprono la sezione di origine.\n\n**Figure originali:** 2 immagini della lezione, collegate ai concetti illustrati.",
+      "x": 0,
+      "y": -750,
+      "width": 4072.0,
+      "height": 260
+    },
+    {
+      "id": "bd299465e7950987",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management.md",
+      "x": 0,
+      "y": -400,
+      "width": 1911.0,
+      "height": 100
+    },
+    {
+      "id": "9e17d66963efc378",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/canvas/00 - DM - MOC dei canvas.canvas",
+      "x": 2161.0,
+      "y": -400,
+      "width": 1911.0,
+      "height": 100
+    },
+    {
+      "id": "7c6e85f9face92ac",
+      "type": "text",
+      "text": "## Percorso della mappa\n\n- 01 · Il buffer fra memoria e disco\n- 02 · fix, utilizzo e rilascio\n- 03 · Sostituzione: candidati, LRU e clock\n- 04 · Scritture, commit e recovery",
+      "x": 0,
+      "y": -250,
+      "width": 4072.0,
+      "height": 230
+    },
+    {
+      "id": "5c335bba1dcc36ec",
+      "type": "text",
+      "text": "## Ripasso attivo\n\nScegli un nodo e spiegalo senza leggere. Poi segui una freccia e giustifica il rapporto con il nodo successivo.\nRicostruisci un esempio, indica un limite e apri la sezione della lezione per formule, figure o esercizi.\n\n**I gruppi sono numerati e seguono un percorso a serpentina:** prima riga da sinistra a destra, seconda da destra a sinistra, poi si ripete.\n\nPer le figure: descrivi prima ciò che vedi, poi spiega quale concetto esemplifica. Aprile per leggerle alla risoluzione originale.",
+      "x": 0,
+      "y": 7190.0,
+      "width": 4072.0,
+      "height": 310
+    },
+    {
+      "id": "46e22e1db0001008",
+      "type": "group",
+      "label": "01 · Il buffer fra memoria e disco",
+      "color": "4",
+      "x": 0.0,
+      "y": 120,
+      "width": 1911.0,
+      "height": 4095.0
+    },
+    {
+      "id": "306d93f16299139a",
+      "type": "text",
+      "text": "## 01 · Il buffer fra memoria e disco\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Architecture of the buffer manager|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 170,
+      "width": 1791.0,
+      "height": 105
+    },
+    {
+      "id": "da1a02576e9f8aae",
+      "type": "text",
+      "text": "## Pagine e blocchi\n\nIl database su storage è organizzato in file di pagine. L’unità di trasferimento è una pagina/blocco, non il singolo attributo richiesto.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Architecture of the buffer manager|Nella lezione ↗]]",
+      "x": 646,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "a24fd6903fe963a0",
+      "type": "text",
+      "text": "## Page I/O\n\nIl modello del corso conta trasferimenti tra memoria e storage perché molto più costosi delle operazioni in RAM. Leggere dati già residenti può evitare un I/O.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Architecture of the buffer manager|Nella lezione ↗]]",
+      "x": 646,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "3d014ffd69217d67",
+      "type": "text",
+      "text": "## Buffer pool\n\nArea RAM condivisa e non persistente che conserva copie di pagine. Permette a più moduli e transazioni di riusare gli stessi dati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Architecture of the buffer manager|Nella lezione ↗]]",
+      "x": 646,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "1a99605b4ddda8c9",
+      "type": "text",
+      "text": "## Frame\n\nSlot di memoria capace di ospitare una pagina. Il numero di frame limita quante pagine possono essere residenti contemporaneamente.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Architecture of the buffer manager|Nella lezione ↗]]",
+      "x": 226,
+      "y": 2128,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "afee2be0160f0707",
+      "type": "text",
+      "text": "## Page table\n\nAssocia la pagina su storage, identificata dal PID, al frame che la ospita. Il frame e il PID non sono la stessa identità.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Architecture of the buffer manager|Nella lezione ↗]]",
+      "x": 226,
+      "y": 2994,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "fb2229b97d9c4d4d",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L06-p006.png",
+      "x": 125,
+      "y": 3425,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "e302a09a2dc69d6c",
+      "type": "text",
+      "text": "**Figura · Page table**\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management|Dalla lezione 06]]",
+      "x": 125,
+      "y": 4055,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "5b83282f81d949d8",
+      "type": "text",
+      "text": "## Buffer manager\n\nSta tra access file manager e disk manager; serve richieste e coordina trasferimenti. Recovery e transaction manager hanno bisogno di controllare quando avvengono le scritture.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Architecture of the buffer manager|Nella lezione ↗]]",
+      "x": 1066,
+      "y": 1723,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "a4eca2e30889b561",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p002.png",
+      "x": 966,
+      "y": 2154,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "449da5f798d3947e",
+      "type": "text",
+      "text": "**Figura · Buffer manager**\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management|Dalla lezione 06]]",
+      "x": 966,
+      "y": 2784,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "60f94d28e9266818",
+      "type": "group",
+      "label": "02 · fix, utilizzo e rilascio",
+      "color": "5",
+      "x": 2161.0,
+      "y": 120,
+      "width": 1911.0,
+      "height": 2475.0
+    },
+    {
+      "id": "4e4af3f9a43b403a",
+      "type": "text",
+      "text": "## 02 · fix, utilizzo e rilascio\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#The Fix operation|Apri la sezione della lezione]]",
+      "x": 2221.0,
+      "y": 170,
+      "width": 1791.0,
+      "height": 105
+    },
+    {
+      "id": "91ae762334be6425",
+      "type": "text",
+      "text": "## fix(P): trovare una pagina\n\nCerca P nella page table. Hit: la pagina è già nel pool; miss: va individuato un frame in cui caricarla.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#The Fix operation|Nella lezione ↗]]",
+      "x": 2806,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "504143d97aeddeab",
+      "type": "text",
+      "text": "## Gestire un miss\n\nUsa un frame libero o scegli una vittima. Se la vecchia pagina è dirty, scrivila prima di riusare il frame; poi leggi P e aggiorna la page table.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#The Fix operation|Nella lezione ↗]]",
+      "x": 2560,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "2602ac0853e31b5c",
+      "type": "text",
+      "text": "## Pin-count\n\nConta gli utilizzi protetti. Finché è >0 la pagina non è una vittima ammessa, anche se sembra poco recente.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#The Fix operation|Nella lezione ↗]]",
+      "x": 3178,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "764095898314967f",
+      "type": "text",
+      "text": "## Dirty bit\n\nIndica che la copia in RAM è stata modificata rispetto al disco. Dirty non significa necessariamente «transazione non committed»: stato della pagina e commit sono diversi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#The Fix operation|Nella lezione ↗]]",
+      "x": 2436,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "56f3223162053b48",
+      "type": "text",
+      "text": "## use e unfix\n\nuse modifica e imposta dirty; unfix rilascia l’uso decrementando il pin. Quando pin torna a zero, il frame può diventare candidato alla sostituzione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#The Fix operation|Nella lezione ↗]]",
+      "x": 2806,
+      "y": 1723,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "a66842435d11011c",
+      "type": "text",
+      "text": "## Convenzione delle slide\n\nDopo un nuovo caricamento pin=0 e il primo use prende il pin; un fix su pagina già presente incrementa direttamente. La nota distingue questa convenzione da quella dei manuali con pin=1 dopo il caricamento.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#The Fix operation|Nella lezione ↗]]",
+      "x": 2806,
+      "y": 2184,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "a29158046a1672bd",
+      "type": "group",
+      "label": "03 · Sostituzione: candidati, LRU e clock",
+      "color": "3",
+      "x": 2161.0,
+      "y": 4465.0,
+      "width": 1911.0,
+      "height": 2475.0
+    },
+    {
+      "id": "f5a4ec3deecebaff",
+      "type": "text",
+      "text": "## 03 · Sostituzione: candidati, LRU e clock\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Replacement policy|Apri la sezione della lezione]]",
+      "x": 2221.0,
+      "y": 4515.0,
+      "width": 1791.0,
+      "height": 105
+    },
+    {
+      "id": "e15cc8c33072f150",
+      "type": "text",
+      "text": "## Solo frame unpinned\n\nPin-count=0 è il requisito di ammissibilità. Se tutti sono pinned, non basta cambiare policy: la richiesta può attendere oppure causare un riavvio.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Replacement policy|Nella lezione ↗]]",
+      "x": 2806,
+      "y": 4685,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "e4d6a2e5c342d1bf",
+      "type": "text",
+      "text": "## LRU\n\nMantiene i frame rilasciati in ordine di utilizzo/rilascio e sceglie il meno recente. La gestione della coda ha un costo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Replacement policy|Nella lezione ↗]]",
+      "x": 2806,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "1ea485f0a4376e2e",
+      "type": "text",
+      "text": "## Sequential flooding\n\nUna scansione di un file più grande del pool può espellere pagine utili senza riutilizzare quelle appena lette. LRU non conosce da sola l’intenzione della query.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Replacement policy|Nella lezione ↗]]",
+      "x": 2436,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "52694db48cf5e0e9",
+      "type": "text",
+      "text": "## Clock: mano circolare\n\nScorre i frame in ordine circolare. Salta quelli pinned; concede una seconda opportunità ai frame referenced.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Replacement policy|Nella lezione ↗]]",
+      "x": 3178,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "aafd351bcd845457",
+      "type": "text",
+      "text": "## Bit referenced\n\nSe unpinned e referenced=1, azzera il bit e avanza; se unpinned e referenced=0, sceglie la vittima. Nelle slide il bit viene impostato quando pin scende a zero.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Replacement policy|Nella lezione ↗]]",
+      "x": 3178,
+      "y": 6068,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "ff016354b03325fc",
+      "type": "text",
+      "text": "## Esempio con dieci frame\n\nDispari pinned, pari unpinned e referenced=1, mano da 5: primo giro azzera 6,8,10,2,4; al ritorno sceglie 6. Anche i bit degli altri pari sono cambiati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Replacement policy|Nella lezione ↗]]",
+      "x": 3178,
+      "y": 6529,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "40cac256b613ba8b",
+      "type": "group",
+      "label": "04 · Scritture, commit e recovery",
+      "color": "6",
+      "x": 0.0,
+      "y": 4465.0,
+      "width": 1911.0,
+      "height": 2014.0
+    },
+    {
+      "id": "31aa7e9b60e9f38f",
+      "type": "text",
+      "text": "## 04 · Scritture, commit e recovery\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Force or no-force strategy|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 4515.0,
+      "width": 1791.0,
+      "height": 105
+    },
+    {
+      "id": "fb5a75df9e60f909",
+      "type": "text",
+      "text": "## Operazione force\n\nTrasferimento sincrono di una pagina al disco: il chiamante attende. È una primitiva, da distinguere dalla politica globale al commit.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Force or no-force strategy|Nella lezione ↗]]",
+      "x": 460,
+      "y": 4685,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "d4a5a2d9d6052b6e",
+      "type": "text",
+      "text": "## Operazione flush\n\nScrittura asincrona eseguita in seguito. Può accorpare modifiche alla stessa pagina e liberare memoria senza imporre ogni scrittura al commit.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Force or no-force strategy|Nella lezione ↗]]",
+      "x": 90,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "376b29a8dfed4c4c",
+      "type": "text",
+      "text": "## Strategia force\n\nAl commit si scrivono tutte le pagine attive modificate dalla transazione. Riduce necessità di rifare quelle modifiche, ma aumenta il lavoro sincrono.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Force or no-force strategy|Nella lezione ↗]]",
+      "x": 831,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "d17138afee6a1af8",
+      "type": "text",
+      "text": "## Strategia no-force\n\nIl commit può avvenire mentre alcune pagine modificate sono ancora soltanto in RAM. Migliora flessibilità e prestazioni delle scritture.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Force or no-force strategy|Nella lezione ↗]]",
+      "x": 831,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "3d7bd021a9a69751",
+      "type": "text",
+      "text": "## Durabilità, log e redo\n\nCon no-force, dopo un crash possono mancare modifiche committed nelle pagine su disco. Il log persistente consente di rifarle; WAL coordina l’ordine fra log e pagine.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Force or no-force strategy|Nella lezione ↗]]",
+      "x": 461,
+      "y": 6068,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "47d9d8f6b39d60b3",
+      "type": "text",
+      "text": "## Steal e undo\n\nSteal/no-steal decide se si possono scrivere pagine con modifiche non committed. È una scelta distinta da force/no-force; steal richiede gestire l’annullamento degli effetti non confermati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/06 - DM - Buffer Management#Force or no-force strategy|Nella lezione ↗]]",
+      "x": 1202,
+      "y": 6068,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "f6d8fe9631e28013",
+      "fromNode": "afee2be0160f0707",
+      "toNode": "fb2229b97d9c4d4d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "dbf2afe18c64b615",
+      "fromNode": "5b83282f81d949d8",
+      "toNode": "a4eca2e30889b561",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "e1b5e42c292052f6",
+      "fromNode": "da1a02576e9f8aae",
+      "toNode": "a24fd6903fe963a0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si trasferisce tramite"
+    },
+    {
+      "id": "ff1e75475965797c",
+      "fromNode": "a24fd6903fe963a0",
+      "toNode": "3d014ffd69217d67",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può essere evitato grazie al"
+    },
+    {
+      "id": "791c8e9174aecaeb",
+      "fromNode": "3d014ffd69217d67",
+      "toNode": "1a99605b4ddda8c9",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "è diviso in"
+    },
+    {
+      "id": "5a2795daa51e11ac",
+      "fromNode": "1a99605b4ddda8c9",
+      "toNode": "afee2be0160f0707",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "è associato al PID dalla"
+    },
+    {
+      "id": "a381f900242c6248",
+      "fromNode": "3d014ffd69217d67",
+      "toNode": "5b83282f81d949d8",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "è amministrato dal"
+    },
+    {
+      "id": "599ba57032a9f69c",
+      "fromNode": "91ae762334be6425",
+      "toNode": "504143d97aeddeab",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "se assente esegue"
+    },
+    {
+      "id": "35a69f837ff0dff3",
+      "fromNode": "504143d97aeddeab",
+      "toNode": "764095898314967f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "controlla il"
+    },
+    {
+      "id": "88281bac75b6caad",
+      "fromNode": "91ae762334be6425",
+      "toNode": "2602ac0853e31b5c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "gestisce il"
+    },
+    {
+      "id": "a3ee31551e2500fb",
+      "fromNode": "2602ac0853e31b5c",
+      "toNode": "56f3223162053b48",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "cambia tramite"
+    },
+    {
+      "id": "659ddf24e4bd904a",
+      "fromNode": "764095898314967f",
+      "toNode": "56f3223162053b48",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "viene impostato dalla modifica in"
+    },
+    {
+      "id": "dfc254eda63bf67f",
+      "fromNode": "56f3223162053b48",
+      "toNode": "a66842435d11011c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "va letto secondo la"
+    },
+    {
+      "id": "ff9ee1ef8231dbb0",
+      "fromNode": "e15cc8c33072f150",
+      "toNode": "e4d6a2e5c342d1bf",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si ordinano per esempio con"
+    },
+    {
+      "id": "20e1fef0f8e75b85",
+      "fromNode": "e4d6a2e5c342d1bf",
+      "toNode": "1ea485f0a4376e2e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può soffrire di"
+    },
+    {
+      "id": "8dd951299f08883d",
+      "fromNode": "e4d6a2e5c342d1bf",
+      "toNode": "52694db48cf5e0e9",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "approssimazione più economica è"
+    },
+    {
+      "id": "864c90bcfcd3a86b",
+      "fromNode": "52694db48cf5e0e9",
+      "toNode": "aafd351bcd845457",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "decide mediante"
+    },
+    {
+      "id": "e65fe5582336e74f",
+      "fromNode": "aafd351bcd845457",
+      "toNode": "ff016354b03325fc",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "determina la vittima nell’"
+    },
+    {
+      "id": "7567e0775fc06156",
+      "fromNode": "fb5a75df9e60f909",
+      "toNode": "d4a5a2d9d6052b6e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si distingue per sincronia dalla"
+    },
+    {
+      "id": "775a4b02fc7269cb",
+      "fromNode": "fb5a75df9e60f909",
+      "toNode": "376b29a8dfed4c4c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "è usata dalla politica"
+    },
+    {
+      "id": "84289d0330696b3f",
+      "fromNode": "376b29a8dfed4c4c",
+      "toNode": "d17138afee6a1af8",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "alternativa di commit è"
+    },
+    {
+      "id": "b58f7574b3c906e8",
+      "fromNode": "d17138afee6a1af8",
+      "toNode": "3d7bd021a9a69751",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "deve supportare"
+    },
+    {
+      "id": "7e48987a67cd0985",
+      "fromNode": "d17138afee6a1af8",
+      "toNode": "47d9d8f6b39d60b3",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "è indipendente dalla scelta"
+    },
+    {
+      "id": "a5ec7481cf49c67a",
+      "fromNode": "46e22e1db0001008",
+      "toNode": "60f94d28e9266818",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 02",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "c59dc4a988239327",
+      "fromNode": "60f94d28e9266818",
+      "toNode": "a29158046a1672bd",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 03",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "a7f05db76617737f",
+      "fromNode": "a29158046a1672bd",
+      "toNode": "40cac256b613ba8b",
+      "fromSide": "left",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "continua: sezione 04",
+      "color": "#8a8a8a"
+    }
+  ]
+}

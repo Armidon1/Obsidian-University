@@ -994,7 +994,8 @@ ex:Ann feaf:hasFriend _:x
 ex:John feaf:author _:x
 ```
 
-### Sintassi RDF
+### Sintassi RDF 
+giarda [[DM - Esercizi Turtle - Sintassi compatta]] per capirne di più
 
 RDF è il **modello**; Turtle, N-Triples e RDF/XML sono **serializzazioni**.
 
@@ -1058,7 +1059,38 @@ Triple(subject, predicate, object)
 
 Eventualmente si aggiunge `context` per distinguere i named graph.
 
-Problema: le query con più triple pattern richiedono molti self-join. Per ridurre il costo si usano indici B-tree su combinazioni come:
+Ogni riga rappresenta una tripla, indipendentemente dalla proprietà descritta. Ad esempio:
+
+| subject | predicate | object |
+|---|---|---|
+| `:Mary` | `foaf:name` | `"Maria"` |
+| `:Mary` | `foaf:knows` | `:John` |
+| `:John` | `foaf:name` | `"Giovanni"` |
+
+Il vantaggio è la **flessibilità**: aggiungere una proprietà significa inserire nuove righe, senza modificare lo schema della tabella. Tuttavia, le informazioni su una risorsa sono distribuite su più righe.
+
+> [!example] Self-join: il nome delle persone conosciute da Mary
+> La domanda richiede di collegare due fatti: **Mary conosce una persona** e **quella persona ha un nome**. Nel grafo seguiamo il cammino `:Mary → foaf:knows → :John → foaf:name → "Giovanni"`; nella tabella colleghiamo la seconda riga alla terza.
+
+Usiamo due alias della stessa tabella: `t1` cerca le persone conosciute da Mary, mentre `t2` ne cerca il nome. La condizione di join è **`t1.object = t2.subject`**: la risorsa trovata come oggetto del primo fatto diventa il soggetto del secondo.
+
+```sql
+SELECT t2.object AS nome
+FROM Triple AS t1
+JOIN Triple AS t2 ON t1.object = t2.subject
+WHERE t1.subject = ':Mary'
+  AND t1.predicate = 'foaf:knows'
+  AND t2.predicate = 'foaf:name';
+```
+
+Nell'esempio il risultato è il literal `"Giovanni"`. Per semplicità, la query assume che i termini siano memorizzati come testo nella forma mostrata; un'implementazione può invece usare identificatori numerici e un dizionario, come descritto in [[#Dizionari per URI e literal]].
+
+La sola uguaglianza tra oggetto e soggetto non basta a esprimere la domanda: i filtri selezionano **la risorsa iniziale e i predicati da attraversare**. Senza di essi il join collegherebbe anche righe relative ad altre risorse o proprietà.
+
+> [!important] Perché i self-join possono diventare costosi
+> Ogni ulteriore collegamento richiesto può introdurre un altro alias e un altro join sulla tabella delle triple. Per trovare il nome degli amici degli amici di Mary, ad esempio, servono due occorrenze della relazione di conoscenza e una del nome: tre alias e due join. Il costo effettivo dipende da indici, selettività e piano di esecuzione; non implica necessariamente una scansione completa per ogni alias.
+
+Per ridurre il costo si usano indici B-tree su combinazioni come:
 
 - `s`, `p`, `o`;
 - `sp` e `o`;
@@ -1082,6 +1114,42 @@ Problemi:
 - tabella molto **sparsa**, perché pochi soggetti hanno tutti i predicati;
 - una cella può dover contenere più oggetti se una proprietà è multivalore.
 
+##### Esempio visivo: persone e libri nello stesso grafo
+
+Consideriamo Mary, John e Ann, insieme a due libri. Per confrontare le rappresentazioni, manteniamo **gli stessi dati** in tutti gli esempi seguenti. Le colonne sono associate a questi predicati:
+
+| Colonna | Predicato RDF |
+|---|---|
+| Nome | `foaf:name` |
+| Email | `:email` |
+| Conosce | `foaf:knows` |
+| Titolo | `:title` |
+| Anno | `:publicationYear` |
+| Autore | `:author` |
+
+La tabella orizzontale raccoglie tutte le proprietà possibili:
+
+| Soggetto | Nome | Email | Conosce | Titolo | Anno | Autore |
+|---|---|---|---|---|---|---|
+| `:Mary` | `"Maria"` | `"m@example.org"` | **`[:John, :Ann]`** | — | — | — |
+| `:John` | `"Giovanni"` | `"g@example.org"` | — | — | — | — |
+| `:Ann` | `"Anna"` | — | — | — | — | — |
+| `:LibroA` | — | — | — | `"Database"` | `2020` | `:Mary` |
+| `:LibroB` | — | — | — | `"Grafi"` | `2022` | `:John` |
+
+> [!note] Legenda delle tabelle
+> `—` indica l'assenza di un valore memorizzato, non una tripla RDF con oggetto `NULL` e neppure la prova che quel valore non esista. `[:John, :Ann]` è una **notazione illustrativa di collezione nella cella**, non la sintassi Turtle per un blank node e non una RDF list. Rappresenta le due triple distinte `:Mary foaf:knows :John .` e `:Mary foaf:knows :Ann .`. Gli anni sono abbreviati per leggibilità; nel grafo possono essere literal di tipo `xsd:gYear`.
+
+I due problemi diventano visibili:
+
+1. **Sparsità:** persone e libri utilizzano gruppi di colonne diversi. Anche tra persone, Ann non ha un'email registrata.
+2. **Valori multipli:** la cella Conosce di Mary deve conservare due oggetti. Una sola cella con un solo identificatore non basta.
+
+Un DBMS che supporta array o collezioni può memorizzare più valori nella cella, ma le query devono usare operazioni di appartenenza o espansione della collezione. Un'alternativa è separare quella proprietà in una tabella dedicata, come mostrato sotto.
+
+> [!example] Che cosa diventa più facile e che cosa richiede ancora un join?
+> Leggere nome ed email di Mary richiede una sola riga. Trovare **il nome di John partendo dalle conoscenze di Mary**, invece, richiede ancora di collegare l'oggetto della conoscenza alla riga della persona corrispondente. Raggruppare le proprietà non elimina tutti i join.
+
 ![[DM-L03-p089.png]]
 
 L'esempio delle slide (un piccolo dataset musicale) mostra entrambi i problemi: in alto le triple, in basso la tabella orizzontale con una colonna per predicato (`FileType`, `Composer`, …, `phone`, `friendOf`, `style`). Quasi tutte le celle sono vuote, e `user8604` ha **due** numeri di telefono nella stessa cella, mentre `Debussy` ha due valori di `style`.
@@ -1095,8 +1163,66 @@ La tabella larga viene divisa in tabelle più piccole contenenti proprietà corr
 Vantaggio: meno celle vuote.  
 Svantaggio: occorre decidere come raggruppare le proprietà e le query trasversali possono richiedere join.
 
-#### Vertical partitioning
+##### Raggruppare le proprietà lette insieme
 
+Riprendiamo i dati dell'esempio precedente e separiamo le proprietà delle persone da quelle dei libri. Non introduciamo nuovi fatti: cambia soltanto la loro organizzazione fisica.
+
+**Persone(Soggetto, Nome, Email)**
+
+| Soggetto | Nome | Email |
+|---|---|---|
+| `:Mary` | `"Maria"` | `"m@example.org"` |
+| `:John` | `"Giovanni"` | `"g@example.org"` |
+| `:Ann` | `"Anna"` | — |
+
+**Libri(Soggetto, Titolo, Anno, Autore)**
+
+| Soggetto | Titolo | Anno | Autore |
+|---|---|---|---|
+| `:LibroA` | `"Database"` | `2020` | `:Mary` |
+| `:LibroB` | `"Grafi"` | `2022` | `:John` |
+
+La proprietà multivalore viene conservata separatamente, così ogni riga contiene un solo oggetto:
+
+**Conosce(Soggetto, Oggetto)**
+
+| Soggetto | Oggetto |
+|---|---|
+| `:Mary` | `:John` |
+| `:Mary` | `:Ann` |
+
+```mermaid
+flowchart LR
+    W["Tabella orizzontale unica<br/>Persone e libri mescolati<br/>Molte celle vuote"]
+    W --> P["Persone<br/>Nome · Email"]
+    W --> L["Libri<br/>Titolo · Anno · Autore"]
+    W --> K["Conosce<br/>Una riga per collegamento"]
+```
+
+Questa è una scelta di raggruppamento utile per l'esempio, **non una regola che impone una tabella per classe**. Una property table contiene le proprietà che abbiamo scelto di tenere insieme, non necessariamente tutte quelle di una persona. Le celle vuote possono diminuire senza scomparire: Ann continua a non avere un'email registrata. In generale, anche altre proprietà possono essere multivalore e richiedere una gestione specifica.
+
+##### Esempio di join: l'email dell'autore di un libro
+
+Per conoscere nome ed email di Mary basta leggere la sua riga in Persone. Per ottenere **l'email dell'autore di LibroA**, invece, dobbiamo passare dalla tabella Libri alla tabella Persone:
+
+```mermaid
+flowchart LR
+    L["Libri<br/>Soggetto = :LibroA<br/>Autore = :Mary"]
+    P["Persone<br/>Soggetto = :Mary<br/>Email = m@example.org"]
+    L -->|"Libri.Autore = Persone.Soggetto"| P
+```
+
+```sql
+SELECT p.Email
+FROM Libri AS l
+JOIN Persone AS p ON l.Autore = p.Soggetto
+WHERE l.Soggetto = ':LibroA';
+```
+
+Il risultato è l'email di Mary, `m@example.org`. Le proprietà memorizzate insieme si leggono senza ricostruirle da triple separate; le query che attraversano gruppi diversi possono comunque richiedere join.
+
+#### Vertical partitioning
+**The Battle of Polytopia**
 Base triennale: [[06 - BD - Progettazione Logica#Decomposizione verticale|BD — Decomposizione verticale]]
 
 È l'estremo opposto della tabella larga: per ogni predicato $p$ si crea una tabella binaria:
@@ -1107,6 +1233,91 @@ p(subject, object)
 
 Questo elimina sia le celle vuote sia il problema delle proprietà multivalore. Non va confuso con la **rappresentazione verticale** a singola tabella di triple.
 
+##### Gli stessi dati: una tabella per predicato
+
+Le property tables raggruppavano più proprietà. Con il vertical partitioning creiamo invece **sei tabelle binarie**, una per ciascuno dei sei predicati dell'esempio. I nomi delle tabelle qui sotto sono abbreviazioni dei predicati indicati nella mappa iniziale.
+
+**Nome(Soggetto, Oggetto)** — predicato `foaf:name`
+
+| Soggetto | Oggetto |
+|---|---|
+| `:Mary` | `"Maria"` |
+| `:John` | `"Giovanni"` |
+| `:Ann` | `"Anna"` |
+
+**Email(Soggetto, Oggetto)** — predicato `:email`
+
+| Soggetto | Oggetto |
+|---|---|
+| `:Mary` | `"m@example.org"` |
+| `:John` | `"g@example.org"` |
+
+**Conosce(Soggetto, Oggetto)** — predicato `foaf:knows`
+
+| Soggetto | Oggetto |
+|---|---|
+| `:Mary` | `:John` |
+| `:Mary` | `:Ann` |
+
+**Titolo(Soggetto, Oggetto)** — predicato `:title`
+
+| Soggetto | Oggetto |
+|---|---|
+| `:LibroA` | `"Database"` |
+| `:LibroB` | `"Grafi"` |
+
+**Anno(Soggetto, Oggetto)** — predicato `:publicationYear`
+
+| Soggetto | Oggetto |
+|---|---|
+| `:LibroA` | `2020` |
+| `:LibroB` | `2022` |
+
+**Autore(Soggetto, Oggetto)** — predicato `:author`
+
+| Soggetto | Oggetto |
+|---|---|
+| `:LibroA` | `:Mary` |
+| `:LibroB` | `:John` |
+
+Il predicato non è una colonna perché **è fissato dalla tabella scelta**. Due conoscenze di Mary diventano due righe in Conosce; l'email mancante di Ann non richiede una riga vuota in Email. Nell'esempio abbiamo 13 righe complessive: una per ciascuna tripla del grafo.
+
+> [!important] È partizionamento dei dati, non reificazione
+> Non abbiamo creato risorse RDF che rappresentano predicati o statement. Abbiamo distribuito le triple fra tabelle: il grafo descritto rimane lo stesso. La reificazione, invece, introduce triple che descrivono un'affermazione come risorsa.
+
+##### Ricostruire più proprietà della stessa risorsa
+
+Per ottenere nome ed email di Mary dobbiamo ora collegare Nome ed Email tramite **lo stesso soggetto**:
+
+```mermaid
+flowchart LR
+    N["Nome<br/>Soggetto = :Mary<br/>Oggetto = Maria"]
+    E["Email<br/>Soggetto = :Mary<br/>Oggetto = m@example.org"]
+    N -->|"Nome.Soggetto = Email.Soggetto"| E
+    E --> R["Risultato<br/>Maria · m@example.org"]
+```
+
+```sql
+SELECT n.Oggetto AS Nome, e.Oggetto AS Email
+FROM Nome AS n
+JOIN Email AS e ON n.Soggetto = e.Soggetto
+WHERE n.Soggetto = ':Mary';
+```
+
+Nella property table Persone gli stessi valori erano già sulla stessa riga. Nel vertical partitioning, recuperare molte proprietà di una risorsa può richiedere diversi join. Se una proprietà è facoltativa e vogliamo mantenere anche le risorse che non la possiedono, occorre gestire tale assenza: ad esempio, un `LEFT JOIN` da Nome a Email conserverebbe anche Ann. Il normale `JOIN` richiede invece un abbinamento in entrambe le tabelle.
+
+##### Confronto visivo delle quattro organizzazioni
+
+| Organizzazione | Dove si trova il predicato? | Proprietà diverse di Mary | Mary conosce John e Ann | Problema principale |
+|---|---|---|---|---|
+| **Verticale: tabella unica `(s,p,o)`** | Nella colonna `p` | Su righe diverse della stessa tabella | Due righe | Self-join per collegare più fatti |
+| **Orizzontale: tabella larga** | Nel nome della colonna | Sulla stessa riga | Occorre gestire più valori nella cella | Celle vuote e proprietà multivalore |
+| **Property tables** | Nelle colonne dei gruppi scelti | Insieme se raggruppate | Occorre una gestione specifica, qui una tabella separata | Scelta dei gruppi e join fra gruppi |
+| **Vertical partitioning: tabelle `(s,o)`** | Nella tabella dedicata | In tabelle diverse | Due righe in Conosce | Join per ricostruire molte proprietà |
+
+> [!summary] Scegliere in base alle query
+> Le property tables sono comode quando si leggono spesso insieme proprietà raggruppate, come nome ed email. Il vertical partitioning favorisce l'accesso a una proprietà su molte risorse e rappresenta naturalmente i valori multipli. Non esiste un vincitore assoluto: contano query frequenti, distribuzione dei dati, indici e piano di esecuzione. Sono scelte di memorizzazione, non modifiche alla semantica RDF.
+
 #### Dizionari per URI e literal
 
 URI e literal possono essere molto lunghi e ripetersi molte volte. Per questo si assegna a ogni valore un identificatore numerico, tramite:
@@ -1115,6 +1326,95 @@ URI e literal possono essere molto lunghi e ripetersi molte volte. Per questo si
 - contatore incrementale.
 
 Una tabella dizionario traduce tra ID e valore originale. Le tabelle principali diventano più compatte e i confronti più economici.
+
+##### Esempio: dalle triple testuali agli ID
+
+Consideriamo questo piccolo grafo:
+
+```turtle
+:Mary foaf:knows :John .
+:John foaf:name "Giovanni" .
+:Mary foaf:name "Maria" .
+```
+
+Il dizionario conserva una corrispondenza fra ciascun termine RDF e il suo ID interno. Le IRI sono mostrate abbreviate soltanto per leggibilità:
+
+| ID | Termine RDF |
+|---:|---|
+| 1 | `:Mary` |
+| 2 | `foaf:knows` |
+| 3 | `:John` |
+| 4 | `foaf:name` |
+| 5 | `"Giovanni"` |
+| 6 | `"Maria"` |
+
+La tabella delle triple memorizza quindi soltanto numeri:
+
+| subject | predicate | object |
+|---:|---:|---:|
+| 1 | 2 | 3 |
+| 3 | 4 | 5 |
+| 1 | 4 | 6 |
+
+Per cercare **il nome delle persone conosciute da Mary**, il primo accesso seleziona soggetto `1` e predicato `2`. L'oggetto `3` viene collegato al soggetto della seconda riga, il cui predicato è `4`. Il risultato interno è `5`, che il dizionario riconverte in `"Giovanni"`.
+
+> [!important] Identità dei termini
+> Una IRI e un literal con testo simile, come `:Mary` e `"Mary"`, sono termini diversi e ricevono ID diversi. Per distinguere i literal contano anche datatype ed eventuale lingua. L'ID identifica un **termine RDF**, non certifica che due termini diversi denotino entità diverse nel mondo. Se si usano hash, le eventuali collisioni devono essere gestite: termini diversi non possono essere confusi solo perché producono lo stesso hash.
+
+##### Il costo di traduzione non scompare
+
+La query iniziale contiene termini RDF, mentre le operazioni interne usano ID. Alla fine occorre recuperare dal dizionario i termini richiesti nell'output:
+
+```mermaid
+flowchart TD
+    Q["Query con IRI e literal"] --> E["Dizionario<br/>Traduzione dei termini in ID"]
+    E --> J["Filtri e join sugli ID<br/>Risultati intermedi compatti"]
+    J --> R["ID dei risultati finali"]
+    R --> D["Dizionario<br/>Recupero dei termini"]
+    D --> O["Risultato leggibile"]
+```
+
+Il recupero finale può essere implementato con un join sul dizionario, ma anche con accessi indicizzati, strutture in memoria o traduzioni in blocco. **Non è necessariamente un join relazionale completo per ogni valore.**
+
+Il vantaggio è evitare di trasportare e confrontare stringhe lunghe in tutti i passaggi intermedi. Se una query elabora un milione di righe intermedie ma restituisce dieci nomi, può essere conveniente lavorare sugli ID e decodificare soltanto i valori finali richiesti. Questa decodifica tardiva non è sempre possibile: filtri testuali, confronti fra valori e ordinamenti possono richiedere prima i valori originali o strutture dedicate.
+
+##### Quanto spazio possono costare le IRI ripetute?
+
+Supponiamo, per un **conto illustrativo**, di avere:
+
+- **1 milione di triple**, tutte composte da IRI;
+- IRI lunghe in media **100 byte**;
+- **100.000 IRI distinte**, riutilizzate nelle triple;
+- ID di dimensione fissa pari a **8 byte**.
+
+| Componente | Calcolo | Spazio approssimativo |
+|---|---|---:|
+| IRI memorizzate come stringhe ripetute in ogni tripla | $10^6 \times 3 \times 100$ byte | **300 MB** |
+| ID memorizzati nelle triple | $10^6 \times 3 \times 8$ byte | **24 MB** |
+| IRI conservate una sola volta nel dizionario | $10^5 \times 100$ byte | **10 MB** |
+| **ID nelle triple + stringhe nel dizionario** | $24+10$ MB | **34 MB** |
+
+> [!note] Come leggere il confronto
+> Sono MB decimali. Il conto esclude metadati, strutture di ricerca del dizionario, indici sulle triple e compressione; non è una misura di un DBMS reale. Il risparmio dipende soprattutto dalla ripetizione dei termini. Se un sistema conserva già le stringhe una sola volta e usa riferimenti nelle triple, adotta un principio simile alla codifica tramite dizionario.
+
+##### Costo dei confronti e delle letture
+
+| Operazione | ID numerico di dimensione fissa | IRI come stringa di lunghezza $L$ |
+|---|---|---|
+| Test di uguaglianza | Confronto di dimensione costante | Fino a $O(L)$ nel caso peggiore |
+| Calcolo iniziale dell'hash | Costo costante rispetto a $L$ | Richiede di leggere la stringa: $O(L)$ |
+| Memorizzazione nelle tabelle e negli indici | Pochi byte per termine | Più byte se la stringa viene ripetuta |
+| Recupero del termine leggibile | Richiede il dizionario | Il testo è già disponibile |
+
+Un confronto tra stringhe può terminare prima se trova subito una differenza. Le IRI, però, possono condividere prefissi lunghi, rendendo necessario confrontare molti caratteri. Hash già calcolati, compressione e implementazioni ottimizzate modificano i costi effettivi.
+
+La compattezza migliora anche l'uso della cache e riduce i dati trasferiti dalla memoria o dal disco. **Non segue che una query sia automaticamente dieci volte più veloce**: bisogna considerare selettività, piano di esecuzione e costo del dizionario.
+
+> [!warning] ID, indici e ordine dei valori sono concetti diversi
+> Gli **ID** sono i codici interni dei termini; gli **indici** sono strutture di accesso che possono contenere quei codici. Inoltre, un ID maggiore non indica un nome alfabeticamente successivo o una data più recente. L'uguaglianza fra termini può essere verificata sugli ID assegnati coerentemente, ma l'ordinamento e i confronti semantici richiedono i valori o una codifica che preservi appositamente l'ordine. Anche termini RDF diversi possono rappresentare lo stesso valore: l'uguaglianza degli ID non sostituisce ogni confronto fra valori.
+
+> [!summary] Il compromesso
+> Si paga una traduzione fra termini e ID per ridurre il costo di memorizzazione e di molte operazioni intermedie. Il beneficio non viene soltanto dai confronti numerici: contano anche tabelle e indici più piccoli e meno dati da leggere.
 
 ### Prospettiva entity-centric
 

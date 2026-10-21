@@ -1,0 +1,1567 @@
+{
+  "nodes": [
+    {
+      "id": "67e59e9ac29e9711",
+      "type": "text",
+      "text": "# 07 · File Organization and Indexing\n\n**7 sezioni · 42 concetti distinti.**\nSegui i gruppi numerati lungo le frecce. Ogni freccia interna forma una frase: concetto → relazione → concetto. I link «Nella lezione» aprono la sezione di origine.\n\n**Figure originali:** 21 immagini della lezione, collegate ai concetti illustrati.",
+      "x": 0,
+      "y": -750,
+      "width": 5615.0,
+      "height": 260
+    },
+    {
+      "id": "529d085177639840",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing.md",
+      "x": 0,
+      "y": -400,
+      "width": 2682.5,
+      "height": 100
+    },
+    {
+      "id": "32527a4de4708b29",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/canvas/00 - DM - MOC dei canvas.canvas",
+      "x": 2932.5,
+      "y": -400,
+      "width": 2682.5,
+      "height": 100
+    },
+    {
+      "id": "85728f83c301700b",
+      "type": "text",
+      "text": "## Percorso della mappa\n\n- 01 · Record, pagine e identificatori\n- 02 · Heap, sorted e hashed file\n- 03 · External merge sort\n- 04 · Anatomia e proprietà di un indice\n- 05 · Indici ordinati, densi e sparsi\n- 06 · ISAM e B+-tree\n- 07 · Dalla struttura al costo di una query",
+      "x": 0,
+      "y": -250,
+      "width": 5615.0,
+      "height": 320
+    },
+    {
+      "id": "7fe83b69519c512b",
+      "type": "text",
+      "text": "## Ripasso attivo\n\nScegli un nodo e spiegalo senza leggere. Poi segui una freccia e giustifica il rapporto con il nodo successivo.\nRicostruisci un esempio, indica un limite e apri la sezione della lezione per formule, figure o esercizi.\n\n**I gruppi sono numerati e seguono un percorso a serpentina:** prima riga da sinistra a destra, seconda da destra a sinistra, poi si ripete.\n\nPer le figure: descrivi prima ciò che vedi, poi spiega quale concetto esemplifica. Aprile per leggerle alla risoluzione originale.",
+      "x": 0,
+      "y": 17039.0,
+      "width": 5615.0,
+      "height": 310
+    },
+    {
+      "id": "df126f797869cf43",
+      "type": "group",
+      "label": "01 · Record, pagine e identificatori",
+      "color": "4",
+      "x": 0.0,
+      "y": 120,
+      "width": 2682.5,
+      "height": 4444.0
+    },
+    {
+      "id": "e512496a66149898",
+      "type": "text",
+      "text": "## 01 · Record, pagine e identificatori\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Pages and records|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 170,
+      "width": 2562.5,
+      "height": 105
+    },
+    {
+      "id": "6111637e3861f5bb",
+      "type": "text",
+      "text": "## Relazione e file\n\nLa relazione logica viene memorizzata in un file di pagine. La disposizione fisica può cambiare senza modificare gli attributi della relazione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Pages and records|Nella lezione ↗]]",
+      "x": 1132,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "46cac94b6d55744a",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p005.png",
+      "x": 1032,
+      "y": 771,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "3853141432eac553",
+      "type": "text",
+      "text": "**Figura · Relazione e file**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 1032,
+      "y": 1401,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "d38e3bb2b149a0bc",
+      "type": "text",
+      "text": "## Record\n\nRappresentazione di una tupla con campi e metadati. Campi variabili e NULL richiedono informazioni per trovare e interpretare i valori.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Pages and records|Nella lezione ↗]]",
+      "x": 1132,
+      "y": 1611,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "fa79ab25b0c4d32b",
+      "type": "text",
+      "text": "## Pagina con record fissi\n\nSlot di dimensione nota semplificano il calcolo degli indirizzi. Occorre comunque gestire quali slot sono occupati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Pages and records|Nella lezione ↗]]",
+      "x": 190,
+      "y": 2072,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "fb4a8fd9ac48e27c",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p007.png",
+      "x": 90,
+      "y": 2503,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "6c54a4c6ac27ca57",
+      "type": "text",
+      "text": "**Figura · Pagina con record fissi**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 90,
+      "y": 3133,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "c7159031faf92af1",
+      "type": "text",
+      "text": "## Pagina con record variabili\n\nUna slot directory memorizza posizione e dimensione dei record, facilitando spostamenti interni e compattazione dello spazio libero.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Pages and records|Nella lezione ↗]]",
+      "x": 1132,
+      "y": 2072,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "aef45c14b3b16d5a",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p008.png",
+      "x": 1032,
+      "y": 2503,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "393faee76d7bcde8",
+      "type": "text",
+      "text": "**Figura · Pagina con record variabili**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 1032,
+      "y": 3133,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "52d940ad9536cc70",
+      "type": "text",
+      "text": "## Record Identifier\n\nRID = ⟨page id, slot number⟩. Lo slot può mantenere la stessa identità mentre il record cambia offset dentro la pagina.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Pages and records|Nella lezione ↗]]",
+      "x": 1132,
+      "y": 3343,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "0a9fa5d232ed5dce",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p009.png",
+      "x": 1032,
+      "y": 3774,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "164638f8e87f14ab",
+      "type": "text",
+      "text": "**Figura · Record Identifier**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 1032,
+      "y": 4404,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "53123e729edbdc8f",
+      "type": "text",
+      "text": "## Record più grandi di una pagina\n\nRichiedono frammentazione, overflow o puntatori a parti esterne. Un accesso logico a un record può così richiedere più page I/O.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Pages and records|Nella lezione ↗]]",
+      "x": 1974,
+      "y": 2477,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "d1eef1e84d5819c0",
+      "type": "group",
+      "label": "02 · Heap, sorted e hashed file",
+      "color": "5",
+      "x": 2932.5,
+      "y": 120,
+      "width": 2682.5,
+      "height": 4556.0
+    },
+    {
+      "id": "416a175d5217e927",
+      "type": "text",
+      "text": "## 02 · Heap, sorted e hashed file\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost model|Apri la sezione della lezione]]",
+      "x": 2992.5,
+      "y": 170,
+      "width": 2562.5,
+      "height": 105
+    },
+    {
+      "id": "eb07fdbe95b43427",
+      "type": "text",
+      "text": "## Heap file\n\nRecord senza ordine sulla chiave di ricerca. Inserimento semplice se è noto spazio libero; ricerche non indicizzate richiedono scansioni.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost model|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "550221277c607070",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p018.png",
+      "x": 3864,
+      "y": 1693,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "433cde768f4e5a33",
+      "type": "text",
+      "text": "**Figura · Heap file**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3864,
+      "y": 2323,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "855d0a0b99b35768",
+      "type": "text",
+      "text": "## Sorted file\n\nRecord in ordine di search key. Favorisce range e accessi ordinati, ma inserire mantenendo l’ordine può richiedere spostamenti o strutture aggiuntive.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost model|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 2533,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "d3e469bc6c690875",
+      "type": "text",
+      "text": "## Hashed file\n\nh(chiave) individua un bucket con pagina primaria ed eventuali overflow. Buono per uguaglianza sulla chiave; non mantiene un ordine utile ai range.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost model|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 2994,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "29b40bf365b53713",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p022.png",
+      "x": 3864,
+      "y": 3425,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "fb0f46e9dc714f8d",
+      "type": "text",
+      "text": "**Figura · Hashed file**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3864,
+      "y": 4055,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "2e8cdbfa039ef64f",
+      "type": "text",
+      "text": "## Parametri del costo\n\nB = pagine, R = record per pagina nel modello di organizzazione. Il costo si misura in page I/O e va letto con le ipotesi di occupazione e overflow.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost model|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "bdc45bbf53adb11a",
+      "type": "text",
+      "text": "## Quale operazione misuri?\n\nFull scan, uguaglianza, range, insert e delete favoriscono strutture differenti. Non esiste un’organizzazione migliore per ogni carico.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost model|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "ba1d3a422696c9eb",
+      "type": "text",
+      "text": "## Collisioni e overflow\n\nValori diversi possono cadere nello stesso bucket. Catene lunghe aumentano I/O e rendono il costo hash meno vicino al caso ideale costante.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost model|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 4265,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "d1b1c6732739d4e4",
+      "type": "group",
+      "label": "03 · External merge sort",
+      "color": "3",
+      "x": 2932.5,
+      "y": 4926.0,
+      "width": 2682.5,
+      "height": 4556.0
+    },
+    {
+      "id": "6ac69871e13e8176",
+      "type": "text",
+      "text": "## 03 · External merge sort\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#External sorting|Apri la sezione della lezione]]",
+      "x": 2992.5,
+      "y": 4976.0,
+      "width": 2562.5,
+      "height": 105
+    },
+    {
+      "id": "1c85195c900c8b39",
+      "type": "text",
+      "text": "## Perché ordinare fuori RAM\n\nSe B pagine superano i frame disponibili non si può caricare tutto. Sorting serve a grouping, deduplica, ORDER BY e join.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#External sorting|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "49537904c5eb0d71",
+      "type": "text",
+      "text": "## Generare run\n\nLeggi fino a F pagine, ordina in memoria e riscrivi una run. Il primo passo produce circa ceil(B/F) run.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#External sorting|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "04a64ada71ec658b",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p044.png",
+      "x": 3864,
+      "y": 6038,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "3085f2b54dd23a78",
+      "type": "text",
+      "text": "**Figura · Generare run**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3864,
+      "y": 6668,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "591e64a7e8a72700",
+      "type": "text",
+      "text": "## Merge a più vie\n\nCon F frame, usa fino a F−1 input e uno per output. Ogni passo riduce il numero di run fino a una sola sequenza ordinata.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#External sorting|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 6878,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "83851bbaf1ba4e99",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p050.png",
+      "x": 3864,
+      "y": 7309,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "b7eecfb770e1268e",
+      "type": "text",
+      "text": "**Figura · Merge a più vie**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3864,
+      "y": 7939,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "6d693a6930274062",
+      "type": "text",
+      "text": "## Passate necessarie\n\nDopo la generazione, servono ceil(log base F−1 di ceil(B/F)) livelli di merge, per F>2. Più frame aumentano il fan-in.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#External sorting|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 8149,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "99fd01cbc5db9822",
+      "type": "text",
+      "text": "## Costo delle passate\n\nUna lettura e riscrittura complete costano 2B. Costo standard: 2B × (1 + livelli di merge), se anche l’output finale viene scritto.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#External sorting|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 8610,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "685338386e409e3c",
+      "type": "text",
+      "text": "## Riutilizzare l’ordine\n\nUn operatore successivo può consumare direttamente il merge finale, evitando una scrittura intermedia. La formula dipende da materializzazione o pipeline.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#External sorting|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 9071,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "b3ac829ec5e93a52",
+      "type": "group",
+      "label": "04 · Anatomia e proprietà di un indice",
+      "color": "6",
+      "x": 0.0,
+      "y": 4926.0,
+      "width": 2682.5,
+      "height": 3634.0
+    },
+    {
+      "id": "828b151bc01dde52",
+      "type": "text",
+      "text": "## 04 · Anatomia e proprietà di un indice\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Properties of an index|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 4976.0,
+      "width": 2562.5,
+      "height": 105
+    },
+    {
+      "id": "c2caeae4804039ce",
+      "type": "text",
+      "text": "## Database index\n\nStruttura che conduce da un valore di ricerca alle data entry e quindi ai record. Richiede spazio e manutenzione quando cambiano i dati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Properties of an index|Nella lezione ↗]]",
+      "x": 1292,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "98bdf74b2a1d70a1",
+      "type": "text",
+      "text": "## Search key\n\nAttributi usati per cercare: non devono costituire una chiave univoca. Età o città possono essere chiavi di ricerca con molti duplicati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Properties of an index|Nella lezione ↗]]",
+      "x": 922,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "9e4ee912dc4f934a",
+      "type": "text",
+      "text": "## Tre alternative di data entry\n\n1: il record intero. 2: coppia (chiave,RID). 3: chiave con lista di RID. Le alternative cambiano dimensione delle foglie e accessi ai dati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Properties of an index|Nella lezione ↗]]",
+      "x": 502,
+      "y": 6473,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "dcc4580dfc8cd2d0",
+      "type": "text",
+      "text": "## Clustering\n\nL’ordine delle entry corrisponde alla vicinanza fisica dei record. Le chiavi vicine si leggono con meno page I/O; un file non può avere più ordini fisici forti indipendenti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Properties of an index|Nella lezione ↗]]",
+      "x": 502,
+      "y": 7339,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "87d25e8647ea32e9",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p082.png",
+      "x": 401,
+      "y": 7770,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "2ae3108e07ff4572",
+      "type": "text",
+      "text": "**Figura · Clustering**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 401,
+      "y": 8400,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "beabce9ace3f4a84",
+      "type": "text",
+      "text": "## Primary e secondary\n\nRiguarda il ruolo degli attributi indicizzati, non è un sinonimo generale di clustering/non-clustering. Va separato dalle altre classificazioni.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Properties of an index|Nella lezione ↗]]",
+      "x": 1662,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "e2af2a1115163bfe",
+      "type": "text",
+      "text": "## Indice composto\n\nSearch key con più attributi in ordine, per esempio ⟨città,cognome⟩. L’ordine lessicografico favorisce i prefissi iniziali, non ogni sottoinsieme.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Properties of an index|Nella lezione ↗]]",
+      "x": 1342,
+      "y": 6068,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "c6aa44b82cc3bf47",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p092.png",
+      "x": 1242,
+      "y": 6499,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "0262bf5ff187541e",
+      "type": "text",
+      "text": "**Figura · Indice composto**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 1242,
+      "y": 7129,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "00e606456b817f90",
+      "type": "group",
+      "label": "05 · Indici ordinati, densi e sparsi",
+      "color": "2",
+      "x": 0.0,
+      "y": 9732.0,
+      "width": 2682.5,
+      "height": 4444.0
+    },
+    {
+      "id": "46f5674c739b735c",
+      "type": "text",
+      "text": "## 05 · Indici ordinati, densi e sparsi\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Sorted index organization|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 9782.0,
+      "width": 2562.5,
+      "height": 105
+    },
+    {
+      "id": "778295fd349d4073",
+      "type": "text",
+      "text": "## Dense index\n\nHa una data entry per ciascun valore di ricerca presente, oppure entry per record secondo l’alternativa. Può rappresentare duplicati con RID-list.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Sorted index organization|Nella lezione ↗]]",
+      "x": 561,
+      "y": 9952,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "06c4bdb0d4c51b0f",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p088.png",
+      "x": 460,
+      "y": 10383,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "5b9c08cadf1a1b21",
+      "type": "text",
+      "text": "**Figura · Dense index**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 460,
+      "y": 11013,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "cf540a61cb026b26",
+      "type": "text",
+      "text": "## Sparse index\n\nConserva solo valori guida, tipicamente uno per pagina. Deve poter raggiungere gli altri record grazie all’ordine del file: richiede clustering.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Sorted index organization|Nella lezione ↗]]",
+      "x": 561,
+      "y": 11223,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "ea1b4ee5333c1b59",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p090.png",
+      "x": 460,
+      "y": 11654,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "201105239621b37e",
+      "type": "text",
+      "text": "**Figura · Sparse index**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 460,
+      "y": 12284,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "cd0bd7e66a70e8e2",
+      "type": "text",
+      "text": "## Inverted list\n\nPer ogni valore elenca i RID dei record che lo possiedono. È utile con duplicati e realizza l’alternativa chiave–lista.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Sorted index organization|Nella lezione ↗]]",
+      "x": 1503,
+      "y": 11628,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "1db19fc7b34cbb39",
+      "type": "text",
+      "text": "## Multilevel index\n\nSe l’indice non entra in una pagina, un livello superiore indicizza le pagine inferiori. La ricerca segue un cammino, anziché scandire tutte le entry.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Sorted index organization|Nella lezione ↗]]",
+      "x": 561,
+      "y": 12494,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "d167db8ede9aaa93",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p126.png",
+      "x": 460,
+      "y": 12925,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "59b7d2a6ddbe9044",
+      "type": "text",
+      "text": "**Figura · Multilevel index**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 460,
+      "y": 13555,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "8b3cb91393456f24",
+      "type": "text",
+      "text": "## Non-clustering con duplicati\n\nRecord dello stesso valore possono trovarsi in pagine distanti. Tanti match possono richiedere tanti I/O; la sola presenza dell’indice non garantisce convenienza.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Sorted index organization|Nella lezione ↗]]",
+      "x": 1503,
+      "y": 12494,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "e012e8e7fda031e8",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p142.png",
+      "x": 1402,
+      "y": 12925,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "ea07363b0d647aaa",
+      "type": "text",
+      "text": "**Figura · Non-clustering con duplicati**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 1402,
+      "y": 13555,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "1ad5004645deab79",
+      "type": "text",
+      "text": "## Range su indice ordinato\n\nCerca il primo valore e prosegui lungo le entry/foglie finché supera il limite. Il costo dei record dipende da quante pagine fisiche toccano i match.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Sorted index organization|Nella lezione ↗]]",
+      "x": 1032,
+      "y": 13765,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "76cd49d005b98dc4",
+      "type": "group",
+      "label": "06 · ISAM e B+-tree",
+      "color": "4",
+      "x": 2932.5,
+      "y": 9732.0,
+      "width": 2682.5,
+      "height": 4793.0
+    },
+    {
+      "id": "9d4c264dfc1febb5",
+      "type": "text",
+      "text": "## 06 · ISAM e B+-tree\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Tree-based index organization|Apri la sezione della lezione]]",
+      "x": 2992.5,
+      "y": 9782.0,
+      "width": 2562.5,
+      "height": 105
+    },
+    {
+      "id": "b98c6870d2cd330c",
+      "type": "text",
+      "text": "## ISAM\n\nStruttura statica: livelli superiori costruiti senza ribilanciamento a ogni inserimento. Nuove entry possono finire in pagine overflow.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Tree-based index organization|Nella lezione ↗]]",
+      "x": 3594,
+      "y": 9952,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "400ceb1211e3887e",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p159.png",
+      "x": 3494,
+      "y": 10383,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "35b8d97c23f37996",
+      "type": "text",
+      "text": "**Figura · ISAM**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3494,
+      "y": 11013,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "9a118e41033e6f83",
+      "type": "text",
+      "text": "## Costo dello statico\n\nSe crescono le catene di overflow, una ricerca deve seguirle. L’altezza dei livelli iniziali non descrive da sola l’intero costo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Tree-based index organization|Nella lezione ↗]]",
+      "x": 3123,
+      "y": 11223,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "bb4fb89d4d4a9435",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p164.png",
+      "x": 3022,
+      "y": 11654,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "e5499db6b485c3a6",
+      "type": "text",
+      "text": "**Figura · Costo dello statico**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3022,
+      "y": 12284,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "3442e5aba13d2162",
+      "type": "text",
+      "text": "## B+-tree\n\nAlbero dinamico bilanciato con data entry nelle foglie collegate in ordine. I nodi interni contengono separatori e puntatori.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Tree-based index organization|Nella lezione ↗]]",
+      "x": 4065,
+      "y": 11223,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "14a6ebfaa30bf384",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p167.png",
+      "x": 3964,
+      "y": 11654,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "14e282ea7aabe2cd",
+      "type": "text",
+      "text": "**Figura · B+-tree**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3964,
+      "y": 12284,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "63b963144dbc74b7",
+      "type": "text",
+      "text": "## Insert e split\n\nSi inserisce nella foglia corretta; se piena si divide e propaga un separatore al padre. La divisione può raggiungere la radice e aumentare l’altezza.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Tree-based index organization|Nella lezione ↗]]",
+      "x": 3123,
+      "y": 12494,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "ca00d37a0c710f77",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p174.png",
+      "x": 3022,
+      "y": 12925,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "c5318bd3b5c7bdee",
+      "type": "text",
+      "text": "**Figura · Insert e split**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3022,
+      "y": 13555,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "978aca08908a21a1",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p175.png",
+      "x": 3022,
+      "y": 13735,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "dbd1f2a76fd18354",
+      "type": "text",
+      "text": "**Figura · Insert e split**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3022,
+      "y": 14365,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "cc5bd1bd67912981",
+      "type": "text",
+      "text": "## Delete e ribilanciamento\n\nUn nodo troppo vuoto può ricevere entry da un fratello o fondersi. Gli invarianti dipendono anche dalle convenzioni di occupazione e dall’eccezione della radice.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Tree-based index organization|Nella lezione ↗]]",
+      "x": 4065,
+      "y": 12494,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "4f6027a0d233ac75",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p178.png",
+      "x": 3964,
+      "y": 12925,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "0a7f8b9480076dd1",
+      "type": "text",
+      "text": "**Figura · Delete e ribilanciamento**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3964,
+      "y": 13555,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "840d17ffd8f1b671",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L07-p181.png",
+      "x": 3964,
+      "y": 13735,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "3060bc2af35f58d7",
+      "type": "text",
+      "text": "**Figura · Delete e ribilanciamento**\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing|Dalla lezione 07]]",
+      "x": 3964,
+      "y": 14365,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "e7e5af884afbeeb6",
+      "type": "text",
+      "text": "## Fan-out e altezza\n\nMolti puntatori per pagina significano pochi livelli. Con altezza h in archi, il cammino completo richiede h+1 pagine se nessuna è già in buffer.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Tree-based index organization|Nella lezione ↗]]",
+      "x": 4906,
+      "y": 13304,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "b1a78ca767617223",
+      "type": "group",
+      "label": "07 · Dalla struttura al costo di una query",
+      "color": "5",
+      "x": 2932.5,
+      "y": 14775.0,
+      "width": 2682.5,
+      "height": 2014.0
+    },
+    {
+      "id": "0efb7147cefb3111",
+      "type": "text",
+      "text": "## 07 · Dalla struttura al costo di una query\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost of a clustered B+-tree index|Apri la sezione della lezione]]",
+      "x": 2992.5,
+      "y": 14825.0,
+      "width": 2562.5,
+      "height": 105
+    },
+    {
+      "id": "00b03d7e323863a0",
+      "type": "text",
+      "text": "## Lookup\n\nIl costo totale include cammino nell’indice e pagine dei record, salvo index-only. Radice o altri livelli già nel buffer riducono gli I/O reali.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost of a clustered B+-tree index|Nella lezione ↗]]",
+      "x": 4334,
+      "y": 15456,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "c73ff784954f8d66",
+      "type": "text",
+      "text": "## Dati clustered\n\nPiù record qualificanti possono condividere poche pagine consecutive. Per range ampi il costo dipende soprattutto dalle pagine contenenti i match.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost of a clustered B+-tree index|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 15917,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "1c81c07a222d5474",
+      "type": "text",
+      "text": "## Dati unclustered\n\nNel caso sfavorevole ogni RID conduce a una pagina distinta. Molti match possono costare quanto o più di una scansione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost of a clustered B+-tree index|Nella lezione ↗]]",
+      "x": 4705,
+      "y": 15917,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "2632d4805b650618",
+      "type": "text",
+      "text": "## Stimare le foglie\n\nDimensione delle data entry, capacità di pagina e occupazione determinano il numero di foglie. Entry più grandi aumentano spazio e possibili livelli.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost of a clustered B+-tree index|Nella lezione ↗]]",
+      "x": 4334,
+      "y": 14995,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "11d7b9e565f3c925",
+      "type": "text",
+      "text": "## Manutenzione\n\nInserimenti e cancellazioni devono aggiornare anche gli indici. Troppi indici velocizzano alcune letture ma rallentano scritture e occupano memoria/storage.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost of a clustered B+-tree index|Nella lezione ↗]]",
+      "x": 3223,
+      "y": 15917,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "9279f099746af74f",
+      "type": "text",
+      "text": "## Scelta fisica\n\nFrequenza delle query, selettività, ordine richiesto e aggiornamenti guidano l’indice. Il costo di un accesso non coincide con il solo numero di livelli.\n\n[[Obsidian-University/University/Magistrale/Data Managment/07 - DM - File Organization and Indexing#Cost of a clustered B+-tree index|Nella lezione ↗]]",
+      "x": 3964,
+      "y": 16378,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "8820f72c4c8f8a57",
+      "fromNode": "6111637e3861f5bb",
+      "toNode": "46cac94b6d55744a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "a10102178f2e3c7f",
+      "fromNode": "fa79ab25b0c4d32b",
+      "toNode": "fb4a8fd9ac48e27c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "3cbcaf35e0da8999",
+      "fromNode": "c7159031faf92af1",
+      "toNode": "aef45c14b3b16d5a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "a1e1e48e0d622193",
+      "fromNode": "52d940ad9536cc70",
+      "toNode": "0a9fa5d232ed5dce",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "f2a1e682d6167f42",
+      "fromNode": "6111637e3861f5bb",
+      "toNode": "d38e3bb2b149a0bc",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "contiene"
+    },
+    {
+      "id": "b9b7d8c468603d2b",
+      "fromNode": "d38e3bb2b149a0bc",
+      "toNode": "fa79ab25b0c4d32b",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può avere formato adatto a"
+    },
+    {
+      "id": "4f60f0315f67bd39",
+      "fromNode": "d38e3bb2b149a0bc",
+      "toNode": "c7159031faf92af1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può richiedere"
+    },
+    {
+      "id": "cd35b714452e68bd",
+      "fromNode": "c7159031faf92af1",
+      "toNode": "52d940ad9536cc70",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "mantiene stabile il"
+    },
+    {
+      "id": "a81cf1bf6a8565e0",
+      "fromNode": "d38e3bb2b149a0bc",
+      "toNode": "53123e729edbdc8f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "caso speciale è"
+    },
+    {
+      "id": "db6ed16b2334efe0",
+      "fromNode": "eb07fdbe95b43427",
+      "toNode": "550221277c607070",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "c73eee4c662a53ea",
+      "fromNode": "d3e469bc6c690875",
+      "toNode": "29b40bf365b53713",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "cb93a44672b5ffab",
+      "fromNode": "eb07fdbe95b43427",
+      "toNode": "855d0a0b99b35768",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "confronta inserimento con ordine in"
+    },
+    {
+      "id": "eeb7f55555adfdc7",
+      "fromNode": "855d0a0b99b35768",
+      "toNode": "d3e469bc6c690875",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "confronta range con uguaglianza in"
+    },
+    {
+      "id": "8cf7d749efd6a42f",
+      "fromNode": "2e8cdbfa039ef64f",
+      "toNode": "bdc45bbf53adb11a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "serve a stimare"
+    },
+    {
+      "id": "45148178a91d145d",
+      "fromNode": "bdc45bbf53adb11a",
+      "toNode": "eb07fdbe95b43427",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "valuta"
+    },
+    {
+      "id": "80460b89f43b85ad",
+      "fromNode": "d3e469bc6c690875",
+      "toNode": "ba1d3a422696c9eb",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "deve gestire"
+    },
+    {
+      "id": "d62d0651b47909c2",
+      "fromNode": "49537904c5eb0d71",
+      "toNode": "04a64ada71ec658b",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "3"
+    },
+    {
+      "id": "e2f4894d5ac42f49",
+      "fromNode": "591e64a7e8a72700",
+      "toNode": "83851bbaf1ba4e99",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "3"
+    },
+    {
+      "id": "3e527cfdde7ddd1c",
+      "fromNode": "1c85195c900c8b39",
+      "toNode": "49537904c5eb0d71",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "inizia con"
+    },
+    {
+      "id": "acd53dff791d245c",
+      "fromNode": "49537904c5eb0d71",
+      "toNode": "591e64a7e8a72700",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "vengono combinate con"
+    },
+    {
+      "id": "8d8f027eca772f08",
+      "fromNode": "591e64a7e8a72700",
+      "toNode": "6d693a6930274062",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "determina il numero di"
+    },
+    {
+      "id": "fd921c0ce3cf613f",
+      "fromNode": "6d693a6930274062",
+      "toNode": "99fd01cbc5db9822",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "determina il"
+    },
+    {
+      "id": "cf5f8d0ecdc6c60f",
+      "fromNode": "99fd01cbc5db9822",
+      "toNode": "685338386e409e3c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può ridursi tramite"
+    },
+    {
+      "id": "7ea82c9f721fc3d3",
+      "fromNode": "dcc4580dfc8cd2d0",
+      "toNode": "87d25e8647ea32e9",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "e5bb981e4e9debb4",
+      "fromNode": "e2af2a1115163bfe",
+      "toNode": "c6aa44b82cc3bf47",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "e5641edfe3d7947f",
+      "fromNode": "c2caeae4804039ce",
+      "toNode": "98bdf74b2a1d70a1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "è definito su una"
+    },
+    {
+      "id": "645b3a6c0d256323",
+      "fromNode": "98bdf74b2a1d70a1",
+      "toNode": "9e4ee912dc4f934a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "compare nelle"
+    },
+    {
+      "id": "fe5fcaa0b323502e",
+      "fromNode": "9e4ee912dc4f934a",
+      "toNode": "dcc4580dfc8cd2d0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "accesso ai record influenzato dal"
+    },
+    {
+      "id": "1804b0775f15c6cb",
+      "fromNode": "c2caeae4804039ce",
+      "toNode": "beabce9ace3f4a84",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si classifica anche come"
+    },
+    {
+      "id": "0e762baf846511bb",
+      "fromNode": "98bdf74b2a1d70a1",
+      "toNode": "e2af2a1115163bfe",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può essere una chiave di"
+    },
+    {
+      "id": "11a1553bbe22a291",
+      "fromNode": "778295fd349d4073",
+      "toNode": "06c4bdb0d4c51b0f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "8d516febac12de3b",
+      "fromNode": "cf540a61cb026b26",
+      "toNode": "ea1b4ee5333c1b59",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "002080cc59553e72",
+      "fromNode": "1db19fc7b34cbb39",
+      "toNode": "d167db8ede9aaa93",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "626cd71644a632e5",
+      "fromNode": "8b3cb91393456f24",
+      "toNode": "e012e8e7fda031e8",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "774642d330c07485",
+      "fromNode": "778295fd349d4073",
+      "toNode": "cf540a61cb026b26",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "copertura ridotta nella variante"
+    },
+    {
+      "id": "9e76d483b1a4ad96",
+      "fromNode": "cf540a61cb026b26",
+      "toNode": "1db19fc7b34cbb39",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può essere organizzato in"
+    },
+    {
+      "id": "899eade7a9309d02",
+      "fromNode": "cd0bd7e66a70e8e2",
+      "toNode": "8b3cb91393456f24",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "rappresenta RID dispersi in un"
+    },
+    {
+      "id": "f409109a2d427026",
+      "fromNode": "1db19fc7b34cbb39",
+      "toNode": "1ad5004645deab79",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "accelera la posizione iniziale di un"
+    },
+    {
+      "id": "a237500efb956949",
+      "fromNode": "8b3cb91393456f24",
+      "toNode": "1ad5004645deab79",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "aumenta il costo di recupero dati nel"
+    },
+    {
+      "id": "7063c489508983a8",
+      "fromNode": "b98c6870d2cd330c",
+      "toNode": "400ceb1211e3887e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "b115b36c6ea4104c",
+      "fromNode": "9a118e41033e6f83",
+      "toNode": "bb4fb89d4d4a9435",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "462a21f1695c1fc9",
+      "fromNode": "3442e5aba13d2162",
+      "toNode": "14a6ebfaa30bf384",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "eb6729bf7231b676",
+      "fromNode": "63b963144dbc74b7",
+      "toNode": "ca00d37a0c710f77",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "c10861f3d1600910",
+      "fromNode": "ca00d37a0c710f77",
+      "toNode": "978aca08908a21a1",
+      "fromSide": "right",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "altro passaggio dello stesso esempio",
+      "color": "4"
+    },
+    {
+      "id": "93e6705c85eea1c8",
+      "fromNode": "cc5bd1bd67912981",
+      "toNode": "4f6027a0d233ac75",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "c7644fc26f8dc2e9",
+      "fromNode": "4f6027a0d233ac75",
+      "toNode": "840d17ffd8f1b671",
+      "fromSide": "right",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "altro passaggio dello stesso esempio",
+      "color": "4"
+    },
+    {
+      "id": "d4b38a72b57df050",
+      "fromNode": "b98c6870d2cd330c",
+      "toNode": "9a118e41033e6f83",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "soffre di"
+    },
+    {
+      "id": "9c8626bea1ad5a2f",
+      "fromNode": "b98c6870d2cd330c",
+      "toNode": "3442e5aba13d2162",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "alternativa dinamica è"
+    },
+    {
+      "id": "d3b7666531837184",
+      "fromNode": "3442e5aba13d2162",
+      "toNode": "63b963144dbc74b7",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "gestisce crescita tramite"
+    },
+    {
+      "id": "ba2c5e9cad1b1d6a",
+      "fromNode": "3442e5aba13d2162",
+      "toNode": "cc5bd1bd67912981",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "gestisce diminuzione tramite"
+    },
+    {
+      "id": "47ff9e10c4ee3756",
+      "fromNode": "3442e5aba13d2162",
+      "toNode": "e7e5af884afbeeb6",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "ha costo influenzato da"
+    },
+    {
+      "id": "c6dd114b3e7c0ba7",
+      "fromNode": "00b03d7e323863a0",
+      "toNode": "c73ff784954f8d66",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "recupero economico se"
+    },
+    {
+      "id": "5ea79e0ea7976673",
+      "fromNode": "00b03d7e323863a0",
+      "toNode": "1c81c07a222d5474",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "recupero disperso se"
+    },
+    {
+      "id": "5308cb633556bd40",
+      "fromNode": "2632d4805b650618",
+      "toNode": "00b03d7e323863a0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "influenza la profondità di"
+    },
+    {
+      "id": "6c7f12265a784000",
+      "fromNode": "11d7b9e565f3c925",
+      "toNode": "9279f099746af74f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "va bilanciata nella"
+    },
+    {
+      "id": "8ced85053e9baa93",
+      "fromNode": "1c81c07a222d5474",
+      "toNode": "9279f099746af74f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può far preferire una scan nella"
+    },
+    {
+      "id": "ba63047444d23334",
+      "fromNode": "df126f797869cf43",
+      "toNode": "d1eef1e84d5819c0",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 02",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "86f0db75cdf004c6",
+      "fromNode": "d1eef1e84d5819c0",
+      "toNode": "d1b1c6732739d4e4",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 03",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "8312682dbe2f8a53",
+      "fromNode": "d1b1c6732739d4e4",
+      "toNode": "b3ac829ec5e93a52",
+      "fromSide": "left",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "continua: sezione 04",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "a60774c679eaaa55",
+      "fromNode": "b3ac829ec5e93a52",
+      "toNode": "00e606456b817f90",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 05",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "59fc905d92cc425a",
+      "fromNode": "00e606456b817f90",
+      "toNode": "76cd49d005b98dc4",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 06",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "b10a822c60e8f85c",
+      "fromNode": "76cd49d005b98dc4",
+      "toNode": "b1a78ca767617223",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 07",
+      "color": "#8a8a8a"
+    }
+  ]
+}

@@ -1,0 +1,1007 @@
+{
+  "nodes": [
+    {
+      "id": "33f019c73f37bd0d",
+      "type": "text",
+      "text": "# 01 · Introduction\n\n**7 sezioni · 43 concetti distinti.**\nSegui i gruppi numerati lungo le frecce. Ogni freccia interna forma una frase: concetto → relazione → concetto. I link «Nella lezione» aprono la sezione di origine.",
+      "x": 0,
+      "y": -680,
+      "width": 4688.4,
+      "height": 220
+    },
+    {
+      "id": "810be6654e5d049b",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction.md",
+      "x": 0,
+      "y": -400,
+      "width": 2239.2,
+      "height": 100
+    },
+    {
+      "id": "0ae21e2ad6e6a2de",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/canvas/00 - DM - MOC dei canvas.canvas",
+      "x": 2449.2,
+      "y": -400,
+      "width": 2239.2,
+      "height": 100
+    },
+    {
+      "id": "a0e13634294607bf",
+      "type": "text",
+      "text": "## Percorso della mappa\n\n- 01 · Fondamenti del modello relazionale\n- 02 · Cinque operatori fondamentali\n- 03 · Join e pattern di interrogazione\n- 04 · SQL, NULL e ordine logico\n- 05 · Gruppi e granularità\n- 06 · Definire una finestra\n- 07 · Ranking e analisi temporale",
+      "x": 0,
+      "y": -250,
+      "width": 4688.4,
+      "height": 320
+    },
+    {
+      "id": "fe9ea6234557a9c4",
+      "type": "group",
+      "label": "01 · Fondamenti del modello relazionale",
+      "color": "4",
+      "x": 0.0,
+      "y": 180,
+      "width": 2239.2,
+      "height": 1509.6
+    },
+    {
+      "id": "dd3e092f256f4d20",
+      "type": "text",
+      "text": "## 01 · Fondamenti del modello relazionale\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The relational data model|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 230,
+      "width": 2119.2,
+      "height": 105
+    },
+    {
+      "id": "f693989b4e6dc43e",
+      "type": "text",
+      "text": "## Relazione\n\nInsieme di tuple su domini: R ⊆ D₁×…×Dₖ. Non possiede duplicati né un ordinamento intrinseco.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The relational data model|Nella lezione ↗]]",
+      "x": 810,
+      "y": 400,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "2f4828becb938bee",
+      "type": "text",
+      "text": "## Schema e istanza\n\nLo schema fissa nome e attributi; l’istanza è il contenuto attuale. Cambiare i dati non significa cambiare lo schema.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The relational data model|Nella lezione ↗]]",
+      "x": 90,
+      "y": 839,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "25402a78a2966b85",
+      "type": "text",
+      "text": "## Grado e cardinalità\n\nGrado = numero di attributi. Cardinalità = numero di tuple dell’istanza. Una proiezione cambia il primo; una selezione può cambiare la seconda.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The relational data model|Nella lezione ↗]]",
+      "x": 90,
+      "y": 1278,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "f2ff9e3a95a99933",
+      "type": "text",
+      "text": "## Set e bag\n\nL’algebra classica usa insiemi; SQL normalmente conserva duplicati. SELECT DISTINCT elimina duplicati; ORDER BY esterno stabilisce l’ordine del risultato.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The relational data model|Nella lezione ↗]]",
+      "x": 810,
+      "y": 839,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "64d5035b479b8877",
+      "type": "text",
+      "text": "## Algebra relazionale\n\nLinguaggio procedurale di composizione di operatori: input e output sono relazioni. La chiusura permette di annidare le espressioni.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The relational data model|Nella lezione ↗]]",
+      "x": 1530,
+      "y": 839,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "c769c99bcf3eee7e",
+      "type": "text",
+      "text": "## Calcolo e teorema di Codd\n\nIl calcolo dichiara proprietà logiche. Le forme sicure e l’algebra hanno pari potere espressivo; SQL pratico aggiunge altre capacità e semantiche.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The relational data model|Nella lezione ↗]]",
+      "x": 1530,
+      "y": 1278,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "047b0c7ccecf56d6",
+      "type": "group",
+      "label": "02 · Cinque operatori fondamentali",
+      "color": "5",
+      "x": 2449.2,
+      "y": 180,
+      "width": 2239.2,
+      "height": 2827.2
+    },
+    {
+      "id": "f54bf1c0b8de57a9",
+      "type": "text",
+      "text": "## 02 · Cinque operatori fondamentali\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The five basic operations of relational algebra|Apri la sezione della lezione]]",
+      "x": 2509.2,
+      "y": 230,
+      "width": 2119.2,
+      "height": 105
+    },
+    {
+      "id": "d5e79043a059a69a",
+      "type": "text",
+      "text": "## Unione ∪\n\nTuple presenti in almeno uno degli input. Richiede compatibilità di grado e domini; i duplicati non si ripetono.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The five basic operations of relational algebra|Nella lezione ↗]]",
+      "x": 3259,
+      "y": 400,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "2cb53b99308cca2e",
+      "type": "text",
+      "text": "## Differenza −\n\nR−S contiene tuple in R assenti da S. Richiede compatibilità e non è commutativa: R−S può differire da S−R.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The five basic operations of relational algebra|Nella lezione ↗]]",
+      "x": 3259,
+      "y": 839,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "e496445884df8fed",
+      "type": "text",
+      "text": "## Prodotto cartesiano ×\n\nCombina ogni tupla di R con ogni tupla di S. Cardinalità |R|×|S|, grado somma dei gradi: genera tutte le coppie candidate.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The five basic operations of relational algebra|Nella lezione ↗]]",
+      "x": 3259,
+      "y": 1278,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "9e154342eacaf533",
+      "type": "text",
+      "text": "## Proiezione π\n\nSceglie attributi e, nell’algebra a insiemi, elimina duplicati. π(nome,città) può collassare persone diverse con la stessa coppia.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The five basic operations of relational algebra|Nella lezione ↗]]",
+      "x": 3259,
+      "y": 2157,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "3a6da87e5aa6772c",
+      "type": "text",
+      "text": "## Selezione σ\n\nFiltra tuple con una condizione e preserva gli attributi. σ(stipendio>50) mantiene soltanto le righe che soddisfano il predicato.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The five basic operations of relational algebra|Nella lezione ↗]]",
+      "x": 3259,
+      "y": 1718,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "b7ff3f14e2f0a4fa",
+      "type": "text",
+      "text": "## Ridenominazione\n\nCambia nomi degli attributi per evitare ambiguità e confrontare copie della stessa relazione. È essenziale nei self-join.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#The five basic operations of relational algebra|Nella lezione ↗]]",
+      "x": 3259,
+      "y": 2596,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "0e8551f202abf095",
+      "type": "group",
+      "label": "03 · Join e pattern di interrogazione",
+      "color": "3",
+      "x": 2449.2,
+      "y": 3217.2,
+      "width": 2239.2,
+      "height": 1948.8
+    },
+    {
+      "id": "755aa956c207a0ce",
+      "type": "text",
+      "text": "## 03 · Join e pattern di interrogazione\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Derived operations|Apri la sezione della lezione]]",
+      "x": 2509.2,
+      "y": 3267.2,
+      "width": 2119.2,
+      "height": 105
+    },
+    {
+      "id": "4310d94e5d3b7792",
+      "type": "text",
+      "text": "## Theta join\n\nR ⋈θ S = σθ(R×S). La condizione può usare uguaglianze o confronti come stipendio dipendente > stipendio direttore.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Derived operations|Nella lezione ↗]]",
+      "x": 2899,
+      "y": 4316,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "1fa0981741c1949b",
+      "type": "text",
+      "text": "## Equijoin e natural join\n\nEquijoin: confronti di uguaglianza espliciti. Natural join: uguaglia tutti gli attributi con nomi comuni e li restituisce una volta.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Derived operations|Nella lezione ↗]]",
+      "x": 2899,
+      "y": 4755,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "f84084a5d7d206ea",
+      "type": "text",
+      "text": "## Esistenza\n\n«Città con almeno una scuola eccellente»: basta trovare una combinazione che soddisfa il predicato, poi proiettare la città.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Derived operations|Nella lezione ↗]]",
+      "x": 3619,
+      "y": 3437,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "4f42b0fc5ab9aa6e",
+      "type": "text",
+      "text": "## Assenza\n\n«Scuole senza voti 100»: tutte le scuole meno quelle con un testimone positivo. SQL: NOT EXISTS correlato.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Derived operations|Nella lezione ↗]]",
+      "x": 3619,
+      "y": 3876,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "368cb982e553b913",
+      "type": "text",
+      "text": "## Universalità\n\n«Ogni scuola della città ha un voto 100» equivale a «non esiste una scuola senza voto 100». Doppia negazione: cercare controesempi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Derived operations|Nella lezione ↗]]",
+      "x": 3619,
+      "y": 4316,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "4c4bde3d1223cf2f",
+      "type": "text",
+      "text": "## Minimo per gruppo\n\nTrova chi non ha nello stesso gruppo un valore più piccolo. Conserva tutti i pari merito; ROW_NUMBER con tie-breaker potrebbe invece sceglierne uno.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Derived operations|Nella lezione ↗]]",
+      "x": 3619,
+      "y": 4755,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "e709b109b783cbd8",
+      "type": "group",
+      "label": "04 · SQL, NULL e ordine logico",
+      "color": "6",
+      "x": 0.0,
+      "y": 3217.2,
+      "width": 2239.2,
+      "height": 1948.8
+    },
+    {
+      "id": "31f0e636657b4daf",
+      "type": "text",
+      "text": "## 04 · SQL, NULL e ordine logico\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#SQL: Structured Query Language|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 3267.2,
+      "width": 2119.2,
+      "height": 105
+    },
+    {
+      "id": "5a2a993b5ed57788",
+      "type": "text",
+      "text": "## Query dichiarativa\n\nSELECT descrive il risultato, non l’algoritmo fisico. FROM/JOIN individuano le sorgenti; WHERE filtra; SELECT sceglie le espressioni.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#SQL: Structured Query Language|Nella lezione ↗]]",
+      "x": 810,
+      "y": 3437,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "acba67c36275ecde",
+      "type": "text",
+      "text": "## Ordine logico\n\nFROM/JOIN → WHERE → GROUP BY → HAVING → espressioni SELECT e finestre → DISTINCT → ORDER BY. È un ordine concettuale, non la sequenza fisica del motore.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#SQL: Structured Query Language|Nella lezione ↗]]",
+      "x": 90,
+      "y": 3876,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "6717e6e55c434143",
+      "type": "text",
+      "text": "## NULL e logica a tre valori\n\nUn confronto ordinario con NULL produce UNKNOWN. WHERE conserva TRUE; IS NULL verifica l’assenza. NULL=NULL non produce TRUE.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#SQL: Structured Query Language|Nella lezione ↗]]",
+      "x": 810,
+      "y": 3876,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "b2ccadc910f3a425",
+      "type": "text",
+      "text": "## Alias e qualificazione\n\nTabelle ripetute richiedono alias distinti. t.attributo elimina ambiguità: il nome deve chiarire da quale occorrenza proviene il valore.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#SQL: Structured Query Language|Nella lezione ↗]]",
+      "x": 1530,
+      "y": 3876,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "653c05bc5b186f47",
+      "type": "text",
+      "text": "## COUNT(*) e COUNT(col)\n\nCOUNT(*) conta le righe; COUNT(col) solo valori non NULL; COUNT(DISTINCT col) valori distinti non NULL.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#SQL: Structured Query Language|Nella lezione ↗]]",
+      "x": 810,
+      "y": 4316,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "8e0be0726d3d4cd0",
+      "type": "text",
+      "text": "## SUM, AVG, MIN, MAX\n\nOperano sui valori non NULL. AVG non divide per il numero totale di righe se alcune hanno NULL; distinguere insieme vuoto da valore numerico zero.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#SQL: Structured Query Language|Nella lezione ↗]]",
+      "x": 810,
+      "y": 4755,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "c5ac0ecdb4f30037",
+      "type": "group",
+      "label": "05 · Gruppi e granularità",
+      "color": "2",
+      "x": 0.0,
+      "y": 5376.0,
+      "width": 2239.2,
+      "height": 1948.8
+    },
+    {
+      "id": "f59276325aa2cc1b",
+      "type": "text",
+      "text": "## 05 · Gruppi e granularità\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Aggregation and grouping|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 5426.0,
+      "width": 2119.2,
+      "height": 105
+    },
+    {
+      "id": "8af73acb4241575d",
+      "type": "text",
+      "text": "## GROUP BY\n\nLe righe con stessi valori di raggruppamento formano un gruppo. Il risultato ha una riga per gruppo, non per riga originale.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Aggregation and grouping|Nella lezione ↗]]",
+      "x": 810,
+      "y": 6035,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "5f929f82e532a608",
+      "type": "text",
+      "text": "## Granularità della query\n\nUna riga può rappresentare una persona, una città o un dipartimento. Prima di scrivere gli aggregati, chiediti cosa rappresenterà ogni riga del risultato.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Aggregation and grouping|Nella lezione ↗]]",
+      "x": 450,
+      "y": 6474,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "651de03cc99654c5",
+      "type": "text",
+      "text": "## Target list omogenea\n\nLe espressioni non aggregate devono essere coerenti con il raggruppamento. Non scegliere arbitrariamente un nome personale da un gruppo con più persone.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Aggregation and grouping|Nella lezione ↗]]",
+      "x": 450,
+      "y": 6914,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "b0a9af63f45a8f0c",
+      "type": "text",
+      "text": "## WHERE\n\nFiltra le singole righe prima dei gruppi. «Solo dipendenti attivi» cambia quali righe contribuiscono a SUM o COUNT.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Aggregation and grouping|Nella lezione ↗]]",
+      "x": 810,
+      "y": 5596,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "ecff574ff63fd570",
+      "type": "text",
+      "text": "## HAVING\n\nFiltra dopo il raggruppamento. «Dipartimenti con COUNT(*)>10» usa una proprietà dell’intero gruppo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Aggregation and grouping|Nella lezione ↗]]",
+      "x": 1170,
+      "y": 6474,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "ced7e8712a14b6b4",
+      "type": "text",
+      "text": "## Due filtri, due momenti\n\nWHERE salario>1000 elimina dipendenti; GROUP BY reparto crea gruppi; HAVING AVG(salario)>2000 elimina reparti. Scambiare i filtri cambia la domanda.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Aggregation and grouping|Nella lezione ↗]]",
+      "x": 1170,
+      "y": 6914,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "65c67131a2d14a4c",
+      "type": "group",
+      "label": "06 · Definire una finestra",
+      "color": "4",
+      "x": 2449.2,
+      "y": 5376.0,
+      "width": 2239.2,
+      "height": 2827.2
+    },
+    {
+      "id": "8705a47d0b7b733b",
+      "type": "text",
+      "text": "## 06 · Definire una finestra\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Components of a window function|Apri la sezione della lezione]]",
+      "x": 2509.2,
+      "y": 5426.0,
+      "width": 2119.2,
+      "height": 105
+    },
+    {
+      "id": "106e146cea41af78",
+      "type": "text",
+      "text": "## Funzione OVER\n\nCalcola su righe correlate mantenendo la riga corrente. A differenza di GROUP BY non collassa le righe del risultato.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Components of a window function|Nella lezione ↗]]",
+      "x": 3375,
+      "y": 5596,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "777b831c1e657ec1",
+      "type": "text",
+      "text": "## PARTITION BY\n\nSepara le righe in partizioni indipendenti. SUM(salario) OVER(PARTITION BY reparto) ripete il totale del reparto su ogni dipendente.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Components of a window function|Nella lezione ↗]]",
+      "x": 3375,
+      "y": 6035,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "3c5a62a44eca1ae1",
+      "type": "text",
+      "text": "## ORDER BY dentro OVER\n\nDefinisce l’ordine della finestra per ranking, confronti e cumulati. Non garantisce l’ordine finale della tabella: serve ORDER BY esterno.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Components of a window function|Nella lezione ↗]]",
+      "x": 3375,
+      "y": 6474,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "8ae5e303a3f88391",
+      "type": "text",
+      "text": "## Window frame\n\nSottoinsieme relativo alla riga corrente entro la partizione ordinata. Per un cumulato: ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Components of a window function|Nella lezione ↗]]",
+      "x": 3375,
+      "y": 6914,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "2e8d3579fac05211",
+      "type": "text",
+      "text": "## ROWS\n\nGli estremi contano posizioni fisiche nell’ordine. ROWS BETWEEN 2 PRECEDING AND CURRENT ROW include al massimo tre righe.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Components of a window function|Nella lezione ↗]]",
+      "x": 3144,
+      "y": 7353,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "fe08e4bcd6975075",
+      "type": "text",
+      "text": "## RANGE\n\nDefinisce limiti rispetto ai valori dell’ordinamento e ai peer. Con valori pari può includere più righe di ROWS: il frame predefinito va controllato.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Components of a window function|Nella lezione ↗]]",
+      "x": 3375,
+      "y": 7792,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "a963a826ced93968",
+      "type": "group",
+      "label": "07 · Ranking e analisi temporale",
+      "color": "5",
+      "x": 2449.2,
+      "y": 8413.2,
+      "width": 2239.2,
+      "height": 1948.8
+    },
+    {
+      "id": "2530f0a083144089",
+      "type": "text",
+      "text": "## 07 · Ranking e analisi temporale\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Practical use cases for window functions|Apri la sezione della lezione]]",
+      "x": 2509.2,
+      "y": 8463.2,
+      "width": 2119.2,
+      "height": 105
+    },
+    {
+      "id": "773a1362902f3ccd",
+      "type": "text",
+      "text": "## ROW_NUMBER\n\nAssegna numeri distinti. Con pari valori, aggiungi una chiave al sort per rendere deterministica la scelta; utile per deduplica e paginazione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Practical use cases for window functions|Nella lezione ↗]]",
+      "x": 2784,
+      "y": 8633,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "bbf337ee4afb3d8f",
+      "type": "text",
+      "text": "## RANK\n\nDà lo stesso rango ai pari merito e lascia salti dopo i gruppi pari. Con valori 100,100,90 restituisce 1,1,3.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Practical use cases for window functions|Nella lezione ↗]]",
+      "x": 2784,
+      "y": 9072,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "19a459f8e5531b4d",
+      "type": "text",
+      "text": "## DENSE_RANK\n\nDà lo stesso rango ai pari merito senza lasciare salti: con valori 100,100,90 restituisce 1,1,2. Conta livelli distinti di valore, non posizioni delle righe.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Practical use cases for window functions|Nella lezione ↗]]",
+      "x": 2784,
+      "y": 9512,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "69e67394649a2e7d",
+      "type": "text",
+      "text": "## Top-N per gruppo\n\nCalcola il ranking nella sottoquery e filtra nella query esterna. Scegli ROW_NUMBER per esattamente N righe; ranking con pari merito può restituirne di più.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Practical use cases for window functions|Nella lezione ↗]]",
+      "x": 2784,
+      "y": 9951,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "9d7fdec7416364e0",
+      "type": "text",
+      "text": "## Running total\n\nSUM(valore) OVER(... ORDER BY data ROWS UNBOUNDED PRECEDING) accumula fino alla riga corrente. Specificare l’ordine evita un totale privo di progressione temporale.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Practical use cases for window functions|Nella lezione ↗]]",
+      "x": 3735,
+      "y": 8633,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "c31a6868fc6a3c1b",
+      "type": "text",
+      "text": "## LAG e LEAD\n\nLeggono valori di righe precedenti o successive nell’ordine della partizione. Consentono differenze temporali senza un self-join; offset e default sono configurabili.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Practical use cases for window functions|Nella lezione ↗]]",
+      "x": 3735,
+      "y": 9512,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "4e5348657acfe33c",
+      "type": "text",
+      "text": "## Moving average\n\nAVG su un frame mobile, per esempio due righe precedenti e la corrente. Tre osservazioni non significano sempre tre giorni: dipende dalla presenza delle date.\n\n[[Obsidian-University/University/Magistrale/Data Managment/01 - DM - Introduction#Practical use cases for window functions|Nella lezione ↗]]",
+      "x": 3504,
+      "y": 9072,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "2663a1b1f02cd56b",
+      "type": "text",
+      "text": "## Ripasso attivo\n\nScegli un nodo e spiegalo senza leggere. Poi segui una freccia e giustifica il rapporto con il nodo successivo.\nRicostruisci un esempio, indica un limite e apri la sezione della lezione per formule, figure o esercizi.\n\n**I gruppi sono numerati e seguono un percorso a serpentina:** prima riga da sinistra a destra, seconda da destra a sinistra, poi si ripete.",
+      "x": 0,
+      "y": 10572.0,
+      "width": 4688.4,
+      "height": 240
+    }
+  ],
+  "edges": [
+    {
+      "id": "3bcebe429eab0658",
+      "fromNode": "f693989b4e6dc43e",
+      "toNode": "2f4828becb938bee",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si descrive con"
+    },
+    {
+      "id": "b60bb59d73e23ce6",
+      "fromNode": "2f4828becb938bee",
+      "toNode": "25402a78a2966b85",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "permette di distinguere"
+    },
+    {
+      "id": "fb21c35f1552efcf",
+      "fromNode": "f693989b4e6dc43e",
+      "toNode": "f2ff9e3a95a99933",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "ha semantica da confrontare con"
+    },
+    {
+      "id": "e8e4343a59605230",
+      "fromNode": "f693989b4e6dc43e",
+      "toNode": "64d5035b479b8877",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si interroga con"
+    },
+    {
+      "id": "d6b6f0eed63dc9ff",
+      "fromNode": "64d5035b479b8877",
+      "toNode": "c769c99bcf3eee7e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "ha pari espressività sicura rispetto al"
+    },
+    {
+      "id": "f46ba4e2f91be920",
+      "fromNode": "d5e79043a059a69a",
+      "toNode": "2cb53b99308cca2e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "stesso requisito di compatibilità di"
+    },
+    {
+      "id": "8ca648db1df0e6a8",
+      "fromNode": "2cb53b99308cca2e",
+      "toNode": "e496445884df8fed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può combinarsi in espressioni con"
+    },
+    {
+      "id": "17d208d0eae20b4e",
+      "fromNode": "e496445884df8fed",
+      "toNode": "3a6da87e5aa6772c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "genera candidati da filtrare tramite"
+    },
+    {
+      "id": "c4206d7dfdcbd0b2",
+      "fromNode": "3a6da87e5aa6772c",
+      "toNode": "9e154342eacaf533",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "filtra righe prima di scegliere colonne con"
+    },
+    {
+      "id": "33665797547d0993",
+      "fromNode": "9e154342eacaf533",
+      "toNode": "b7ff3f14e2f0a4fa",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può incorporare una"
+    },
+    {
+      "id": "ffb20fafbbcc7075",
+      "fromNode": "4310d94e5d3b7792",
+      "toNode": "1fa0981741c1949b",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si specializza in"
+    },
+    {
+      "id": "045c680017b03d73",
+      "fromNode": "f84084a5d7d206ea",
+      "toNode": "4f42b0fc5ab9aa6e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "negare l’esistenza porta a"
+    },
+    {
+      "id": "23b0024dde439eaa",
+      "fromNode": "4f42b0fc5ab9aa6e",
+      "toNode": "368cb982e553b913",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "cercare assenza di controesempi esprime"
+    },
+    {
+      "id": "e510a49214af07f4",
+      "fromNode": "368cb982e553b913",
+      "toNode": "4c4bde3d1223cf2f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "stessa idea di nessun controesempio in"
+    },
+    {
+      "id": "28424a88a94731f5",
+      "fromNode": "4310d94e5d3b7792",
+      "toNode": "4c4bde3d1223cf2f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "self-join trova chi ha un concorrente migliore in"
+    },
+    {
+      "id": "b77c89ceba3e77c1",
+      "fromNode": "5a2a993b5ed57788",
+      "toNode": "acba67c36275ecde",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si comprende tramite"
+    },
+    {
+      "id": "1e89c1a502b0b6b2",
+      "fromNode": "5a2a993b5ed57788",
+      "toNode": "6717e6e55c434143",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "deve gestire"
+    },
+    {
+      "id": "90312604c0d42394",
+      "fromNode": "5a2a993b5ed57788",
+      "toNode": "b2ccadc910f3a425",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "disambigua con"
+    },
+    {
+      "id": "58495e78d8acbdce",
+      "fromNode": "6717e6e55c434143",
+      "toNode": "653c05bc5b186f47",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "influenza"
+    },
+    {
+      "id": "e76566b9651c90cb",
+      "fromNode": "653c05bc5b186f47",
+      "toNode": "8e0be0726d3d4cd0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si confronta con altri"
+    },
+    {
+      "id": "5ca783958c21c3c5",
+      "fromNode": "8af73acb4241575d",
+      "toNode": "5f929f82e532a608",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "cambia la"
+    },
+    {
+      "id": "6409589d3515c997",
+      "fromNode": "5f929f82e532a608",
+      "toNode": "651de03cc99654c5",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "impone coerenza alla"
+    },
+    {
+      "id": "61e347f4f3be4264",
+      "fromNode": "b0a9af63f45a8f0c",
+      "toNode": "8af73acb4241575d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "filtra prima del"
+    },
+    {
+      "id": "ff42bdd4fb53577a",
+      "fromNode": "8af73acb4241575d",
+      "toNode": "ecff574ff63fd570",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "viene filtrato dopo da"
+    },
+    {
+      "id": "adf1ba9af8d84f37",
+      "fromNode": "ecff574ff63fd570",
+      "toNode": "ced7e8712a14b6b4",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si vede insieme a WHERE nell’"
+    },
+    {
+      "id": "f41dd7b17550e42c",
+      "fromNode": "106e146cea41af78",
+      "toNode": "777b831c1e657ec1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "divide l’input con"
+    },
+    {
+      "id": "b5d985d38aec1f63",
+      "fromNode": "777b831c1e657ec1",
+      "toNode": "3c5a62a44eca1ae1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può essere ordinata da"
+    },
+    {
+      "id": "2387c1655a50a703",
+      "fromNode": "3c5a62a44eca1ae1",
+      "toNode": "8ae5e303a3f88391",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "dà contesto al"
+    },
+    {
+      "id": "8b6a5e103030d59b",
+      "fromNode": "8ae5e303a3f88391",
+      "toNode": "2e8d3579fac05211",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può usare unità di righe con"
+    },
+    {
+      "id": "d389d6066c2b9708",
+      "fromNode": "8ae5e303a3f88391",
+      "toNode": "fe08e4bcd6975075",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può usare valori e peer con"
+    },
+    {
+      "id": "6dfdede3d916882d",
+      "fromNode": "2e8d3579fac05211",
+      "toNode": "fe08e4bcd6975075",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "non equivale a"
+    },
+    {
+      "id": "302205f320146719",
+      "fromNode": "773a1362902f3ccd",
+      "toNode": "bbf337ee4afb3d8f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "confronta gestione dei pari merito con"
+    },
+    {
+      "id": "669aaecf75d219ae",
+      "fromNode": "bbf337ee4afb3d8f",
+      "toNode": "19a459f8e5531b4d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "conserva i pari merito ma lascia salti a differenza di"
+    },
+    {
+      "id": "7ec59ec39c5b90bb",
+      "fromNode": "19a459f8e5531b4d",
+      "toNode": "69e67394649a2e7d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "guida la scelta per"
+    },
+    {
+      "id": "9ed96ab10e860579",
+      "fromNode": "9d7fdec7416364e0",
+      "toNode": "4e5348657acfe33c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "altro calcolo basato sul frame è"
+    },
+    {
+      "id": "99bd073958dba1fd",
+      "fromNode": "c31a6868fc6a3c1b",
+      "toNode": "9d7fdec7416364e0",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "toEnd": "arrow",
+      "label": "condivide l’importanza dell’ordine con"
+    },
+    {
+      "id": "dcdbac9706309a88",
+      "fromNode": "4e5348657acfe33c",
+      "toNode": "c31a6868fc6a3c1b",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "confronta finestra di valori con accesso a una riga in"
+    },
+    {
+      "id": "8cbd4981a363ee0b",
+      "fromNode": "fe9ea6234557a9c4",
+      "toNode": "047b0c7ccecf56d6",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 02",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "587fdbdfc7252d08",
+      "fromNode": "047b0c7ccecf56d6",
+      "toNode": "0e8551f202abf095",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 03",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "a5c14f8a463c4d9e",
+      "fromNode": "0e8551f202abf095",
+      "toNode": "e709b109b783cbd8",
+      "fromSide": "left",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "continua: sezione 04",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "64706ef2600522b4",
+      "fromNode": "e709b109b783cbd8",
+      "toNode": "c5ac0ecdb4f30037",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 05",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "4a7b1acf315ec095",
+      "fromNode": "c5ac0ecdb4f30037",
+      "toNode": "65c67131a2d14a4c",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 06",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "787ae101624ce1f4",
+      "fromNode": "65c67131a2d14a4c",
+      "toNode": "a963a826ced93968",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 07",
+      "color": "#8a8a8a"
+    }
+  ]
+}

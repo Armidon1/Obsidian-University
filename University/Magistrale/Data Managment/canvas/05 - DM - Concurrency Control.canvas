@@ -1,0 +1,1399 @@
+{
+  "nodes": [
+    {
+      "id": "18eb48b999ea708d",
+      "type": "text",
+      "text": "# 05 · Concurrency Control\n\n**7 sezioni · 42 concetti distinti.**\nSegui i gruppi numerati lungo le frecce. Ogni freccia interna forma una frase: concetto → relazione → concetto. I link «Nella lezione» aprono la sezione di origine.\n\n**Figure originali:** 15 immagini della lezione, collegate ai concetti illustrati.",
+      "x": 0,
+      "y": -750,
+      "width": 5213.0,
+      "height": 260
+    },
+    {
+      "id": "35338aa250d8761c",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control.md",
+      "x": 0,
+      "y": -400,
+      "width": 2481.5,
+      "height": 100
+    },
+    {
+      "id": "a91209a799f6e413",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/canvas/00 - DM - MOC dei canvas.canvas",
+      "x": 2731.5,
+      "y": -400,
+      "width": 2481.5,
+      "height": 100
+    },
+    {
+      "id": "391eb946238d4d88",
+      "type": "text",
+      "text": "## Percorso della mappa\n\n- 01 · Transazioni e anomalie\n- 02 · Equivalenza e serializzabilità\n- 03 · Grafo di precedenza\n- 04 · Lock e protocollo 2PL\n- 05 · Deadlock e dipendenze di commit\n- 06 · Strict 2PL, timestamp e versioni\n- 07 · Validazione ottimistica e livelli SQL",
+      "x": 0,
+      "y": -250,
+      "width": 5213.0,
+      "height": 320
+    },
+    {
+      "id": "d2996021181cb569",
+      "type": "text",
+      "text": "## Ripasso attivo\n\nScegli un nodo e spiegalo senza leggere. Poi segui una freccia e giustifica il rapporto con il nodo successivo.\nRicostruisci un esempio, indica un limite e apri la sezione della lezione per formule, figure o esercizi.\n\n**I gruppi sono numerati e seguono un percorso a serpentina:** prima riga da sinistra a destra, seconda da destra a sinistra, poi si ripete.\n\nPer le figure: descrivi prima ciò che vedi, poi spiega quale concetto esemplifica. Aprile per leggerle alla risoluzione originale.",
+      "x": 0,
+      "y": 16927.0,
+      "width": 5213.0,
+      "height": 310
+    },
+    {
+      "id": "39cbea1919974f19",
+      "type": "group",
+      "label": "01 · Transazioni e anomalie",
+      "color": "4",
+      "x": 0.0,
+      "y": 120,
+      "width": 2481.5,
+      "height": 1553.0
+    },
+    {
+      "id": "eb44e067294a4a23",
+      "type": "text",
+      "text": "## 01 · Transazioni e anomalie\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Transactions|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 170,
+      "width": 2361.5,
+      "height": 105
+    },
+    {
+      "id": "276ae47f35599951",
+      "type": "text",
+      "text": "## Transazione\n\nUnità logica che termina con commit o rollback. Le operazioni interne devono essere protette anche quando altre transazioni avanzano contemporaneamente.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Transactions|Nella lezione ↗]]",
+      "x": 560,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "a196ee534cb698c9",
+      "type": "text",
+      "text": "## ACID\n\nAtomicità: tutto o niente. Consistenza: preservare vincoli. Isolamento: controllare interferenze. Durabilità: un commit sopravvive ai guasti previsti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Transactions|Nella lezione ↗]]",
+      "x": 190,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "22af04e5f41de854",
+      "type": "text",
+      "text": "## Schedule\n\nSequenza delle azioni di più transazioni che conserva l’ordine interno di ciascuna. Seriale: nessun interleaving; concorrente: azioni mescolate.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Transactions|Nella lezione ↗]]",
+      "x": 931,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "fed0eab575bf019b",
+      "type": "text",
+      "text": "## Dirty read\n\nUna transazione legge una scrittura non committed di un’altra. Se la prima abortisce, il lettore ha usato un valore temporaneo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Transactions|Nella lezione ↗]]",
+      "x": 190,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "79c7a2bddb4a60a4",
+      "type": "text",
+      "text": "## Lost update\n\nDue transazioni leggono il vecchio valore e scrivono aggiornamenti incompatibili: una scrittura può cancellare l’effetto dell’altra.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Transactions|Nella lezione ↗]]",
+      "x": 931,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "592c2a6df289ca31",
+      "type": "text",
+      "text": "## Letture instabili e phantom\n\nRileggere un dato può dare un valore diverso; ripetere una query può restituire un insieme diverso di righe. I lock su singoli record non proteggono automaticamente i predicati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Transactions|Nella lezione ↗]]",
+      "x": 1672,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "6afc2ec2ced06e3c",
+      "type": "group",
+      "label": "02 · Equivalenza e serializzabilità",
+      "color": "5",
+      "x": 2731.5,
+      "y": 120,
+      "width": 2481.5,
+      "height": 2824.0
+    },
+    {
+      "id": "7124e217c1fd86fa",
+      "type": "text",
+      "text": "## 02 · Equivalenza e serializzabilità\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Serializability and equivalence of schedules|Apri la sezione della lezione]]",
+      "x": 2791.5,
+      "y": 170,
+      "width": 2361.5,
+      "height": 105
+    },
+    {
+      "id": "0dd46e3b7dd53389",
+      "type": "text",
+      "text": "## Seriale e serializzabile\n\nUno schedule serializzabile è equivalente a uno seriale secondo il criterio scelto; può mantenere interleaving e quindi concorrenza.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Serializability and equivalence of schedules|Nella lezione ↗]]",
+      "x": 3292,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "95d99f2b1ae1c581",
+      "type": "text",
+      "text": "## View-equivalence\n\nConserva chi legge il valore iniziale, le relazioni reads-from e l’ultima scrittura di ogni dato. View-serializable: equivalente per viste a uno seriale.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Serializability and equivalence of schedules|Nella lezione ↗]]",
+      "x": 3292,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "bfa677cca9806498",
+      "type": "text",
+      "text": "## Conflitto\n\nAzioni su stesso dato di transazioni diverse, almeno una write: RW, WR o WW. Due read non confliggono.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Serializability and equivalence of schedules|Nella lezione ↗]]",
+      "x": 4033,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "09bd3a0621525bb4",
+      "type": "text",
+      "text": "## Conflict-equivalence\n\nConserva l’ordine di ogni coppia in conflitto. Scambiare azioni adiacenti non confliggenti non cambia questa relazione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Serializability and equivalence of schedules|Nella lezione ↗]]",
+      "x": 4033,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "b037b7160fe78e25",
+      "type": "text",
+      "text": "## Inclusione delle classi\n\nConflict-serializable ⊆ view-serializable. Il criterio per conflitti è più restrittivo ma più semplice da controllare.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Serializability and equivalence of schedules|Nella lezione ↗]]",
+      "x": 3662,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "ebf3572f4d88ad62",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p034.png",
+      "x": 3562,
+      "y": 1693,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "001366dc28c5e819",
+      "type": "text",
+      "text": "**Figura · Inclusione delle classi**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 3562,
+      "y": 2323,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "2e9443b339c8623f",
+      "type": "text",
+      "text": "## Scheduler\n\nDecide se eseguire, ritardare o rifiutare un’azione per mantenere la proprietà richiesta. Verificare uno schedule e generarlo correttamente sono problemi collegati ma distinti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Serializability and equivalence of schedules|Nella lezione ↗]]",
+      "x": 3662,
+      "y": 2533,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "a55536e99500d291",
+      "type": "group",
+      "label": "03 · Grafo di precedenza",
+      "color": "3",
+      "x": 2731.5,
+      "y": 3194.0,
+      "width": 2481.5,
+      "height": 3634.0
+    },
+    {
+      "id": "17075894752b2f75",
+      "type": "text",
+      "text": "## 03 · Grafo di precedenza\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Conflict-serializability and the precedence graph|Apri la sezione della lezione]]",
+      "x": 2791.5,
+      "y": 3244.0,
+      "width": 2361.5,
+      "height": 105
+    },
+    {
+      "id": "53c5a5cfd520c5da",
+      "type": "text",
+      "text": "## Nodi del grafo\n\nUn nodo per transazione. Il grafo non rappresenta pagine o record e non è un wait-for graph.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Conflict-serializability and the precedence graph|Nella lezione ↗]]",
+      "x": 3763,
+      "y": 3414,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "501128e920bc4dd2",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p060.png",
+      "x": 3662,
+      "y": 3845,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "aac54e4002206bc4",
+      "type": "text",
+      "text": "**Figura · Nodi del grafo**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 3662,
+      "y": 4475,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "e73cddcbb60ea764",
+      "type": "text",
+      "text": "## Arco Ti → Tj\n\nEsiste quando un’azione di Ti precede una di Tj e le due confliggono. Una sola dipendenza basta a imporre quell’ordine.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Conflict-serializability and the precedence graph|Nella lezione ↗]]",
+      "x": 3763,
+      "y": 4685,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "bf45dd7649f5e3b5",
+      "type": "text",
+      "text": "## Teorema del grafo\n\nLo schedule è conflict-serializable se e solo se il grafo di precedenza è aciclico.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Conflict-serializability and the precedence graph|Nella lezione ↗]]",
+      "x": 3763,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "431f9ed2506b7d63",
+      "type": "text",
+      "text": "## Ordinamento topologico\n\nUn ordine topologico dei nodi fornisce un ordine seriale equivalente. Possono esisterne diversi quando le dipendenze non fissano ogni coppia.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Conflict-serializability and the precedence graph|Nella lezione ↗]]",
+      "x": 2922,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "b821b1778b940b8c",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p065.png",
+      "x": 2822,
+      "y": 6038,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "051c9b3d59d30bfd",
+      "type": "text",
+      "text": "**Figura · Ordinamento topologico**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 2822,
+      "y": 6668,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "cdda59573929e56e",
+      "type": "text",
+      "text": "## Esempio di ciclo\n\nT1 impone T1→T2 su x, ma T2 impone T2→T1 su y. Non esiste un ordine seriale che rispetti entrambe le dipendenze.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Conflict-serializability and the precedence graph|Nella lezione ↗]]",
+      "x": 3763,
+      "y": 6012,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "9c8e301a845e6c9a",
+      "type": "text",
+      "text": "## Serialization Graph Testing\n\nMantiene dipendenze durante l’esecuzione e controlla la comparsa di cicli. Il costo di mantenimento motiva protocolli che garantiscono la proprietà in modo indiretto.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Conflict-serializability and the precedence graph|Nella lezione ↗]]",
+      "x": 4504,
+      "y": 6012,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "f15cb94ca5ee405f",
+      "type": "group",
+      "label": "04 · Lock e protocollo 2PL",
+      "color": "6",
+      "x": 0.0,
+      "y": 3194.0,
+      "width": 2481.5,
+      "height": 4905.0
+    },
+    {
+      "id": "fe62211a11ef0fb0",
+      "type": "text",
+      "text": "## 04 · Lock e protocollo 2PL\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Two-Phase Locking (2PL)|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 3244.0,
+      "width": 2361.5,
+      "height": 105
+    },
+    {
+      "id": "b521e4f46f17143c",
+      "type": "text",
+      "text": "## Lock shared ed exclusive\n\nS consente lettura condivisa; X protegge scrittura esclusiva. Il lock coordina l’accesso, non è il dato memorizzato.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Two-Phase Locking (2PL)|Nella lezione ↗]]",
+      "x": 981,
+      "y": 3414,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "e6b8add5ee8cefae",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p132.png",
+      "x": 880,
+      "y": 3845,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "c07b1db506f9b7d9",
+      "type": "text",
+      "text": "**Figura · Lock shared ed exclusive**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 880,
+      "y": 4475,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "cf6591d8811cc351",
+      "type": "text",
+      "text": "## Matrice di compatibilità\n\nS/S è compatibile; S/X, X/S e X/X no tra transazioni diverse. Una richiesta incompatibile attende o viene gestita dal protocollo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Two-Phase Locking (2PL)|Nella lezione ↗]]",
+      "x": 981,
+      "y": 4685,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "b59ebf546aa97988",
+      "type": "text",
+      "text": "## Legalità e well-formed\n\nLa transazione richiede il lock necessario prima di accedere; lo scheduler rispetta le incompatibilità. Da soli questi requisiti non bastano alla serializzabilità.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Two-Phase Locking (2PL)|Nella lezione ↗]]",
+      "x": 981,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "78c9c776cb668f71",
+      "type": "text",
+      "text": "## Two-Phase Locking\n\nPrima fase: acquisire lock; dopo il primo rilascio: solo rilasciare. Nessun nuovo lock dopo l’inizio della fase decrescente.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Two-Phase Locking (2PL)|Nella lezione ↗]]",
+      "x": 981,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "16d38be0d83b003f",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p106.png",
+      "x": 880,
+      "y": 6038,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "576f2c6c87edbca3",
+      "type": "text",
+      "text": "**Figura · Two-Phase Locking**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 880,
+      "y": 6668,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "ca44a58f4427065a",
+      "type": "text",
+      "text": "## Garanzia di 2PL\n\nGli schedule generati sono conflict-serializable. La garanzia non elimina deadlock né implica da sola tutte le proprietà di recuperabilità.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Two-Phase Locking (2PL)|Nella lezione ↗]]",
+      "x": 561,
+      "y": 6878,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "91a39ac3b8e49ca0",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p119.png",
+      "x": 460,
+      "y": 7309,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "51271def0f6e9f53",
+      "type": "text",
+      "text": "**Figura · Garanzia di 2PL**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 460,
+      "y": 7939,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "e07d3b852f1e47ff",
+      "type": "text",
+      "text": "## Il limite dopo il rilascio\n\nSe T1 rilascia il lock su x, non può poi acquisire un nuovo lock su y rispettando 2PL. Non significa che debba acquisire tutti i lock all’inizio.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Two-Phase Locking (2PL)|Nella lezione ↗]]",
+      "x": 1402,
+      "y": 7283,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "da17c58f2ca2707b",
+      "type": "group",
+      "label": "05 · Deadlock e dipendenze di commit",
+      "color": "2",
+      "x": 0.0,
+      "y": 8349.0,
+      "width": 2481.5,
+      "height": 4444.0
+    },
+    {
+      "id": "484c7a6e0a6b7d66",
+      "type": "text",
+      "text": "## 05 · Deadlock e dipendenze di commit\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Deadlock management|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 8399.0,
+      "width": 2361.5,
+      "height": 105
+    },
+    {
+      "id": "5c5e96f4770d2632",
+      "type": "text",
+      "text": "## Deadlock\n\nT1 attende un lock di T2 e T2 uno di T1: nessuna può avanzare. È un ciclo di attesa, non un ciclo di conflitti già eseguiti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Deadlock management|Nella lezione ↗]]",
+      "x": 931,
+      "y": 8569,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "c60b418ad88e8d1f",
+      "type": "text",
+      "text": "## Wait-for graph\n\nArco Ti→Tj se Ti attende una risorsa detenuta da Tj. La detection cerca cicli e sceglie una vittima da abortire.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Deadlock management|Nella lezione ↗]]",
+      "x": 460,
+      "y": 9030,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "01cfca6b9134dfb1",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p136.png",
+      "x": 360,
+      "y": 9461,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "50763c7c603d19c9",
+      "type": "text",
+      "text": "**Figura · Wait-for graph**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 360,
+      "y": 10091,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "5113e958bed622fd",
+      "type": "text",
+      "text": "## Timeout e wait-die\n\nTimeout presume stallo dopo una soglia. Wait-die usa l’età: una transazione più vecchia può attendere una giovane; una giovane che richiede a una vecchia viene riavviata.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Deadlock management|Nella lezione ↗]]",
+      "x": 460,
+      "y": 10301,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "0f4cc3da5e6a70ba",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p138.png",
+      "x": 360,
+      "y": 10732,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "56581a083bdd6c7a",
+      "type": "text",
+      "text": "**Figura · Timeout e wait-die**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 360,
+      "y": 11362,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "467d1400ddd6371d",
+      "type": "text",
+      "text": "## Recoverable\n\nSe Tj legge da Ti, Tj può committare soltanto dopo Ti. Può ancora richiedere rollback a cascata quando legge dati non committed.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Deadlock management|Nella lezione ↗]]",
+      "x": 1402,
+      "y": 9030,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "109a1c2d15b9c202",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p146.png",
+      "x": 1302,
+      "y": 9461,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "2d3e972d745f7f39",
+      "type": "text",
+      "text": "**Figura · Recoverable**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 1302,
+      "y": 10091,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "fc93108ea1f30f70",
+      "type": "text",
+      "text": "## Avoiding Cascading Rollback\n\nSi leggono soltanto valori committed. Evita propagazione di abort attraverso dirty read; è più forte della sola recuperabilità.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Deadlock management|Nella lezione ↗]]",
+      "x": 1402,
+      "y": 10301,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "d325c1b2a32675c9",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p149.png",
+      "x": 1302,
+      "y": 10732,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "0234129644b0122c",
+      "type": "text",
+      "text": "**Figura · Avoiding Cascading Rollback**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 1302,
+      "y": 11362,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "d948522a580534bd",
+      "type": "text",
+      "text": "## Strict e rigorous\n\nStrict impedisce letture/scritture su un dato scritto da una transazione ancora attiva. Rigorous trattiene anche le protezioni sulle letture fino alla fine; rigorous ⊆ strict ⊆ ACR ⊆ recoverable.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Deadlock management|Nella lezione ↗]]",
+      "x": 1402,
+      "y": 11572,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "5c60a4e9e79ea568",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p154.png",
+      "x": 1302,
+      "y": 12003,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "d2882bc741a3bb71",
+      "type": "text",
+      "text": "**Figura · Strict e rigorous**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 1302,
+      "y": 12633,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "a05146e983a25aa0",
+      "type": "group",
+      "label": "06 · Strict 2PL, timestamp e versioni",
+      "color": "4",
+      "x": 2731.5,
+      "y": 8349.0,
+      "width": 2481.5,
+      "height": 2824.0
+    },
+    {
+      "id": "5dfc996b3b1a3b14",
+      "type": "text",
+      "text": "## 06 · Strict 2PL, timestamp e versioni\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Recoverability and 2PL|Apri la sezione della lezione]]",
+      "x": 2791.5,
+      "y": 8399.0,
+      "width": 2361.5,
+      "height": 105
+    },
+    {
+      "id": "f307abafb14586cc",
+      "type": "text",
+      "text": "## Strict 2PL\n\nMantiene i lock esclusivi fino a commit/rollback; conserva il requisito 2PL. Produce schedule strict e conflict-serializable.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Recoverability and 2PL|Nella lezione ↗]]",
+      "x": 3528,
+      "y": 8569,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "3ecc350caf9259b7",
+      "type": "text",
+      "text": "## Strong strict 2PL\n\nMantiene sia S sia X fino alla fine. Produce schedule rigorous; per i phantom servono protezioni adatte ai range/predicati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Recoverability and 2PL|Nella lezione ↗]]",
+      "x": 3057,
+      "y": 9030,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "949ac2342699506f",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p163.png",
+      "x": 2956,
+      "y": 9461,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "0b9c1e394c2dc173",
+      "type": "text",
+      "text": "**Figura · Strong strict 2PL**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 2956,
+      "y": 10091,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "cb7abd0c3886f7cd",
+      "type": "text",
+      "text": "## Timestamp ordering\n\nOgni transazione ha un timestamp; rts e wts degli item controllano se un accesso è troppo tardivo rispetto all’ordine imposto.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Recoverability and 2PL|Nella lezione ↗]]",
+      "x": 3999,
+      "y": 9030,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "966bceaf99703a85",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p182.png",
+      "x": 3898,
+      "y": 9461,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "7f848b5647168493",
+      "type": "text",
+      "text": "**Figura · Timestamp ordering**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 3898,
+      "y": 10091,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "64d5d155789bbc36",
+      "type": "text",
+      "text": "## Thomas write rule\n\nUna write ormai superata da una scrittura più recente può essere ignorata, se le condizioni sui timestamp di lettura lo permettono. Nella variante con attese sui commit bit può esserci deadlock.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Recoverability and 2PL|Nella lezione ↗]]",
+      "x": 3628,
+      "y": 10301,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "43f949757019fa1b",
+      "type": "text",
+      "text": "## MVCC\n\nConserva più versioni e seleziona una versione visibile alle letture. Riduce interferenze tra lettori e scrittori; le precise garanzie dipendono dal protocollo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Recoverability and 2PL|Nella lezione ↗]]",
+      "x": 4369,
+      "y": 10301,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "c1fcd7ab2e397442",
+      "type": "text",
+      "text": "## Snapshot isolation\n\nLegge uno snapshot e controlla conflitti di scrittura concorrenti. Non garantisce serializzabilità: write skew può violare un vincolo anche senza scrivere lo stesso item.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Recoverability and 2PL|Nella lezione ↗]]",
+      "x": 4369,
+      "y": 10762,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "bedb49670c9e107e",
+      "type": "group",
+      "label": "07 · Validazione ottimistica e livelli SQL",
+      "color": "5",
+      "x": 2731.5,
+      "y": 13043.0,
+      "width": 2481.5,
+      "height": 3634.0
+    },
+    {
+      "id": "7b52f97be0293b7d",
+      "type": "text",
+      "text": "## 07 · Validazione ottimistica e livelli SQL\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Isolation levels (SQL standard)|Apri la sezione della lezione]]",
+      "x": 2791.5,
+      "y": 13093.0,
+      "width": 2361.5,
+      "height": 105
+    },
+    {
+      "id": "91d8a08bd3635a76",
+      "type": "text",
+      "text": "## Optimistic Concurrency Control\n\nEsecuzione su workspace privato, validazione dei conflitti e poi scrittura. Efficace con pochi conflitti; l’assenza di lock non elimina la necessità di controlli.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Isolation levels (SQL standard)|Nella lezione ↗]]",
+      "x": 3292,
+      "y": 13724,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "4c2f017827edb101",
+      "type": "text",
+      "text": "## BOCC e FOCC\n\nBOCC confronta con transazioni precedentemente validate; FOCC controlla l’impatto verso quelle ancora attive. Read set e write set identificano le possibili interferenze.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Isolation levels (SQL standard)|Nella lezione ↗]]",
+      "x": 3292,
+      "y": 14185,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "7f3d60ccf5d4715d",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p196.png",
+      "x": 3192,
+      "y": 14616,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "150ad250a8f063b3",
+      "type": "text",
+      "text": "**Figura · BOCC e FOCC**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 3192,
+      "y": 15246,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "5395b2027e44b2fe",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L05-p199.png",
+      "x": 3192,
+      "y": 15426,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "e6b716a68e0ce4a7",
+      "type": "text",
+      "text": "**Figura · BOCC e FOCC**\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control|Dalla lezione 05]]",
+      "x": 3192,
+      "y": 16056,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "358eeef65e6ff19d",
+      "type": "text",
+      "text": "## READ UNCOMMITTED\n\nNel confronto standard può permettere dirty read. Il comportamento effettivo può essere più forte a seconda del DBMS.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Isolation levels (SQL standard)|Nella lezione ↗]]",
+      "x": 4134,
+      "y": 13263,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "ba7ff8b5902046b1",
+      "type": "text",
+      "text": "## READ COMMITTED\n\nNon legge dati non committed. Query successive nella stessa transazione possono vedere commit intervenuti nel frattempo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Isolation levels (SQL standard)|Nella lezione ↗]]",
+      "x": 4134,
+      "y": 13724,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "48a0463e745361dc",
+      "type": "text",
+      "text": "## REPEATABLE READ\n\nNella classificazione standard esclude dirty e non-repeatable read; i phantom non sono esclusi in generale. Un DBMS a snapshot può avere un comportamento più forte su questi casi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Isolation levels (SQL standard)|Nella lezione ↗]]",
+      "x": 4134,
+      "y": 14995,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "0003f392c4d6c2fe",
+      "type": "text",
+      "text": "## SERIALIZABLE\n\nRichiede comportamento equivalente a un’esecuzione seriale. Può essere realizzato con lock o controlli diversi; PostgreSQL e standard vanno distinti dagli altri livelli e dalle singole implementazioni.\n\n[[Obsidian-University/University/Magistrale/Data Managment/05 - DM - Concurrency Control#Isolation levels (SQL standard)|Nella lezione ↗]]",
+      "x": 3712,
+      "y": 16266,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    }
+  ],
+  "edges": [
+    {
+      "id": "469bf3044c8e8dd5",
+      "fromNode": "276ae47f35599951",
+      "toNode": "a196ee534cb698c9",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "mira a rispettare"
+    },
+    {
+      "id": "5a3398981d4ace48",
+      "fromNode": "276ae47f35599951",
+      "toNode": "22af04e5f41de854",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si intreccia con altre in uno"
+    },
+    {
+      "id": "5db421495658839e",
+      "fromNode": "22af04e5f41de854",
+      "toNode": "fed0eab575bf019b",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può produrre"
+    },
+    {
+      "id": "fb86a0cf01a7ce07",
+      "fromNode": "22af04e5f41de854",
+      "toNode": "79c7a2bddb4a60a4",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può produrre"
+    },
+    {
+      "id": "87153fb74b6922f8",
+      "fromNode": "22af04e5f41de854",
+      "toNode": "592c2a6df289ca31",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può produrre"
+    },
+    {
+      "id": "e1d6292857639109",
+      "fromNode": "b037b7160fe78e25",
+      "toNode": "ebf3572f4d88ad62",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "4b927d51af186702",
+      "fromNode": "0dd46e3b7dd53389",
+      "toNode": "95d99f2b1ae1c581",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può essere definito tramite"
+    },
+    {
+      "id": "b883bb50b48427fc",
+      "fromNode": "bfa677cca9806498",
+      "toNode": "09bd3a0621525bb4",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "determina la"
+    },
+    {
+      "id": "8ebb1104600c2f73",
+      "fromNode": "09bd3a0621525bb4",
+      "toNode": "b037b7160fe78e25",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "produce la classe inclusa indicata in"
+    },
+    {
+      "id": "d903349f88e62bf5",
+      "fromNode": "95d99f2b1ae1c581",
+      "toNode": "b037b7160fe78e25",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "produce la classe più ampia indicata in"
+    },
+    {
+      "id": "10fca5ee6301454e",
+      "fromNode": "b037b7160fe78e25",
+      "toNode": "2e9443b339c8623f",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "guida le scelte dello"
+    },
+    {
+      "id": "64620e65d0fa9286",
+      "fromNode": "53c5a5cfd520c5da",
+      "toNode": "501128e920bc4dd2",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "3"
+    },
+    {
+      "id": "e75c4f8ddbee87ee",
+      "fromNode": "431f9ed2506b7d63",
+      "toNode": "b821b1778b940b8c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "3"
+    },
+    {
+      "id": "497b7c036e3830ee",
+      "fromNode": "53c5a5cfd520c5da",
+      "toNode": "e73cddcbb60ea764",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "sono connessi da un"
+    },
+    {
+      "id": "42f098098c581764",
+      "fromNode": "e73cddcbb60ea764",
+      "toNode": "bf45dd7649f5e3b5",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "viene verificato tramite"
+    },
+    {
+      "id": "5d1dc1b1abaa8404",
+      "fromNode": "bf45dd7649f5e3b5",
+      "toNode": "431f9ed2506b7d63",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "se soddisfatto consente un"
+    },
+    {
+      "id": "d4b0a53fc02895f6",
+      "fromNode": "bf45dd7649f5e3b5",
+      "toNode": "cdda59573929e56e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "fallisce nell’"
+    },
+    {
+      "id": "527a0d07e00d7892",
+      "fromNode": "bf45dd7649f5e3b5",
+      "toNode": "9c8e301a845e6c9a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "controllato online da"
+    },
+    {
+      "id": "be2b694a49439796",
+      "fromNode": "b521e4f46f17143c",
+      "toNode": "e6b8add5ee8cefae",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "c647f653d5527e1f",
+      "fromNode": "78c9c776cb668f71",
+      "toNode": "16d38be0d83b003f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "85c3a559bbfc8a0b",
+      "fromNode": "ca44a58f4427065a",
+      "toNode": "91a39ac3b8e49ca0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "6"
+    },
+    {
+      "id": "03473e034ccde843",
+      "fromNode": "b521e4f46f17143c",
+      "toNode": "cf6591d8811cc351",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si assegnano secondo la"
+    },
+    {
+      "id": "fc66543467bdfb19",
+      "fromNode": "cf6591d8811cc351",
+      "toNode": "b59ebf546aa97988",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "è richiesta per la"
+    },
+    {
+      "id": "075abdccd3e5816e",
+      "fromNode": "b59ebf546aa97988",
+      "toNode": "78c9c776cb668f71",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "va rafforzata con"
+    },
+    {
+      "id": "88712e2004179739",
+      "fromNode": "78c9c776cb668f71",
+      "toNode": "ca44a58f4427065a",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "fornisce la"
+    },
+    {
+      "id": "c0d9b32a7b8c667b",
+      "fromNode": "78c9c776cb668f71",
+      "toNode": "e07d3b852f1e47ff",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "vincola le azioni come nell’"
+    },
+    {
+      "id": "5ae5661396bacb2f",
+      "fromNode": "c60b418ad88e8d1f",
+      "toNode": "01cfca6b9134dfb1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "fe900c22d3da4385",
+      "fromNode": "5113e958bed622fd",
+      "toNode": "0f4cc3da5e6a70ba",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "6bc8c4aba09978ca",
+      "fromNode": "467d1400ddd6371d",
+      "toNode": "109a1c2d15b9c202",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "fa3364c0e976d71e",
+      "fromNode": "fc93108ea1f30f70",
+      "toNode": "d325c1b2a32675c9",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "ed86a5dad8b47dcb",
+      "fromNode": "d948522a580534bd",
+      "toNode": "5c60a4e9e79ea568",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "2"
+    },
+    {
+      "id": "f5382d939f132d87",
+      "fromNode": "5c5e96f4770d2632",
+      "toNode": "c60b418ad88e8d1f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si rileva tramite"
+    },
+    {
+      "id": "86a4daa3ff47aeb7",
+      "fromNode": "c60b418ad88e8d1f",
+      "toNode": "5113e958bed622fd",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "alternativa al rilevamento è"
+    },
+    {
+      "id": "77a4c021a31aabdf",
+      "fromNode": "467d1400ddd6371d",
+      "toNode": "fc93108ea1f30f70",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "garanzia più forte è"
+    },
+    {
+      "id": "5bc16a955c56a911",
+      "fromNode": "fc93108ea1f30f70",
+      "toNode": "d948522a580534bd",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "ulteriormente rafforzata da"
+    },
+    {
+      "id": "f8caec591aeb94eb",
+      "fromNode": "5c5e96f4770d2632",
+      "toNode": "467d1400ddd6371d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "problema distinto dalla"
+    },
+    {
+      "id": "3f40aaab085d5706",
+      "fromNode": "3ecc350caf9259b7",
+      "toNode": "949ac2342699506f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "f25246339f127828",
+      "fromNode": "cb7abd0c3886f7cd",
+      "toNode": "966bceaf99703a85",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "3990ef12eb571d59",
+      "fromNode": "f307abafb14586cc",
+      "toNode": "3ecc350caf9259b7",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si rafforza in"
+    },
+    {
+      "id": "c68c665853af07e1",
+      "fromNode": "f307abafb14586cc",
+      "toNode": "cb7abd0c3886f7cd",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "alternativa di ordinamento è"
+    },
+    {
+      "id": "a1f8f6bec0fa502b",
+      "fromNode": "cb7abd0c3886f7cd",
+      "toNode": "64d5d155789bbc36",
+      "fromSide": "left",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può usare la"
+    },
+    {
+      "id": "36074c63252132c2",
+      "fromNode": "cb7abd0c3886f7cd",
+      "toNode": "43f949757019fa1b",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "ha una variante multiversione in"
+    },
+    {
+      "id": "f8f218cb1934e811",
+      "fromNode": "43f949757019fa1b",
+      "toNode": "c1fcd7ab2e397442",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può implementare"
+    },
+    {
+      "id": "61dc5b22c01d938b",
+      "fromNode": "4c2f017827edb101",
+      "toNode": "7f3d60ccf5d4715d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "5"
+    },
+    {
+      "id": "34d332f3dc85f674",
+      "fromNode": "7f3d60ccf5d4715d",
+      "toNode": "5395b2027e44b2fe",
+      "fromSide": "right",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "altro passaggio dello stesso esempio",
+      "color": "5"
+    },
+    {
+      "id": "fd89961cf6a2a46d",
+      "fromNode": "91d8a08bd3635a76",
+      "toNode": "4c2f017827edb101",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "varianti di validazione sono"
+    },
+    {
+      "id": "2c69c513a17e1fc7",
+      "fromNode": "358eeef65e6ff19d",
+      "toNode": "ba7ff8b5902046b1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "garanzia standard più forte è"
+    },
+    {
+      "id": "03fea2dafff35b7e",
+      "fromNode": "ba7ff8b5902046b1",
+      "toNode": "48a0463e745361dc",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "garanzia standard più forte è"
+    },
+    {
+      "id": "55f0b017bab44005",
+      "fromNode": "48a0463e745361dc",
+      "toNode": "0003f392c4d6c2fe",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "garanzia complessiva più forte è"
+    },
+    {
+      "id": "ce7c8a1072c14530",
+      "fromNode": "4c2f017827edb101",
+      "toNode": "0003f392c4d6c2fe",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può contribuire a implementare"
+    },
+    {
+      "id": "a51a5d8e518053b8",
+      "fromNode": "39cbea1919974f19",
+      "toNode": "6afc2ec2ced06e3c",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 02",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "721ffd9bea35b7b1",
+      "fromNode": "6afc2ec2ced06e3c",
+      "toNode": "a55536e99500d291",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 03",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "50c742a935a2352b",
+      "fromNode": "a55536e99500d291",
+      "toNode": "f15cb94ca5ee405f",
+      "fromSide": "left",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "continua: sezione 04",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "81e5e1cef88922fa",
+      "fromNode": "f15cb94ca5ee405f",
+      "toNode": "da17c58f2ca2707b",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 05",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "8d45673abb42ab5c",
+      "fromNode": "da17c58f2ca2707b",
+      "toNode": "a05146e983a25aa0",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 06",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "e95f98013db5331b",
+      "fromNode": "a05146e983a25aa0",
+      "toNode": "bedb49670c9e107e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 07",
+      "color": "#8a8a8a"
+    }
+  ]
+}

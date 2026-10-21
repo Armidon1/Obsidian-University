@@ -1,0 +1,1197 @@
+{
+  "nodes": [
+    {
+      "id": "3b7dff6230217e43",
+      "type": "text",
+      "text": "# 08 · Evaluation of Relational Operators\n\n**8 sezioni · 48 concetti distinti.**\nSegui i gruppi numerati lungo le frecce. Ogni freccia interna forma una frase: concetto → relazione → concetto. I link «Nella lezione» aprono la sezione di origine.\n\n**Figure originali:** 3 immagini della lezione, collegate ai concetti illustrati.",
+      "x": 0,
+      "y": -750,
+      "width": 4812.0,
+      "height": 260
+    },
+    {
+      "id": "817265dace59061d",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators.md",
+      "x": 0,
+      "y": -400,
+      "width": 2281.0,
+      "height": 100
+    },
+    {
+      "id": "4225d45efc807fe6",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/canvas/00 - DM - MOC dei canvas.canvas",
+      "x": 2531.0,
+      "y": -400,
+      "width": 2281.0,
+      "height": 100
+    },
+    {
+      "id": "ef826344bfca8927",
+      "type": "text",
+      "text": "## Percorso della mappa\n\n- 01 · Dal linguaggio al piano eseguibile\n- 02 · Misurare input, memoria e risultato\n- 03 · One-pass: una lettura basta?\n- 04 · Nested-loop: la memoria riduce riletture\n- 05 · Two-pass con ordinamento\n- 06 · Hashing, skew e multipass\n- 07 · Indici: conformità e costo dei match\n- 08 · Parallelismo shared-nothing",
+      "x": 0,
+      "y": -250,
+      "width": 4812.0,
+      "height": 350
+    },
+    {
+      "id": "78cc3749a124b8ae",
+      "type": "text",
+      "text": "## Ripasso attivo\n\nScegli un nodo e spiegalo senza leggere. Poi segui una freccia e giustifica il rapporto con il nodo successivo.\nRicostruisci un esempio, indica un limite e apri la sezione della lezione per formule, figure o esercizi.\n\n**I gruppi sono numerati e seguono un percorso a serpentina:** prima riga da sinistra a destra, seconda da destra a sinistra, poi si ripete.\n\nPer le figure: descrivi prima ciò che vedi, poi spiega quale concetto esemplifica. Aprile per leggerle alla risoluzione originale.",
+      "x": 0,
+      "y": 14372.0,
+      "width": 4812.0,
+      "height": 310
+    },
+    {
+      "id": "acaf11613805fbb1",
+      "type": "group",
+      "label": "01 · Dal linguaggio al piano eseguibile",
+      "color": "4",
+      "x": 0.0,
+      "y": 120,
+      "width": 2281.0,
+      "height": 4095.0
+    },
+    {
+      "id": "4d723651886bbd6b",
+      "type": "text",
+      "text": "## 01 · Dal linguaggio al piano eseguibile\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Query processing by the SQL engine|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 170,
+      "width": 2161.0,
+      "height": 105
+    },
+    {
+      "id": "6435a5da47d0e1a5",
+      "type": "text",
+      "text": "## SQL dichiarativo\n\nLa query specifica le righe desiderate. Più algoritmi fisici possono produrre lo stesso risultato logico con costi diversi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Query processing by the SQL engine|Nella lezione ↗]]",
+      "x": 830,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "dfa51c2aa62f38db",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L08-p005.png",
+      "x": 730,
+      "y": 771,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "8dfa0384a247cfeb",
+      "type": "text",
+      "text": "**Figura · SQL dichiarativo**\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators|Dalla lezione 08]]",
+      "x": 730,
+      "y": 1401,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "1e764249d9ec4546",
+      "type": "text",
+      "text": "## Piano logico\n\nAlbero di operatori come selezione, proiezione, join e raggruppamento. Descrive le trasformazioni sui dati senza fissare tutti gli algoritmi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Query processing by the SQL engine|Nella lezione ↗]]",
+      "x": 830,
+      "y": 1611,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "8571e9e9b081d319",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L08-p006.png",
+      "x": 730,
+      "y": 2042,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "494f90181be19d10",
+      "type": "text",
+      "text": "**Figura · Piano logico**\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators|Dalla lezione 08]]",
+      "x": 730,
+      "y": 2672,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "6f7609cd5bd36fba",
+      "type": "text",
+      "text": "## Piano fisico\n\nSceglie scan, indice e algoritmo per ogni operatore. Dimensioni, memoria e proprietà dell’input guidano la scelta.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Query processing by the SQL engine|Nella lezione ↗]]",
+      "x": 830,
+      "y": 2882,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "a4181407941b637b",
+      "type": "text",
+      "text": "## Materializzazione\n\nScrive un risultato intermedio e lo rilegge dopo. Consuma spazio e I/O ma disaccoppia gli operatori e permette riuso.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Query processing by the SQL engine|Nella lezione ↗]]",
+      "x": 460,
+      "y": 3343,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "37e2fc8a4d34dcc1",
+      "type": "text",
+      "text": "## Pipeline\n\nUna tupla prodotta può passare subito all’operatore successivo. Riduce risultati intermedi, ma un operatore bloccante può dover consumare prima l’input.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Query processing by the SQL engine|Nella lezione ↗]]",
+      "x": 1202,
+      "y": 3343,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "2c67da86c99f0e47",
+      "type": "text",
+      "text": "## Iterator: Open, GetNext, Close\n\nIl padre richiede tuple ai figli. Open inizializza, GetNext restituisce una tupla, Close rilascia risorse. Grouping non ordinato può svolgere molto lavoro già in Open.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Query processing by the SQL engine|Nella lezione ↗]]",
+      "x": 1202,
+      "y": 3804,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "4a98cea6b554aaad",
+      "type": "group",
+      "label": "02 · Misurare input, memoria e risultato",
+      "color": "5",
+      "x": 2531.0,
+      "y": 120,
+      "width": 2281.0,
+      "height": 2014.0
+    },
+    {
+      "id": "fc7a302454d4b5dc",
+      "type": "text",
+      "text": "## 02 · Misurare input, memoria e risultato\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Number of pages of a relation|Apri la sezione della lezione]]",
+      "x": 2591.0,
+      "y": 170,
+      "width": 2161.0,
+      "height": 105
+    },
+    {
+      "id": "0e0453051112034a",
+      "type": "text",
+      "text": "## B(R): numero di pagine\n\nÈ il volume fisico letto. Due relazioni con lo stesso numero di tuple possono occupare numeri diversi di pagine.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Number of pages of a relation|Nella lezione ↗]]",
+      "x": 3732,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "fcc03451fc73222a",
+      "type": "text",
+      "text": "## T(R): numero di tuple\n\nConta quante volte si fa un lookup se l’algoritmo lavora per tupla esterna. Non sostituire T(R) con B(R) nelle formule.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Number of pages of a relation|Nella lezione ↗]]",
+      "x": 2992,
+      "y": 1723,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "e1811a8233de419e",
+      "type": "text",
+      "text": "## V(R,A): valori distinti\n\nCon uniformità, una uguaglianza su A seleziona circa T(R)/V(R,A) tuple. Senza uniformità una singola frequenza può essere molto diversa.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Number of pages of a relation|Nella lezione ↗]]",
+      "x": 2992,
+      "y": 1262,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "53be141f49b30dfe",
+      "type": "text",
+      "text": "## M: buffer disponibili\n\nLe formule riservano frame per input/output e strutture di lavoro. Nella lezione M indica talvolta i frame del blocco, con altri due frame esterni alla conta.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Number of pages of a relation|Nella lezione ↗]]",
+      "x": 2992,
+      "y": 340,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "d89256d8bcc47de3",
+      "type": "text",
+      "text": "## Costo dell’output\n\nMolte formule del corso ignorano la scrittura del risultato. Un join con molte corrispondenze può produrre enorme output: dichiarare sempre questa ipotesi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Number of pages of a relation|Nella lezione ↗]]",
+      "x": 3732,
+      "y": 1723,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "96f2c9075ac22996",
+      "type": "text",
+      "text": "## Proprietà dell’input\n\nOrdine, clustering, indici, numero di gruppi e skew possono cambiare algoritmo e costo anche a parità di B e T.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Number of pages of a relation|Nella lezione ↗]]",
+      "x": 2992,
+      "y": 801,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "74c01fbddc76b953",
+      "type": "group",
+      "label": "03 · One-pass: una lettura basta?",
+      "color": "3",
+      "x": 2531.0,
+      "y": 4465.0,
+      "width": 2281.0,
+      "height": 1553.0
+    },
+    {
+      "id": "94c8417e1f8d453b",
+      "type": "text",
+      "text": "## 03 · One-pass: una lettura basta?\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#One-pass algorithms|Apri la sezione della lezione]]",
+      "x": 2591.0,
+      "y": 4515.0,
+      "width": 2161.0,
+      "height": 105
+    },
+    {
+      "id": "865abee87d2a6dd2",
+      "type": "text",
+      "text": "## Selezione e proiezione\n\nUna scansione legge B pagine. Proiezione con bag e proiezione con eliminazione duplicati non sono lo stesso problema fisico.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#One-pass algorithms|Nella lezione ↗]]",
+      "x": 2621,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "bf0262df26cb54f1",
+      "type": "text",
+      "text": "## Eliminazione duplicati\n\nSu input non ordinato memorizza i valori distinti visti. È one-pass solo se la struttura entra in RAM; con ordine su tutti i campi bastano confronti consecutivi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#One-pass algorithms|Nella lezione ↗]]",
+      "x": 2621,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "b5901fbc5440ab7d",
+      "type": "text",
+      "text": "## Grouping\n\nInput non ordinato: un accumulatore per gruppo, che deve entrare in memoria. Input ordinato sui gruppi: conserva soltanto lo stato del gruppo corrente.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#One-pass algorithms|Nella lezione ↗]]",
+      "x": 3732,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "93160572ec3b57d6",
+      "type": "text",
+      "text": "## Operazioni binarie\n\nPer join e altre operazioni si può caricare il lato piccolo e leggere l’altro una volta. Servono frame per struttura, input e output.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#One-pass algorithms|Nella lezione ↗]]",
+      "x": 3732,
+      "y": 4685,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "839d3eabe1322d4e",
+      "type": "text",
+      "text": "## Bag e contatori\n\nBag intersection restituisce min(nR,nS) copie; bag difference max(0,nR−nS). Deduplicare cambia il significato, non è una semplice ottimizzazione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#One-pass algorithms|Nella lezione ↗]]",
+      "x": 3362,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "7c97bd7829b79824",
+      "type": "text",
+      "text": "## Costo ideale one-pass\n\nB per operatori unari, B(R)+B(S) per binari, trascurando output. Non basta leggere la formula: verificare che lo stato richiesto entri davvero in memoria.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#One-pass algorithms|Nella lezione ↗]]",
+      "x": 4103,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "3"
+    },
+    {
+      "id": "621de9d5f5cfacbe",
+      "type": "group",
+      "label": "04 · Nested-loop: la memoria riduce riletture",
+      "color": "6",
+      "x": 0.0,
+      "y": 4465.0,
+      "width": 2281.0,
+      "height": 2475.0
+    },
+    {
+      "id": "36b53423d6ff09b9",
+      "type": "text",
+      "text": "## 04 · Nested-loop: la memoria riduce riletture\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Nested-loop join|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 4515.0,
+      "width": 2161.0,
+      "height": 105
+    },
+    {
+      "id": "3f620723740290b6",
+      "type": "text",
+      "text": "## Tuple nested-loop\n\nPer ogni tupla esterna di S scansiona R. Costo B(S)+T(S)×B(R), ignorando output: può essere enorme.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Nested-loop join|Nella lezione ↗]]",
+      "x": 830,
+      "y": 4685,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "d15e9a2725fe7e6d",
+      "type": "text",
+      "text": "## Page nested-loop\n\nPer ogni pagina di S scansiona R. Costo B(S)+B(S)×B(R): riusa la pagina esterna per molte tuple.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Nested-loop join|Nella lezione ↗]]",
+      "x": 830,
+      "y": 5146,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "5bcb66c855fa98b0",
+      "type": "text",
+      "text": "## Block nested-loop\n\nCarica un blocco di K pagine di S e scansiona R. K è la capacità del blocco; occorrono inoltre un frame per R e uno per output.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Nested-loop join|Nella lezione ↗]]",
+      "x": 830,
+      "y": 5607,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "58adde2b214a83f9",
+      "type": "text",
+      "text": "## Formula del blocco\n\nB(S)+B(R)×ceil(B(S)/K). Più grande è K, meno volte si rilegge R. Per orientare i lati, confrontare i costi con i rispettivi arrotondamenti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Nested-loop join|Nella lezione ↗]]",
+      "x": 830,
+      "y": 6068,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "e0e76f4af8f3eaf8",
+      "type": "text",
+      "text": "## Esempio: 1000 e 500 pagine\n\nCon S=500, R=1000 e 102 frame totali, K=100: 500+1000×5=5500 I/O. Non dividere per 102 se due frame sono riservati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Nested-loop join|Nella lezione ↗]]",
+      "x": 460,
+      "y": 6529,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "676123e88d37de8e",
+      "type": "text",
+      "text": "## Se il lato piccolo entra\n\nSe K≥B(S), una sola scansione di R dà B(R)+B(S): è il caso one-pass. Nested-loop resta applicabile anche senza equijoin o hashing utile.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Nested-loop join|Nella lezione ↗]]",
+      "x": 1202,
+      "y": 6529,
+      "width": 619,
+      "height": 331,
+      "color": "6"
+    },
+    {
+      "id": "ce1e0cfc4b764df5",
+      "type": "group",
+      "label": "05 · Two-pass con ordinamento",
+      "color": "2",
+      "x": 0.0,
+      "y": 7190.0,
+      "width": 2281.0,
+      "height": 2014.0
+    },
+    {
+      "id": "cde3c5c677e14ab3",
+      "type": "text",
+      "text": "## 05 · Two-pass con ordinamento\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Two-pass algorithms|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 7240.0,
+      "width": 2161.0,
+      "height": 105
+    },
+    {
+      "id": "5c6f2ff707e6e7a5",
+      "type": "text",
+      "text": "## Prima passata: run ordinate\n\nLegge input, ordina blocchi in RAM e scrive run. Costo 2×input: una lettura e una scrittura per pagina.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Two-pass algorithms|Nella lezione ↗]]",
+      "x": 460,
+      "y": 7410,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "7df1ebf998af8f79",
+      "type": "text",
+      "text": "## Seconda passata: merge operativo\n\nLegge i fronti delle run e calcola grouping, deduplica o join senza riscrivere prima tutto il file ordinato.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Two-pass algorithms|Nella lezione ↗]]",
+      "x": 460,
+      "y": 7871,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "ec6e8a9c27a5fe07",
+      "type": "text",
+      "text": "## Vincolo di memoria\n\nDeve esserci un frame per ogni run attiva, più output e stato necessario. Il numero di run di entrambi gli input conta negli operatori binari.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Two-pass algorithms|Nella lezione ↗]]",
+      "x": 460,
+      "y": 8332,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "e87383442a85eb4b",
+      "type": "text",
+      "text": "## Simple sort join\n\nOrdina completamente entrambi gli input e poi fa il merge join: nel caso two-pass del corso costa 5×(B(R)+B(S)), con ipotesi sui gruppi duplicati.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Two-pass algorithms|Nella lezione ↗]]",
+      "x": 1202,
+      "y": 7871,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "66ebbdff532cce23",
+      "type": "text",
+      "text": "## Sort-merge join integrato\n\nIntegra il join nell’ultimo merge: costo tipico 3×(B(R)+B(S)). Richiede spazio per fronti e gestione dei gruppi con stesso valore di join.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Two-pass algorithms|Nella lezione ↗]]",
+      "x": 1202,
+      "y": 8332,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "53573b1d3dc494c7",
+      "type": "text",
+      "text": "## Gruppi di join grandi\n\nSe molte tuple condividono una chiave, devono essere combinate con tutte le corrispondenti dell’altro lato. Se non entrano, occorrono gestione aggiuntiva e possibili riletture.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Two-pass algorithms|Nella lezione ↗]]",
+      "x": 1202,
+      "y": 8793,
+      "width": 619,
+      "height": 331,
+      "color": "2"
+    },
+    {
+      "id": "895c465c0c9045a8",
+      "type": "group",
+      "label": "06 · Hashing, skew e multipass",
+      "color": "4",
+      "x": 2531.0,
+      "y": 7190.0,
+      "width": 2281.0,
+      "height": 2936.0
+    },
+    {
+      "id": "26522ac9c30468b7",
+      "type": "text",
+      "text": "## 06 · Hashing, skew e multipass\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Multipass algorithms|Apri la sezione della lezione]]",
+      "x": 2591.0,
+      "y": 7240.0,
+      "width": 2161.0,
+      "height": 105
+    },
+    {
+      "id": "1cce51a0573a56f9",
+      "type": "text",
+      "text": "## Prima passata hash\n\nUsa la stessa funzione sugli attributi rilevanti di entrambi gli input. Tuple che possono fare match devono finire in bucket corrispondenti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Multipass algorithms|Nella lezione ↗]]",
+      "x": 3362,
+      "y": 7410,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "dd4a9dbb23fcecae",
+      "type": "text",
+      "text": "## Seconda passata: build e probe\n\nPer ogni coppia di bucket carica il lato piccolo e cerca match leggendo l’altro. Lo stesso schema serve a join e operazioni insiemistiche con strutture appropriate.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Multipass algorithms|Nella lezione ↗]]",
+      "x": 3362,
+      "y": 7871,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "e9e0a2c18ce05cf5",
+      "type": "text",
+      "text": "## Costo two-pass hash\n\nLeggere + scrivere partizioni + rileggere: circa 3×input, output escluso. Ogni bucket del lato di build deve entrare nella memoria utile.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Multipass algorithms|Nella lezione ↗]]",
+      "x": 3362,
+      "y": 8332,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "d7387de29ac2e6cd",
+      "type": "text",
+      "text": "## Data skew\n\nFrequenze sbilanciate generano bucket troppo grandi. La media piccola non garantisce che il bucket massimo entri; chiavi dominanti richiedono attenzione specifica.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Multipass algorithms|Nella lezione ↗]]",
+      "x": 3362,
+      "y": 8793,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "6c75c3396d9cc53c",
+      "type": "text",
+      "text": "## Più passate\n\nSe non basta, ricorsione: nuovi livelli di partizione con funzioni diverse, oppure più merge nel sort. Con K passate il modello ideale costa (2K−1)×input.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Multipass algorithms|Nella lezione ↗]]",
+      "x": 3362,
+      "y": 9254,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "2315bac2c73e5c6c",
+      "type": "text",
+      "text": "## Sort oppure hash?\n\nSort produce un ordine potenzialmente utile; hash dipende dal lato piccolo e dall’uniformità. Nessuno dei due ha costo 3×input senza rispettare i vincoli.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Multipass algorithms|Nella lezione ↗]]",
+      "x": 3362,
+      "y": 9715,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "c11005909554437b",
+      "type": "group",
+      "label": "07 · Indici: conformità e costo dei match",
+      "color": "5",
+      "x": 2531.0,
+      "y": 10376.0,
+      "width": 2281.0,
+      "height": 1553.0
+    },
+    {
+      "id": "0373cb538d1dbbdd",
+      "type": "text",
+      "text": "## 07 · Indici: conformità e costo dei match\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Index-based algorithms|Apri la sezione della lezione]]",
+      "x": 2591.0,
+      "y": 10426.0,
+      "width": 2161.0,
+      "height": 105
+    },
+    {
+      "id": "fd65e82f378355b6",
+      "type": "text",
+      "text": "## Indice conforme\n\nUn tree sfrutta condizioni su un prefisso iniziale della chiave; un hash richiede uguaglianza su tutti gli attributi della search key. Gli altri predicati sono residui da controllare.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Index-based algorithms|Nella lezione ↗]]",
+      "x": 3362,
+      "y": 10596,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "b92a99adc3d7179a",
+      "type": "text",
+      "text": "## Esempio di prefisso\n\nChiave ⟨a,b,c⟩: ⟨a⟩ e ⟨a,b⟩ sono prefissi, ⟨b,c⟩ no. Un range precoce può impedire di usare i campi successivi per restringere un unico intervallo contiguo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Index-based algorithms|Nella lezione ↗]]",
+      "x": 2621,
+      "y": 11057,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "762399e79144b60f",
+      "type": "text",
+      "text": "## Quanti record e pagine?\n\nCon distribuzione uniforme A=v seleziona T/V tuple. Clustered: circa B/V pagine; unclustered: fino a un accesso per tupla, secondo cache e distribuzione.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Index-based algorithms|Nella lezione ↗]]",
+      "x": 3362,
+      "y": 11057,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "d184de45ee23b815",
+      "type": "text",
+      "text": "## Index-only scan\n\nSe l’indice contiene tutti i dati necessari, si leggono le entry evitando il file dati nel modello del corso. Un ordine adatto può facilitare deduplica o grouping.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Index-based algorithms|Nella lezione ↗]]",
+      "x": 3362,
+      "y": 11518,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "037a02401053bcbc",
+      "type": "text",
+      "text": "## Index nested-loop join\n\nPer ogni tupla di R cerca S tramite indice: B(R)+T(R)×(lookup + pagine match). Conviene con esterno piccolo e lookup selettivi.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Index-based algorithms|Nella lezione ↗]]",
+      "x": 4103,
+      "y": 11057,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "aaa1b5136c719faf",
+      "type": "text",
+      "text": "## Esempio di costo corretto\n\nB(R)=1000, T(R)=10000, lookup=2, B(S)=500 e V=100: 1000+10000×(2+5)=71000. Include anche la lettura di R, come segnala la correzione nella nota.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Index-based algorithms|Nella lezione ↗]]",
+      "x": 4103,
+      "y": 11518,
+      "width": 619,
+      "height": 331,
+      "color": "5"
+    },
+    {
+      "id": "59c2a9bcb1039186",
+      "type": "group",
+      "label": "08 · Parallelismo shared-nothing",
+      "color": "4",
+      "x": 0.0,
+      "y": 10376.0,
+      "width": 2281.0,
+      "height": 3746.0
+    },
+    {
+      "id": "c15f184e90c2e51c",
+      "type": "text",
+      "text": "## 08 · Parallelismo shared-nothing\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Parallel algorithms|Apri la sezione della lezione]]",
+      "x": 60.0,
+      "y": 10426.0,
+      "width": 2161.0,
+      "height": 105
+    },
+    {
+      "id": "b550d58adbc508c9",
+      "type": "text",
+      "text": "## Shared-nothing\n\nOgni nodo ha CPU, memoria e dischi propri. I dati remoti passano via rete: il parallelismo richiede un’organizzazione dei dati compatibile.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Parallel algorithms|Nella lezione ↗]]",
+      "x": 831,
+      "y": 10596,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "9754c4ee346c2260",
+      "type": "file",
+      "file": "Obsidian-University/University/Magistrale/Data Managment/images/DM-L08-p110.png",
+      "x": 730,
+      "y": 11027,
+      "width": 820,
+      "height": 615
+    },
+    {
+      "id": "97f3eb4b3d0c29cc",
+      "type": "text",
+      "text": "**Figura · Shared-nothing**\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators|Dalla lezione 08]]",
+      "x": 730,
+      "y": 11657,
+      "width": 820,
+      "height": 80
+    },
+    {
+      "id": "902a9ab1b922b7c2",
+      "type": "text",
+      "text": "## Round robin\n\nDistribuisce tuple a rotazione e bilancia il volume, ma una condizione sul valore in genere non individua un singolo nodo.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Parallel algorithms|Nella lezione ↗]]",
+      "x": 831,
+      "y": 11867,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "64930e76db726ed8",
+      "type": "text",
+      "text": "## Partizionamento per range\n\nOgni nodo gestisce un intervallo. Può limitare nodi coinvolti nelle query per range, ma distribuzioni sbilanciate causano skew.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Parallel algorithms|Nella lezione ↗]]",
+      "x": 831,
+      "y": 12328,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "8b2db5f06eb9c9b4",
+      "type": "text",
+      "text": "## Partizionamento hash\n\nUguaglianze sulla chiave possono individuare il nodo. Range normalmente richiedono più nodi; gruppi o join richiedono hash sugli attributi corretti.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Parallel algorithms|Nella lezione ↗]]",
+      "x": 831,
+      "y": 12789,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "e8408594da1de3e3",
+      "type": "text",
+      "text": "## Riallineare gli input\n\nPer join su Y invia tuple con uguale Y allo stesso nodo, usando lo stesso hash sui due input. Poi si esegue un join locale.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Parallel algorithms|Nella lezione ↗]]",
+      "x": 831,
+      "y": 13250,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    },
+    {
+      "id": "df42ad243c60b5b5",
+      "type": "text",
+      "text": "## Tempo e lavoro totale\n\nCon distribuzione bilanciata il tempo può scendere verso 1/P, ma comunicazione, sorgenti centralizzate e nodo più lento limitano lo speedup. Il lavoro totale non si divide automaticamente per P.\n\n[[Obsidian-University/University/Magistrale/Data Managment/08 - DM - Evaluation of Relational Operators#Parallel algorithms|Nella lezione ↗]]",
+      "x": 831,
+      "y": 13711,
+      "width": 619,
+      "height": 331,
+      "color": "4"
+    }
+  ],
+  "edges": [
+    {
+      "id": "f1eb3241837cfc82",
+      "fromNode": "6435a5da47d0e1a5",
+      "toNode": "dfa51c2aa62f38db",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "785143f66330851b",
+      "fromNode": "1e764249d9ec4546",
+      "toNode": "8571e9e9b081d319",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "915ecbbc25770b67",
+      "fromNode": "6435a5da47d0e1a5",
+      "toNode": "1e764249d9ec4546",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "viene tradotto in"
+    },
+    {
+      "id": "ed2516317b6fb5b9",
+      "fromNode": "1e764249d9ec4546",
+      "toNode": "6f7609cd5bd36fba",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "viene implementato come"
+    },
+    {
+      "id": "bdf254ba83d26bee",
+      "fromNode": "6f7609cd5bd36fba",
+      "toNode": "a4181407941b637b",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può eseguire con"
+    },
+    {
+      "id": "7d318e2f743f8e75",
+      "fromNode": "6f7609cd5bd36fba",
+      "toNode": "37e2fc8a4d34dcc1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può eseguire con"
+    },
+    {
+      "id": "0d95730dfb812ffa",
+      "fromNode": "37e2fc8a4d34dcc1",
+      "toNode": "2c67da86c99f0e47",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "spesso realizzata tramite"
+    },
+    {
+      "id": "b098eef7d0434077",
+      "fromNode": "0e0453051112034a",
+      "toNode": "fcc03451fc73222a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "misura diversa da"
+    },
+    {
+      "id": "fcdf9235cd85dfeb",
+      "fromNode": "e1811a8233de419e",
+      "toNode": "fcc03451fc73222a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "permette di stimare tuple qualificanti da"
+    },
+    {
+      "id": "a734a488602874c3",
+      "fromNode": "53be141f49b30dfe",
+      "toNode": "96f2c9075ac22996",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "limita algoritmi insieme alle"
+    },
+    {
+      "id": "2cdea6a105ae3065",
+      "fromNode": "0e0453051112034a",
+      "toNode": "d89256d8bcc47de3",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "costo di input distinto dal"
+    },
+    {
+      "id": "24d49ab5c309f144",
+      "fromNode": "96f2c9075ac22996",
+      "toNode": "e1811a8233de419e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "include distribuzione dei valori riassunta solo in parte da"
+    },
+    {
+      "id": "927ccf8e6ed2dda6",
+      "fromNode": "865abee87d2a6dd2",
+      "toNode": "bf0262df26cb54f1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "proiezione DISTINCT richiede anche"
+    },
+    {
+      "id": "a270d7274b1b1f5b",
+      "fromNode": "865abee87d2a6dd2",
+      "toNode": "b5901fbc5440ab7d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "aggregazione richiede stato per"
+    },
+    {
+      "id": "e55dedd31064e030",
+      "fromNode": "93160572ec3b57d6",
+      "toNode": "839d3eabe1322d4e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "deve rispettare molteplicità con"
+    },
+    {
+      "id": "6e4b92f9ac6e1298",
+      "fromNode": "93160572ec3b57d6",
+      "toNode": "7c97bd7829b79824",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "se entra in memoria raggiunge"
+    },
+    {
+      "id": "681a867bb2de9888",
+      "fromNode": "7c97bd7829b79824",
+      "toNode": "b5901fbc5440ab7d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "condizionato dalla memoria necessaria per"
+    },
+    {
+      "id": "2e7b40a1d31229a4",
+      "fromNode": "3f620723740290b6",
+      "toNode": "d15e9a2725fe7e6d",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si riduce riusando la pagina in"
+    },
+    {
+      "id": "c984d96d1813cbb0",
+      "fromNode": "d15e9a2725fe7e6d",
+      "toNode": "5bcb66c855fa98b0",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si riduce riusando un blocco in"
+    },
+    {
+      "id": "f58cbabea88df276",
+      "fromNode": "5bcb66c855fa98b0",
+      "toNode": "58adde2b214a83f9",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "ha costo"
+    },
+    {
+      "id": "adce5250b4e3cf52",
+      "fromNode": "58adde2b214a83f9",
+      "toNode": "e0e76f4af8f3eaf8",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "produce"
+    },
+    {
+      "id": "5d9a3f1ba3c8e63c",
+      "fromNode": "58adde2b214a83f9",
+      "toNode": "676123e88d37de8e",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "raggiunge il limite one-pass quando"
+    },
+    {
+      "id": "2a2254145879e6b1",
+      "fromNode": "5c6f2ff707e6e7a5",
+      "toNode": "7df1ebf998af8f79",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "alimenta"
+    },
+    {
+      "id": "328262f41b9f8101",
+      "fromNode": "7df1ebf998af8f79",
+      "toNode": "ec6e8a9c27a5fe07",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "è possibile se rispetta il"
+    },
+    {
+      "id": "9fab949695770a9b",
+      "fromNode": "e87383442a85eb4b",
+      "toNode": "66ebbdff532cce23",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "evita materializzazione completa nel"
+    },
+    {
+      "id": "a4b71be8ddd15aea",
+      "fromNode": "7df1ebf998af8f79",
+      "toNode": "66ebbdff532cce23",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può eseguire il"
+    },
+    {
+      "id": "d86850fc2770a69e",
+      "fromNode": "66ebbdff532cce23",
+      "toNode": "53573b1d3dc494c7",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "deve gestire"
+    },
+    {
+      "id": "ab662db055e9943b",
+      "fromNode": "1cce51a0573a56f9",
+      "toNode": "dd4a9dbb23fcecae",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "prepara"
+    },
+    {
+      "id": "aa92c423be29e55f",
+      "fromNode": "dd4a9dbb23fcecae",
+      "toNode": "e9e0a2c18ce05cf5",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "nel caso fattibile raggiunge"
+    },
+    {
+      "id": "60f82e26c8a54ec0",
+      "fromNode": "e9e0a2c18ce05cf5",
+      "toNode": "d7387de29ac2e6cd",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può essere compromesso dallo"
+    },
+    {
+      "id": "2d4e1d333c31a6d5",
+      "fromNode": "d7387de29ac2e6cd",
+      "toNode": "6c75c3396d9cc53c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può richiedere"
+    },
+    {
+      "id": "7c539318e83af8c3",
+      "fromNode": "6c75c3396d9cc53c",
+      "toNode": "2315bac2c73e5c6c",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "entra nella scelta"
+    },
+    {
+      "id": "6507caf7a0813c44",
+      "fromNode": "fd65e82f378355b6",
+      "toNode": "b92a99adc3d7179a",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "dipende dalla nozione di"
+    },
+    {
+      "id": "90da09c0133099bd",
+      "fromNode": "fd65e82f378355b6",
+      "toNode": "762399e79144b60f",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "utilità finale dipende anche dalla"
+    },
+    {
+      "id": "4ad1b5385a376415",
+      "fromNode": "762399e79144b60f",
+      "toNode": "d184de45ee23b815",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "recupero dati evitabile con"
+    },
+    {
+      "id": "dc667a2f0a76e454",
+      "fromNode": "fd65e82f378355b6",
+      "toNode": "037a02401053bcbc",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "permette il lookup interno di"
+    },
+    {
+      "id": "8b272506b8269957",
+      "fromNode": "037a02401053bcbc",
+      "toNode": "aaa1b5136c719faf",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "si calcola come nell’"
+    },
+    {
+      "id": "7fbd539ed662a19d",
+      "fromNode": "b550d58adbc508c9",
+      "toNode": "9754c4ee346c2260",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "figura della lezione",
+      "color": "4"
+    },
+    {
+      "id": "474ea138ad7ffd54",
+      "fromNode": "b550d58adbc508c9",
+      "toNode": "902a9ab1b922b7c2",
+      "fromSide": "right",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "può distribuire con"
+    },
+    {
+      "id": "e53f3590bebba350",
+      "fromNode": "902a9ab1b922b7c2",
+      "toNode": "64930e76db726ed8",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "alternativa guidata dai valori è"
+    },
+    {
+      "id": "7367fd2ffa8c9e0b",
+      "fromNode": "64930e76db726ed8",
+      "toNode": "8b2db5f06eb9c9b4",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "alternativa per uguaglianza è"
+    },
+    {
+      "id": "0075be14c527ca43",
+      "fromNode": "8b2db5f06eb9c9b4",
+      "toNode": "e8408594da1de3e3",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "permette co-locazione tramite"
+    },
+    {
+      "id": "c38d16c9e2760b3c",
+      "fromNode": "e8408594da1de3e3",
+      "toNode": "df42ad243c60b5b5",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "migliora tempo sotto le ipotesi di"
+    },
+    {
+      "id": "4c880ab65065282e",
+      "fromNode": "acaf11613805fbb1",
+      "toNode": "4a98cea6b554aaad",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 02",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "aa062dedde72428f",
+      "fromNode": "4a98cea6b554aaad",
+      "toNode": "74c01fbddc76b953",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 03",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "8c3740492e73357e",
+      "fromNode": "74c01fbddc76b953",
+      "toNode": "621de9d5f5cfacbe",
+      "fromSide": "left",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "continua: sezione 04",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "8582d8d5f4500b66",
+      "fromNode": "621de9d5f5cfacbe",
+      "toNode": "ce1e0cfc4b764df5",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 05",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "b77de2430adef5a3",
+      "fromNode": "ce1e0cfc4b764df5",
+      "toNode": "895c465c0c9045a8",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "continua: sezione 06",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "790d9b493102b87b",
+      "fromNode": "895c465c0c9045a8",
+      "toNode": "c11005909554437b",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "continua: sezione 07",
+      "color": "#8a8a8a"
+    },
+    {
+      "id": "d627e550f5921752",
+      "fromNode": "c11005909554437b",
+      "toNode": "59c2a9bcb1039186",
+      "fromSide": "left",
+      "toSide": "right",
+      "toEnd": "arrow",
+      "label": "continua: sezione 08",
+      "color": "#8a8a8a"
+    }
+  ]
+}
