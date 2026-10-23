@@ -1,5 +1,21 @@
 # Riprendere lo studio di RDF su un altro computer
 
+## Aggiornamento prioritario del 23 ottobre 2026
+
+Questa sezione sostituisce il vecchio punto di ripresa del 16 ottobre riportato sotto. È un riepilogo della chat, non un transcript integrale.
+
+Simone ha continuato SPARQL in chat: query di classe, variabili in soggetto e oggetto, più condizioni, risposte DB rispetto a RDFS e catene delle quattro regole. Evidenze e punti da verificare: `learning-records/0006-sparql-e-catene-rdfs.md`. Restano reificazione e un Problem 5 completo prima di chiudere il blocco prioritario della 03.
+
+01 e 02 sono già studiate; 04 è da fare. Esame 28 ottobre, 27 simulazioni; 25–26 disponibili tutto il giorno. Il 24 viaggio per Napoli e festa nel pomeriggio. Non basare il recupero sullo studio in viaggio. Piano aggiornato in NOTES.md.
+
+### Prompt per la sessione vocale del 24 ottobre
+
+> Sto preparando Data Management per il 28 ottobre. Oggi voglio una lezione solo orale sulla nota 05: transazioni e anomalie della concorrenza. Sto guidando: niente schermo, grafi, formule, notazione di schedule o calcoli. Spiega in italiano un concetto per volta, con interventi brevi ed esempi semplici di due persone che operano sullo stesso conto o prenotazione. Introduci transazione, commit, rollback e isolamento, poi lost update, dirty read e lettura non ripetibile. Fammi una domanda breve per volta e aspetta la risposta; correggimi subito. Parti da zero sulla 05, senza dare per acquisite le spiegazioni di oggi. Se chiedo una pausa, fermati. La priorità resta la guida. Alla fine riassumi cosa ho dimostrato di capire e cosa riprendere da fermo. Se hai accesso alla repository, leggi prima NOTES.md e la nota 05; non fingere di averli letti se non puoi accedervi.
+
+### Ripresa successiva da fermo
+
+Usare `.claude/skills/teach/SKILL.md` nella radice della repository, leggere NOTES.md e learning-records. Verificare ciò che è stato effettivamente affrontato in voce. Completare reificazione e Problem 5, poi studiare la 05 con esercizi scritti di conflitti, grafo delle precedenze e recuperabilità.
+
 Aggiornato il 16 ottobre 2026. Questo è un riepilogo didattico, non un'esportazione completa della conversazione.
 
 ## Prompt da incollare nella nuova chat
