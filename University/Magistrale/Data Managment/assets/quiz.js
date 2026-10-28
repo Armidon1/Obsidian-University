@@ -27,7 +27,7 @@ if (typeof document !== 'undefined') {
     if (el) el.textContent = `${solved.size} / ${forms.length} esercizi completati correttamente in questa apertura.`;
   };
   const report = (form, ok, message) => {
-    const output = form.querySelector('[data-feedback]');
+    const output = form.querySelector('div[data-feedback]');
     output.textContent = message;
     output.dataset.state = ok ? 'correct' : 'incorrect';
     if (ok) solved.add(form.id); else solved.delete(form.id);
@@ -46,7 +46,7 @@ if (typeof document !== 'undefined') {
     });
     form.addEventListener('input', () => {
       solved.delete(form.id);
-      form.querySelector('[data-feedback]').textContent = '';
+      form.querySelector('div[data-feedback]').textContent = '';
       progress();
     });
   });

@@ -1,4 +1,4 @@
-# Mission: RDF, RDFS e SPARQL per l'esame di Data Management
+# Mission: superare l'esame di Data Management del 28 ottobre 2026
 
 ## Why
 Simone vuole capire le slide sui Graph Databases di Data Management e risolvere autonomamente gli esercizi RDF del corso. Obiettivo confermato il 15 ottobre 2026.
@@ -19,3 +19,6 @@ Aggiornamento del 21 ottobre 2026: Simone non fa il progetto (option 1), quindi 
 
 ## Out of scope
 - Per tempo limitato: OPTIONAL, MINUS, UNION, aggregati e property path, mai chiesti negli appelli di giugno, luglio e settembre 2026. Da ripassare solo se avanza tempo il 27.
+
+## Aggiornamento del 25 ottobre 2026
+La missione si allarga all'intero esame. Simone sta studiando la nota 05 (Concurrency Control): le lezioni 03–06 coprono i Problem 1–2 (precedence graph, 2PL con lock X e S/X, strict/rigorous, timestamp scheduler con commit bit). Il 26 tocca alle note 06–08 (Problem 3–4, costi di I/O). Il 27 resta per le prove d'esame: non usare i testi degli appelli come esercizi prima di allora.

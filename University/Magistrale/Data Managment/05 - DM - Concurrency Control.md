@@ -106,12 +106,12 @@ Vedi [[Schedule (Concurrency)]].
 
 $T_1: a_1,a_2,a_3$ · $T_2: b_1,b_2$ · $T_3: c_1,c_2,c_3,c_4$
 
-| Sequence | Classification | Why |
-|---|---|---|
-| $S_1$: a1 a2 b1 c1 c2 b2 c3 a3 c4 | total schedule | all actions, internal orders respected |
-| $S_2$: a1 a2 c3 c4 b1 c1 c2 b2 a3 | **not** a schedule | $c_3, c_4$ come before $c_1, c_2$ |
-| $S_3$: b1 a1 b2 a2 a3 c1 c2 | partial schedule | $c_3, c_4$ missing |
-| $S_4$: c1 c2 c3 c4 a1 a2 a3 b1 b2 | serial schedule | $T_3$, then $T_1$, then $T_2$ |
+| Sequence                          | Classification     | Why                                    |
+| --------------------------------- | ------------------ | -------------------------------------- |
+| $S_1$: a1 a2 b1 c1 c2 b2 c3 a3 c4 | total schedule     | all actions, internal orders respected |
+| $S_2$: a1 a2 c3 c4 b1 c1 c2 b2 a3 | **not** a schedule | $c_3, c_4$ come before $c_1, c_2$      |
+| $S_3$: b1 a1 b2 a2 a3 c1 c2       | partial schedule   | $c_3, c_4$ missing                     |
+| $S_4$: c1 c2 c3 c4 a1 a2 a3 b1 b2 | serial schedule    | $T_3$, then $T_1$, then $T_2$          |
 
 ## Serializability
 
@@ -186,7 +186,7 @@ To characterize problematic behaviours, the literature singles out recurrent inc
 
 Vedi [[Concurrency Anomalies]].
 
-### Anomaly 1: reading temporary data
+### Anomaly 1: reading temporary data (Dirty Read)
 
 ```text
 T1                    T2

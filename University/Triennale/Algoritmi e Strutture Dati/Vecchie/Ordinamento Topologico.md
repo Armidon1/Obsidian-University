@@ -2,6 +2,8 @@
 
 ### Definizione e Condizione Necessaria
 
+![[Pasted image 20261026121906.png]]
+
 L'ordinamento topologico è un concetto applicabile esclusivamente ai **Grafi Orientati Aciclici (DAG - Directed Acyclic Graph)**.
 
 - **Condizione d'Esistenza:** Un grafo orientato $G$ ammette un ordinamento topologico **se e solo se** è **aciclico** (non contiene cicli orientati).
@@ -16,6 +18,13 @@ L'ordinamento topologico è un concetto applicabile esclusivamente ai **Grafi Or
     
 - **Concetto Intuitivo:** Dispone i vertici in una sequenza da sinistra a destra in modo che **tutti i percorsi orientati** seguano sempre tale disposizione. (Ad esempio, è perfetto per la schedulazione di attività con dipendenze).
     
+
+> [!important] A cosa serve in pratica
+> L'ordinamento topologico serve a **mettere in sequenza attività o elementi rispettando le loro dipendenze**: risponde alla domanda «in quale ordine posso elaborarli?». Se esiste un arco $A \to B$, $A$ deve comparire prima di $B$. È utile, per esempio, per organizzare attività di un progetto, prerequisiti degli esami o compilazione di moduli software.
+>
+> La lista ottenuta **non obbliga a eseguire tutto uno alla volta**: attività indipendenti possono essere eseguite in parallelo. Per esempio, con i vincoli $A \to B$ e $C \to B$, sia $A, C, B$ sia $C, A, B$ sono ordini validi; $A$ e $C$ possono anche essere svolte contemporaneamente, purché entrambe finiscano prima di iniziare $B$.
+>
+> Questo spiega anche perché l'ordinamento può **non essere unico**. Inoltre, l'ordine topologico può guidare altri algoritmi sui DAG, come il calcolo dei percorsi minimi: quando si elabora un vertice, tutti i suoi predecessori sono già stati elaborati.
 
 ---
 

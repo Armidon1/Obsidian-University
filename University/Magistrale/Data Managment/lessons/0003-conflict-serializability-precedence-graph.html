@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conflict-serializability in tre minuti</title>
+<style id="lesson-styles">
+:root{color-scheme:light;--ink:#22332f;--muted:#566861;--paper:#faf8f2;--line:#d6ddd4;--green:#17664f;--tint:#edf2e9;--red:#a0332e;--gold:#e5be66;font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.65}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}main{max-width:900px;margin:auto;padding:48px 30px 70px}header{padding-bottom:30px;border-bottom:1px solid var(--line)}.eyebrow,nav,.meta,button,label,select,.tag,figcaption{font-family:system-ui,sans-serif}.eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:.7rem;color:var(--green);font-weight:700}h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.12;letter-spacing:-.035em;margin:.5em 0}h2{font-size:1.6rem;line-height:1.25;margin:0 0 20px}h3{font-size:1.13rem;line-height:1.3}.intro{font-size:1.15rem;max-width:690px}.meta,figcaption{font-size:.78rem;color:var(--muted)}nav{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:22px;font-size:.8rem}a{color:var(--green);text-underline-offset:3px}section{padding-top:36px;margin-top:14px}p{max-width:740px}code,pre,textarea{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{font-size:.84em}pre{background:#edf0e8;border:1px solid var(--line);border-radius:8px;padding:20px;overflow:auto;font-size:.8rem;line-height:1.7}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-family:system-ui,sans-serif;font-size:.73rem;text-transform:uppercase;letter-spacing:.04em}.callout{padding:16px 22px;border-left:3px solid var(--green);background:var(--tint);margin:24px 0}.callout p{margin:4px 0}.exercise{border:1px solid var(--line);border-radius:12px;padding:25px;margin:24px 0;background:#fffefa}.exercise h3{margin-top:0}.options{display:grid;gap:10px;border:0;padding:0;margin:20px 0}.options label{display:flex;align-items:baseline;gap:12px;border:1px solid var(--line);padding:12px 15px;border-radius:6px;font-size:.88rem;cursor:pointer}.options label:has(input:checked){border-color:var(--green);background:var(--tint)}button{background:var(--green);border:1px solid var(--green);border-radius:6px;color:white;padding:10px 18px;cursor:pointer;font-size:.84rem}button:hover{filter:brightness(.92)}button.secondary{background:transparent;color:var(--green)}button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.feedback{margin-top:16px;font-size:.94rem}.feedback[data-state=correct]{color:var(--green)}.feedback[data-state=incorrect]{color:var(--red)}.feedback:empty{display:none}textarea{display:block;width:100%;padding:16px;border:1px solid #8c9d91;border-radius:6px;min-height:145px;background:white;color:var(--ink);font-size:.82rem;line-height:1.8;margin:12px 0}details{margin-top:20px}summary{cursor:pointer;color:var(--green)}.actions{display:flex;gap:12px;flex-wrap:wrap}.graph{background:var(--tint);padding:22px;border-radius:8px;overflow:auto}.graph svg{display:block;width:100%;min-width:420px;height:auto}.graph text{font-family:system-ui,sans-serif;fill:var(--ink)}.graph line{stroke:var(--green);stroke-width:2}.graph rect{fill:var(--paper);stroke:var(--green)}footer{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;font-size:.82rem;color:var(--muted)}.progress{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--green);margin:18px 0}noscript{display:block;border:1px solid var(--red);padding:16px}.checklist li{margin:8px 0}@media(max-width:550px){main{padding:28px 18px}.exercise{padding:18px}th,td{padding:10px 5px;font-size:.8rem}}@media print{body{background:white;color:black}main{max-width:none;padding:0;font-size:11pt}.exercise{break-inside:avoid}button,nav,.progress{display:none}pre,.callout,.graph{background:white}a{color:inherit}details>*{display:block}textarea{min-height:110px}header{padding-bottom:10px}section{padding-top:20px;margin:0}h1{font-size:28pt}}
+.sched{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}.act{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.95rem;padding:5px 10px 5px 8px;border-radius:6px;border:1px solid;border-left-width:5px;background:white}.act sub{font-family:system-ui,sans-serif;font-size:.6rem;color:var(--muted);margin-right:5px}.act.t1{border-color:#2c6e9b}.act.t2{border-color:#b5562a}.act.t3{border-color:#6b4fa0}.act.t4{border-color:#8a7a14}.act b{font-weight:700}.edges{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;border:0;padding:0;margin:8px 0 18px}.edges label{border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:.9rem;cursor:pointer;background:white}.edges label:has(input:checked){border-color:var(--green);background:var(--tint)}.options.inline{grid-template-columns:1fr 1fr}.feedback ul{padding-left:20px;margin:6px 0}.pgraph{max-width:340px;min-width:0!important}.pgraph path{fill:none;stroke:var(--green);stroke-width:2}.pgraph .tip{fill:var(--green);stroke:none}.pgraph .cyc{stroke:var(--red)}.pgraph .tip.cyc{fill:var(--red)}.pgraph circle{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}.elcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:18px 0}.elcols>div{border:1px solid var(--line);border-radius:10px;padding:14px 18px;background:white}.elcols h3{margin:0 0 8px;font-family:system-ui,sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.plan td:first-child{white-space:nowrap;font-family:system-ui,sans-serif;font-size:.82rem}.now{background:#fbf3dc}@media(max-width:550px){.options.inline{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body><main>
+<header><div class="eyebrow">Data Management / lezione 03 / 15 minuti</div><h1>Conflict-serializability<br>in tre minuti.</h1><p class="intro">Alla fine saprai costruire il precedence graph di uno schedule, decidere se è conflict-serializable e scrivere la risposta come la vuole il Problem 2.1.</p><div class="meta">Nota di riferimento: <em>05 - DM - Concurrency Control</em>, § 5.3 · Slide 55–69 di <em>5-Concurrency-complete-and-final-set-of-slides.pdf</em></div>
+<nav><a href="#piano">Il piano fino al 28</a><a href="#conflitto">La regola del conflitto</a><a href="#metodo">Il metodo</a><a href="#pratica">Pratica</a><a href="#esame">Come scriverlo</a><a href="../reference/concurrency-esame.html">Scheda Concurrency</a><a href="0002-sparql-per-il-problem-5.html">← Lezione 02</a></nav></header>
+<noscript>Per la correzione automatica abilita JavaScript. Le soluzioni espandibili restano leggibili anche senza.</noscript>
+
+<section id="piano"><h2>Dove sei nel piano.</h2>
+<table class="plan"><thead><tr><th>Giorno</th><th>Cosa</th><th>Problemi d’esame</th></tr></thead><tbody>
+<tr class="now"><td>Dom 25</td><td>Nota 05 in quattro lezioni brevi: <strong>03 precedence graph</strong> → 04 2PL con lock X e S/X → 05 strict e rigorous → 06 timestamp scheduler</td><td>P1, P2</td></tr>
+<tr><td>Lun 26</td><td>Note 06–08 (buffer, file e indici, costo degli operatori); ripasso lampo della <a href="0002-sparql-per-il-problem-5.html">lezione 02</a></td><td>P3, P4, P5</td></tr>
+<tr><td>Mar 27</td><td>Appelli di giugno A/B, luglio, settembre a tempo</td><td>tutti</td></tr>
+<tr><td>Mer 28</td><td>Esame</td><td></td></tr></tbody></table>
+<div class="callout"><p><strong>Cosa leggere della nota 05, in ordine.</strong> Indispensabili: § 5.3 (questa lezione), § 5.4 <em>Two-Phase Locking</em> e <em>Adding shared locks</em>, § 5.5 <em>Strict</em> e <em>Rigorous schedules</em>, § 5.6 per intero. Lettura veloce: § 5.1 e § 5.2 (definizioni di schedule e view-serializability, chiesta a luglio). Rimandabili: SGT, classi monotone, § 5.7–5.9 e PostgreSQL: non sono mai comparsi nei quattro appelli. Non è una garanzia, solo la scommessa migliore con il tempo che hai.</p>
+<p><strong>Tieni da parte i testi d’esame.</strong> Oggi esercitati sugli schedule di questa pagina; giugno, luglio e settembre ti servono «vergini» per la prova del 27.</p></div></section>
+
+<section id="conflitto"><h2>Tre condizioni, tutte insieme.</h2>
+<p>Due azioni di uno schedule sono <strong>in conflitto</strong> quando scambiarle potrebbe cambiare il risultato. Per gli schedule di read e write succede se e solo se:</p>
+<ol class="checklist"><li>appartengono a <strong>transazioni diverse</strong>;</li><li>agiscono sullo <strong>stesso elemento</strong>;</li><li>almeno una delle due è una <strong>write</strong>.</li></ol>
+<table><thead><tr><th></th><th><code>r<sub>j</sub>(x)</code></th><th><code>w<sub>j</sub>(x)</code></th></tr></thead><tbody>
+<tr><th><code>r<sub>i</sub>(x)</code></th><td>nessun conflitto: entrambe leggono lo stesso valore</td><td>conflitto: cambia il valore letto da T<sub>i</sub></td></tr>
+<tr><th><code>w<sub>i</sub>(x)</code></th><td>conflitto: cambia il valore letto da T<sub>j</sub></td><td>conflitto: cambia il valore finale di x</td></tr></tbody></table>
+<p>Il <strong>precedence graph</strong> P(S) ha un nodo per transazione e un arco <strong>T<sub>i</sub> → T<sub>j</sub></strong> se un’azione di T<sub>i</sub> viene <em>prima</em> di un’azione di T<sub>j</sub> in conflitto con essa. Il teorema del corso dice: <strong>S è conflict-serializable se e solo se P(S) è aciclico</strong>; in quel caso ogni ordine topologico del grafo dà uno schedule seriale equivalente.</p>
+<p class="meta">Fonti: slide 55 (conflitti negli schedule), 59–61 (precedence graph e teorema), 65 (ordine topologico). Stessa definizione in <a href="https://en.wikipedia.org/wiki/Precedence_graph">Wikipedia, «Precedence graph»</a> e in Garcia-Molina, Ullman, Widom, <em>Database Systems: The Complete Book</em>, § 18.2.</p>
+
+<form onsubmit="return false" class="exercise" id="q1" data-quiz><h3>01 / Due letture</h3><p>Nello schedule compaiono <code>r1(x)</code> e, più avanti, <code>r2(x)</code>. Sono in conflitto?</p><fieldset class="options"><legend class="meta">Scegli una risposta.</legend>
+<label><input type="radio" name="q1" data-correct="true" data-feedback="Corretto: manca la terza condizione. Due read sullo stesso elemento leggono lo stesso valore in qualsiasi ordine.">No: due read non confliggono mai tra loro</label>
+<label><input type="radio" name="q1" data-feedback="Mancano due condizioni su tre? No, ne manca una: serve anche che almeno una sia una write.">Sì: stesso elemento e transazioni diverse bastano sempre</label>
+<label><input type="radio" name="q1" data-feedback="L’adiacenza conta per la regola di scambio, non per definire il conflitto. E comunque due read non sono mai in conflitto.">Sì, ma solo se sono adiacenti nello schedule</label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div></form>
+
+<form onsubmit="return false" class="exercise" id="q2" data-quiz><h3>02 / Verso dell’arco</h3><p>In S, <code>w2(x)</code> viene prima di <code>r1(x)</code>. Che arco aggiungi?</p><fieldset class="options"><legend class="meta">Scegli una risposta.</legend>
+<label><input type="radio" name="q2" data-feedback="Il verso non dipende da chi legge: va sempre dalla transazione dell’azione che viene prima a quella dell’azione che viene dopo.">T1 → T2, perché T1 legge il valore</label>
+<label><input type="radio" name="q2" data-correct="true" data-feedback="Corretto: l’arco segue l’ordine nello schedule. In ogni seriale equivalente T2 deve stare prima di T1.">T2 → T1, dalla transazione che agisce prima</label>
+<label><input type="radio" name="q2" data-feedback="Basta una write: read-write e write-read sono conflitti quanto write-write.">Nessun arco, perché serve che entrambe siano write</label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div></form></section>
+
+<section id="metodo"><h2>Il metodo: una colonna per elemento.</h2>
+<p>Il modo più sicuro per non perdere archi è non guardare lo schedule tutto insieme. Riscrivilo separando le azioni per elemento, mantenendo l’ordine; poi in ogni colonna confronta ogni azione con quelle <em>sotto</em> di lei.</p>
+<pre><code>S = r1(x)  w2(x)  r2(y)  w1(y)  w3(x)</code></pre>
+<div class="elcols"><div><h3>Elemento x</h3><div class="sched"><span class="act t1">r<b>1</b>(x)</span><span class="act t2">w<b>2</b>(x)</span><span class="act t3">w<b>3</b>(x)</span></div>
+<p>r1 · w2 → <strong>T1 → T2</strong><br>r1 · w3 → <strong>T1 → T3</strong><br>w2 · w3 → <strong>T2 → T3</strong></p></div>
+<div><h3>Elemento y</h3><div class="sched"><span class="act t2">r<b>2</b>(y)</span><span class="act t1">w<b>1</b>(y)</span></div>
+<p>r2 · w1 → <strong>T2 → T1</strong></p></div></div>
+<p>T1 → T2 e T2 → T1 formano un <strong>ciclo</strong>: S non è conflict-serializable. Un ciclo di due nodi basta.</p>
+<div class="callout"><p><strong>Basta spostare un’azione.</strong> In <code>r1(x) w2(x) <u>w1(y) r2(y)</u> w3(x)</code> la coppia su y si inverte: l’arco diventa T1 → T2, che già c’era. Restano T1 → T2, T1 → T3, T2 → T3: grafo aciclico, equivalente al seriale <strong>T1 T2 T3</strong>.</p></div>
+
+<form onsubmit="return false" class="exercise" id="q3" data-quiz><h3>03 / Dal grafo al seriale</h3><p>Il precedence graph ha solo gli archi T2 → T1, T2 → T3, T3 → T1. Quale schedule seriale è conflict-equivalente a S?</p><fieldset class="options"><legend class="meta">Scegli una risposta.</legend>
+<label><input type="radio" name="q3" data-feedback="T1 ha due archi entranti: deve venire dopo T2 e T3, non prima.">T1 T2 T3</label>
+<label><input type="radio" name="q3" data-feedback="L’arco T3 → T1 va rispettato, ma anche T2 → T3: T3 non può precedere T2.">T3 T2 T1</label>
+<label><input type="radio" name="q3" data-correct="true" data-feedback="Corretto: T2 non ha archi entranti, poi T3, infine T1. È l’unico ordine topologico.">T2 T3 T1</label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div></form>
+</section>
+
+<section id="pratica"><h2>Ora tocca a te.</h2>
+<p>Prima uno schedule fisso, con quattro transazioni come negli appelli. Usa il metodo a colonne su carta, poi spunta gli archi. La pagina ti dice quali mancano e quale coppia di azioni li giustifica.</p>
+<div class="exercise"><h3>04 / Quattro transazioni</h3><div class="sched-drill" data-precedence="r2(x) r1(x) w1(y) r3(y) w2(z) r4(z) w3(x) r4(y)"></div></div>
+<p>Poi, se ti va, qualche schedule casuale. Non c’è un numero da raggiungere: anche uno solo, fatto con calma, conta. Ciclici e aciclici escono con la stessa probabilità.</p>
+<div class="exercise"><h3>05 / Schedule casuali</h3><div class="sched-drill" data-random></div></div></section>
+
+<section id="esame"><h2>Come scriverlo all’esame.</h2>
+<p>Il testo chiede «explaining your answer in detail». Il dettaglio è l’elenco delle coppie in conflitto con l’arco che producono: è esattamente il lavoro della colonna per elemento. Un modello, in inglese come il testo d’esame:</p>
+<pre><code>Two actions conflict if they belong to different transactions,
+access the same element and at least one is a write.
+Conflicting pairs and edges of the precedence graph P(S):
+  on x: r1(x)-w2(x)  T1→T2,  r1(x)-w3(x)  T1→T3,  w2(x)-w3(x)  T2→T3
+  on y: r2(y)-w1(y)  T2→T1
+P(S) contains the cycle T1→T2→T1, hence by the conflict-serializability
+theorem (S is conflict-serializable iff P(S) is acyclic) S is NOT
+conflict-serializable.</code></pre>
+<p>Se il grafo è aciclico, chiudi con l’ordine topologico: <em>«P(S) is acyclic, so S is conflict-serializable; a conflict-equivalent serial schedule is T1 T2 T3 (a topological order of P(S))»</em>.</p>
+<div class="callout"><p><strong>Trappole viste negli appelli.</strong> (1) Due azioni della stessa transazione non danno mai archi. (2) Non conflict-serializable non vuol dire non view-serializable: <code>r1(x) w2(x) w1(x) w3(x)</code> è view-serializable ma ha il ciclo T1 ↔ T2 (nota 05, <em>Comparison with view-serializability</em>). Serve per domande come luglio 1.1–1.2. (3) Settembre P1 chiede <em>quanti</em> schedule su due transazioni sono conflict-serializable: è lo stesso grafo, contato al contrario. Lo affronteremo dopo 2PL.</p></div></section>
+
+<section><h2>Fonte principale.</h2><p>Le slide 55–69 di Lenzerini (<code>Slides Lenzerini/5-Concurrency-complete-and-final-set-of-slides.pdf</code>) e la § 5.3 della nota 05, che le segue fedelmente e risolve gli Exercise 4 e 6. Fai l’Exercise 4 della nota senza aprire la soluzione: è il miglior test di trasferimento.</p>
+<div class="callout"><p><strong>Hai un dubbio?</strong> Chiedimelo in chat: anche uno schedule che non ti torna, lo controlliamo insieme. Quando te la senti, scrivimi e passiamo alla lezione 04 su 2PL.</p></div></section>
+
+<footer>Lezione 03 · Scheda di ripasso: <a href="../reference/concurrency-esame.html">Concurrency per l’esame</a> · Precedente: <a href="0002-sparql-per-il-problem-5.html">SPARQL per il Problem 5</a></footer>
+</main>
+
+
+
+
+
+<script id="lesson-practice">
+'use strict';
+// Shared practice widgets: radio quizzes and a checker for one-pattern SPARQL class queries.
+// No network, tracking or persistence: answers stay in the open page.
+
+function checkClassQuery(source, cls) {
+  const q = source.replace(/^\s*PREFIX[^\n]*$/gim, '').replace(/\s+/g, ' ').trim();
+  if (!q) return {ok:false, message:'Scrivi la query prima di controllare.'};
+  if (!/^SELECT\b/i.test(q)) return {ok:false, message:'Una query di interrogazione inizia con SELECT, seguito dalle variabili da restituire.'};
+  if (!/\bWHERE\s*\{/i.test(q) || !q.endsWith('}')) return {ok:false, message:'Manca il blocco WHERE { … }: le triple da cercare vanno tra graffe.'};
+  const m = q.match(/^SELECT\s+(?:DISTINCT\s+)?(\*|\?\w+)\s+WHERE\s*\{\s*(\S+)\s+(\S+)\s+(\S+?)\s*\.?\s*\}$/i);
+  if (!m) return {ok:false, message:'Basta un solo triple pattern: SELECT ?v WHERE { soggetto predicato oggetto . }. Controlla spazi e graffe.'};
+  const [, out, s, p, o] = m;
+  if (!s.startsWith('?')) return {ok:false, message:`Il soggetto ${s} è una costante: vuoi lasciarlo libero, quindi serve una variabile come ?x.`};
+  if (out !== '*' && out !== s) return {ok:false, message:`Nel SELECT restituisci ${out}, ma nel pattern la variabile è ${s}. Devono coincidere.`};
+  if (p !== 'rdf:type' && p !== 'a') return {ok:false, message:`Il predicato ${p} non esprime l’appartenenza a una classe: usa rdf:type (oppure a).`};
+  if (/^["']/.test(o)) return {ok:false, message:'La classe è una IRI, non una stringa: niente virgolette.'};
+  if (o !== cls) return {ok:false, message:`Classe sbagliata: hai scritto ${o}, la classe richiesta è ${cls} (il prefisso vuoto e le maiuscole contano).`};
+  return {ok:true, message:'Corretto. È esattamente la forma attesa all’esame: un solo triple pattern con rdf:type. Il lavoro vero è al punto successivo, dove decidi su quali triple valutarla.'};
+}
+
+if (typeof module !== 'undefined') module.exports = {checkClassQuery};
+if (typeof document !== 'undefined') {
+  const forms = document.querySelectorAll('form[data-quiz],form[data-sparql]');
+  const solved = new Set();
+  const progress = () => {
+    const el = document.querySelector('[data-progress]');
+    if (el) el.textContent = `${solved.size} / ${forms.length} esercizi completati correttamente in questa apertura.`;
+  };
+  const report = (form, ok, message) => {
+    const output = form.querySelector('div[data-feedback]');
+    output.textContent = message;
+    output.dataset.state = ok ? 'correct' : 'incorrect';
+    if (ok) solved.add(form.id); else solved.delete(form.id);
+    progress();
+  };
+  forms.forEach(form => {
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      if (form.hasAttribute('data-sparql')) {
+        const r = checkClassQuery(form.querySelector('textarea').value, form.dataset.sparql);
+        return report(form, r.ok, r.message);
+      }
+      const choice = form.querySelector('input:checked');
+      if (!choice) return report(form, false, 'Scegli una risposta e poi controlla.');
+      report(form, choice.dataset.correct === 'true', choice.dataset.feedback);
+    });
+    form.addEventListener('input', () => {
+      solved.delete(form.id);
+      form.querySelector('div[data-feedback]').textContent = '';
+      progress();
+    });
+  });
+  progress();
+}
+
+'use strict';
+// Read/write schedules: parsing, conflicts, precedence graph, random practice.
+// Widgets: <div class="sched-drill" data-precedence="r1(x) w2(x) ..." [data-random]></div>
+//          <div class="tpl-drill" data-schedule="r1(x) w2(x) ..." [data-random]></div>  (2PL, X and S/X)
+// No network, tracking or persistence: answers stay in the open page.
+
+const Schedule = (() => {
+  const parse = src => [...src.matchAll(/([rw])\s*(\d+)\s*\(\s*(\w+)\s*\)/gi)]
+    .map((m, i) => ({op: m[1].toLowerCase(), tx: +m[2], el: m[3], i}));
+  const fmt = a => `${a.op}${a.tx}(${a.el})`;
+  const txs = S => [...new Set(S.map(a => a.tx))].sort((a, b) => a - b);
+  const conflict = (a, b) => a.tx !== b.tx && a.el === b.el && (a.op === 'w' || b.op === 'w');
+
+  // Edge "i>j" → every conflicting pair (earlier action of Ti, later of Tj) that justifies it.
+  function edges(S) {
+    const out = new Map();
+    S.forEach((a, i) => S.slice(i + 1).forEach(b => {
+      if (!conflict(a, b)) return;
+      const k = `${a.tx}>${b.tx}`;
+      if (!out.has(k)) out.set(k, []);
+      out.get(k).push([a, b]);
+    }));
+    return out;
+  }
+
+  // Kahn: a topological order, or null when the graph has a cycle.
+  function topo(nodes, keys) {
+    const inDeg = new Map(nodes.map(n => [n, 0]));
+    const pairs = [...keys].map(k => k.split('>').map(Number));
+    pairs.forEach(([, j]) => inDeg.set(j, inDeg.get(j) + 1));
+    const order = [], ready = nodes.filter(n => !inDeg.get(n));
+    while (ready.length) {
+      const n = ready.shift();
+      order.push(n);
+      pairs.filter(([i]) => i === n).forEach(([, j]) => {
+        inDeg.set(j, inDeg.get(j) - 1);
+        if (!inDeg.get(j)) ready.push(j);
+      });
+    }
+    return order.length === nodes.length ? order : null;
+  }
+
+  // One cycle as a node list [a, b, ..., a], or null.
+  function cycle(nodes, keys) {
+    const adj = new Map(nodes.map(n => [n, []]));
+    [...keys].forEach(k => { const [i, j] = k.split('>').map(Number); adj.get(i).push(j); });
+    const state = new Map(), stack = [];
+    const dfs = n => {
+      state.set(n, 1); stack.push(n);
+      for (const m of adj.get(n)) {
+        if (state.get(m) === 1) return [...stack.slice(stack.indexOf(m)), m];
+        if (!state.get(m)) { const c = dfs(m); if (c) return c; }
+      }
+      state.set(n, 2); stack.pop();
+      return null;
+    };
+    for (const n of nodes) if (!state.get(n)) { const c = dfs(n); if (c) return c; }
+    return null;
+  }
+
+  // Random interleaving of nTx transactions, each with 2–3 distinct actions on x, y and at least one write.
+  function random(nTx = 3) {
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const actions = t => {
+      for (;;) {
+        const a = ['rx', 'ry', 'wx', 'wy'].sort(() => Math.random() - .5).slice(0, 2 + (Math.random() < .4));
+        if (a.some(s => s[0] === 'w')) return a.map(s => ({op: s[0], tx: t, el: s[1]}));
+      }
+    };
+    const acyclic = Math.random() < .5;  // drawn once, so the verdict can't be guessed
+    for (;;) {
+      const queues = Array.from({length: nTx}, (_, t) => actions(t + 1));
+      const S = [];
+      while (queues.some(q => q.length)) S.push(pick(queues.filter(q => q.length)).shift());
+      S.forEach((a, i) => { a.i = i; });
+      const E = edges(S);
+      if (E.size >= 2 && !cycle(txs(S), new Set(E.keys())) === acyclic) return S;
+    }
+  }
+
+  // 2PL membership. Under 2PL each Ti has a lock point LP: every lock before it, every unlock after it.
+  // Given LP, Ti must hold A at least over [min(first, LP), max(last, LP)]; S is 2PL iff some choice
+  // of distinct LPs makes these minimal intervals legal. shared=false: exclusive locks only;
+  // shared=true: sl for reads, xl from the first write (lock upgrade allowed).
+  function twoPL(S, shared) {
+    const T = txs(S), m = T.length, D = .01;
+    const use = new Map(T.map(t => [t, new Map()]));
+    S.forEach((a, k) => {
+      const u = use.get(a.tx), p = k + 1, e = u.get(a.el) || {first: p, firstW: null};
+      e.last = p;
+      if (a.op === 'w' && e.firstW === null) e.firstW = p;
+      u.set(a.el, e);
+    });
+    const span = t => { const ps = S.filter(a => a.tx === t).map(a => a.i + 1); return [Math.min(...ps), Math.max(...ps)]; };
+    const intervals = (t, lp) => [...use.get(t)].flatMap(([el, e]) => {
+      const s = Math.min(e.first - D, lp), end = Math.max(e.last + D, lp);
+      if (!shared) return [{t, el, s, e: end, x: true}];
+      if (e.firstW === null) return [{t, el, s, e: end, x: false}];
+      const xs = Math.min(e.firstW - D, lp);
+      return [...(s < xs ? [{t, el, s, e: xs, x: false, up: true}] : []), {t, el, s: xs, e: end, x: true}];
+    });
+    const clash = (I, J) => I.some(a => J.some(b => a.el === b.el && (a.x || b.x) && a.s < b.e && b.s < a.e));
+    const chosen = [];
+    const search = k => {
+      if (k === m) return true;
+      const t = T[k], [f, l] = span(t);
+      for (let g = f - 1; g <= l; g++) for (let s = 1; s <= m; s++) {
+        const lp = g + s / (m + 1);
+        if (chosen.some(c => c.lp === lp)) continue;
+        const I = intervals(t, lp);
+        if (chosen.some(c => clash(I, c.I))) continue;
+        chosen.push({t, lp, I});
+        if (search(k + 1)) return true;
+        chosen.pop();
+      }
+      return false;
+    };
+    if (search(0)) {
+      const ev = S.map((a, k) => ({time: k + 1, ord: 1, txt: fmt(a)}));
+      chosen.forEach(({t, I}) => {
+        I.forEach(iv => ev.push({time: iv.s, ord: 0, txt: `${shared ? (iv.x ? 'xl' : 'sl') : 'l'}${t}(${iv.el})`}));
+        I.filter(iv => !iv.up).forEach(iv => ev.push({time: iv.e, ord: 2, txt: `u${t}(${iv.el})`}));
+      });
+      ev.sort((a, b) => a.time - b.time || a.ord - b.ord);
+      return {ok: true, witness: ev.map(e => e.txt).join(' ')};
+    }
+    return {ok: false, reason: twoPLReason(S, shared)};
+  }
+
+  // A human-readable obstacle: Ti must unlock A before someone else uses it, yet later needs B,
+  // and another transaction uses B in between.
+  function twoPLReason(S, shared) {
+    const T = txs(S), keys = new Set(edges(S).keys()), cyc = cycle(T, keys);
+    if (cyc) return `Non è conflict-serializable (ciclo ${cyc.map(t => 'T' + t).join(' → ')}), e ogni schedule 2PL è conflict-serializable.`;
+    const clashes = (a, b) => a.tx !== b.tx && a.el === b.el && (!shared || a.op === 'w' || b.op === 'w');
+    for (const t of T) {
+      const mine = S.filter(a => a.tx === t);
+      const force = S.find(b => mine.some(a => a.i < b.i && clashes(a, b)));
+      if (!force) continue;
+      const held = mine.find(a => a.i < force.i && clashes(a, force));
+      for (const later of mine.filter(a => a.i > force.i)) {
+        if (later.el === force.el && (!shared || later.op === 'w' || force.op === 'w'))
+          return `T${t} deve rilasciare ${held.el} prima di ${fmt(force)}, ma poi gli serve di nuovo per ${fmt(later)}: riprenderlo sarebbe un lock dopo un unlock.`;
+        const writes = mine.some(a => a.el === later.el && a.op === 'w');
+        const other = S.find(b => b.i > force.i && b.i < later.i && b.tx !== t && b.el === later.el &&
+          (!shared || writes || b.op === 'w'));
+        if (other) return `T${t} deve rilasciare ${held.el} prima di ${fmt(force)}, quindi a quel punto deve già avere il lock${shared && writes ? ' esclusivo' : ''} su ${later.el} per ${fmt(later)}. Ma in mezzo c’è ${fmt(other)}, che ${shared ? 'è incompatibile con quel lock' : 'ha bisogno dello stesso lock'}.`;
+      }
+    }
+    return 'I vincoli si incastrano a catena: ogni modo di inserire lock e unlock viola la legalità o le due fasi. Prova a costruire i lock passo passo, transazione per transazione.';
+  }
+
+  // Random schedule whose 2PL verdicts (X only / S and X) fall equally often in the three possible pairs.
+  function random2PL() {
+    const want = Math.floor(Math.random() * 3);  // 0: no/no, 1: no/yes, 2: yes/yes
+    for (;;) {
+      const S = random();
+      const kind = twoPL(S, false).ok ? 2 : twoPL(S, true).ok ? 1 : 0;
+      if (kind === want) return S;
+    }
+  }
+
+  return {parse, fmt, txs, conflict, edges, topo, cycle, random, twoPL, random2PL};
+})();
+
+// Precedence graph as inline SVG; edges on the cycle are highlighted.
+function precedenceSvg(nodes, keys, cyc) {
+  const R = 18, cx = 150, cy = 105, r = nodes.length > 2 ? 70 : 60;
+  const pos = new Map(nodes.map((n, k) => {
+    const t = -Math.PI / 2 + 2 * Math.PI * k / nodes.length;
+    return [n, [cx + r * Math.cos(t), cy + r * Math.sin(t)]];
+  }));
+  const onCycle = new Set();
+  if (cyc) cyc.slice(1).forEach((n, k) => onCycle.add(`${cyc[k]}>${n}`));
+  const lines = [...keys].map(k => {
+    const [i, j] = k.split('>').map(Number);
+    const [x1, y1] = pos.get(i), [x2, y2] = pos.get(j);
+    const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+    const bend = keys.has(`${j}>${i}`) ? 16 : 0;  // two-way pair: bend both arcs apart
+    const mx = (x1 + x2) / 2 - uy * bend, my = (y1 + y2) / 2 + ux * bend;
+    const sx = x1 + ux * R, sy = y1 + uy * R, ex = x2 - ux * (R + 4), ey = y2 - uy * (R + 4);
+    const cls = onCycle.has(k) ? ' class="cyc"' : '';
+    return `<path${cls} d="M${sx},${sy} Q${mx},${my} ${ex},${ey}" marker-end="url(#${onCycle.has(k) ? 'ah-c' : 'ah'})"/>`;
+  }).join('');
+  const circles = nodes.map(n => { const [x, y] = pos.get(n);
+    return `<circle cx="${x}" cy="${y}" r="${R}"/><text x="${x}" y="${y + 5}" text-anchor="middle">T${n}</text>`; }).join('');
+  return `<svg class="pgraph" viewBox="0 0 300 210" role="img" aria-label="Precedence graph">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" class="tip"/></marker>
+<marker id="ah-c" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" class="tip cyc"/></marker></defs>
+${lines}${circles}</svg>`;
+}
+
+if (typeof module !== 'undefined') module.exports = {Schedule, precedenceSvg};
+const chips = S => `<div class="sched">${S.map((a, k) =>
+  `<span class="act t${a.tx}"><sub>${k + 1}</sub>${a.op}<b>${a.tx}</b>(${a.el})</span>`).join('')}</div>`;
+
+if (typeof document !== 'undefined') {
+  document.querySelectorAll('.tpl-drill').forEach((box, n) => {
+    let S;
+    const yn = (name, q) => `<p class="meta">${q}</p><fieldset class="options inline">
+<label><input type="radio" name="${name}" value="yes"> Sì, è 2PL</label><label><input type="radio" name="${name}" value="no"> No, non è 2PL</label></fieldset>`;
+    const render = () => {
+      box.innerHTML = chips(S) + yn(`tx${n}`, '1 · Con soli lock esclusivi (l, u)?') + yn(`ts${n}`, '2 · Con lock condivisi ed esclusivi (sl, xl, u)?') +
+        `<div class="actions"><button type="button" data-check>Controlla</button>${box.hasAttribute('data-random') ?
+        '<button type="button" class="secondary" data-new>Nuovo schedule</button>' : ''}</div><div class="feedback" role="status" aria-live="polite"></div>`;
+      box.querySelector('[data-check]').onclick = check;
+      const again = box.querySelector('[data-new]');
+      if (again) again.onclick = () => { S = Schedule.random2PL(); render(); };
+    };
+    const check = () => {
+      const out = box.querySelector('.feedback');
+      const parts = [[`tx${n}`, false, 'Soli lock esclusivi'], [`ts${n}`, true, 'Lock condivisi ed esclusivi']];
+      if (parts.some(([name]) => !box.querySelector(`input[name=${name}]:checked`))) {
+        out.dataset.state = 'incorrect'; out.textContent = 'Rispondi a entrambe le domande.'; return;
+      }
+      let all = true;
+      out.innerHTML = parts.map(([name, shared, label]) => {
+        const r = Schedule.twoPL(S, shared), ok = (box.querySelector(`input[name=${name}]:checked`).value === 'yes') === r.ok;
+        all = all && ok;
+        return `<p><strong>${label}: ${ok ? 'corretto' : 'sbagliato'}</strong>, ${r.ok ? 'è' : 'non è'} 2PL.</p>` +
+          (r.ok ? `<pre><code>${r.witness}</code></pre>` : `<p>${r.reason}</p>`);
+      }).join('');
+      out.dataset.state = all ? 'correct' : 'incorrect';
+    };
+    S = box.dataset.schedule ? Schedule.parse(box.dataset.schedule) : Schedule.random2PL();
+    render();
+  });
+
+  document.querySelectorAll('.sched-drill').forEach((box, n) => {
+    let S;
+    const name = `pg${n}`;
+    const render = () => {
+      const T = Schedule.txs(S);
+      const grid = T.flatMap(i => T.filter(j => j !== i).map(j =>
+        `<label><input type="checkbox" value="${i}>${j}"> T${i} → T${j}</label>`)).join('');
+      box.innerHTML = `${chips(S)}
+<p class="meta">1 · Spunta tutti gli archi del precedence graph.</p><fieldset class="edges">${grid}</fieldset>
+<p class="meta">2 · Lo schedule è conflict-serializable?</p>
+<fieldset class="options inline"><label><input type="radio" name="${name}" value="yes"> Sì, il grafo è aciclico</label>
+<label><input type="radio" name="${name}" value="no"> No, il grafo ha un ciclo</label></fieldset>
+<div class="actions"><button type="button" data-check>Controlla</button>${box.hasAttribute('data-random') ?
+  '<button type="button" class="secondary" data-new>Nuovo schedule</button>' : ''}</div>
+<div class="feedback" role="status" aria-live="polite"></div>`;
+      box.querySelector('[data-check]').onclick = check;
+      const again = box.querySelector('[data-new]');
+      if (again) again.onclick = () => { S = Schedule.random(); render(); };
+    };
+    const check = () => {
+      const T = Schedule.txs(S), E = Schedule.edges(S), keys = new Set(E.keys());
+      const ticked = new Set([...box.querySelectorAll('.edges input:checked')].map(c => c.value));
+      const verdict = box.querySelector(`input[name=${name}]:checked`);
+      const out = box.querySelector('.feedback');
+      const why = k => E.get(k).map(([a, b]) => `${Schedule.fmt(a)} prima di ${Schedule.fmt(b)}`).join('; ');
+      const missing = [...keys].filter(k => !ticked.has(k)), extra = [...ticked].filter(k => !keys.has(k));
+      const arrow = k => k.replace('>', ' → T').replace(/^/, 'T');
+      const msgs = [];
+      missing.forEach(k => msgs.push(`Manca ${arrow(k)}: ${why(k)}.`));
+      extra.forEach(k => { const [i, j] = k.split('>');
+        msgs.push(`${arrow(k)} non c’è: nessuna azione di T${i} viene prima di un’azione di T${j} in conflitto con essa (stesso elemento, almeno una write).`); });
+      const cyc = Schedule.cycle(T, keys), order = Schedule.topo(T, keys);
+      if (!verdict) msgs.push('Scegli anche il verdetto.');
+      else if ((verdict.value === 'yes') !== !cyc) msgs.push(cyc
+        ? `Verdetto sbagliato: c’è il ciclo ${cyc.map(t => 'T' + t).join(' → ')}, quindi non è conflict-serializable.`
+        : 'Verdetto sbagliato: il grafo è aciclico, quindi è conflict-serializable.');
+      const ok = !msgs.length;
+      const result = cyc ? `Ciclo ${cyc.map(t => 'T' + t).join(' → ')}: <strong>non</strong> conflict-serializable.`
+        : `Aciclico: conflict-serializable, equivalente allo schedule seriale <strong>${order.map(t => 'T' + t).join(' ')}</strong>${T.length > 2 ? ' (un ordine topologico; possono essercene altri)' : ''}.`;
+      out.dataset.state = ok ? 'correct' : 'incorrect';
+      out.innerHTML = (ok ? '<p>Corretto.</p>' : `<ul>${msgs.map(m => `<li>${m}</li>`).join('')}</ul>`) +
+        (ok ? `<div class="graph">${precedenceSvg(T, keys, cyc)}</div><p>${result}</p>
+<p class="meta">Archi e coppie che li giustificano: ${[...keys].map(k => `${arrow(k)} (${why(k)})`).join(' · ')}</p>` : '');
+    };
+    S = box.dataset.precedence ? Schedule.parse(box.dataset.precedence) : Schedule.random();
+    render();
+  });
+}
+
+</script>
+</body>
+</html>

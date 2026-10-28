@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strict e rigorous</title>
+<style id="lesson-styles">
+:root{color-scheme:light;--ink:#22332f;--muted:#566861;--paper:#faf8f2;--line:#d6ddd4;--green:#17664f;--tint:#edf2e9;--red:#a0332e;--gold:#e5be66;font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.65}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}main{max-width:900px;margin:auto;padding:48px 30px 70px}header{padding-bottom:30px;border-bottom:1px solid var(--line)}.eyebrow,nav,.meta,button,label,select,.tag,figcaption{font-family:system-ui,sans-serif}.eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:.7rem;color:var(--green);font-weight:700}h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.12;letter-spacing:-.035em;margin:.5em 0}h2{font-size:1.6rem;line-height:1.25;margin:0 0 20px}h3{font-size:1.13rem;line-height:1.3}.intro{font-size:1.15rem;max-width:690px}.meta,figcaption{font-size:.78rem;color:var(--muted)}nav{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:22px;font-size:.8rem}a{color:var(--green);text-underline-offset:3px}section{padding-top:36px;margin-top:14px}p{max-width:740px}code,pre,textarea{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{font-size:.84em}pre{background:#edf0e8;border:1px solid var(--line);border-radius:8px;padding:20px;overflow:auto;font-size:.8rem;line-height:1.7}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-family:system-ui,sans-serif;font-size:.73rem;text-transform:uppercase;letter-spacing:.04em}.callout{padding:16px 22px;border-left:3px solid var(--green);background:var(--tint);margin:24px 0}.callout p{margin:4px 0}.exercise{border:1px solid var(--line);border-radius:12px;padding:25px;margin:24px 0;background:#fffefa}.exercise h3{margin-top:0}.options{display:grid;gap:10px;border:0;padding:0;margin:20px 0}.options label{display:flex;align-items:baseline;gap:12px;border:1px solid var(--line);padding:12px 15px;border-radius:6px;font-size:.88rem;cursor:pointer}.options label:has(input:checked){border-color:var(--green);background:var(--tint)}button{background:var(--green);border:1px solid var(--green);border-radius:6px;color:white;padding:10px 18px;cursor:pointer;font-size:.84rem}button:hover{filter:brightness(.92)}button.secondary{background:transparent;color:var(--green)}button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.feedback{margin-top:16px;font-size:.94rem}.feedback[data-state=correct]{color:var(--green)}.feedback[data-state=incorrect]{color:var(--red)}.feedback:empty{display:none}textarea{display:block;width:100%;padding:16px;border:1px solid #8c9d91;border-radius:6px;min-height:145px;background:white;color:var(--ink);font-size:.82rem;line-height:1.8;margin:12px 0}details{margin-top:20px}summary{cursor:pointer;color:var(--green)}.actions{display:flex;gap:12px;flex-wrap:wrap}.graph{background:var(--tint);padding:22px;border-radius:8px;overflow:auto}.graph svg{display:block;width:100%;min-width:420px;height:auto}.graph text{font-family:system-ui,sans-serif;fill:var(--ink)}.graph line{stroke:var(--green);stroke-width:2}.graph rect{fill:var(--paper);stroke:var(--green)}footer{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;font-size:.82rem;color:var(--muted)}.progress{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--green);margin:18px 0}noscript{display:block;border:1px solid var(--red);padding:16px}.checklist li{margin:8px 0}@media(max-width:550px){main{padding:28px 18px}.exercise{padding:18px}th,td{padding:10px 5px;font-size:.8rem}}@media print{body{background:white;color:black}main{max-width:none;padding:0;font-size:11pt}.exercise{break-inside:avoid}button,nav,.progress{display:none}pre,.callout,.graph{background:white}a{color:inherit}details>*{display:block}textarea{min-height:110px}header{padding-bottom:10px}section{padding-top:20px;margin:0}h1{font-size:28pt}}
+.sched{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}.act{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.95rem;padding:5px 10px 5px 8px;border-radius:6px;border:1px solid;border-left-width:5px;background:white}.act sub{font-family:system-ui,sans-serif;font-size:.6rem;color:var(--muted);margin-right:5px}.act.t1{border-color:#2c6e9b}.act.t2{border-color:#b5562a}.act.t3{border-color:#6b4fa0}.act.t4{border-color:#8a7a14}.act b{font-weight:700}.edges{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;border:0;padding:0;margin:8px 0 18px}.edges label{border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:.9rem;cursor:pointer;background:white}.edges label:has(input:checked){border-color:var(--green);background:var(--tint)}.options.inline{grid-template-columns:1fr 1fr}.feedback ul{padding-left:20px;margin:6px 0}.pgraph{max-width:340px;min-width:0!important}.pgraph path{fill:none;stroke:var(--green);stroke-width:2}.pgraph .tip{fill:var(--green);stroke:none}.pgraph .cyc{stroke:var(--red)}.pgraph .tip.cyc{fill:var(--red)}.pgraph circle{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}.elcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:18px 0}.elcols>div{border:1px solid var(--line);border-radius:10px;padding:14px 18px;background:white}.elcols h3{margin:0 0 8px;font-family:system-ui,sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.plan td:first-child{white-space:nowrap;font-family:system-ui,sans-serif;font-size:.82rem}.now{background:#fbf3dc}@media(max-width:550px){.options.inline{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body><main>
+<header><div class="eyebrow">Data Management / lezione 05 / 20 minuti</div><h1>Strict e rigorous:<br>chi deve aver fatto commit, e prima di cosa.</h1><p class="intro">Alla fine saprai dire se uno schedule è strict o rigorous, anche quando mancano dei commit. È la domanda 2.3 di giugno e compare anche nel Problem 1.</p><div class="meta">Nota di riferimento: <em>05 - DM - Concurrency Control</em>, § 5.5 · Slide 140–163</div>
+<nav><a href="#perche">Perché</a><a href="#scala">La scala</a><a href="#metodo">Il metodo</a><a href="#pratica">Pratica</a><a href="#esame">Come scriverlo</a><a href="../reference/concurrency-esame.html">Scheda</a><a href="0004c-2pl-allenamento.html">← Allenamento 2PL</a></nav></header>
+<noscript>Per la correzione automatica abilita JavaScript.</noscript>
+
+<section id="perche"><h2>Perché servono.</h2>
+<p>Finora nessuna transazione faceva rollback. Se invece T1 può abortire, nasce un problema nuovo:</p>
+<pre><code>w1(x)   r2(x)   a1        T2 ha letto un valore che non è mai esistito (dirty read)</code></pre>
+<p>Se T2 ha già fatto commit, non si può più rimediare. Se non l’ha fatto, va abortita anche lei, poi chi ha letto da lei, e così via: è il <strong>cascading rollback</strong>. La serializzabilità non basta a evitarlo: serve guardare <strong>dove stanno i commit</strong>.</p></section>
+
+<section id="scala"><h2>L’idea: un lucchetto tenuto fino al commit.</h2>
+<p>Pensa al 2PL di ieri. Strict e rigorous chiedono una cosa sola: <strong>finché T<sub>i</sub> non ha fatto commit, gli altri non possono toccare ciò che T<sub>i</sub> ha usato</strong>. Cambia solo cosa conta come «usato».</p>
+<div class="elcols">
+<div><h3>Strict</h3><p>Gli elementi che T<sub>i</sub> ha <strong>scritto</strong> sono bloccati fino a c<sub>i</sub>: nessun altro li <strong>legge</strong> né li <strong>riscrive</strong>.</p><p class="meta">Come tenere i lock esclusivi fino al commit (strict 2PL).</p></div>
+<div><h3>Rigorous</h3><p>Anche gli elementi che T<sub>i</sub> ha solo <strong>letto</strong> sono protetti fino a c<sub>i</sub>: nessun altro li <strong>scrive</strong>.</p><p class="meta">Come tenere tutti i lock, anche i condivisi, fino al commit (strong strict 2PL).</p></div></div>
+<p><strong>Perché?</strong> Se T1 scrive x e poi abortisce, il suo valore non è mai esistito. Chi l’ha letto nel frattempo ha usato un dato falso (<em>dirty read</em>); chi l’ha sovrascritto rende difficile capire quale valore ripristinare. Strict impedisce entrambe le cose. Rigorous va oltre e garantisce anche che lo schedule sia conflict-serializable, nell’ordine dei commit.</p>
+<h3>Cinque casi, uno per riga</h3>
+<table><thead><tr><th>Schedule</th><th>Cosa succede su x</th><th>Strict?</th><th>Rigorous?</th></tr></thead><tbody>
+<tr><td><code>w1(x) r2(x) c1</code></td><td>T2 legge ciò che T1 ha scritto, prima di c1</td><td><strong>no</strong></td><td><strong>no</strong></td></tr>
+<tr><td><code>w1(x) w2(x) c1</code></td><td>T2 riscrive ciò che T1 ha scritto, prima di c1</td><td><strong>no</strong></td><td><strong>no</strong></td></tr>
+<tr><td><code>r1(x) w2(x) c1</code></td><td>T2 scrive ciò che T1 ha solo letto, prima di c1</td><td>sì</td><td><strong>no</strong></td></tr>
+<tr><td><code>r1(x) r2(x) c1</code></td><td>due letture: nessun conflitto</td><td>sì</td><td>sì</td></tr>
+<tr><td><code>w1(x) c1 r2(x)</code></td><td>T2 legge dopo il commit di T1</td><td>sì</td><td>sì</td></tr></tbody></table>
+<div class="callout"><p><strong>Per decidere basta una domanda</strong>, per ogni coppia di azioni di transazioni diverse sullo stesso elemento: <em>il commit di chi agisce per primo arriva prima della seconda azione?</em> Strict la pone solo quando la prima azione è una write; rigorous sempre, tranne read-read.</p></div>
+<p>Ne segue che ogni schedule rigorous è anche strict, e uno schedule seriale è sempre entrambe le cose.</p>
+<details><summary>Le altre due classi della nota (recoverable e ACR), più deboli</summary>
+<table><thead><tr><th>Classe</th><th>Chiede solo che…</th></tr></thead><tbody>
+<tr><td>ACR</td><td>chi legge un valore di T<sub>i</sub> lo legga dopo c<sub>i</sub> (le sovrascritture sono ammesse)</td></tr>
+<tr><td>Recoverable</td><td>chi legge un valore di T<sub>i</sub> faccia il proprio commit dopo c<sub>i</sub></td></tr></tbody></table>
+<p><strong>Commit mancanti e recoverable.</strong> Qui la regola «commit subito dopo l’ultima azione» non basta: il commit di chi legge va spostato <em>dopo</em> quello di chi ha scritto. Esempio: <code>w1(x) r2(x) r1(y)</code> diventa <code>w1(x) r2(x) r1(y) c1 c2</code>, che è recoverable ma non ACR né strict.</p>
+<p>serial ⊂ rigorous ⊂ strict ⊂ ACR ⊂ recoverable. Attenzione: strict non garantisce la conflict-serializability (<code>r1(x) w2(x) c2 w1(x) c1</code> è strict ma ha il ciclo T1 ⇄ T2); rigorous sì.</p></details>
+
+<form onsubmit="return false" class="exercise" id="q1" data-quiz><h3>01 / Read seguita da write</h3><p><code>r1(x) w2(x) c1 c2</code>: T2 sovrascrive x mentre T1, che l’aveva solo letto, non ha ancora fatto commit. Cosa vale?</p><fieldset class="options"><legend class="meta">Scegli una risposta.</legend>
+<label><input type="radio" name="q1" data-feedback="Strict guarda solo le azioni dopo una write: qui prima c’è una read, quindi per strict va bene.">Non è strict: c1 doveva venire prima</label>
+<label><input type="radio" name="q1" data-correct="true" data-feedback="Corretto: strict ignora la coppia read→write; rigorous no, e vorrebbe c1 prima di w2(x).">È strict, ma non è rigorous</label>
+<label><input type="radio" name="q1" data-feedback="Rigorous considera ogni coppia in conflitto, anche read→write: serve c1 prima di w2(x).">È strict ed è anche rigorous</label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div></form>
+
+<form onsubmit="return false" class="exercise" id="q2" data-quiz><h3>02 / ACR e strict</h3><p>In <code>w1(x) w2(x) c1 c2</code> nessuno legge. Cosa vale?</p><fieldset class="options"><legend class="meta">Scegli una risposta.</legend>
+<label><input type="radio" name="q2" data-feedback="ACR guarda solo le letture, e qui non ce ne sono: è ACR.">Non è ACR e non è strict</label>
+<label><input type="radio" name="q2" data-feedback="Strict guarda anche le sovrascritture: w2(x) scrive sopra w1(x) prima di c1.">È ACR ed è anche strict</label>
+<label><input type="radio" name="q2" data-correct="true" data-feedback="Corretto: nessuna lettura sporca, ma w2(x) sovrascrive un valore non committato.">È ACR, ma non è strict</label>
+</fieldset><button type="submit">Controlla</button><div class="feedback" data-feedback role="status" aria-live="polite"></div></form></section>
+
+<section id="metodo"><h2>Il metodo.</h2>
+<ol class="checklist">
+<li><strong>Commit mancanti?</strong> Mettili subito dopo l’ultima azione della transazione. Ogni regola chiede «c<sub>i</sub> prima di qualcosa», quindi prima è sempre meglio. (Nota § 5.5, <em>Membership with missing commits</em>.)</li>
+<li><strong>Una colonna per elemento</strong>, come per il precedence graph.</li>
+<li><strong>Strict:</strong> per ogni <code>w<sub>i</sub>(x)</code>, ogni azione successiva su x di un’altra transazione deve venire dopo c<sub>i</sub>.</li>
+<li><strong>Rigorous:</strong> come strict, e in più per ogni <code>r<sub>i</sub>(x)</code> ogni <code>w<sub>j</sub>(x)</code> successiva deve venire dopo c<sub>i</sub>.</li>
+<li>Basta una coppia che viola la regola per dire «no». Se non è strict, non è nemmeno rigorous.</li></ol>
+<div class="exercise"><h3>Esempio con commit mancanti</h3><pre><code>S = w1(x)  r2(y)  w3(y)  w2(x)</code></pre>
+<p>Commit inseriti: <code>w1(x) c1 r2(y) w3(y) c3 w2(x) c2</code>.</p>
+<p><strong>Strict:</strong> le write sono w1(x), w3(y), w2(x). Dopo w1(x) c’è w2(x), ma c1 è già arrivato. Dopo w3(y) nessuno usa y. <strong>Sì.</strong></p>
+<p><strong>Rigorous:</strong> <code>r2(y) … w3(y)</code> è una coppia in conflitto, e c2 arriva solo alla fine, dopo w3(y). <strong>No.</strong></p></div></section>
+
+<section id="pratica"><h2>Ora tocca a te.</h2>
+<p>Due risposte per schedule. I commit tratteggiati nella correzione sono quelli inseriti.</p>
+<div class="exercise"><h3>1</h3><div class="rec-drill" data-schedule="w1(x) r2(x) c1 w2(y) c2"></div></div>
+<div class="exercise"><h3>2</h3><div class="rec-drill" data-schedule="w1(x) c1 r2(x) w2(x) c2"></div></div>
+<div class="exercise"><h3>3</h3><div class="rec-drill" data-schedule="r1(x) r2(x) w2(y) c2 w1(y) c1"></div></div>
+<div class="exercise"><h3>4</h3><div class="rec-drill" data-schedule="w1(x) r1(y) w2(y) c1 r2(x) c2"></div></div>
+<div class="exercise"><h3>5 / Commit mancanti</h3><div class="rec-drill" data-schedule="r1(y) w1(y) w1(x) w2(x)"></div></div>
+<div class="exercise"><h3>6 / Commit mancanti</h3><div class="rec-drill" data-schedule="w1(x) w2(x) r1(y)"></div>
+<details><summary>Suggerimento</summary><p>Dove può andare c1, visto che T1 ha ancora <code>r1(y)</code> dopo w2(x)?</p></details></div>
+<div class="exercise"><h3>Casuali, quanti ne vuoi</h3><p class="meta">I tre esiti possibili (né strict né rigorous, solo strict, entrambi) escono con la stessa probabilità.</p><div class="rec-drill" data-random></div></div></section>
+
+<section id="esame"><h2>Come scriverlo all’esame.</h2>
+<pre><code>Inserting the missing commits right after the last action of each
+transaction: w1(x) c1 r2(y) w3(y) c3 w2(x) c2.
+S is strict: every action on an element written by another transaction
+(w2(x) after w1(x)) comes after that transaction's commit (c1).
+S is not rigorous: r2(y) and w3(y) conflict, but c2 does not occur
+between them.</code></pre>
+<div class="callout"><p><strong>Domande «esiste / non esiste uno schedule…»</strong> (luglio 1.3–1.4). Per dire che <em>esiste</em>, costruisci un esempio e verificalo con il metodo. Per dire che <em>non esiste</em>, mostra il vincolo che ogni schedule del tipo richiesto viola. Ricorda: uno schedule seriale è sempre rigorous.</p></div></section>
+
+<section><h2>Fonte principale.</h2><p>Nota 05, § 5.5 (circa 10 minuti), dopo gli esercizi. Esercizi 8 e 9 della nota per strict 2PL e SS2PL.</p>
+<div class="callout"><p><strong>Hai un dubbio?</strong> Scrivimelo in chat.</p></div></section>
+
+<footer>Lezione 05 · <a href="../reference/concurrency-esame.html">Scheda Concurrency</a> · Precedente: <a href="0004c-2pl-allenamento.html">Allenamento 2PL</a></footer>
+</main>
+
+
+
+
+
+<script id="lesson-practice">
+'use strict';
+// Shared practice widgets: radio quizzes and a checker for one-pattern SPARQL class queries.
+// No network, tracking or persistence: answers stay in the open page.
+
+function checkClassQuery(source, cls) {
+  const q = source.replace(/^\s*PREFIX[^\n]*$/gim, '').replace(/\s+/g, ' ').trim();
+  if (!q) return {ok:false, message:'Scrivi la query prima di controllare.'};
+  if (!/^SELECT\b/i.test(q)) return {ok:false, message:'Una query di interrogazione inizia con SELECT, seguito dalle variabili da restituire.'};
+  if (!/\bWHERE\s*\{/i.test(q) || !q.endsWith('}')) return {ok:false, message:'Manca il blocco WHERE { … }: le triple da cercare vanno tra graffe.'};
+  const m = q.match(/^SELECT\s+(?:DISTINCT\s+)?(\*|\?\w+)\s+WHERE\s*\{\s*(\S+)\s+(\S+)\s+(\S+?)\s*\.?\s*\}$/i);
+  if (!m) return {ok:false, message:'Basta un solo triple pattern: SELECT ?v WHERE { soggetto predicato oggetto . }. Controlla spazi e graffe.'};
+  const [, out, s, p, o] = m;
+  if (!s.startsWith('?')) return {ok:false, message:`Il soggetto ${s} è una costante: vuoi lasciarlo libero, quindi serve una variabile come ?x.`};
+  if (out !== '*' && out !== s) return {ok:false, message:`Nel SELECT restituisci ${out}, ma nel pattern la variabile è ${s}. Devono coincidere.`};
+  if (p !== 'rdf:type' && p !== 'a') return {ok:false, message:`Il predicato ${p} non esprime l’appartenenza a una classe: usa rdf:type (oppure a).`};
+  if (/^["']/.test(o)) return {ok:false, message:'La classe è una IRI, non una stringa: niente virgolette.'};
+  if (o !== cls) return {ok:false, message:`Classe sbagliata: hai scritto ${o}, la classe richiesta è ${cls} (il prefisso vuoto e le maiuscole contano).`};
+  return {ok:true, message:'Corretto. È esattamente la forma attesa all’esame: un solo triple pattern con rdf:type. Il lavoro vero è al punto successivo, dove decidi su quali triple valutarla.'};
+}
+
+if (typeof module !== 'undefined') module.exports = {checkClassQuery};
+if (typeof document !== 'undefined') {
+  const forms = document.querySelectorAll('form[data-quiz],form[data-sparql]');
+  const solved = new Set();
+  const progress = () => {
+    const el = document.querySelector('[data-progress]');
+    if (el) el.textContent = `${solved.size} / ${forms.length} esercizi completati correttamente in questa apertura.`;
+  };
+  const report = (form, ok, message) => {
+    const output = form.querySelector('div[data-feedback]');
+    output.textContent = message;
+    output.dataset.state = ok ? 'correct' : 'incorrect';
+    if (ok) solved.add(form.id); else solved.delete(form.id);
+    progress();
+  };
+  forms.forEach(form => {
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      if (form.hasAttribute('data-sparql')) {
+        const r = checkClassQuery(form.querySelector('textarea').value, form.dataset.sparql);
+        return report(form, r.ok, r.message);
+      }
+      const choice = form.querySelector('input:checked');
+      if (!choice) return report(form, false, 'Scegli una risposta e poi controlla.');
+      report(form, choice.dataset.correct === 'true', choice.dataset.feedback);
+    });
+    form.addEventListener('input', () => {
+      solved.delete(form.id);
+      form.querySelector('div[data-feedback]').textContent = '';
+      progress();
+    });
+  });
+  progress();
+}
+
+'use strict';
+// Strict and rigorous schedules (note 05, § 5.5), with commits inserted where they are missing.
+// No network, tracking or persistence.
+
+const Recovery = (() => {
+  // Actions r/w with an element, and commits c (abort is not used in these drills).
+  function parse(src) {
+    const out = [];
+    for (const m of src.matchAll(/([rwc])\s*(\d+)(?:\s*\(\s*(\w+)\s*\))?/gi))
+      out.push({op: m[1].toLowerCase(), tx: +m[2], el: m[3] || null});
+    return out;
+  }
+  const fmt = a => a.op === 'c' ? `c${a.tx}` : `${a.op}${a.tx}(${a.el})`;
+
+  // A missing commit goes right after the last action of its transaction: every condition below
+  // has the form "ci comes before some action", so committing as early as possible is optimal.
+  function complete(S) {
+    const out = S.map(a => ({...a}));
+    const txs = [...new Set(S.map(a => a.tx))];
+    for (const t of txs) {
+      if (out.some(a => a.op === 'c' && a.tx === t)) continue;
+      let last = -1;
+      out.forEach((a, k) => { if (a.tx === t) last = k; });
+      out.splice(last + 1, 0, {op: 'c', tx: t, el: null, added: true});
+    }
+    out.forEach((a, k) => { a.i = k; });
+    return out;
+  }
+  const commitPos = (S, t) => S.find(a => a.op === 'c' && a.tx === t).i;
+
+  // Strict: every read or write on x by Tj after a write on x by Ti (i ≠ j) needs ci before it.
+  // Rigorous: the same for every conflicting pair, so a read followed by a write counts too.
+  function check(S0, rigorous) {
+    const S = complete(S0);
+    for (const b of S) {
+      if (b.op === 'c') continue;
+      for (const a of S) {
+        if (a.i >= b.i || a.op === 'c' || a.tx === b.tx || a.el !== b.el) continue;
+        if (a.op !== 'w' && !(rigorous && b.op === 'w')) continue;
+        if (commitPos(S, a.tx) > b.i) {
+          const kind = a.op === 'w' ? (b.op === 'r' ? 'legge un valore scritto' : 'scrive sopra un valore scritto')
+            : 'scrive un elemento letto';
+          return {ok: false, S, reason: `${fmt(b)} ${kind} da T${a.tx} con ${fmt(a)}, ma c${a.tx} arriva dopo.`};
+        }
+      }
+    }
+    return {ok: true, S};
+  }
+
+  function random() {
+    const els = ['x', 'y'], n = 2 + Math.floor(Math.random() * 2);
+    const queues = [];
+    for (let t = 1; t <= n; t++) {
+      const k = 1 + Math.floor(Math.random() * 2), q = [];
+      const pool = ['r', 'w'].flatMap(op => els.map(el => ({op, tx: t, el})));
+      for (let j = 0; j < k; j++) q.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      if (!q.some(a => a.op === 'w')) q[q.length - 1].op = 'w';
+      if (Math.random() < .75) q.push({op: 'c', tx: t, el: null});
+      queues.push(q);
+    }
+    const S = [];
+    while (queues.some(q => q.length)) {
+      const live = queues.filter(q => q.length);
+      const q = live[Math.floor(Math.random() * live.length)];
+      S.push(q.shift());
+    }
+    return S;
+  }
+  // Rigorous implies strict, so only three verdict pairs exist; draw them equally often.
+  function randomBalanced() {
+    const want = Math.floor(Math.random() * 3);  // 0: no/no, 1: strict only, 2: both
+    for (;;) {
+      const S = random();
+      const kind = check(S, true).ok ? 2 : check(S, false).ok ? 1 : 0;
+      const conflicts = S.some((a, k) => a.op !== 'c' && S.slice(k + 1).some(b => b.op !== 'c' && b.tx !== a.tx && b.el === a.el));
+      if (kind === want && conflicts) return S;
+    }
+  }
+  return {parse, fmt, complete, check, random, randomBalanced};
+})();
+
+if (typeof module !== 'undefined') module.exports = {Recovery};
+
+if (typeof document !== 'undefined') {
+  const chip = (a, k) => a.op === 'c'
+    ? `<span class="act t${a.tx}"${a.added ? ' style="border-style:dashed"' : ''}><sub>${k + 1}</sub><b>c${a.tx}</b></span>`
+    : `<span class="act t${a.tx}"><sub>${k + 1}</sub>${a.op}<b>${a.tx}</b>(${a.el})</span>`;
+  const row = S => `<div class="sched">${S.map(chip).join('')}</div>`;
+  document.querySelectorAll('.rec-drill').forEach((box, n) => {
+    let S;
+    const yn = (name, q) => `<p class="meta">${q}</p><fieldset class="options inline">
+<label><input type="radio" name="${name}" value="yes"> Sì</label><label><input type="radio" name="${name}" value="no"> No</label></fieldset>`;
+    const render = () => {
+      const missing = Recovery.complete(S).some(a => a.added);
+      box.innerHTML = row(S) + (missing ? '<p class="meta">Alcune transazioni non hanno il commit: inseriscilo tu dove conviene.</p>' : '') +
+        yn(`st${n}`, '1 · È strict?') + yn(`rg${n}`, '2 · È rigorous?') +
+        `<div class="actions"><button type="button" data-check>Controlla</button>${box.hasAttribute('data-random') ?
+        '<button type="button" class="secondary" data-new>Nuovo schedule</button>' : ''}</div><div class="feedback" role="status" aria-live="polite"></div>`;
+      box.querySelector('[data-check]').onclick = check;
+      const again = box.querySelector('[data-new]');
+      if (again) again.onclick = () => { S = Recovery.randomBalanced(); render(); };
+    };
+    const check = () => {
+      const out = box.querySelector('.feedback');
+      const parts = [[`st${n}`, false, 'Strict'], [`rg${n}`, true, 'Rigorous']];
+      if (parts.some(([name]) => !box.querySelector(`input[name=${name}]:checked`))) {
+        out.dataset.state = 'incorrect'; out.textContent = 'Rispondi a entrambe le domande.'; return;
+      }
+      let allOk = true;
+      const html = parts.map(([name, rig, label]) => {
+        const r = Recovery.check(S, rig), said = box.querySelector(`input[name=${name}]:checked`).value === 'yes';
+        const good = said === r.ok; allOk = allOk && good;
+        return `<p><strong>${label}: ${good ? 'corretto' : 'sbagliato'}, ${r.ok ? 'sì' : 'no'}.</strong> ${r.ok ? '' : r.reason}</p>`;
+      }).join('');
+      const full = Recovery.complete(S);
+      out.dataset.state = allOk ? 'correct' : 'incorrect';
+      out.innerHTML = html + (full.some(a => a.added)
+        ? `<p class="meta">Con i commit mancanti messi subito dopo l’ultima azione (tratteggiati):</p>${row(full)}` : '');
+    };
+    S = box.hasAttribute('data-random') ? Recovery.randomBalanced() : Recovery.parse(box.dataset.schedule);
+    render();
+  });
+}
+
+</script>
+</body>
+</html>

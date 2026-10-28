@@ -1,4 +1,4 @@
-# RDF Resources
+# Data Management Resources
 
 ## Knowledge
 
@@ -16,6 +16,13 @@
 - [W3C — RDF 1.1 Semantics, regole RDFS (informative)](https://www.w3.org/TR/rdf11-mt/#patterns-of-rdfs-entailment-informative)
   rdfs2/3/7/9 corrispondono alle regole domain, range, subPropertyOf, subClassOf della Instance-Based Completion del corso.
 - Testi d'esame: `exams/June/TextA.pdf`, `exams/June/TextB.pdf`, `exams/July/Text.pdf`, `exams/september/Text.pdf` e `Sol.pdf` (unica soluzione ufficiale disponibile; contiene un refuso nelle triple `:edition_of`).
+
+- [Slide del corso — 5-Concurrency](Slides%20Lenzerini/5-Concurrency-complete-and-final-set-of-slides.pdf)
+  Fonte primaria per i Problem 1–2. Slide 55–69: conflitti, precedence graph, teorema, ordine topologico, Exercise 4.
+- [Wikipedia — Precedence graph](https://en.wikipedia.org/wiki/Precedence_graph)
+  Definizione standard coerente con quella del corso, citata nella lezione 03.
+- Garcia-Molina, Ullman, Widom, *Database Systems: The Complete Book*, cap. 18 (§ 18.2 conflict-serializability, § 18.3–18.4 locking).
+  Testo di riferimento alternativo alle slide.
 
 ## Wisdom (Communities)
 

@@ -23,3 +23,28 @@
 - Piano concordato indicativo: 25 mattina 05, pomeriggio 04 (circa due ore) e 06; 26 note 07–08; 27 simulazione, correzione e ripasso mirato 01–02. Piano serrato da adattare alle prestazioni effettive.
 - Per il viaggio del 24: argomento consigliato = nota 05, transazioni e anomalie della concorrenza, con esempi orali brevi. Non richiedere lettura dello schermo, notazione di schedule, grafi o calcoli mentre guida. Preparare la lezione scritta su serializzabilità in una sessione da fermo.
 - Handoff aggiornato: RIPRESA-RDF.md, sezione iniziale del 23 ottobre; il vecchio esercizio sull'amicizia più sotto è storico e già superato.
+
+## 25 ottobre 2026: nota 05 (Concurrency)
+- Simone ha chiesto con /teach di studiare la nota 05 e di ritrovare il piano verso l'esame. Stava rivedendo le prime sezioni (5.1, schedule).
+- Piano: oggi lezioni 03 precedence graph → 04 2PL X e S/X → 05 strict/rigorous → 06 timestamp scheduler; 26 note 06–08; 27 appelli a tempo.
+- Lezione 03: lessons/0003-conflict-serializability-precedence-graph.html. Usa assets/quiz.js + assets/schedule.js (parser, conflitti, precedence graph SVG, generatore casuale bilanciato ciclico/aciclico; widget `.sched-drill`). Build: `python3 -I assets/build-rdf-lesson.py lessons/0003-....html assets/quiz.js assets/schedule.js` (ora accetta più script).
+- Scheda: reference/concurrency-esame.html, da estendere a ogni lezione 04–06 (CSS incorporato a mano: reincorporarlo se cambia teaching.css).
+- schedule.js è pensato per riuso: per 2PL/strict aggiungere funzioni nello stesso modulo invece di nuovi parser.
+
+## 25 ottobre 2026: ansia e concentrazione
+- Simone riferisce un'ansia bloccante: si distrae e controlla di continuo il proprio rendimento, e non riesce a entrare in concentrazione.
+- Quindi: niente contatori, serie da completare o punteggi nelle lezioni; blocchi brevi con un solo compito chiaro; feedback sul metodo, non sul rendimento; non mettere in primo piano il conto alla rovescia verso l'esame. Esercizi anche in chat, uno alla volta, se lo preferisce.
+
+## 26 ottobre 2026, pomeriggio
+
+- Lezione 03 completata bene (anche lo schedule casuale). Alle 15:42 si passa alla lezione 04 (2PL, P2.2).
+- `schedule.js` ora ha anche `twoPL(S, shared)` (backtracking sui lock point, restituisce lo schedule con i lock o il motivo) e il widget `.tpl-drill[data-schedule|data-random]`. Il generatore `random2PL` dà no/no, no/sì, sì/sì con la stessa probabilità.
+- La scheda `reference/concurrency-esame.html` ha la sezione 2PL.
+- Dopo la 04: costi di I/O (note 06–08, P3–P4). Strict/rigorous (05) e timestamp (06) stasera o domattina.
+
+## 27 ottobre 2026
+
+- 2PL fatto in chat (Simone non riusciva a leggere), poi pagine `0004b` (ripasso dalla chat) e `0004c` (8 esercizi + casuali): fatti.
+- Bug corretto in `quiz.js`: il feedback finiva nella prima opzione (anche lei ha `data-feedback`); ora `div[data-feedback]`. Ricompilate 0002–0004.
+- Lezione 05 strict/rigorous con `assets/recovery.js` (checker con commit mancanti inseriti dopo l'ultima azione, widget `.rec-drill`). Build: `python3 -I assets/build-rdf-lesson.py lessons/0005-strict-e-rigorous.html assets/quiz.js assets/recovery.js`.
+- Simone dice che fare esercizi giusti lo fa sentire più sveglio: puntare su esercizi subito, poca lettura.
