@@ -506,3 +506,9 @@ This map explains the course's place in a broader curriculum: distributed system
 - Dependability is achieved through a combination of prevention, tolerance, removal, and forecasting.
 - Heterogeneity, openness, security, scalability, fault tolerance, concurrency, and transparency are connected design challenges, not isolated features.
 - Every guarantee depends on a clear specification and an explicit model of nodes, networks, failures, and threats.
+
+
+---
+
+> [!info] Navigazione
+> Mappa del corso: [[MOC - Dependable Distributed Systems]] · Lezione successiva: [[2 - DDS - Modelling Distributed Systems and Abstracting Communications]]

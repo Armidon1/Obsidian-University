@@ -77,4 +77,4 @@ It is critical to distinguish these two steps:
 - **Deterministic Finality:** Algorithms like PBFT or the **Uniform Flooding Consensus** provide instant/guaranteed finality once the decision step is reached.
 - **Probabilistic Finality:** In Proof-of-Work (Bitcoin), finality is probabilistic; the deeper a block is, the less likely it is to be reversed.
 
-#### See more in [[8 - Consensus Problem]] 
+#### See more in [[8 - DDS - Consensus|8 - Consensus Problem]] 

@@ -620,3 +620,8 @@ now we see more in details what happens in practise, considerign that both p and
 ![[Pasted image 20260930122508.png]]
 
 DRAWING THOSE STUFF IS EXTREMMELY IMPORTANT TO UNDERSTAND HOW YOUR OWN CODE WORKS AND TRY TO EXPLOIT YOUR OWN DESIGN.
+
+---
+
+> [!info] Navigazione
+> Mappa del corso: [[MOC - Dependable Distributed Systems]] · Lezione precedente: [[1- DDS - Introduction]] · Lezione successiva: [[3 - DDS - Time in Distributed Systems]] · Vedi anche [[Liveness]]

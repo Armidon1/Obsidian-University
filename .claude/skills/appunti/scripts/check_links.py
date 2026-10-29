@@ -30,10 +30,14 @@ for d, dirs, fs in os.walk(vault):
             attachments.setdefault(f, []).append(p)
 
 heading_cache = {}
+def norm(h):
+    # Obsidian ignora i caratteri non ammessi nei link (es. ':') quando risolve #Sezione
+    return ' '.join(re.sub(r'[:#|^\\]', ' ', h).split())
+
 def headings(path):
     if path not in heading_cache:
         txt = open(path, encoding='utf-8').read()
-        heading_cache[path] = {h.strip() for h in re.findall(r'^#{1,6} (.+)$', txt, re.M)}
+        heading_cache[path] = {norm(h) for h in re.findall(r'^#{1,6} (.+)$', txt, re.M)}
     return heading_cache[path]
 
 problems, used = 0, set()
@@ -46,17 +50,18 @@ for d, dirs, fs in os.walk(course):
         rel = os.path.relpath(p, course)
         txt = open(p, encoding='utf-8').read()
         txt = re.sub(r'```.*?```', '', txt, flags=re.S)  # ignora i blocchi di codice
+        txt = re.sub(r'`[^`\n]*`', '', txt)  # e il codice inline (Obsidian non vi risolve i link)
         for m in re.findall(r'!\[\[([^\]|#]+)(?:[|#][^\]]*)?\]\]', txt):
             name = os.path.basename(m.strip())
             used.add(name)
             if name not in attachments and name not in notes and name[:-3] not in notes:
                 print(f'MISSING IMG  {rel}: {m}'); problems += 1
         for m in re.findall(r'(?<!!)\[\[([^\]]+)\]\]', txt):
-            target = m.split('|')[0]
+            target = m.split('|')[0].rstrip('\\')  # \| dentro le tabelle
             page, _, sec = target.partition('#')
             page = os.path.basename(page.strip())
             if not page:  # link interno [[#Sezione]]
-                if sec and sec.strip() not in headings(p):
+                if sec and norm(sec) not in headings(p):
                     print(f'BAD SECTION  {rel}: {m}'); problems += 1
                 continue
             if page not in notes:
@@ -66,7 +71,7 @@ for d, dirs, fs in os.walk(course):
                 continue
             if len(notes[page]) > 1:
                 print(f'AMBIGUOUS    {rel}: {page} -> {len(notes[page])} file con questo nome')
-            if sec and not any(sec.strip() in headings(x) for x in notes[page]):
+            if sec and not any(norm(sec) in headings(x) for x in notes[page]):
                 print(f'BAD SECTION  {rel}: {m}'); problems += 1
 
 img_dir = os.path.join(course, 'images')
