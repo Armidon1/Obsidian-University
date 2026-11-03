@@ -1,217 +1,148 @@
 ---
 name: appuntiLatexDSA
-description: Genera appunti universitari completi in LaTeX e PDF pensati per chi ha DSA lievi (dislessia, discalculia, disortografia, disgrafia): stessi contenuti di /appuntiLatex, senza perdite né semplificazioni, con impaginazione ad alta leggibilità, mappe concettuali e diagrammi di flusso per capitolo e per concetto, schede di ripasso e controlli di completezza. Usare quando Simone chiede appunti per DSA o dislessia, appunti con più schemi e mappe concettuali, o invoca /appuntiLatexDSA. Per appunti LaTeX standard usare /appuntiLatex, per note Obsidian /appunti.
+description: "Progetta un libro universitario organico in LaTeX e PDF per studenti con DSA: contenuti completi, impaginazione ad alta leggibilità, uno schema introduttivo e una mappa concettuale per ogni capitolo, altri schemi selezionati per utilità, ripasso e copertura delle fonti. Usare per appunti DSA, dislessia o lettura facilitata, anche da appunti già rielaborati; per LaTeX standard usare appuntiLatex e per Obsidian appunti."
 ---
 
-# /appuntiLatexDSA — appunti in LaTeX completi e accessibili per studenti con DSA
+# /appuntiLatexDSA — libro di studio organico e accessibile in LaTeX e PDF
 
-Argomenti opzionali: percorso del materiale, e opzioni come `solo capitoli` (senza glossario), `con libro <file>`, `appunti classe <file>`. Senza argomenti si lavora sulla cartella corrente.
+## Risultato e principio editoriale
 
-Il risultato è una cartella `appunti/` nel corso: `main.tex`, `capitoli/`, `images/`, `inventario/`, `main.pdf`.
+Produci un **libro di studio organico e autonomo**, che si possa leggere dall'inizio alla fine senza dover aprire le slide. Conserva la conoscenza delle fonti e scegli la forma più utile per comprenderla.
 
-In questo file `<skill>` è la cartella della skill. Lancia gli script Python con `python3 -I` e tieni i file di lavoro nella scratchpad: in `appunti/images/` finisce solo ciò che viene incluso nel PDF.
+**Completezza sostanziale, libertà di scrittura.** Mantieni concetti, passaggi del ragionamento, condizioni, distinzioni, esempi, formule, eccezioni, dati e riferimenti. Puoi riscrivere, spostare e accorpare spiegazioni ed eliminare duplicazioni. Quando fondi due fonti, conserva le rispettive precisazioni e provenienze. La fedeltà non richiede di ripetere ogni frase o ogni occorrenza dello stesso concetto. Lunghezza e numero di diagrammi non sono obiettivi; non comprimere il ragionamento per risparmiare pagine.
 
-## Il principio: stesso contenuto, più vie d'accesso
+Le citazioni restano integrali e fedeli. Identificatori, nomi propri, valori, formule e listati mantengono la precisione necessaria. Conserva le annotazioni personali riconoscibili e con la formulazione originale, in un riquadro, in una sezione dedicata o in appendice; non mescolarle senza segnale alla trattazione verificata.
 
-Chi ha un DSA lieve ha le stesse capacità di ragionamento degli altri studenti e sostiene lo stesso esame. La difficoltà sta nel decodificare il testo, nel tenere a mente sequenze, nomi, date e numeri, e nel ritrovare le informazioni. Questi appunti riducono il costo di lettura e offrono più vie per arrivare allo stesso concetto: testo, schema, tabella e ripasso.
+## Modalità e ambito
 
-Quindi **si aggiunge, non si toglie**:
-- ogni concetto, nome, data, formula, esempio, eccezione e citazione del materiale resta nel testo;
-- i termini tecnici restano, spiegati alla prima occorrenza: non si sostituiscono con parole più facili;
-- le citazioni difficili restano integrali; la spiegazione semplice si aggiunge dopo;
-- uno schema accompagna il testo e non lo sostituisce, anche perché la sintesi vocale non legge bene i diagrammi;
-- rendere chiara la forma è permesso, ridurre il ragionamento no: scomponi una frase lunga in più frasi, ma mantieni ogni passaggio, condizione e sfumatura.
+Senza argomenti lavora sulla cartella corrente. Opzioni utili: `da appunti già rielaborati`, `ordine delle lezioni`, `solo capitoli`, `con libro <file>`, `appunti classe <file>`. Rispetta eventuali richieste diverse dell'utente.
 
-Il PDF sarà più lungo di una versione standard, ed è previsto: non comprimerlo togliendo contenuti.
+- **Libro organico (predefinita):** capitoli per argomenti e prerequisiti, anche accorpando più lezioni o separando una lezione molto eterogenea.
+- **Da appunti già rielaborati:** usa gli appunti esistenti come fonte primaria e riusa testo, figure e correzioni valide. Concentra il lavoro su indice, integrazione, collegamenti, eliminazione delle ripetizioni e impaginazione. Non rifare automaticamente tutta l'estrazione dei PDF o una nuova integrazione del libro: consulta gli originali in modo mirato per lacune, figure o incongruenze, dichiarando ciò che hai verificato.
+- **Ordine delle lezioni:** mantieni l'ordine originale quando richiesto o necessario per il contenuto; conserva comunque titoli per argomento e rimandi fra temi ripetuti.
+- **Integrazione di un volume esistente:** leggi le modifiche presenti e conserva le personalizzazioni. Non rigenerare indiscriminatamente i capitoli.
 
-## 0. Ricognizione
+Il risultato va in `appunti/`: `main.tex`, `capitoli/`, `images/`, `inventario/`, `main.pdf`. In `images/` conserva soltanto figure incluse nel volume. Tieni estratti, ritagli di prova e render nella scratchpad. Esegui gli script Python con `python3 -I`.
 
-1. Elenca i sorgenti e leggi cosa c'è già. Se `appunti/` esiste, **non sovrascrivere**: chiedi se integrare o creare una nuova cartella, perché può contenere modifiche di Simone.
-2. Stabilisci il ruolo di ogni fonte. Di solito le slide e le dispense sono il riferimento, e fissano ordine e citazioni. Gli appunti in classe aggiungono ciò che è stato detto a lezione, ma contengono spesso errori di trascrizione e nomi scritti a orecchio.
-3. Lancia il sopralluogo sui PDF:
-   ```bash
-   python3 -I <skill>/scripts/survey_pdfs.py <scratchpad>/survey <file.pdf> [...]
-   ```
-   Scrive il testo in `txt/`, le miniature in `thumbs/` e i fogli di contatto `sheet-*.png`. Stampa anche le pagine con immagini e poco testo: possono contenere testo dentro un'immagine, che `pdftotext` non vede. Guarda tutti i fogli con Read.
-4. Ricostruisci l'ordine delle lezioni e confronta le fonti: quali argomenti hanno slide, quali solo appunti, cosa manca.
-5. Chiedi una sola volta, e solo se cambia il risultato (lingua, libro da integrare, ordine davvero ambiguo). Il resto lo decidi tu e lo dichiari nel riepilogo.
+## Profilo DSA e aiuti alla lettura
 
-## 1. Estrazione
+La versione DSA conserva la stessa profondità disciplinare del libro standard e offre più vie di accesso dove servono. Mantieni il profilo regolabile in `main.tex`: font senza grazie 12 pt, interlinea ampia, spazio fra lettere e parole, allineamento a sinistra, sillabazione e legature comuni disattivate, sfondo crema modificabile per la stampa. La preferenza dell'utente prevale sulle impostazioni predefinite.
 
-- **PDF di slide**
-  - testo: già in `txt/`, oppure `pdftotext -layout -f N -l N file.pdf -`;
-  - immagini raster: `pdfimages -png -f N -l N file.pdf <out>/LNN-PP`;
-  - figure vettoriali o spezzate in tasselli (`pdfimages` restituisce molti frammenti o niente): renderizza con `pdftoppm -r 170 -png -f N -l N file.pdf <out>/LNN`, poi ritaglia:
-    ```bash
-    python3 -I <skill>/scripts/slide_crops.py <out>/crops <pagina.png> [...]
-    ```
-    Lo script ritaglia ogni blocco di inchiostro, anche i blocchi di testo: scarta quelli inutili. Se due figure si fondono, ritaglia a mano con `magick pagina.png -crop LxA+X+Y +repage -trim uscita.png`.
-- **PDF di libro o dispensa**: trova i capitoli con `pdftotext -layout`, leggili con Read (`pages`, massimo 20 per volta). Per le figure con didascalia usa `python3 -I <skill>/scripts/pdf_figures.py file.pdf <out> SIGLA [prima] [ultima]`, con `--bands` per quelle senza. Cita la pagina.
-- **docx**: `python3 -I <skill>/scripts/extract_docx.py file.docx <out> SIGLA-LNN` produce il testo con i marcatori `[IMG nome]`.
-- **pptx**: usa la skill `pptx`.
+- Usa frasi focalizzate e paragrafi brevi. Dividi un ragionamento lungo senza perderne passaggi, condizioni o sfumature. Un elenco serve quando ci sono elementi realmente paralleli o una sequenza.
+- Evita corpo piccolo, corsivo, sottolineature, maiuscolo esteso e note a piè di pagina nei capitoli. Colore e grassetto non devono essere l'unico segnale; evidenzia pochi termini chiave alla prima introduzione pertinente. Non impostare font «per dislessici» senza una preferenza dell'utente.
+- La struttura è riconoscibile ma flessibile. Ogni capitolo numerato ha `mappainizio` e `mappafine` (sezione 4). Per il resto puoi usare `primadiiniziare`, `daricordare`, `insintesi`, `ripasso`, `risposte`: scegli i riquadri che servono al capitolo. Orientamento e sintesi possono essere prosa ordinaria; non è obbligatorio ripetere tutti gli ambienti.
+- Usa `parolesemplici` per passaggi difficili e `nonconfondere` per distinzioni che rischiano di essere scambiate. `passoapasso` accompagna procedure e calcoli quando aiuta a seguire lo stato e la sequenza. Non trasformare ogni elenco numerato in una procedura.
+- Nei calcoli rendi esplicite sostituzioni e trasformazioni. Spiega simboli e unità vicino alla formula, con `simboli` o in prosa; per formule contigue con gli stessi simboli basta una legenda comune facilmente reperibile. Distingui unità e sistemi numerici, evita spezzature ambigue di valori e indirizzi, e controlla i risultati.
+- Mantieni leggibili nodi, etichette e frecce senza ridurli a testo piccolo. Dividi mappe dense in viste collegate; 7–9 nodi sono un'indicazione pratica, non una quota da raggiungere. Gli stili TikZ (`concetto`, `dettaglio`, `processo`, `decisione`, `freccia`, `etichetta`) mantengono significati coerenti.
+- Ogni diagramma ha una spiegazione testuale: lo studio e la lettura vocale devono poter seguire i passaggi anche senza decodificare la figura. `permemoria` è facoltativo e dichiara che il trucco è aggiunto dall'autore. Indica la pronuncia con `\pron{...}` solo se certa e utile.
 
-Controlla i ritagli con un foglio di contatto prima di usarli:
-```bash
-montage -label '%f' *.png -tile 8x -geometry 220x220+3+3 -pointsize 10 <scratchpad>/foglio.png
-```
+`check_latex.py` mantiene gli errori di accessibilità rilevabili nei capitoli, ma tratta la lunghezza dei paragrafi come avviso editoriale. Verifica che ogni capitolo numerato abbia i due schemi di capitolo nella posizione giusta e seguiti da testo; non impone altri schemi, flussi, riquadri o conteggi minimi. Rivedi gli avvisi nel contesto, senza aggiungere riempitivi per azzerarli.
 
-**Guarda ogni immagine prima di scrivere il capitolo**: va spiegata, non solo inserita. Dai ai file nomi che dicono cosa mostrano (`mappa-ebstorf.png`).
+## 1. Ricognizione e progetto del libro
 
-Scarta logo, sfondi e decorazioni ripetute. Un'immagine di contenuto che non puoi usare va omessa e dichiarata nel riepilogo. Il testo dentro le immagini va trascritto, così la sintesi vocale può leggerlo.
+1. Leggi le istruzioni della cartella, elenca le fonti e stabiliscine il ruolo: materiale del docente, libro richiesto, appunti rielaborati, annotazioni personali, laboratori. Mantieni la lingua già usata nel corso, salvo richiesta diversa.
+2. Se `appunti/` esiste, verifica l'autorizzazione già data: integra quando è quanto richiesto, proteggendo le modifiche personali. Se l'utente non ha indicato come trattare un volume esistente, chiarisci prima di sovrascriverlo.
+3. Individua prerequisiti, idee centrali, sovrapposizioni, esempi e applicazioni. Scrivi in `inventario/struttura.md` l'indice ragionato: obiettivo e prerequisiti di ciascun capitolo, fonti associate, collocazione di laboratori e annotazioni, motivi dei principali accorpamenti. Procedi senza richiedere un'approvazione intermedia se l'ambito è chiaro.
+4. Prepara `inventario/copertura.json`: per ogni contenuto sostanziale registra fonti e destinazioni previste. Leggi [references/copertura.md](references/copertura.md) per formato e verifica. La matrice consente di spostare o distribuire un concetto fra capitoli; non obbliga a usare le stesse parole.
+5. Per fonti grezze o parti da estrarre, segui [references/estrazione.md](references/estrazione.md). Nella modalità da appunti rielaborati limita il sopralluogo ai materiali che servono effettivamente.
 
-## 2. Inventario dei contenuti
+Chiedi chiarimenti soltanto quando lingua, ambito del libro o contraddizioni fra fonti cambiano materialmente il risultato e il contesto non li risolve. Non ricostruire a memoria una parte mancante.
 
-Questo passaggio protegge dalla perdita di concetti, il rischio principale di un adattamento. Prima di scrivere un capitolo, rileggi le sue fonti e crea `inventario/NN.txt`, con lo stesso numero del capitolo: una riga per ogni elemento da non perdere, scritta come dovrà comparire nel testo.
+## 2. Impianto e campione
 
-```
-# 01: Il lato oscuro della traduzione
-Venuti
-invisibilità del traduttore
-rough translation
-1995
-```
+Copia `assets/template/` nella nuova cartella di output, sostituisci i segnaposto `@@...@@` e configura lingua, docente e università. In un volume esistente adatta il preambolo senza sostituirlo in blocco.
 
-Includi concetti, termini tecnici, persone, opere, date, formule, esempi ed eccezioni. Dopo aver scritto il capitolo, controlla:
+Usa `capitoli/00-prova.tex` come campionario tecnico, non come struttura obbligatoria dei capitoli. Prova caratteri, formule, codice, una figura, una tabella e un diagramma rappresentativi dei materiali effettivi. Compila e guarda il campione prima di estendere il volume:
 
 ```bash
-python3 -I <skill>/scripts/check_coverage.py <corso>/appunti
+<skill>/scripts/compile.sh <corso>/appunti
 ```
 
-Lo script cerca ogni voce nella prosa, escludendo diagrammi e indici: un concetto presente solo in uno schema non basta. Trova le parole, non verifica la spiegazione, quindi rileggi anche le fonti accanto al capitolo.
+Lo script usa LuaLaTeX/latexmk locali oppure un contenitore TeX Live. Se manca l'immagine, pesa circa 6 GB: chiedi prima di scaricarla con `--pull`. Dopo la prova rimuovi il file dimostrativo e il suo `\input`. Sostituisci o rimuovi anche i file comuni dimostrativi e i loro rimandi a `cap:prova`; non lasciare capitoli inutilizzati nella consegna.
 
-## 3. Impianto e prova tecnica
+Progetta poi un primo capitolo rappresentativo con la struttura editoriale scelta e controllane la resa. L'orientamento dato dal template non sostituisce il progetto del libro.
 
-```bash
-cp -r <skill>/assets/template <corso>/appunti
-```
+## 3. Scrittura e struttura
 
-1. In `main.tex` sostituisci i segnaposto `@@...@@` e attiva le lingue e le scritture che servono al corso (istruzioni nei commenti).
-2. In `capitoli/00-prova.tex` aggiungi un campione delle scritture e dei simboli presenti nel materiale, poi compila:
-   ```bash
-   <skill>/scripts/compile.sh <corso>/appunti
-   ```
-   L'immagine TeX Live pesa circa 6 GB: se manca, lo script si ferma. Chiedi a Simone prima di rilanciarlo con `--pull`.
-3. Guarda la pagina di prova e correggi il preambolo ora.
-4. Togli la prova: cancella il file e la sua riga `\input` da `main.tex`. Il file mostra come si usano tutti gli ambienti: rileggilo prima di cancellarlo. `00-mappa-corso.tex`, `98-schede.tex` e `99-glossario.tex` rimandano ancora a `cap:prova`: i loro esempi vanno sostituiti al passo 6, e fino ad allora `check_latex.py` segnala quei `BROKEN REF`.
+Usa `capitoli/NN-titolo.tex`, con `\chapter{...}\label{cap:...}`, e includi i file da `main.tex`. Scrivi per unità coerenti e compila dopo cambiamenti significativi, mantenendo localizzabili gli errori.
 
-## 4. Impaginazione
+- Apri un capitolo con un orientamento breve: domanda centrale, prerequisiti e collegamento al percorso. Subito dopo metti `mappainizio`. Sviluppa prima ciò che serve per capire ciò che segue.
+- Ogni concetto va spiegato: che cos'è, perché serve, quali condizioni e limiti ha, come si collega al resto. Rendi espliciti i passaggi impliciti senza inventare nuovi argomenti del corso.
+- Usa sezioni descrittive e paragrafi focalizzati. Non creare una sottosezione, un riquadro o una figura per ogni termine tecnico.
+- Dopo l'ultima sezione metti `mappafine`, poi chiudi con una sintesi o con punti da ricordare; usa entrambi soltanto quando svolgono funzioni diverse. Le domande di recupero e le risposte con rimandi sono utili dove verificano una comprensione concreta, e non sono domande d'esame.
+- Riunisci una spiegazione ripetuta in una sede principale e richiamala altrove. Mantieni vicino all'uso le informazioni indispensabili per seguire il passaggio; evita continui salti fra capitoli.
+- Le sigle si sciolgono alla prima occorrenza del capitolo. I rimandi reali usano etichette stabili; colloca `\idx{termine}` e `\aut{Cognome, Nome}` dove si spiega il contenuto, evitando di indicizzare automaticamente ogni titolo o domanda del laboratorio.
 
-Il template applica già font senza grazie, corpo 12, interlinea ampia, spaziatura tra lettere, testo allineato a sinistra, niente sillabazione, niente legature e sfondo crema. Tutto si regola nel blocco «Profilo di lettura» di `main.tex`, perché i DSA sono diversi tra loro: se Simone chiede un altro font, un'altra interlinea o uno sfondo bianco per la stampa, si cambia lì.
+Adatta le unità al materiale:
 
-Non compromettere queste scelte nei capitoli:
-- niente `\small`, `\footnotesize`, `\tiny`, note a piè di pagina, `\textit`, sottolineature o MAIUSCOLO esteso: rallentano la lettura. Il grassetto va sui termini chiave, solo la prima volta che compaiono in una sezione. `\emph` è già ridefinito senza corsivo, quindi si può usare per titoli e parole straniere;
-- non usare font «per dislessici» come impostazione predefinita: le prove di un vantaggio sono deboli. Vanno bene se Simone li preferisce;
-- il colore aiuta ma non basta: ogni riquadro e nodo porta anche un'etichetta scritta, così funziona in bianco e nero e per chi distingue male i colori.
+| Unità | Elementi utili |
+| --- | --- |
+| Concetto | Definizione, problema, relazioni, esempio, condizioni e limiti |
+| Procedura | Obiettivo, prerequisiti, passi, risultato atteso, errori o casi di fallimento |
+| Codice o algoritmo | Listato, spiegazione delle parti decisive, stato iniziale/finale e condizioni |
+| Strumento | Domanda a cui risponde, dati osservabili, interpretazione e limiti |
+| Laboratorio | Consegna, metodo, osservazioni, interpretazioni, risultati verificati e questioni aperte |
 
-## 5. Capitoli
+Colloca laboratori ed esercizi in una parte autonoma o in appendice quando interrompono il percorso teorico; usa rimandi ai capitoli pertinenti. Un suggerimento dell'esercitazione non diventa un risultato osservato. Un file derivato dall'analista non diventa un artefatto prodotto dal campione.
 
-Un capitolo per lezione o blocco di slide: `capitoli/NN-titolo.tex`, con `\chapter{...}\label{cap:...}`, aggiunto via `\input` in `main.tex`. Scrivi un capitolo alla volta e compila subito dopo.
+## 4. Figure, schemi, tabelle e codice
 
-### Struttura fissa di ogni capitolo
+Ogni elemento aggiunto deve aiutare a **capire, ricordare o ritrovare** un'informazione. Usa una mappa per relazioni fra concetti, un flusso per una procedura o una decisione, una tabella per confronti omogenei e una cronologia per date pertinenti. Evita mappe che elencano soltanto i titoli e flussi che fanno sembrare sequenziali attività indipendenti.
 
-Una struttura sempre uguale permette di orientarsi senza rileggere e di sapere dove cercare.
+A parte i due schemi di capitolo descritti sotto, non esiste un minimo di diagrammi per sezione o capitolo. Non inserire riempitivi o commenti di esenzione per soddisfare un controllo numerico. Dividi gli schemi troppo densi anziché ridurre il testo a dimensioni illeggibili. Etichetta le relazioni e i rami delle decisioni; usa solo relazioni sostenute dalle fonti. Accompagna ogni schema con una spiegazione in prosa. Guarda i diagrammi renderizzati: compilare senza errori non esclude sovrapposizioni.
 
-1. `primadiiniziare`: di cosa parla, cosa bisogna ricordare (con rimandi), cosa si saprà fare alla fine.
-2. `mappa`: mappa concettuale di tutto il capitolo.
-3. Sezioni, nell'**ordine del materiale originale**, con titoli per argomento e mai «Slide N». Ogni sezione ha:
-   - testo completo, con un'idea per paragrafo;
-   - almeno uno schema o diagramma del concetto;
-   - `parolesemplici` dopo citazioni o passaggi difficili;
-   - `nonconfondere` dove due termini, nomi o procedure si somigliano;
-   - `passoapasso` per ogni procedura o esempio numerico.
-4. `daricordare`: i punti da non dimenticare, da 3 a 7.
-5. `insintesi`: il filo del ragionamento in prosa.
-6. `ripasso` con le domande, poi `risposte`, ciascuna con il rimando alla sezione. Sapere rispondere senza guardare fissa il contenuto meglio della rilettura.
+### I due schemi di ogni capitolo
 
-### Scrittura
+Ogni capitolo numerato ha due schemi, con funzioni diverse. Non servono per mappa del corso, schede e glossario. Adatta i titoli dei riquadri alla lingua del volume. Una richiesta diversa dell'utente prevale.
 
-- **Spiega**: per ogni concetto dì cos'è, perché viene introdotto, a quale problema risponde e come si lega al resto.
-- **Frasi**: una sola idea per frase, in forma attiva, con il soggetto esplicito. Evita incisi lunghi e doppie negazioni. Non comprimere una spiegazione lunga: dividila.
-- **Paragrafi**: brevi, massimo 6-7 righe. Se un paragrafo contiene un elenco nascosto, usa un elenco vero.
-- **Titoli**: descrittivi e frequenti, perché servono per ritrovare le informazioni. Ogni concetto importante ha una `\subsection`.
-- **Riferimenti**: nomina sempre ciò di cui parli, senza contare su «quanto detto sopra» o «il primo dei due». Evita indicazioni come «a sinistra» e «a destra»: usa i nomi.
-- **Sigle**: sciogli ogni sigla la prima volta che compare in ogni capitolo.
-- **Nomi difficili e stranieri**: indica la pronuncia solo se ne sei sicuro, con un `\pron{...}` semplice alla prima occorrenza.
-- **Rimandi**: `capitolo~\ref{cap:...}` verso i capitoli già visti, quando il legame è reale.
-- **Indice**: `\aut{Cognome, Nome}` per autori e opere, `\idx{termine}` per i concetti.
+| | `mappainizio` | `mappafine` |
+| --- | --- | --- |
+| Posizione | Dopo l'orientamento, prima della prima sezione | Dopo l'ultima sezione, prima del riquadro di chiusura |
+| Funzione | Solo introduttiva: che cosa arriva e in quale ordine | Riepilogo: come si collegano le idee |
+| Contenuto | 3-6 blocchi che raggruppano le sezioni, nell'ordine reale, ciascuno con il suo contenuto e il rimando `\ref` | Le idee principali, con ogni freccia etichettata da una relazione sostenuta dalle fonti |
+| Da evitare | Spiegare concetti, anticipare relazioni, ricopiare tutti i titoli | Rielencare le sezioni, ripetere lo schema iniziale, aggiungere relazioni non verificate |
 
-### Numeri e formule
+Ciascuno è seguito da una spiegazione di poche frasi che percorre lo schema senza introdurre contenuti nuovi. Se in un volume esistente c'è un vecchio ambiente `mappa`, aggiungi al preambolo i due nuovi ambienti e converti la vecchia mappa in quello adatto, oppure in uno `schema` con un titolo proprio.
 
-Questi accorgimenti aiutano soprattutto con la discalculia e non tolgono rigore:
-- dopo ogni formula, una tabella `simboli` spiega ogni simbolo a parole e con la sua unità di misura;
-- scrivi ogni passaggio dei calcoli, anche quelli ovvi, spiegando cosa cambia e perché;
-- mantieni la formula originale: la lettura a parole si aggiunge;
-- date e dati in sequenza vanno in una `cronologia`, oltre che nel testo;
-- dai ai numeri lunghi la separazione in gruppi (`1\,000\,000`). Controlla i conti.
+Per evitare sovrapposizioni, disegna così:
 
-### Schemi e diagrammi
+- **Larghezza:** resta nella larghezza utile del riquadro, circa 14,4 cm con la geometria del template, etichette comprese. Bastano due colonne di nodi larghi 4,4 cm con i centri a circa 10 cm di distanza, oppure tre colonne più strette.
+- **Altezza delle righe:** un nodo di tre righe è alto circa 2 cm. Lascia almeno 3 cm fra i centri delle righe, di più se la freccia porta un'etichetta su due righe, oppure usa il posizionamento relativo (`below=of`).
+- **Etichette:** hanno lo sfondo pieno e coprono ciò che sta sotto. Sulle frecce verticali mettile a lato (`right` o `left`), verso l'interno dello schema. Sulle frecce oblique tienile a metà di un tratto più lungo dell'etichetta. Per una freccia orizzontale lascia almeno 2 cm fra i nodi.
+- **Frecce:** nessuna freccia passa sopra un nodo. Se succede, sposta i nodi invece di aggiungere deviazioni.
+- **Pagina:** i riquadri non si spezzano, quindi uno schema alto può lasciare molto bianco prima di sé. Dividilo o riducine l'altezza. Tieni il corpo normale del testo.
 
-Ambienti: `schema` e `flusso`, con il titolo tra parentesi quadre; dentro, `tikzpicture` con gli stili già pronti (`concetto`, `dettaglio`, `esempio`, `processo`, `decisione`, `estremo`, `freccia`, `collega`, `etichetta`).
+- **Figure:** `\figw{larghezza}{file}{didascalia}` o `\figh{altezza}{a,b}{didascalia}`. La didascalia identifica il contenuto e la provenienza; la prosa ne spiega la funzione. Puoi accorpare copie della stessa figura conservando i riferimenti alle fonti. Dichiara omissioni di contenuti non ridondanti e immagini illeggibili.
+- **Testo nelle figure:** rendi disponibili come testo i contenuti necessari per lo studio, inclusi identificatori, valori e passaggi decisivi del codice. Non trascrivere decorazioni o ogni elemento irrilevante dell'interfaccia. Nella modalità da appunti rielaborati riusa le trascrizioni esistenti e integra ciò che manca; distingui spiegazione e trascrizione integrale.
+- **Tabelle:** `booktabs` e colonne `Y` di `tabularx`, oppure `longtable` con colonne `>{\RaggedRight\arraybackslash}p{...}`. Le celle vanno a capo senza giustificazione forzata; le tabelle multipagina ripetono l'intestazione. Dividi confronti troppo larghi mantenendo intestazioni e informazioni.
+- **Codice:** il template mantiene `lstlisting` come ambiente letterale con andata a capo anche per percorsi lunghi. Nel codice in linea preserva gli spazi fra istruzioni e operandi: usa per esempio `\texttt{mov eax, [ebx+4]}` con l'escaping LaTeX necessario. `\url` e `\nolinkurl` sono per indirizzi, non per istruzioni con spazi. Verifica anche il testo estratto dal PDF.
+- **Formule:** conserva la notazione e controlla i conti; spiega simboli, unità, ipotesi e passaggi necessari nel punto di utilizzo. Definizioni condivise possono accompagnare un gruppo coerente di formule.
 
-Scegli la forma in base a ciò che va mostrato:
-
-| Il contenuto è | Forma |
-|---|---|
-| Un'idea con le sue parti | Mappa concettuale, con le frecce etichettate |
-| Una procedura, un'argomentazione a passi, una causa con i suoi effetti | Diagramma di flusso |
-| Un algoritmo o un caso con condizioni | Flusso con rombi `decisione` e rami sì/no |
-| Più elementi con le stesse caratteristiche | Tabella di confronto |
-| Una sequenza di date | `cronologia` |
-| Una gerarchia o una classificazione | Albero |
-
-Regole, tutte al servizio di uno schema che si legge davvero:
-- **Mostra solo relazioni presenti nelle fonti.** Una freccia è un'affermazione: una causa o un collegamento inventati da te sono un errore di contenuto. Se vuoi proporre un legame tuo, dichiaralo nel testo come osservazione.
-- **Massimo 7-9 nodi per schema.** Se servono di più, fai una mappa generale e uno schema per ogni parte: il contenuto non si taglia, si divide.
-- **Parole brevi nei nodi, ma quelle vere**: i termini del corso, non sinonimi.
-- **Ogni freccia in una mappa ha un'etichetta** che dice la relazione («causa», «è un tipo di»). Una freccia muta costringe a indovinare.
-- **Una direzione di lettura**: dall'alto al basso o da sinistra a destra.
-- **Stessi stili per gli stessi significati** in tutto il documento.
-- **Dopo ogni schema, una frase lo racconta**, così il contenuto arriva anche con la sintesi vocale.
-- Se un diagramma non aggiunge niente, non inserirlo per riempire: metti in quella sezione il commento `% nodiagramma: motivo`, che il controllo riconosce e che resta verificabile. Vale lo stesso per `% noflusso: motivo` a livello di capitolo.
-
-**Guarda ogni diagramma renderizzato** prima di proseguire: testi fuori dai nodi e frecce sovrapposte non generano errori di compilazione.
-
-### Immagini, tabelle e citazioni
-
-- **Immagini**: `\figw{larghezza}{file}{didascalia}` o `\figh{altezza}{a,b}{didascalia}` nel punto da cui provengono, con una spiegazione.
-- **Tabelle**: `booktabs` con `tabularx` e colonne `Y`, che vanno a capo senza sillabare; poche colonne e testi brevi. Se una tabella è troppo stretta, dividila.
-- **Codice**: `lstlisting`, spiegando riga per riga ciò che conta.
-- **Citazioni**: `\begin{cit}[lingua] ... \fontecit{(fonte)} \end{cit}`. Testo a fronte: `\afronte[lingua]{originale}{traduzione}`.
-- **Trucchi per ricordare**: `permemoria`, solo se davvero utili. Vengono da te e non dal corso, e il riquadro lo dichiara.
-
-### Fedeltà alle fonti
+## 5. Fedeltà e provenienza
 
 | Situazione | Segnale |
-|---|---|
-| Errore o incongruenza nel materiale | `correzione`: testo originale, correzione e motivo |
-| Punto che le fonti non permettono di risolvere | `dubbio` |
-| Spiegazione dal libro (`con libro`) | `dallibro`, con pagina verificata |
-| Sezione senza slide, solo dagli appunti in classe | `\soloappunti` all'inizio |
-| Conoscenza generale aggiunta da te | `\integrazione{...}` |
+| --- | --- |
+| Errore o incongruenza del materiale | `correzione`: originale, correzione e motivo |
+| Punto irrisolto | `dubbio`: cosa manca e cosa verificare |
+| Integrazione richiesta dal libro | `dallibro`, con pagina verificata |
+| Contenuto ricostruito soltanto da appunti in classe | `\soloappunti` nella parte interessata |
+| Conoscenza generale aggiunta oltre le fonti | `\integrazione{...}` |
 
-Applica queste regole:
-- Non correggere mai in silenzio, e non presentare una tua conoscenza come se venisse dal corso. Se una correzione viene da te e non dalle fonti, dillo nel riquadro.
-- `parolesemplici`, `permemoria` e le domande di ripasso sono tuoi: non attribuirli al docente e non presentare le domande come domande d'esame.
-- Cita le lingue straniere esattamente come sono nel materiale. Se sani un refuso evidente, dichiaralo; se il dubbio è sostanziale, lascia il testo e usa `dubbio`.
-- Non inventare ciò che manca: niente testi, traduzioni, date o riferimenti ricostruiti a memoria. Una traduzione tua va indicata come tale.
-- Un nome che sembra scritto a orecchio negli appunti va riportato com'è, con la forma probabile in un `dubbio`.
-- Non dedurre il genere di una persona dal nome: formula la frase in modo neutro, se le fonti non lo indicano.
+Non correggere in silenzio. Mantieni le correzioni e i dubbi già segnalati, verificando che glossario, schemi e ripasso concordino con essi. Un accorpamento non risolve una contraddizione fra fonti. Non attribuire al docente inferenze, traduzioni o domande aggiunte dall'autore degli appunti. Conserva citazioni e lingue straniere con precisione; indica le traduzioni proprie. Per nomi trascritti a orecchio, conserva la forma originale e segnala quella probabile come dubbio. Non dedurre il genere di una persona dal nome.
 
-## 6. Parti comuni
+Citazioni: `\begin{cit}[lingua] ... \fontecit{(fonte)} \end{cit}`. Testo a fronte: `\afronte[lingua]{originale}{traduzione}`.
 
-Con tutti i capitoli pronti:
+## 6. Parti comuni e copertura
 
-1. `capitoli/00-mappa-corso.tex`: mappa generale del corso, un nodo per capitolo con i legami reali tra i capitoli, e una tabella capitolo-argomenti.
-2. `capitoli/98-schede.tex`, schede da ripasso rapido, ciascuna con il rimando al capitolo. Tieni solo quelle utili al corso:
-   - **Chi ha detto cosa**: persona, opera, idea, capitolo;
-   - **Cronologia** generale;
-   - **Formulario** con la spiegazione dei simboli;
-   - **Parole da non confondere**, che raccoglie i riquadri `nonconfondere`;
-   - **Procedure**: i diagrammi di flusso principali richiamati per nome.
-3. `capitoli/99-glossario.tex` (salvo `solo capitoli`): una voce per concetto, in ordine alfabetico, con una definizione breve e il rimando al capitolo. Riassume senza aggiungere. Verifica che ogni voce concordi con il testo, comprese le correzioni fatte.
-4. Adatta «Come leggere questi appunti» in `main.tex` ai segnali usati davvero.
+Salvo `solo capitoli`, prepara un glossario alfabetico dei concetti utili a orientarsi nel corso, con definizioni coerenti e rimandi alla spiegazione principale. L'indice analitico deve aiutare la ricerca, senza diventare un secondo sommario.
 
-## 7. Verifica
+Una mappa generale è utile se mostra relazioni fra i temi; una tabella capitoli/argomenti può già bastare per l'orientamento. Schede di ripasso, formulario, cronologia e confronti finali vanno selezionati per utilità, evitando di ricopiare tutti i riepiloghi.
+
+Aggiorna la matrice di copertura durante la scrittura. Verifica ogni voce leggendo fonte e destinazione: completezza del ragionamento, condizioni, esempi ed eventuali dubbi. Registra l'esito e una nota concreta. La ricerca letterale resta un ausilio per identificatori, dati e citazioni, non una prova automatica di comprensione o correttezza.
+
+Adatta «Come leggere questi appunti» ai segnali e alle parti presenti davvero.
+
+## 7. Verifica e consegna
 
 ```bash
 <skill>/scripts/compile.sh <corso>/appunti
@@ -219,23 +150,12 @@ python3 -I <skill>/scripts/check_latex.py <corso>/appunti
 python3 -I <skill>/scripts/check_coverage.py <corso>/appunti
 ```
 
-`check_latex.py` controlla le cose tecniche (immagini, rimandi, capitoli non inclusi, segnaposto, errori e caratteri mancanti nel log) e quelle di accessibilità (struttura di ogni capitolo, schema in ogni sezione, un flusso per capitolo, testo piccolo, corsivi, note a piè di pagina, paragrafi troppo lunghi). Correggi finché entrambi non riportano `problems: 0`, senza mai tagliare contenuti per farlo.
+Correggi gli errori tecnici e le lacune di copertura fino a `problems: 0`. Lo script di copertura valida la matrice e i riscontri dichiarati: non sostituisce il confronto editoriale. Gli eventuali inventari numerati `.txt` restano compatibili per i volumi precedenti.
 
-Lo script non vede tutto, quindi guarda anche il risultato:
-1. renderizza tutte le pagine (`pdftoppm -r 40 -png main.pdf <scratchpad>/pg/p`), componile in fogli con `montage` e cerca figure tagliate, pagine vuote e tabelle rotte;
-2. guarda da vicino (`-r 80`) **tutti** i diagrammi e le pagine con scritture non latine, testi a fronte e tabelle larghe;
-3. rileggi le citazioni in lingua straniera confrontandole con il testo estratto;
-4. prova la sintesi vocale in modo indiretto: `pdftotext main.pdf -` deve dare un testo scorrevole, senza parole spezzate né caratteri strani.
+Separa i controlli tecnici dalla revisione didattica: cerca prerequisiti mancanti, ripetizioni, attribuzioni confuse, mappe senza utilità e passaggi compressi. Gli avvisi editoriali richiedono giudizio, non materiale aggiunto per far sparire un numero.
 
-Se il PDF supera i 30 MB, segnalalo; riduci le immagini solo su richiesta: `magick mogrify -resize '1600x1600>' images/*.png`, poi ricompila.
+Renderizza tutte le pagine (`pdftoppm -r 40 -png main.pdf <scratchpad>/pg/p`), componi fogli di contatto e cerca pagine vuote, tagli e tabelle spezzate male. Controlla a 80 dpi tutti i `mappainizio` e `mappafine`, gli altri diagrammi, le tabelle dense, codice, scritture non latine e testi a fronte. Confronta citazioni e valori sensibili con le fonti. Estrai il testo con `pdftotext`: verifica caratteri, ordine di lettura, spazi del codice e formule rappresentative. L'estrazione è un controllo indiretto, non una certificazione di accessibilità del PDF.
 
-## 8. Riepilogo per Simone
+Se il PDF supera 30 MB, segnalalo; non ricomprimere automaticamente le immagini. Riducile se richiesto, poi ricompila e ricontrolla.
 
-Breve e facile da scorrere, in italiano:
-- cosa è stato creato: capitoli, pagine, numero di diagrammi, peso del PDF e percorso;
-- l'esito di inventario e controlli;
-- le correzioni principali e i dubbi da verificare, specie quelli che contano per l'esame;
-- le scelte fatte senza chiedere: ordine, sezioni basate solo sugli appunti, sezioni senza diagramma e perché, immagini omesse, testi trascritti da immagini;
-- cosa hai controllato davvero e cosa no.
-
-Non fare commit: lo fa Simone, oppure lo fai tu se te lo chiede.
+Consegna un riepilogo breve in italiano: percorsi di PDF e sorgenti, capitoli/pagine/peso, scelte di organizzazione e accorpamento, esiti tecnici e copertura, correzioni e dubbi importanti, immagini omesse o trascritte, verifiche svolte e limiti. Distingui materiale riutilizzato da nuove verifiche delle fonti. Non fare commit salvo richiesta esplicita.

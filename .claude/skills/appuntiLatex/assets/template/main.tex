@@ -26,7 +26,9 @@
 \usepackage{float}
 \usepackage{etoolbox}
 \usepackage[font=small,labelfont=bf]{caption}
-\usepackage{booktabs,tabularx,array}
+\usepackage{booktabs,tabularx,array,longtable,fvextra}
+\usepackage{ragged2e}
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
 \usepackage{enumitem}
 \setlist{itemsep=2pt,topsep=4pt}
 \usepackage{paracol}
@@ -65,11 +67,13 @@
   \xdef\ultimasezione{\thesection.\noexpand\ \unexpanded{#1}}\markright{\ultimasezione}}
 \makeatother
 
-\lstset{basicstyle=\ttfamily\small,breaklines=true,columns=fullflexible,keepspaces=true,
-  frame=leftline,framerule=1.5pt,rulecolor=\color{accento},xleftmargin=8pt,
-  numberstyle=\tiny\color{gray},captionpos=b,
-  % Libertinus Mono non ha grassetto né corsivo: si distingue con il colore
-  keywordstyle=\color{accento},commentstyle=\color{gray},stringstyle=\color{libro}}
+% Codice letterale: conserva spazi e Unicode; spezza anche percorsi senza spazi.
+% lstlisting usa le opzioni di fvextra (per esempio numbers=left), non language=C.
+\DefineVerbatimEnvironment{lstlisting}{Verbatim}{breaklines=true,breakanywhere=true,
+  breakautoindent=false,breakindent=1em,breaksymbolleft={},breaksymbolright={},
+  fontsize=\normalsize,frame=leftline,framesep=5pt}
+\renewcommand{\theFancyVerbLine}{\normalfont\normalsize\arabic{FancyVerbLine}}
+
 
 % --- Riquadri -----------------------------------------------------------------------
 \tcbset{appbox/.style={enhanced,breakable,boxrule=0pt,leftrule=2.5pt,sharp corners,
@@ -109,7 +113,7 @@
 
 % --- Figure --------------------------------------------------------------------------
 % \figw{larghezza in frazione di \textwidth}{file}{didascalia}
-\newcommand{\figw}[3]{\begin{figure}[H]\centering\includegraphics[width=#1\textwidth,height=.42\textheight,keepaspectratio]{#2}\caption{#3}\end{figure}}
+\newcommand{\figw}[3]{\begin{figure}[H]\centering\includegraphics[width=#1\textwidth,height=.70\textheight,keepaspectratio]{#2}\caption{#3}\end{figure}}
 % \figh{altezza}{file1,file2,...}{didascalia}: immagini affiancate alla stessa altezza
 \newcommand{\figitem}[2]{\includegraphics[height=#1,width=.31\textwidth,keepaspectratio]{#2}\hspace{.6em}}
 \newcommand{\figh}[3]{\begin{figure}[H]\centering\forcsvlist{\figitem{#1}}{#2}\unskip\caption{#3}\end{figure}}
@@ -127,7 +131,7 @@
 \maketitle
 
 \chapter*{Come leggere questi appunti}
-Gli appunti seguono l'ordine del materiale originale. Questi segnali distinguono la provenienza di ciò che leggi.
+Il libro organizza gli argomenti secondo i prerequisiti e i collegamenti del corso. Le fonti e gli accorpamenti sono tracciati nell'inventario; l'ordine delle lezioni viene mantenuto se richiesto. Questi segnali distinguono la provenienza di ciò che leggi.
 
 \begin{correzione}
 Errore o incongruenza nel materiale. Il testo originale resta riportato, accanto alla correzione e al motivo.

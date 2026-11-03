@@ -21,8 +21,8 @@
 % Il greco, anche politonico, si scrive direttamente con Fira Sans: non serve dichiararlo.
 \usepackage[english,main=italian]{babel}
 % Niente legature: fi, fl e simili restano lettere separate, a favore di lettura e sintesi vocale.
-\babelfont{rm}[Ligatures=NoCommon,LetterSpace=\spaziolettere,WordSpace=\spazioparole]{\fontprincipale}
-\babelfont{sf}[Ligatures=NoCommon,LetterSpace=\spaziolettere,WordSpace=\spazioparole]{\fontprincipale}
+\babelfont{rm}[Ligatures=NoCommon,RawFeature={-liga,-clig,-dlig,-hlig,-calt},LetterSpace=\spaziolettere,WordSpace=\spazioparole]{\fontprincipale}
+\babelfont{sf}[Ligatures=NoCommon,RawFeature={-liga,-clig,-dlig,-hlig,-calt},LetterSpace=\spaziolettere,WordSpace=\spazioparole]{\fontprincipale}
 \babelfont{tt}{\fontcodice}
 % Per l'ebraico aggiungi bidi=basic alle opzioni di babel e togli il commento a queste righe:
 % \babelprovide[import]{hebrew}
@@ -42,7 +42,7 @@
 \usepackage{float}
 \usepackage{etoolbox}
 \usepackage[font=normalsize,labelfont=bf,justification=RaggedRight,singlelinecheck=false]{caption}
-\usepackage{booktabs,tabularx,array}
+\usepackage{booktabs,tabularx,array,longtable,fvextra}
 \usepackage{enumitem}
 \setlist{itemsep=4pt,topsep=4pt}
 \usepackage{paracol}
@@ -107,10 +107,14 @@
 \makeatother
 
 % Fira Mono non ha il corsivo: il codice si distingue con il colore.
-\lstset{basicstyle=\ttfamily,breaklines=true,columns=fullflexible,keepspaces=true,
-  frame=leftline,framerule=1.5pt,rulecolor=\color{accento},xleftmargin=8pt,
-  numberstyle=\small\color{gray},captionpos=b,
-  keywordstyle=\color{accento},commentstyle=\color{gray},stringstyle=\color{libro}}
+% Codice letterale: conserva spazi e Unicode; spezza anche percorsi senza spazi.
+% lstlisting usa le opzioni di fvextra (per esempio numbers=left), non language=C.
+\DefineVerbatimEnvironment{lstlisting}{Verbatim}{breaklines=true,breakanywhere=true,
+  breakautoindent=false,breakindent=1em,breaksymbolleft={},breaksymbolright={},
+  fontsize=\normalsize,frame=leftline,framesep=5pt,
+  formatcom={\hyphenpenalty=50\exhyphenpenalty=50}}
+\renewcommand{\theFancyVerbLine}{\normalfont\normalsize\arabic{FancyVerbLine}}
+
 
 % --- Riquadri ---------------------------------------------------------------------------
 % Ogni riquadro ha un'etichetta scritta, così si riconosce anche senza colori.
@@ -122,9 +126,11 @@
 \newtcolorbox{correzione}[1][]{appbox,colframe=corr,colback=corr!6,title={\textcolor{corr}{Correzione}},#1}
 \newtcolorbox{dubbio}[1][]{appbox,colframe=fonte,colback=fonte!7,title={\textcolor{fonte}{Da verificare}},#1}
 \newtcolorbox{dallibro}[1][]{appbox,colframe=libro,colback=libro!7,title={\textcolor{libro}{Dal libro}},#1}
-% Struttura fissa del capitolo
+% Aiuti facoltativi: scegli quelli utili al capitolo
 \newtcolorbox{primadiiniziare}[1][]{appbox,colframe=accento,colback=accento!6,title={\textcolor{accento}{Prima di iniziare}},#1}
-\newtcolorbox{mappa}[1][]{appbox,unbreakable,colframe=mappacol,colback=mappacol!4,title={\textcolor{mappacol}{Mappa del capitolo}},#1}
+% Due schemi per ogni capitolo numerato: adatta i titoli alla lingua del volume.
+\newtcolorbox{mappainizio}[1][]{appbox,unbreakable,colframe=mappacol,colback=mappacol!4,title={\textcolor{mappacol}{Struttura del capitolo: che cosa arriva e in quale ordine}},#1}
+\newtcolorbox{mappafine}[1][]{appbox,unbreakable,colframe=mappacol,colback=mappacol!4,title={\textcolor{mappacol}{Mappa concettuale: come si collegano le idee}},#1}
 \newtcolorbox{daricordare}[1][]{appbox,colframe=ricorda,colback=ricorda!7,title={\textcolor{ricorda}{Da ricordare}},#1}
 \newtcolorbox{insintesi}[1][]{appbox,colframe=sintesi,colback=sintesi!7,title={\textcolor{sintesi}{In sintesi}},#1}
 \newtcolorbox{ripasso}[1][]{appbox,colframe=accento,colback=accento!4,title={\textcolor{accento}{Ripasso: prova a rispondere senza guardare}},#1}
@@ -167,7 +173,7 @@
   estremo/.style={draw=flussocol,thick,fill=flussocol!18,rounded rectangle,align=center,minimum height=.9cm,inner xsep=12pt,font=\bfseries},
   freccia/.style={-{Latex[length=2.8mm,width=2.2mm]},thick,color=testo},
   collega/.style={thick,color=testo},
-  etichetta/.style={font=\small,fill=pagina,inner sep=2pt,midway,align=center},
+  etichetta/.style={font=\normalsize,fill=pagina,inner sep=2pt,align=center},
 }
 
 % --- Citazioni e testi a fronte ----------------------------------------------------------
@@ -189,7 +195,7 @@
 
 % --- Figure --------------------------------------------------------------------------------
 % \figw{larghezza in frazione di \textwidth}{file}{didascalia}
-\newcommand{\figw}[3]{\begin{figure}[H]\centering\includegraphics[width=#1\textwidth,height=.42\textheight,keepaspectratio]{#2}\caption{#3}\end{figure}}
+\newcommand{\figw}[3]{\begin{figure}[H]\centering\includegraphics[width=#1\textwidth,height=.70\textheight,keepaspectratio]{#2}\caption{#3}\end{figure}}
 % \figh{altezza}{file1,file2,...}{didascalia}: immagini affiancate alla stessa altezza
 \newcommand{\figitem}[2]{\includegraphics[height=#1,width=.31\textwidth,keepaspectratio]{#2}\hspace{.6em}}
 \newcommand{\figh}[3]{\begin{figure}[H]\centering\forcsvlist{\figitem{#1}}{#2}\unskip\caption{#3}\end{figure}}
@@ -207,15 +213,15 @@
 \maketitle
 
 \chapter*{Come leggere questi appunti}
-Questi appunti contengono tutto il materiale del corso. Gli schemi e i riquadri si aggiungono al testo: non tolgono e non semplificano niente.
+Questo libro organizza i contenuti sostanziali del corso per prerequisiti e argomenti, accorpando le spiegazioni ripetute. Gli schemi e i riquadri offrono altre vie di accesso alle spiegazioni. Fonti e destinazioni sono tracciate nella matrice di copertura.
 
-\textbf{Ogni capitolo ha sempre la stessa struttura.} Puoi usarla così:
+\textbf{Il percorso di lettura è riconoscibile e flessibile.} Gli aiuti disponibili si usano così:
 
 \begin{enumerate}
-\item Leggi \textbf{Prima di iniziare} e guarda la \textbf{Mappa del capitolo}: sai già dove stai andando.
-\item Studia una sezione alla volta. Ogni sezione ha il testo e almeno uno schema.
-\item Alla fine leggi \textbf{Da ricordare} e \textbf{In sintesi}.
-\item Fai il \textbf{Ripasso} senza guardare, poi controlla le \textbf{Risposte}.
+\item Leggi l'orientamento iniziale per riconoscere obiettivo e prerequisiti, poi la \textbf{Struttura del capitolo} per vedere che cosa arriva e in quale ordine.
+\item Studia una sezione alla volta. Tabelle e diagrammi compaiono quando chiariscono confronti, relazioni o procedure; la prosa conserva il ragionamento completo.
+\item Alla fine usa la \textbf{Mappa concettuale} per vedere come si collegano le idee, poi la sintesi o i punti da ricordare per ricostruire il filo del capitolo.
+\item Quando ci sono domande di ripasso, prova a rispondere senza guardare e poi controlla le risposte con i rimandi.
 \end{enumerate}
 
 \textbf{Questi segnali dicono da dove viene un'informazione.}
@@ -238,7 +244,7 @@ Così è segnalata una sezione senza slide, ricostruita soltanto dagli appunti i
 Spiegazione aggiunta in questi appunti, dopo un passaggio difficile. Non è una frase del docente e non sostituisce il testo originale.
 \end{parolesemplici}
 
-\textbf{Alla fine del volume} trovi le schede di ripasso, il glossario e l'indice analitico. Il PDF ha i segnalibri e il testo si può far leggere da un programma di sintesi vocale.
+\textbf{Alla fine del volume} trovi le schede di ripasso, il glossario e l'indice analitico. Il PDF offre segnalibri e testo selezionabile. L'estrazione del testo va verificata; questo non implica una certificazione PDF/UA.
 
 \tableofcontents
 

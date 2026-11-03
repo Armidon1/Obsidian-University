@@ -4,9 +4,11 @@ uso: python3 -I check_latex.py <cartella-appunti> [--overfull PT] [--max-parole 
 
 Sorgenti:      immagini mancanti o non usate, \\ref senza \\label, \\label doppie, file di
                capitoli/ non inclusi, segnaposto @@...@@ rimasti.
-Accessibilità: ogni capitolo ha i riquadri previsti e un diagramma di flusso; ogni sezione ha
-               uno schema (o '% nodiagramma: motivo'); niente testo piccolo, corsivo, sottolineato,
-               note a piè di pagina; paragrafi entro N parole (default 110), citazioni escluse.
+Accessibilità: niente testo piccolo, corsivo, sottolineato o note a piè di pagina nei capitoli.
+Editoriale:    paragrafi oltre N parole (default 110): avvisi, non errori.
+Schemi:        ogni capitolo numerato ha mappainizio prima della prima sezione e mappafine dopo
+               l'ultima, ciascuno seguito da testo (solo se main.tex definisce i due ambienti).
+               Nessun altro minimo di diagrammi, flussi o riquadri; struttura flessibile.
 Log:           errori, caratteri assenti dal font, riferimenti non risolti, file non trovati,
                righe oltre il margine di più di PT punti (default 10), log vecchio.
 Termina con 'problems: N'; l'exit code è 1 se N > 0.
@@ -27,6 +29,7 @@ if not os.path.isfile(main):
     sys.exit(f'main.tex non trovato in {root}')
 
 problems = 0
+editorial_warnings = 0
 
 
 def report(kind, msg):
@@ -35,9 +38,15 @@ def report(kind, msg):
     print(f'{kind:<14}{msg}')
 
 
+def advise(kind, msg):
+    global editorial_warnings
+    editorial_warnings += 1
+    print(f'{kind:<14}{msg}')
+
+
 def clean(tex):
     """Toglie ambienti letterali e commenti, dove i comandi non vanno interpretati."""
-    tex = re.sub(r'\\begin\{(lstlisting|verbatim)\}.*?\\end\{\1\}', '', tex, flags=re.S)
+    tex = re.sub(r'\\begin\{(lstlisting|verbatim|Verbatim|minted)\}.*?\\end\{\1\}', '', tex, flags=re.S)
     return re.sub(r'(?<!\\)%.*', '', tex)
 
 
@@ -92,9 +101,12 @@ for rel in order:
             report('DUP LABEL', f'{name}: {labels[name]} e {rel}')
         labels.setdefault(name, rel)
 for rel in order:
-    for name in re.findall(r'\\(?:page|auto|name)?ref\{([^}]+)\}', sources[rel]):
+    for name in re.findall(r'\\(?:page|auto|name|eq)?ref\{([^}]+)\}', sources[rel]):
         if name not in labels:
             report('BROKEN REF', f'{rel}: {name}')
+    for name in re.findall(r'\\hyperref\[([^\]]+)\]', sources[rel]):
+        if name not in labels:
+            report('BROKEN REF', f'{rel}: hyperref[{name}]')
 
 # --- capitoli non inclusi e segnaposto ---------------------------------------------------
 chap_dir = os.path.join(root, 'capitoli')
@@ -108,18 +120,36 @@ for rel in order:
         report('PLACEHOLDER', f'{rel}: {name}')
 
 # --- accessibilità -----------------------------------------------------------------------
-REQUIRED = ['primadiiniziare', 'mappa', 'daricordare', 'insintesi', 'ripasso', 'risposte']
-DIAGRAM = re.compile(r'\\begin\{(?:schema|flusso|tikzpicture)\}')
 BANNED = {
     r'\\(?:small|footnotesize|scriptsize|tiny)\b': 'testo piccolo',
     r'\\footnote\b': 'nota a piè di pagina',
-    r'\\textit\b|\\itshape\b|\\it\b|\\slshape\b': 'corsivo',
+    r'\\textit\b|\\itshape\b|(?<!\\)\\it\b|\\slshape\b': 'corsivo',
     r'\\underline\b|\\uline\b': 'sottolineatura',
     r'\\MakeUppercase\b': 'maiuscolo esteso',
 }
-UNCOUNTED = re.compile(r'\\begin\{(cit|tikzpicture|tabularx|tabular|simboli|cronologia|figure|align\*?|equation\*?)\}'
+UNCOUNTED = re.compile(r'\\begin\{(cit|tikzpicture|tabularx|tabular|longtable|simboli|cronologia|figure|align\*?|equation\*?)\}'
                        r'.*?\\end\{\1\}', re.S)
 chapters = diagrams_total = 0
+chapter_maps = r'\newtcolorbox{mappainizio}' in sources.get('main.tex', '') and r'\newtcolorbox{mappafine}' in sources.get('main.tex', '')
+
+
+def check_chapter_maps(rel, tex):
+    for env in ('mappainizio', 'mappafine'):
+        found = len(re.findall(r'\\begin\{%s\}' % env, tex))
+        if found != 1:
+            report('CHAPTER MAP', f'{rel}: {env} presente {found} volte (ne serve una)')
+            continue
+        after = tex.split(r'\end{%s}' % env, 1)[1].lstrip()
+        if after.startswith(('\\begin', '\\section', '\\end')) or not after:
+            report('CHAPTER MAP', f'{rel}: {env} senza spiegazione a testo subito dopo')
+    sections = [m.start() for m in re.finditer(r'\\section\*?\{', tex)]
+    start, end = tex.find(r'\begin{mappainizio}'), tex.find(r'\begin{mappafine}')
+    if sections and start > sections[0]:
+        report('CHAPTER MAP', f'{rel}: mappainizio dopo la prima sezione')
+    if sections and -1 < end < sections[-1]:
+        report('CHAPTER MAP', f'{rel}: mappafine prima dell\'ultima sezione')
+
+
 for rel in order:
     if not rel.startswith('capitoli' + os.sep):
         continue
@@ -133,28 +163,15 @@ for rel in order:
     for par in re.split(r'\n\s*\n', prose):
         words = len(re.sub(r'\\[a-zA-Z]+(?:\[[^\]]*\])?|[{}]', ' ', par).split())
         if words > max_words:
-            report('LONG PAR', f'{rel}: {words} parole: «{" ".join(par.split())[:50]}...»')
+            advise('LONG PAR', f'{rel}: {words} parole: «{" ".join(par.split())[:50]}...»')
 
-    name = os.path.basename(rel)
-    if name.startswith(('00-mappa', '98-', '99-')) or r'\chapter{' not in tex:
-        continue
-    chapters += 1
-    for env in REQUIRED:
-        if r'\begin{%s}' % env not in tex:
-            report('MISSING BOX', f'{rel}: {env}')
-    if r'\begin{flusso}' not in tex and '% noflusso:' not in raw[rel]:
-        report('NO FLOW', f'{rel}: nessun diagramma di flusso (o "% noflusso: motivo")')
-    # Le sezioni si leggono dal sorgente grezzo, per vedere il commento di esenzione.
-    parts = re.split(r'(?m)^\\section\*?\{', raw[rel])[1:]
-    for part in parts:
-        title = part.split('}')[0]
-        body = clean(part)
-        if not DIAGRAM.search(body) and '% nodiagramma:' not in part:
-            report('NO DIAGRAM', f'{rel}: sezione «{title}» (o "% nodiagramma: motivo")')
-    found = len(DIAGRAM.findall(tex))
-    diagrams_total += len(re.findall(r'\\begin\{tikzpicture\}', tex))
-    print(f'(info) {name}: sezioni {len(parts)}, tikz {len(re.findall(r"begin.tikzpicture", tex))}, '
-          f'flussi {tex.count(chr(92) + "begin{flusso}")}, voci diagramma {found}')
+    count = len(re.findall(r'\\begin\{tikzpicture\}', tex))
+    diagrams_total += count
+    if r'\chapter{' in tex and not os.path.basename(rel).startswith(('00-', '98-', '99-')):
+        chapters += 1
+        if chapter_maps:
+            check_chapter_maps(rel, tex)
+    print(f'(info) {os.path.basename(rel)}: diagrammi {count}')
 
 # --- log -------------------------------------------------------------------------------
 log_path = os.path.join(root, 'main.log')
@@ -182,5 +199,6 @@ else:
 
 print(f'(info) file: {len(order)}, capitoli: {chapters}, diagrammi TikZ: {diagrams_total}, '
       f'immagini usate: {len(used)}/{len(on_disk)}, etichette: {len(labels)}')
+print('editorial warnings:', editorial_warnings)
 print('problems:', problems)
 sys.exit(1 if problems else 0)

@@ -1,3 +1,5 @@
+% Campionario tecnico ed editoriale: mappainizio e mappafine servono in ogni capitolo numerato,
+% gli altri ambienti qui mostrati sono facoltativi.
 % Pagina di prova ed esempio d'uso di tutti gli ambienti.
 % Aggiungi un campione delle scritture e dei simboli del corso, compila, guarda il risultato.
 % Rileggilo come modello, poi cancella il file e la sua riga \input.
@@ -9,25 +11,29 @@
 
 \textbf{Che cosa devi ricordare:} niente, è il primo capitolo.
 
-\textbf{Alla fine saprai:} riconoscere ogni riquadro e ogni tipo di schema.
+\textbf{Alla fine saprai:} scegliere gli aiuti utili al ragionamento.
 \end{primadiiniziare}
 
-\begin{mappa}
+\begin{mappainizio}
 \centering
-\begin{tikzpicture}[node distance=1.8cm and .3cm]
-\node[concetto=4.4cm] (c) {Strumenti degli appunti};
-\node[dettaglio,below left=of c] (s) {Schemi};
-\node[dettaglio,below=of c] (t) {Testo e citazioni};
-\node[dettaglio,below right=of c] (n) {Numeri e codice};
-\draw[freccia] (c) -- node[etichetta] {comprende} (s);
-\draw[freccia] (c) -- node[etichetta] {comprende} (t);
-\draw[freccia] (c) -- node[etichetta] {comprende} (n);
+\begin{tikzpicture}
+\node[concetto=3.5cm] (b0) at (0,0) {Schemi};
+\node[dettaglio=6.3cm] (d0) at (5.5,0) {Mappe e diagrammi di flusso\\ (sezione~\ref{sec:prova-schemi})};
+\node[concetto=3.5cm] (b1) at (0,-2.2) {Testo};
+\node[dettaglio=6.3cm] (d1) at (5.5,-2.2) {Citazioni e riquadri di aiuto\\ (sezione~\ref{sec:prova-testo})};
+\node[concetto=3.5cm] (b2) at (0,-4.4) {Dati};
+\node[dettaglio=6.3cm] (d2) at (5.5,-4.4) {Numeri, tabelle e codice\\ (sezione~\ref{sec:prova-dati})};
+\draw[thick,color=mappacol] (b0) -- (d0);
+\draw[thick,color=mappacol] (b1) -- (d1);
+\draw[thick,color=mappacol] (b2) -- (d2);
+\draw[freccia] (b0) -- (b1);
+\draw[freccia] (b1) -- (b2);
 \end{tikzpicture}
-\end{mappa}
+\end{mappainizio}
 
-La mappa ha un concetto centrale, «Strumenti degli appunti», che comprende tre parti: gli schemi, il testo con le citazioni, i numeri con il codice.
+Il capitolo ha tre parti, da leggere dall'alto verso il basso: gli schemi, il testo e i dati. Lo schema mostra soltanto che cosa arriva e in quale ordine: i concetti sono spiegati nelle sezioni.
 
-\section{Schemi}
+\section{Schemi}\label{sec:prova-schemi}
 
 \subsection{Mappa di un concetto}
 
@@ -54,7 +60,7 @@ Lo schema dice che un concetto ha una definizione e si vede in un esempio del co
 \node[estremo] (i) {Inizio};
 \node[decisione,below=of i] (d) {Ci sono passi in sequenza?};
 \node[processo=4.4cm,below=of d] (f) {Usa un diagramma di flusso};
-\node[processo=4.4cm,right=of d] (m) {Usa una mappa concettuale};
+\node[processo=4.4cm,right=of d] (m) {Valuta mappa, tabella o prosa};
 \node[estremo,below=of f] (e) {Fine};
 \draw[freccia] (i) -- (d);
 \draw[freccia] (d) -- node[etichetta] {sì} (f);
@@ -64,10 +70,9 @@ Lo schema dice che un concetto ha una definizione e si vede in un esempio del co
 \end{tikzpicture}
 \end{flusso}
 
-Il diagramma fa una domanda: ci sono passi in sequenza? Se la risposta è sì, si usa un diagramma di flusso. Se la risposta è no, si usa una mappa concettuale.
+Il diagramma fa una domanda: ci sono passi in sequenza? Se la risposta è sì, si usa un diagramma di flusso. Se la risposta è no, si valuta se servono una mappa, una tabella oppure la sola prosa.
 
-\section{Testo e citazioni}
-% nodiagramma: sezione dimostrativa senza concetti da schematizzare
+\section{Testo e citazioni}\label{sec:prova-testo}
 
 Italiano con accenti: è, à, ì, ò, ù, perché, città. Parola inglese: \en{translation}\aut{Autore, Nome}\idx{concetto}. Titolo di un'opera: \emph{Titolo dell'opera}. Termine chiave: \textbf{termine}. Nome con pronuncia: Goethe \pron{ghöte}.
 
@@ -98,8 +103,7 @@ Un trucco per ricordare va sempre dichiarato come tale.
 \soloappunti
 Testo. \integrazione{prova di integrazione.}
 
-\section{Numeri, tabelle e codice}
-% nodiagramma: sezione dimostrativa senza concetti da schematizzare
+\section{Numeri, tabelle e codice}\label{sec:prova-dati}
 
 \subsection{Una formula}
 
@@ -141,15 +145,31 @@ Riga & un testo abbastanza lungo da andare a capo dentro la cella della tabella 
 
 \subsection{Codice}
 
-\begin{lstlisting}[language=C,numbers=left]
+\begin{lstlisting}[numbers=left]
 int main(void) { /* commento con è */
     return 0;
 }
 \end{lstlisting}
 
+\begin{mappafine}
+\centering
+\begin{tikzpicture}
+\node[concetto=4.4cm] (c) at (5,0) {Stessi contenuti, più vie di accesso};
+\node[dettaglio=4.4cm] (s) at (0,-3.2) {Schemi: relazioni e procedure};
+\node[dettaglio=4.4cm] (r) at (10,-3.2) {Riquadri: aiuti alla comprensione};
+\node[concetto=4.4cm] (p) at (5,-6.4) {Spiegazione a testo};
+\draw[freccia] (c) -- node[etichetta] {mostrati con} (s);
+\draw[freccia] (c) -- node[etichetta] {chiariti con} (r);
+\draw[freccia] (s) -- node[etichetta] {sempre con} (p);
+\draw[freccia] (r) -- node[etichetta] {si aggiungono a} (p);
+\end{tikzpicture}
+\end{mappafine}
+
+Gli stessi contenuti hanno più vie di accesso. Gli schemi mostrano relazioni e procedure, i riquadri aiutano a comprendere. Gli schemi hanno sempre una spiegazione a testo, e i riquadri si aggiungono al testo senza sostituirlo.
+
 \begin{daricordare}
 \begin{itemize}
-\item Ogni capitolo ha la stessa struttura.
+\item Ogni capitolo ha un percorso riconoscibile, con gli aiuti pertinenti.
 \item Gli schemi si aggiungono al testo.
 \item Ogni formula ha la spiegazione dei simboli.
 \end{itemize}
@@ -162,13 +182,13 @@ Il template offre schemi, riquadri e tabelle pronte. Servono a dare più vie d'a
 \begin{ripasso}
 \begin{enumerate}
 \item Che cosa deve avere ogni freccia di una mappa concettuale?
-\item Che cosa segue sempre una citazione difficile?
+\item Quale aiuto può accompagnare una citazione difficile?
 \end{enumerate}
 \end{ripasso}
 
 \begin{risposte}
 \begin{enumerate}
 \item Un'etichetta che dice la relazione (sezione «Schemi»).
-\item Un riquadro «In parole semplici» (sezione «Testo e citazioni»).
+\item Una spiegazione, eventualmente nel riquadro «In parole semplici» (sezione «Testo e citazioni»).
 \end{enumerate}
 \end{risposte}

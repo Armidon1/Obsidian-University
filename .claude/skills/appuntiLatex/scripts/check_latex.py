@@ -32,7 +32,7 @@ def report(kind, msg):
 
 def clean(tex):
     """Toglie commenti e ambienti letterali, dove i comandi non vanno interpretati."""
-    tex = re.sub(r'\\begin\{(lstlisting|verbatim)\}.*?\\end\{\1\}', '', tex, flags=re.S)
+    tex = re.sub(r'\\begin\{(lstlisting|verbatim|Verbatim|minted)\}.*?\\end\{\1\}', '', tex, flags=re.S)
     return re.sub(r'(?<!\\)%.*', '', tex)
 
 
@@ -87,9 +87,12 @@ for rel in order:
             report('DUP LABEL', f'{name}: {labels[name]} e {rel}')
         labels.setdefault(name, rel)
 for rel in order:
-    for name in re.findall(r'\\(?:page|auto|name)?ref\{([^}]+)\}', sources[rel]):
+    for name in re.findall(r'\\(?:page|auto|name|eq)?ref\{([^}]+)\}', sources[rel]):
         if name not in labels:
             report('BROKEN REF', f'{rel}: {name}')
+    for name in re.findall(r'\\hyperref\[([^\]]+)\]', sources[rel]):
+        if name not in labels:
+            report('BROKEN REF', f'{rel}: hyperref[{name}]')
 
 # --- capitoli non inclusi e segnaposto ---------------------------------------------------
 chap_dir = os.path.join(root, 'capitoli')
