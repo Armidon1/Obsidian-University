@@ -49,7 +49,21 @@ Le note contengono anche commenti scritti a mano da Simone (es. "notice that the
 
 ## Generare note da materiale di un corso
 
-Usa la skill `/appunti` (`.claude/skills/appunti/`): estrae testo e immagini da docx/pdf, scrive le note complete per lezione, le note atomiche in `Concetti/` con il MOC, e verifica link e immagini.
+Scegli la skill in base al risultato richiesto:
+
+| Risultato | Skill | Dove si trova |
+|---|---|---|
+| Note Obsidian in Markdown (predefinita) | `/appunti` | `.claude/skills/appunti/` |
+| Appunti in LaTeX e PDF | `/appuntiLatex` | `.claude/skills/appuntiLatex/` |
+| Appunti in LaTeX e PDF per chi ha DSA | `/appuntiLatexDSA` | `.claude/skills/appuntiLatexDSA/` |
+
+- `/appunti` estrae testo e immagini da docx/pdf, scrive le note complete per lezione, le note atomiche in `Concetti/` con il MOC, e verifica link e immagini.
+- `/appuntiLatex` produce un volume unico con capitoli, figure spiegate, riquadri per correzioni e dubbi, glossario e indice. Da usare quando Simone chiede appunti in LaTeX o in PDF.
+- `/appuntiLatexDSA` ha gli stessi contenuti di `/appuntiLatex`, senza perdite né semplificazioni. Aggiunge impaginazione ad alta leggibilità, mappe concettuali e diagrammi di flusso per capitolo e per concetto, schede di ripasso e un controllo di completezza. Da usare quando Simone chiede appunti per DSA o dislessia, oppure con più schemi e mappe.
+
+Le due skill LaTeX lavorano nella sottocartella `appunti/` del corso e non seguono le convenzioni delle note Obsidian descritte sopra. Se `appunti/` esiste già, non va sovrascritta senza chiedere.
+
+Le due skill LaTeX esistono anche come copie personali in `~/.claude/skills/`, usate fuori dal vault. Le copie non si sincronizzano da sole: una modifica fatta qui va riportata anche lì, se deve valere ovunque.
 
 ## Git
 

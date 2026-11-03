@@ -1,0 +1,56 @@
+% Pagina di prova del preambolo: aggiungi un campione delle scritture e dei simboli
+% del corso, compila, guarda il risultato, poi cancella il file e la sua riga \input.
+\chapter{Prova tecnica}\label{cap:prova}
+
+\section{Scritture}
+Italiano con accenti: è, à, ì, ò, ù, perché, città. Parola inglese: \en{translation}\aut{Autore, Nome}\idx{concetto}.
+Greco: \gr{παρθένος}, \gr{Ἰδοὺ ἡ παρθένος ἐν γαστρὶ ἕξει}. Rimando: capitolo~\ref{cap:prova}.
+
+\begin{cit}[english]
+A quotation in the language of the source.
+\fontecit{(Fonte, anno)}
+\end{cit}
+
+\afronte[english]{The source text stands on the left, in its language, across several lines of the column.}{La traduzione sta a destra, su più righe della colonna.}
+
+\section{Riquadri}
+\begin{correzione}Prova di correzione.\end{correzione}
+\begin{dubbio}Prova di dubbio.\end{dubbio}
+\begin{dallibro}Prova dal libro (p.~1).\end{dallibro}
+\soloappunti
+Testo. \integrazione{prova di integrazione.}
+
+\section{Tabelle, formule, codice, diagrammi}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{@{}lXX@{}}
+\toprule
+& \textbf{Prima colonna} & \textbf{Seconda colonna} \\
+\midrule
+Riga & un testo abbastanza lungo da andare a capo dentro la cella della tabella & un altro testo abbastanza lungo da andare a capo \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Formula in linea $E = mc^2$, $\alpha \to \beta$, e in evidenza:
+\begin{align}
+\sum_{i=1}^{n} i &= \frac{n(n+1)}{2} \\
+\int_0^1 x^2 \, dx &= \frac{1}{3}
+\end{align}
+
+\begin{lstlisting}[language=C,numbers=left]
+int main(void) { /* commento con è */
+    return 0;
+}
+\end{lstlisting}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.4cm,every node/.style={draw,rounded corners,font=\small,inner sep=5pt}]
+\node (a) {Sorgente};
+\node[right=of a] (b) {Traduzione};
+\draw[-{Latex}] (a) -- (b);
+\end{tikzpicture}
+\end{center}
+
+\begin{insintesi}
+Prova del riquadro di fine capitolo.
+\end{insintesi}

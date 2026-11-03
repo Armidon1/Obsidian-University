@@ -1,0 +1,174 @@
+% Pagina di prova ed esempio d'uso di tutti gli ambienti.
+% Aggiungi un campione delle scritture e dei simboli del corso, compila, guarda il risultato.
+% Rileggilo come modello, poi cancella il file e la sua riga \input.
+% I contenuti sono solo esempi: non vanno riportati negli appunti.
+\chapter{Prova tecnica}\label{cap:prova}
+
+\begin{primadiiniziare}
+\textbf{Di cosa parla:} il capitolo mostra tutti gli strumenti del template.
+
+\textbf{Che cosa devi ricordare:} niente, è il primo capitolo.
+
+\textbf{Alla fine saprai:} riconoscere ogni riquadro e ogni tipo di schema.
+\end{primadiiniziare}
+
+\begin{mappa}
+\centering
+\begin{tikzpicture}[node distance=1.8cm and .3cm]
+\node[concetto=4.4cm] (c) {Strumenti degli appunti};
+\node[dettaglio,below left=of c] (s) {Schemi};
+\node[dettaglio,below=of c] (t) {Testo e citazioni};
+\node[dettaglio,below right=of c] (n) {Numeri e codice};
+\draw[freccia] (c) -- node[etichetta] {comprende} (s);
+\draw[freccia] (c) -- node[etichetta] {comprende} (t);
+\draw[freccia] (c) -- node[etichetta] {comprende} (n);
+\end{tikzpicture}
+\end{mappa}
+
+La mappa ha un concetto centrale, «Strumenti degli appunti», che comprende tre parti: gli schemi, il testo con le citazioni, i numeri con il codice.
+
+\section{Schemi}
+
+\subsection{Mappa di un concetto}
+
+Questa è una mappa concettuale. Ogni freccia dice quale relazione lega due concetti.
+
+\begin{schema}[idea, sue parti ed esempio]
+\centering
+\begin{tikzpicture}[node distance=1.8cm and 1cm]
+\node[concetto=3cm] (a) {Concetto};
+\node[dettaglio=3cm,right=3.8cm of a] (b) {Definizione};
+\node[esempio=3cm,below=of a] (d) {Esempio del corso};
+\draw[freccia] (a) -- node[etichetta] {si definisce come} (b);
+\draw[freccia] (a) -- node[etichetta] {si vede in} (d);
+\end{tikzpicture}
+\end{schema}
+
+Lo schema dice che un concetto ha una definizione e si vede in un esempio del corso.
+
+\subsection{Diagramma di flusso}
+
+\begin{flusso}[come scegliere la forma di uno schema]
+\centering
+\begin{tikzpicture}[node distance=1.2cm and 1.6cm]
+\node[estremo] (i) {Inizio};
+\node[decisione,below=of i] (d) {Ci sono passi in sequenza?};
+\node[processo=4.4cm,below=of d] (f) {Usa un diagramma di flusso};
+\node[processo=4.4cm,right=of d] (m) {Usa una mappa concettuale};
+\node[estremo,below=of f] (e) {Fine};
+\draw[freccia] (i) -- (d);
+\draw[freccia] (d) -- node[etichetta] {sì} (f);
+\draw[freccia] (d) -- node[etichetta] {no} (m);
+\draw[freccia] (f) -- (e);
+\draw[freccia] (m) |- (e);
+\end{tikzpicture}
+\end{flusso}
+
+Il diagramma fa una domanda: ci sono passi in sequenza? Se la risposta è sì, si usa un diagramma di flusso. Se la risposta è no, si usa una mappa concettuale.
+
+\section{Testo e citazioni}
+% nodiagramma: sezione dimostrativa senza concetti da schematizzare
+
+Italiano con accenti: è, à, ì, ò, ù, perché, città. Parola inglese: \en{translation}\aut{Autore, Nome}\idx{concetto}. Titolo di un'opera: \emph{Titolo dell'opera}. Termine chiave: \textbf{termine}. Nome con pronuncia: Goethe \pron{ghöte}.
+
+Greco: \gr{παρθένος}, \gr{Ἰδοὺ ἡ παρθένος ἐν γαστρὶ ἕξει}. Parole con legature evitate: fine, fluire, affitto, ufficio. Rimando: capitolo~\ref{cap:prova}.
+
+\begin{cit}[english]
+A quotation in the language of the source stays complete, however hard it may be to read.
+\fontecit{(Fonte, anno)}
+\end{cit}
+
+\begin{parolesemplici}
+La citazione resta intera. Questo riquadro la spiega con parole più semplici.
+\end{parolesemplici}
+
+\afronte[english]{The source text stands in this column, in its language, across several lines.}{La traduzione sta in questa colonna, su più righe.}
+
+\begin{nonconfondere}
+\textbf{Citazione} è il testo originale. \textbf{Parafrasi} è lo stesso testo detto con altre parole.
+\end{nonconfondere}
+
+\begin{permemoria}
+Un trucco per ricordare va sempre dichiarato come tale.
+\end{permemoria}
+
+\begin{correzione}Prova di correzione.\end{correzione}
+\begin{dubbio}Prova di dubbio.\end{dubbio}
+\begin{dallibro}Prova dal libro (p.~1).\end{dallibro}
+\soloappunti
+Testo. \integrazione{prova di integrazione.}
+
+\section{Numeri, tabelle e codice}
+% nodiagramma: sezione dimostrativa senza concetti da schematizzare
+
+\subsection{Una formula}
+
+La somma dei primi $n$ numeri è:
+\begin{equation}
+S = \frac{n(n+1)}{2}
+\end{equation}
+
+\begin{simboli}
+$S$ & la somma cercata & nessuna \\
+$n$ & l'ultimo numero da sommare & nessuna \\
+\end{simboli}
+
+\begin{passoapasso}{la somma dei primi 4 numeri}
+\begin{enumerate}
+\item Sostituisco $n$ con 4: $S = \frac{4 \cdot (4+1)}{2}$.
+\item Calcolo la parentesi, perché ha la precedenza: $4+1 = 5$, quindi $S = \frac{4 \cdot 5}{2}$.
+\item Calcolo il prodotto: $4 \cdot 5 = 20$, quindi $S = \frac{20}{2}$.
+\item Divido: $S = 10$. Controllo: $1+2+3+4 = 10$.
+\end{enumerate}
+\end{passoapasso}
+
+\subsection{Tabelle e date}
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}lYY@{}}
+\toprule
+& \textbf{Prima colonna} & \textbf{Seconda colonna} \\
+\midrule
+Riga & un testo abbastanza lungo da andare a capo dentro la cella della tabella & un altro testo abbastanza lungo da andare a capo \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{cronologia}
+1813 & Primo evento di esempio \\
+1923 & Secondo evento di esempio \\
+\end{cronologia}
+
+\subsection{Codice}
+
+\begin{lstlisting}[language=C,numbers=left]
+int main(void) { /* commento con è */
+    return 0;
+}
+\end{lstlisting}
+
+\begin{daricordare}
+\begin{itemize}
+\item Ogni capitolo ha la stessa struttura.
+\item Gli schemi si aggiungono al testo.
+\item Ogni formula ha la spiegazione dei simboli.
+\end{itemize}
+\end{daricordare}
+
+\begin{insintesi}
+Il template offre schemi, riquadri e tabelle pronte. Servono a dare più vie d'accesso agli stessi contenuti.
+\end{insintesi}
+
+\begin{ripasso}
+\begin{enumerate}
+\item Che cosa deve avere ogni freccia di una mappa concettuale?
+\item Che cosa segue sempre una citazione difficile?
+\end{enumerate}
+\end{ripasso}
+
+\begin{risposte}
+\begin{enumerate}
+\item Un'etichetta che dice la relazione (sezione «Schemi»).
+\item Un riquadro «In parole semplici» (sezione «Testo e citazioni»).
+\end{enumerate}
+\end{risposte}

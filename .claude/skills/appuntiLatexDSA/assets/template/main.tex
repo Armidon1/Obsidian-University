@@ -1,0 +1,255 @@
+% @@CORSO@@: appunti ad alta leggibilità per studenti con DSA
+% Compilare con LuaLaTeX: latexmk -lualatex main.tex
+\documentclass[12pt,a4paper,openany]{book}
+
+\usepackage[a4paper,margin=2.5cm,headheight=16pt]{geometry}
+
+% ======================= PROFILO DI LETTURA ==========================================
+% Qui si regola tutta la leggibilità: i DSA sono diversi tra loro, quindi conviene provare.
+\newcommand{\interlinea}{1.4}      % distanza tra le righe (1.2 più compatto, 1.6 più arioso)
+\newcommand{\spaziolettere}{1.5}   % spazio tra le lettere, in millesimi circa (0 per toglierlo)
+\newcommand{\spazioparole}{1.15}   % spazio tra le parole (1 è il valore normale)
+\newcommand{\fontprincipale}{Fira Sans} % alternative: Atkinson Hyperlegible Next, Source Sans 3, Lato
+\newcommand{\fontcodice}{Fira Mono}     % alternativa: Atkinson Hyperlegible Mono
+\newif\ifsfondocrema
+\sfondocrematrue                   % \sfondocremafalse per lo sfondo bianco, utile in stampa
+% =====================================================================================
+
+% --- Lingue ---------------------------------------------------------------------
+% Aggiungi le lingue del materiale prima di main=, per esempio:
+%   \usepackage[ngerman,latin,french,spanish,english,main=italian]{babel}
+% Il greco, anche politonico, si scrive direttamente con Fira Sans: non serve dichiararlo.
+\usepackage[english,main=italian]{babel}
+% Niente legature: fi, fl e simili restano lettere separate, a favore di lettura e sintesi vocale.
+\babelfont{rm}[Ligatures=NoCommon,LetterSpace=\spaziolettere,WordSpace=\spazioparole]{\fontprincipale}
+\babelfont{sf}[Ligatures=NoCommon,LetterSpace=\spaziolettere,WordSpace=\spazioparole]{\fontprincipale}
+\babelfont{tt}{\fontcodice}
+% Per l'ebraico aggiungi bidi=basic alle opzioni di babel e togli il commento a queste righe:
+% \babelprovide[import]{hebrew}
+% \babelfont[hebrew]{rm}[Renderer=HarfBuzz]{Libertinus Serif}
+
+% --- Pacchetti --------------------------------------------------------------------
+\usepackage{amsmath}
+\usepackage{unicode-math}
+\setmathfont{Fira Math}
+% Frazioni e indici a grandezza piena anche dentro il testo: aiuta in caso di discalculia.
+\everymath{\displaystyle}
+\usepackage{setspace}
+\setstretch{\interlinea}
+\usepackage{ragged2e}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{float}
+\usepackage{etoolbox}
+\usepackage[font=normalsize,labelfont=bf,justification=RaggedRight,singlelinecheck=false]{caption}
+\usepackage{booktabs,tabularx,array}
+\usepackage{enumitem}
+\setlist{itemsep=4pt,topsep=4pt}
+\usepackage{paracol}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,shapes.misc,automata,babel}
+\usepackage{imakeidx}
+\makeindex[name=indice,title=Indice analitico,intoc,columns=1]
+\usepackage{fancyhdr}
+\usepackage[hidelinks,unicode,bookmarksnumbered,bookmarksopen,pdflang={it-IT},pdftitle={@@CORSO@@: appunti}]{hyperref}
+
+% --- Colori: contrasto alto ma non massimo. Il colore non è mai l'unico segnale. --------
+\ifsfondocrema
+  \definecolor{pagina}{HTML}{FBF7EC}
+\else
+  \definecolor{pagina}{HTML}{FFFFFF}
+\fi
+\definecolor{testo}{HTML}{222222}
+\definecolor{accento}{HTML}{1F4E79}
+\definecolor{corr}{HTML}{A4262C}
+\definecolor{libro}{HTML}{1F6F5C}
+\definecolor{fonte}{HTML}{7A5C00}
+\definecolor{sintesi}{HTML}{4A4A6A}
+\definecolor{mappacol}{HTML}{0B5C7A}
+\definecolor{flussocol}{HTML}{6A3D7C}
+\definecolor{ricorda}{HTML}{B3541E}
+\definecolor{semplice}{HTML}{2F6B2F}
+\pagecolor{pagina}
+
+% --- Testo: allineato a sinistra, senza sillabazione, senza rientri, con paragrafi staccati ---
+\raggedbottom
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.7em plus 0.1em}
+\setlength{\RaggedRightParindent}{0pt}
+\setlength{\RaggedRightParfillskip}{0pt plus 1fil}
+\AtBeginDocument{\color{testo}\RaggedRight\hyphenpenalty=10000\exhyphenpenalty=10000\sloppy}
+% I titoli di opere e le parole straniere si distinguono con il colore, non con il corsivo.
+\renewcommand{\emph}[1]{{\color{accento}#1}}
+% Colonna di tabella che va a capo a sinistra, senza sillabare.
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\renewcommand{\arraystretch}{1.3}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\ultimocapitolo}
+\fancyhead[LO]{\ultimasezione}
+\renewcommand{\headrulewidth}{0.3pt}
+% Le intestazioni leggono queste macro e non \leftmark e \rightmark, che con paracol
+% restano vuoti o arretrati di un capitolo.
+\makeatletter
+\newcommand{\ultimocapitolo}{}
+\newcommand{\ultimasezione}{}
+\renewcommand{\chaptermark}[1]{%
+  \if@mainmatter\xdef\ultimocapitolo{\@chapapp\ \thechapter.\noexpand\ \unexpanded{#1}}%
+  \else\gdef\ultimocapitolo{#1}\fi
+  \gdef\ultimasezione{}\markboth{\ultimocapitolo}{\ultimasezione}}
+\renewcommand{\sectionmark}[1]{%
+  \xdef\ultimasezione{\thesection.\noexpand\ \unexpanded{#1}}\markright{\ultimasezione}}
+\makeatother
+
+% Fira Mono non ha il corsivo: il codice si distingue con il colore.
+\lstset{basicstyle=\ttfamily,breaklines=true,columns=fullflexible,keepspaces=true,
+  frame=leftline,framerule=1.5pt,rulecolor=\color{accento},xleftmargin=8pt,
+  numberstyle=\small\color{gray},captionpos=b,
+  keywordstyle=\color{accento},commentstyle=\color{gray},stringstyle=\color{libro}}
+
+% --- Riquadri ---------------------------------------------------------------------------
+% Ogni riquadro ha un'etichetta scritta, così si riconosce anche senza colori.
+\tcbset{appbox/.style={enhanced,breakable,boxrule=0pt,leftrule=3pt,sharp corners,
+  left=9pt,right=9pt,top=6pt,bottom=6pt,before skip=11pt,after skip=11pt,
+  fonttitle=\bfseries,coltitle=black,detach title,halign=flush left,
+  before upper={\setlength{\parskip}{.5em}\color{testo}{\tcbtitle\par}}}}
+% Provenienza delle informazioni
+\newtcolorbox{correzione}[1][]{appbox,colframe=corr,colback=corr!6,title={\textcolor{corr}{Correzione}},#1}
+\newtcolorbox{dubbio}[1][]{appbox,colframe=fonte,colback=fonte!7,title={\textcolor{fonte}{Da verificare}},#1}
+\newtcolorbox{dallibro}[1][]{appbox,colframe=libro,colback=libro!7,title={\textcolor{libro}{Dal libro}},#1}
+% Struttura fissa del capitolo
+\newtcolorbox{primadiiniziare}[1][]{appbox,colframe=accento,colback=accento!6,title={\textcolor{accento}{Prima di iniziare}},#1}
+\newtcolorbox{mappa}[1][]{appbox,unbreakable,colframe=mappacol,colback=mappacol!4,title={\textcolor{mappacol}{Mappa del capitolo}},#1}
+\newtcolorbox{daricordare}[1][]{appbox,colframe=ricorda,colback=ricorda!7,title={\textcolor{ricorda}{Da ricordare}},#1}
+\newtcolorbox{insintesi}[1][]{appbox,colframe=sintesi,colback=sintesi!7,title={\textcolor{sintesi}{In sintesi}},#1}
+\newtcolorbox{ripasso}[1][]{appbox,colframe=accento,colback=accento!4,title={\textcolor{accento}{Ripasso: prova a rispondere senza guardare}},#1}
+\newtcolorbox{risposte}[1][]{appbox,colframe=semplice,colback=semplice!5,title={\textcolor{semplice}{Risposte, con la sezione in cui ritrovarle}},#1}
+% Schemi: \begin{schema}[titolo] e \begin{flusso}[titolo]. Non si spezzano tra due pagine.
+\newtcolorbox{schema}[1][]{appbox,unbreakable,colframe=mappacol,colback=mappacol!4,title={\textcolor{mappacol}{Schema: #1}}}
+\newtcolorbox{flusso}[1][]{appbox,unbreakable,colframe=flussocol,colback=flussocol!4,title={\textcolor{flussocol}{Diagramma di flusso: #1}}}
+% Aiuti alla comprensione: si aggiungono al testo e non lo sostituiscono.
+\newtcolorbox{parolesemplici}[1][]{appbox,colframe=semplice,colback=semplice!6,title={\textcolor{semplice}{In parole semplici (spiegazione di questi appunti)}},#1}
+\newtcolorbox{nonconfondere}[1][]{appbox,colframe=corr,colback=pagina,title={\textcolor{corr}{Attenzione a non confondere}},#1}
+\newtcolorbox{passoapasso}[1]{appbox,colframe=flussocol,colback=flussocol!4,title={\textcolor{flussocol}{Passo per passo: #1}}}
+\newtcolorbox{permemoria}[1][]{appbox,colframe=sintesi,colback=pagina,title={\textcolor{sintesi}{Per ricordarlo (trucco di questi appunti, non del corso)}},#1}
+
+% Sezione senza slide di riferimento.
+\newcommand{\soloappunti}{\par\textcolor{fonte}{\bfseries Fonte: solo appunti in classe (nessuna slide)}\par}
+% Aggiunta di conoscenza generale, non dal materiale del corso.
+\newcommand{\integrazione}[1]{\textcolor{sintesi}{[\textbf{Integrazione, non dal materiale del corso:} #1]}}
+% Pronuncia di un nome difficile, da usare solo se è certa.
+\newcommand{\pron}[1]{\textcolor{sintesi}{(si pronuncia: #1)}}
+
+% --- Tabelle pronte --------------------------------------------------------------------
+% \begin{simboli} $v$ & velocità & m/s \\ \end{simboli}: spiegazione dei simboli di una formula
+\newenvironment{simboli}{\par\tabularx{\linewidth}{@{}lYl@{}}\toprule\textbf{Simbolo} & \textbf{Che cosa indica} & \textbf{Unità} \\ \midrule}{\bottomrule\endtabularx\par}
+% \begin{cronologia} 1813 & evento \\ \end{cronologia}
+\newenvironment{cronologia}{\par\tabularx{\linewidth}{@{}lY@{}}\toprule\textbf{Quando} & \textbf{Che cosa} \\ \midrule}{\bottomrule\endtabularx\par}
+
+% --- Stili degli schemi ------------------------------------------------------------------
+% Stesso stile, stesso significato, in tutto il documento.
+\tikzset{
+  concetto/.style={draw=mappacol,thick,fill=mappacol!12,rounded corners=4pt,align=center,text width=#1,minimum height=1cm,inner sep=5pt,font=\bfseries},
+  concetto/.default=3.4cm,
+  dettaglio/.style={draw=mappacol,fill=pagina,rounded corners=4pt,align=center,text width=#1,minimum height=1cm,inner sep=5pt},
+  dettaglio/.default=3.4cm,
+  esempio/.style={draw=libro,dashed,fill=libro!6,rounded corners=4pt,align=center,text width=#1,minimum height=1cm,inner sep=5pt},
+  esempio/.default=3.4cm,
+  processo/.style={draw=flussocol,fill=flussocol!8,align=center,text width=#1,minimum height=1cm,inner sep=5pt},
+  processo/.default=5.5cm,
+  decisione/.style={draw=ricorda,thick,fill=ricorda!10,diamond,aspect=2.2,align=center,text width=#1,inner sep=0pt},
+  decisione/.default=3.4cm,
+  estremo/.style={draw=flussocol,thick,fill=flussocol!18,rounded rectangle,align=center,minimum height=.9cm,inner xsep=12pt,font=\bfseries},
+  freccia/.style={-{Latex[length=2.8mm,width=2.2mm]},thick,color=testo},
+  collega/.style={thick,color=testo},
+  etichetta/.style={font=\small,fill=pagina,inner sep=2pt,midway,align=center},
+}
+
+% --- Citazioni e testi a fronte ----------------------------------------------------------
+% La lingua facoltativa deve essere dichiarata in babel.
+\newenvironment{cit}[1][italian]{\begin{quote}\selectlanguage{#1}\RaggedRight}{\end{quote}}
+\newcommand{\fontecit}[1]{\par{\selectlanguage{italian}#1}}
+\newcommand{\afronte}[3][italian]{%
+  \begin{paracol}{2}\selectlanguage{#1}\RaggedRight\sloppy #2\switchcolumn\selectlanguage{italian}\RaggedRight\sloppy #3\end{paracol}\medskip}
+
+% --- Scritture e parole straniere --------------------------------------------------------
+\newcommand{\gr}[1]{#1}
+\newcommand{\en}[1]{\foreignlanguage{english}{\emph{#1}}}
+% Togli il commento dopo aver dichiarato la lingua in babel:
+% \newcommand{\de}[1]{\foreignlanguage{ngerman}{\emph{#1}}}
+% \newcommand{\la}[1]{\foreignlanguage{latin}{\emph{#1}}}
+% \newcommand{\fr}[1]{\foreignlanguage{french}{\emph{#1}}}
+% \newcommand{\es}[1]{\foreignlanguage{spanish}{\emph{#1}}}
+% \newcommand{\he}[1]{\foreignlanguage{hebrew}{#1}}
+
+% --- Figure --------------------------------------------------------------------------------
+% \figw{larghezza in frazione di \textwidth}{file}{didascalia}
+\newcommand{\figw}[3]{\begin{figure}[H]\centering\includegraphics[width=#1\textwidth,height=.42\textheight,keepaspectratio]{#2}\caption{#3}\end{figure}}
+% \figh{altezza}{file1,file2,...}{didascalia}: immagini affiancate alla stessa altezza
+\newcommand{\figitem}[2]{\includegraphics[height=#1,width=.31\textwidth,keepaspectratio]{#2}\hspace{.6em}}
+\newcommand{\figh}[3]{\begin{figure}[H]\centering\forcsvlist{\figitem{#1}}{#2}\unskip\caption{#3}\end{figure}}
+
+% --- Indice --------------------------------------------------------------------------------
+\newcommand{\aut}[1]{\index[indice]{#1}}
+\newcommand{\idx}[1]{\index[indice]{#1}}
+
+\title{\Huge\bfseries @@CORSO@@\\[0.6em]\Large\mdseries Appunti del corso di @@DOCENTE@@\\ @@UNIVERSITA@@}
+\author{}
+\date{}
+
+\begin{document}
+\frontmatter
+\maketitle
+
+\chapter*{Come leggere questi appunti}
+Questi appunti contengono tutto il materiale del corso. Gli schemi e i riquadri si aggiungono al testo: non tolgono e non semplificano niente.
+
+\textbf{Ogni capitolo ha sempre la stessa struttura.} Puoi usarla così:
+
+\begin{enumerate}
+\item Leggi \textbf{Prima di iniziare} e guarda la \textbf{Mappa del capitolo}: sai già dove stai andando.
+\item Studia una sezione alla volta. Ogni sezione ha il testo e almeno uno schema.
+\item Alla fine leggi \textbf{Da ricordare} e \textbf{In sintesi}.
+\item Fai il \textbf{Ripasso} senza guardare, poi controlla le \textbf{Risposte}.
+\end{enumerate}
+
+\textbf{Questi segnali dicono da dove viene un'informazione.}
+
+\begin{correzione}
+Errore o incongruenza nel materiale. Il testo originale resta riportato, accanto alla correzione e al motivo.
+\end{correzione}
+\begin{dubbio}
+Punto che le fonti del corso non permettono di risolvere: controllalo prima di usarlo all'esame.
+\end{dubbio}
+\begin{dallibro}
+Spiegazione tratta dal libro di testo, con il numero di pagina.
+\end{dallibro}
+\soloappunti
+Così è segnalata una sezione senza slide, ricostruita soltanto dagli appunti in classe.
+
+\integrazione{così è segnata un'aggiunta di conoscenza generale, che non viene dal materiale del corso.}
+
+\begin{parolesemplici}
+Spiegazione aggiunta in questi appunti, dopo un passaggio difficile. Non è una frase del docente e non sostituisce il testo originale.
+\end{parolesemplici}
+
+\textbf{Alla fine del volume} trovi le schede di ripasso, il glossario e l'indice analitico. Il PDF ha i segnalibri e il testo si può far leggere da un programma di sintesi vocale.
+
+\tableofcontents
+
+\mainmatter
+\input{capitoli/00-mappa-corso}
+\input{capitoli/00-prova}
+% \input{capitoli/01-titolo}
+
+\backmatter
+\input{capitoli/98-schede}
+\input{capitoli/99-glossario}
+\clearpage\gdef\ultimocapitolo{Indice analitico}\gdef\ultimasezione{}
+\printindex[indice]
+\end{document}

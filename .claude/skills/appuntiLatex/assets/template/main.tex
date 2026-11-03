@@ -1,0 +1,157 @@
+% @@CORSO@@: appunti
+% Compilare con LuaLaTeX: latexmk -lualatex main.tex
+\documentclass[11pt,a4paper,openany]{book}
+
+\usepackage[a4paper,margin=2.6cm,headheight=14pt]{geometry}
+
+% --- Lingue ---------------------------------------------------------------------
+% Aggiungi le lingue del materiale prima di main=, per esempio:
+%   \usepackage[ngerman,latin,french,spanish,english,main=italian]{babel}
+% Il greco, anche politonico, si scrive direttamente con Libertinus: non serve dichiararlo.
+\usepackage[english,main=italian]{babel}
+\babelfont{rm}{Libertinus Serif}
+\babelfont{sf}{Libertinus Sans}
+\babelfont{tt}{Libertinus Mono}
+% Per l'ebraico aggiungi bidi=basic alle opzioni di babel e togli il commento a queste righe:
+% \babelprovide[import]{hebrew}
+% \babelfont[hebrew]{rm}[Renderer=HarfBuzz]{Libertinus Serif}
+
+% --- Pacchetti --------------------------------------------------------------------
+\usepackage{amsmath}
+\usepackage{unicode-math}
+\setmathfont{Libertinus Math}
+\usepackage{microtype}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{float}
+\usepackage{etoolbox}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{booktabs,tabularx,array}
+\usepackage{enumitem}
+\setlist{itemsep=2pt,topsep=4pt}
+\usepackage{paracol}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,automata,babel}
+\usepackage{imakeidx}
+\makeindex[name=indice,title=Indice analitico,intoc,columns=2]
+\usepackage{fancyhdr}
+\usepackage[hidelinks,unicode]{hyperref}
+
+\definecolor{accento}{HTML}{1F4E79}
+\definecolor{corr}{HTML}{A4262C}
+\definecolor{libro}{HTML}{1F6F5C}
+\definecolor{fonte}{HTML}{7A5C00}
+\definecolor{sintesi}{HTML}{4A4A6A}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\small\thepage}
+\fancyhead[RE]{\small\ultimocapitolo}
+\fancyhead[LO]{\small\ultimasezione}
+\renewcommand{\headrulewidth}{0.3pt}
+% Le intestazioni leggono queste macro e non \leftmark e \rightmark, che con paracol
+% restano vuoti o arretrati di un capitolo.
+\makeatletter
+\newcommand{\ultimocapitolo}{}
+\newcommand{\ultimasezione}{}
+\renewcommand{\chaptermark}[1]{%
+  \if@mainmatter\xdef\ultimocapitolo{\@chapapp\ \thechapter.\noexpand\ \unexpanded{#1}}%
+  \else\gdef\ultimocapitolo{#1}\fi
+  \gdef\ultimasezione{}\markboth{\ultimocapitolo}{\ultimasezione}}
+\renewcommand{\sectionmark}[1]{%
+  \xdef\ultimasezione{\thesection.\noexpand\ \unexpanded{#1}}\markright{\ultimasezione}}
+\makeatother
+
+\lstset{basicstyle=\ttfamily\small,breaklines=true,columns=fullflexible,keepspaces=true,
+  frame=leftline,framerule=1.5pt,rulecolor=\color{accento},xleftmargin=8pt,
+  numberstyle=\tiny\color{gray},captionpos=b,
+  % Libertinus Mono non ha grassetto né corsivo: si distingue con il colore
+  keywordstyle=\color{accento},commentstyle=\color{gray},stringstyle=\color{libro}}
+
+% --- Riquadri -----------------------------------------------------------------------
+\tcbset{appbox/.style={enhanced,breakable,boxrule=0pt,leftrule=2.5pt,sharp corners,
+  left=8pt,right=8pt,top=5pt,bottom=5pt,before skip=9pt,after skip=9pt,
+  fonttitle=\bfseries\small,coltitle=black,attach title to upper={\par\smallskip},
+  fontupper=\small}}
+% Errore o incongruenza nel materiale: il testo originale resta visibile.
+\newtcolorbox{correzione}[1][]{appbox,colframe=corr,colback=corr!6,title={\textcolor{corr}{Correzione}},#1}
+% Dubbio non risolvibile con le fonti del corso.
+\newtcolorbox{dubbio}[1][]{appbox,colframe=fonte,colback=fonte!7,title={\textcolor{fonte}{Da verificare}},#1}
+% Spiegazione tratta dal libro, con la pagina.
+\newtcolorbox{dallibro}[1][]{appbox,colframe=libro,colback=libro!7,title={\textcolor{libro}{Dal libro}},#1}
+% Sintesi concettuale a fine capitolo.
+\newtcolorbox{insintesi}[1][]{appbox,colframe=sintesi,colback=sintesi!7,title={\textcolor{sintesi}{In sintesi}},#1}
+
+% Sezione senza slide di riferimento.
+\newcommand{\soloappunti}{\par\noindent\textcolor{fonte}{\small\sffamily\bfseries Fonte: solo appunti in classe (nessuna slide)}\par\smallskip}
+% Aggiunta di conoscenza generale, non dal materiale del corso.
+\newcommand{\integrazione}[1]{\textcolor{sintesi}{\small[\emph{Integrazione, non dal materiale del corso:} #1]}}
+
+% --- Citazioni e testi a fronte -----------------------------------------------------
+% La lingua facoltativa deve essere dichiarata in babel.
+\newenvironment{cit}[1][italian]{\begin{quote}\small\selectlanguage{#1}}{\end{quote}}
+\newcommand{\fontecit}[1]{\par\hfill{\footnotesize\selectlanguage{italian}#1}}
+\newcommand{\afronte}[3][italian]{%
+  \begin{paracol}{2}\small\selectlanguage{#1}\sloppy #2\switchcolumn\selectlanguage{italian}\sloppy #3\end{paracol}\medskip}
+
+% --- Scritture e parole straniere ----------------------------------------------------
+\newcommand{\gr}[1]{#1}
+\newcommand{\en}[1]{\foreignlanguage{english}{\emph{#1}}}
+% Togli il commento dopo aver dichiarato la lingua in babel:
+% \newcommand{\de}[1]{\foreignlanguage{ngerman}{\emph{#1}}}
+% \newcommand{\la}[1]{\foreignlanguage{latin}{\emph{#1}}}
+% \newcommand{\fr}[1]{\foreignlanguage{french}{\emph{#1}}}
+% \newcommand{\es}[1]{\foreignlanguage{spanish}{\emph{#1}}}
+% \newcommand{\he}[1]{\foreignlanguage{hebrew}{#1}}
+
+% --- Figure --------------------------------------------------------------------------
+% \figw{larghezza in frazione di \textwidth}{file}{didascalia}
+\newcommand{\figw}[3]{\begin{figure}[H]\centering\includegraphics[width=#1\textwidth,height=.42\textheight,keepaspectratio]{#2}\caption{#3}\end{figure}}
+% \figh{altezza}{file1,file2,...}{didascalia}: immagini affiancate alla stessa altezza
+\newcommand{\figitem}[2]{\includegraphics[height=#1,width=.31\textwidth,keepaspectratio]{#2}\hspace{.6em}}
+\newcommand{\figh}[3]{\begin{figure}[H]\centering\forcsvlist{\figitem{#1}}{#2}\unskip\caption{#3}\end{figure}}
+
+% --- Indice ----------------------------------------------------------------------------
+\newcommand{\aut}[1]{\index[indice]{#1}}
+\newcommand{\idx}[1]{\index[indice]{#1}}
+
+\title{\Huge\bfseries @@CORSO@@\\[0.6em]\Large\mdseries Appunti del corso di @@DOCENTE@@\\ @@UNIVERSITA@@}
+\author{}
+\date{}
+
+\begin{document}
+\frontmatter
+\maketitle
+
+\chapter*{Come leggere questi appunti}
+Gli appunti seguono l'ordine del materiale originale. Questi segnali distinguono la provenienza di ciò che leggi.
+
+\begin{correzione}
+Errore o incongruenza nel materiale. Il testo originale resta riportato, accanto alla correzione e al motivo.
+\end{correzione}
+\begin{dubbio}
+Punto che le fonti del corso non permettono di risolvere: controllalo prima di usarlo all'esame.
+\end{dubbio}
+\begin{dallibro}
+Spiegazione tratta dal libro di testo, con il numero di pagina. Chiarisce le slide senza aggiungere argomenti.
+\end{dallibro}
+\soloappunti
+\noindent Così è segnalata una sezione senza slide, ricostruita soltanto dagli appunti in classe. \integrazione{così è segnata un'aggiunta di conoscenza generale, che non viene dal materiale del corso.}
+
+\medskip
+\noindent In fondo trovi il glossario dei concetti e l'indice analitico.
+
+\tableofcontents
+
+\mainmatter
+\input{capitoli/00-prova}
+% \input{capitoli/01-titolo}
+
+\backmatter
+\input{capitoli/99-glossario}
+\clearpage\gdef\ultimocapitolo{Indice analitico}\gdef\ultimasezione{}
+\printindex[indice]
+\end{document}
