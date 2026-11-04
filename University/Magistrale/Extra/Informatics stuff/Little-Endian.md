@@ -28,4 +28,16 @@ Come puoi vedere, il byte `4D` (la parte "piccola") va all'indirizzo `1000` (que
 
 Questo formato è quello dominante nel mondo dei personal computer (usato da Intel, AMD e architetture ARM in modalità Little-Endian).
 
+### Letture più corte
+
+Dato che il byte meno significativo è al primo indirizzo, partendo da `1000` e leggendo meno byte ottieni **la parte bassa** del numero, senza spostare l'indirizzo:
+
+|**Lettura da `1000`**|**Byte presi**|**Valore**|
+|---|---|---|
+|1 byte|`4D`|`0x4D`|
+|2 byte|`4D 3C`|`0x3C4D`|
+|4 byte|`4D 3C 2B 1A`|`0x1A2B3C4D`|
+
+È una comodità in certi accessi alla memoria, non un guadagno di velocità nell'aritmetica. L'esempio completo è in [[Big-Endian and Little-Endian#Esempio: letture di dimensioni diverse|Letture di dimensioni diverse]].
+
 vedi anche [[Big-Endian and Little-Endian]]

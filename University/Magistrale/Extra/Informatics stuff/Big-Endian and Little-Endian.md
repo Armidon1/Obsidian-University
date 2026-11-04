@@ -245,6 +245,49 @@ Anche se oggi contano meno, ci sono differenze logiche che hanno cementato le sc
     È molto più veloce determinare se un numero è positivo o negativo (guardando il primo byte) o confrontare due numeri per vedere quale è più grande, perché i bit più "pesanti" arrivano per primi. È come cercare una parola nel dizionario: guardi la prima lettera, non l'ultima.
     
 
+> [!warning] Correzione
+> "Molto più veloce" è esagerato: una volta caricato il valore in un registro, somme e confronti funzionano allo stesso modo con entrambi gli ordini. **L'endianness da sola non rende una CPU più veloce.** Anche i vantaggi del Little Endian qui sotto sono comodità in certi accessi alla memoria, non un guadagno nell'aritmetica.
+
+#### Esempio: letture di dimensioni diverse
+
+Supponiamo che all'indirizzo `0x1000` ci sia il valore 5, salvato come `dword` (4 byte):
+
+| Indirizzo | `0x1000` | `0x1001` | `0x1002` | `0x1003` |
+| --- | --- | --- | --- | --- |
+| Little Endian | `05` | `00` | `00` | `00` |
+| Big Endian | `00` | `00` | `00` | `05` |
+
+Le letture qui sotto **partono tutte da `0x1000`**. Cambia solo quanti byte prendi da lì in avanti, e quelli che restano fuori vengono ignorati:
+
+| Lettura da `0x1000` | Little Endian | Big Endian |
+| --- | --- | --- |
+| 4 byte | `05 00 00 00` = 5 | `00 00 00 05` = 5 |
+| 2 byte | `05 00` = 5 | `00 00` = 0 |
+| 1 byte | `05` = 5 | `00` = 0 |
+
+In Little Endian il `05` è il primo byte, quindi ogni lettura lo include. In Big Endian è l'ultimo, quindi una lettura più corta deve partire da un indirizzo più alto: `0x1002` per 2 byte e `0x1003` per 1 byte.
+
+```asm
+mov eax, dword ptr [esi]   ; 5
+mov ax,  word ptr [esi]    ; 5
+mov al,  byte ptr [esi]    ; 5
+```
+
+Spostare l'indirizzo di partenza esclude invece i byte precedenti: in Little Endian, leggendo 1 byte da `0x1001` ottieni `00`, perché il `05` è rimasto indietro.
+
+Il risultato resta 5 solo perché il numero è piccolo. Una lettura più corta restituisce **la parte bassa del valore**, che coincide con il valore intero solo se questo ci sta nei byte letti. Con `0x12345678`, in memoria `78 56 34 12`, leggendo dallo stesso indirizzo ottieni `0x78` (1 byte), `0x5678` (2 byte) o `0x12345678` (4 byte).
+
+#### Esempio: numeri troppo grandi per un registro
+
+Per sommare un numero a 64 bit su una CPU a 32 bit bisogna partire dalla metà bassa, perché il riporto va verso quella alta. In Little Endian la metà bassa è all'indirizzo più basso, quindi il codice scorre la memoria in avanti:
+
+```asm
+add eax, dword ptr [esi]     ; 32 bit bassi: primi in memoria
+adc edx, dword ptr [esi+4]   ; 32 bit alti, più il riporto (adc = add with carry)
+```
+
+Vedi anche [[2 - MA - X86 Assembly#Word size and endianness|Malware Analysis — Word size and endianness]].
+
 ### 3. L'Inerzia: "Troppo grande per fallire"
 
 Perché non cambiare tutto oggi?

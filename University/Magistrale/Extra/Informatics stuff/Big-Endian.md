@@ -28,4 +28,17 @@ Come puoi vedere, il byte `1A` (la parte "grande") va all'indirizzo `1000` (quel
 
 Questo formato è lo standard utilizzato nei protocolli di rete ed è noto come **Network Byte Order**.
 
+### Letture più corte
+
+Dato che il byte più significativo è al primo indirizzo, partendo da `1000` e leggendo meno byte ottieni **la parte alta** del numero. Per ottenere quella bassa devi partire da un indirizzo più alto:
+
+|**Lettura**|**Byte presi**|**Valore**|
+|---|---|---|
+|4 byte da `1000`|`1A 2B 3C 4D`|`0x1A2B3C4D`|
+|2 byte da `1000`|`1A 2B`|`0x1A2B` (parte alta)|
+|2 byte da `1002`|`3C 4D`|`0x3C4D` (parte bassa)|
+|1 byte da `1003`|`4D`|`0x4D` (parte bassa)|
+
+Questo offset non rende il Big Endian più lento in modo significativo: spesso il compilatore lo calcola già in fase di compilazione. L'esempio completo è in [[Big-Endian and Little-Endian#Esempio: letture di dimensioni diverse|Letture di dimensioni diverse]].
+
 Vedi anche [[Big-Endian and Little-Endian]].
