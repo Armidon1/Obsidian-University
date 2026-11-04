@@ -29,6 +29,7 @@ tags:
 | 11 | [[11 - DDS - Total Order Broadcast]] | TO specifications, consensus-based TO |
 | 12 | [[12 - DDS - Software Replication]] | linearizability, primary-backup, active replication |
 | 13 | [[13 - DDS - Registers]] | regular and atomic registers, ROWA, majority voting, read-impose |
+| 14 | [[14 - DDS - Byzantine Broadcast]] | Byzantine faults, authenticated links, Byzantine quorums, consistent and reliable broadcast |
 
 ## Parte 2 e altro materiale
 
@@ -69,6 +70,10 @@ tags:
 - Specifiche: [[Regular Register]] · [[Atomic Register]]
 - Algoritmi: [[Read-One Write-All]] · [[Majority Voting Regular Register]] · [[Regular to Atomic Register Transformation]] · [[Read-Impose Write-All]] · [[Read-Impose Write-Majority]]
 
+### Guasti bizantini
+- [[Authenticated Perfect Links]] · [[Byzantine Quorum]]
+- Broadcast: [[Byzantine Consistent Broadcast]] · [[Authenticated Echo Broadcast]] · [[Byzantine Reliable Broadcast]] · [[Authenticated Double-Echo Broadcast]]
+
 ## Percorsi trasversali
 
 ```mermaid
@@ -86,6 +91,9 @@ flowchart LR
     FD --> REG
     Q[Majority quorums] --> CONS
     Q --> REG
+    Q --> BQ[Byzantine quorums]
+    BC --> BYZ[Byzantine broadcast<br/>Echo → Double-Echo]
+    BQ --> BYZ
 ```
 
 - **Fail-stop vs fail-silent**: [[Perfect Failure Detector]] → [[Reliable Broadcast (RB)|Lazy RB]] / [[Flooding Consensus]] / [[Read-One Write-All]] / [[Read-Impose Write-All]] ↔ [[Majority Quorum]] → [[Uniform Reliable Broadcast (URB)|Majority-Ack URB]] / [[Paxos]] / [[Majority Voting Regular Register]] / [[Read-Impose Write-Majority]]
@@ -94,3 +102,4 @@ flowchart LR
 - **Uniformità** (cosa può fare un processo prima di crashare): [[Reliable Broadcast (RB)]] → [[Uniform Reliable Broadcast (URB)]] · [[Flooding Consensus]] → [[Flooding Uniform Consensus]]
 - **Registri**: [[Regular Register]] → [[Regular to Atomic Register Transformation]] → [[Atomic Register]] = [[Linearizability]] per i registri
 - **Quorum ovunque**: [[Maekawa's Voting Algorithm]] → [[Majority Quorum]] → [[Paxos]] → [[Read-Impose Write-Majority]]
+- **Dal crash al bizantino**: [[Reliable Broadcast (RB)]] → [[Byzantine Consistent Broadcast]] → [[Byzantine Reliable Broadcast]] · [[Majority Quorum]] → [[Byzantine Quorum]] → [[Authenticated Double-Echo Broadcast]]

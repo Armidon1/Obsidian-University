@@ -18,7 +18,7 @@ tags:
 
 ## Collegamenti
 
-- **Concetti correlati**: [[Best Effort Broadcast (BEB)]] · [[Uniform Reliable Broadcast (URB)]] · [[FIFO Reliable Broadcast]]
+- **Concetti correlati**: [[Best Effort Broadcast (BEB)]] · [[Uniform Reliable Broadcast (URB)]] · [[FIFO Reliable Broadcast]] · [[Byzantine Reliable Broadcast]]
 - **Mappa**: [[MOC - Dependable Distributed Systems]]
 
 > [!info] Approfondimento

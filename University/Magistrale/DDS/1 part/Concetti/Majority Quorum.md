@@ -23,7 +23,7 @@ tags:
 
 ## Collegamenti
 
-- **Concetti correlati**: [[Paxos]] · [[Maekawa's Voting Algorithm]] · [[Majority Voting Regular Register]]
+- **Concetti correlati**: [[Paxos]] · [[Maekawa's Voting Algorithm]] · [[Majority Voting Regular Register]] · [[Byzantine Quorum]]
 - **Mappa**: [[MOC - Dependable Distributed Systems]]
 
 > [!info] Approfondimento
