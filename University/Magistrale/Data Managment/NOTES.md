@@ -1,5 +1,10 @@
 # Preferenze e contesto didattico
 
+## Ripresa del 28 ottobre 2026
+- Esame oggi alle 16. Simone va a vedere la prova e segnala che manca buona parte del programma; chiede rinforzo di ieri e ripasso degli argomenti passati.
+- Ripartire in chat, una domanda alla volta: 2PL, strict/rigorous, precedence graph, poi RDF/SPARQL. Non assumere acquisite le pagine preparate o gli argomenti solo pianificati (timestamp e costi I/O).
+- Preparata lessons/0006-rinforzo-concurrency.html. Nessuna nuova prestazione ancora osservata.
+
 - Obiettivo confermato: capire le slide e svolgere gli esercizi di Data Management.
 - Simone chiede spiegazioni concrete e progressive; ha richiesto esplicitamente introduzione ed esercizi RDF con la skill teach.
 - Simone ha dichiarato di essere DSA e di preferire immagini esplicative: usare esempi coerenti, tabelle e schemi visivi per affiancare le spiegazioni; evitare di dedurre ulteriori esigenze non espresse.
