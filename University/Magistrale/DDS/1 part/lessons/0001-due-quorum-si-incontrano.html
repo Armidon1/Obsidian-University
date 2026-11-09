@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="it">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quorum · Due gruppi si incontrano</title><style id="lesson-styles">
+.servers{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+.srv{display:flex;flex-direction:column;align-items:center;min-width:82px;padding:10px 8px;border:2px solid var(--line);border-radius:8px;background:white;color:var(--ink);font-size:.9rem}
+.srv:hover{filter:none;border-color:var(--ink)}
+.srv small{font-size:.72rem;font-weight:400}
+.srv.new{background:var(--tint);border-color:var(--green)}
+.srv.old{background:#f6efe0;border-color:#b79a55}
+.srv[aria-pressed=true]{outline:3px solid var(--ink);outline-offset:2px}
+.num{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.num input{width:90px;padding:9px 10px;font-size:1rem;border:1px solid #8c9d91;border-radius:6px;background:white;color:var(--ink)}
+.formula{font-size:1.2rem;text-align:center;margin:18px 0}
+.diagram{margin:20px 0;background:var(--tint);padding:18px;border-radius:8px}
+.diagram svg{display:block;width:100%;max-width:560px;height:auto;margin:auto}
+.diagram text{font-family:system-ui,sans-serif;font-size:13px;fill:var(--ink)}
+.diagram rect{fill:var(--paper);stroke:var(--green);stroke-width:1.5}
+.diagram line{stroke:var(--green);stroke-width:2}
+.diagram line.gone{stroke:var(--muted);stroke-dasharray:5 5}
+
+:root{color-scheme:light;--ink:#22332f;--muted:#566861;--paper:#faf8f2;--line:#d6ddd4;--green:#17664f;--tint:#edf2e9;--red:#a0332e;--gold:#e5be66;font-family:Georgia,'Times New Roman',serif;font-size:18px;line-height:1.65}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink)}main{max-width:900px;margin:auto;padding:48px 30px 70px}header{padding-bottom:30px;border-bottom:1px solid var(--line)}.eyebrow,nav,.meta,button,label,select,.tag,figcaption{font-family:system-ui,sans-serif}.eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:.7rem;color:var(--green);font-weight:700}h1{font-size:clamp(2rem,5vw,3.1rem);line-height:1.12;letter-spacing:-.035em;margin:.5em 0}h2{font-size:1.6rem;line-height:1.25;margin:0 0 20px}h3{font-size:1.13rem;line-height:1.3}.intro{font-size:1.15rem;max-width:690px}.meta,figcaption{font-size:.78rem;color:var(--muted)}nav{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:22px;font-size:.8rem}a{color:var(--green);text-underline-offset:3px}section{padding-top:36px;margin-top:14px}p{max-width:740px}code,pre,textarea{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{font-size:.84em}pre{background:#edf0e8;border:1px solid var(--line);border-radius:8px;padding:20px;overflow:auto;font-size:.8rem;line-height:1.7}table{width:100%;border-collapse:collapse;font-size:.9rem}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{font-family:system-ui,sans-serif;font-size:.73rem;text-transform:uppercase;letter-spacing:.04em}.callout{padding:16px 22px;border-left:3px solid var(--green);background:var(--tint);margin:24px 0}.callout p{margin:4px 0}.exercise{border:1px solid var(--line);border-radius:12px;padding:25px;margin:24px 0;background:#fffefa}.exercise h3{margin-top:0}.options{display:grid;gap:10px;border:0;padding:0;margin:20px 0}.options label{display:flex;align-items:baseline;gap:12px;border:1px solid var(--line);padding:12px 15px;border-radius:6px;font-size:.88rem;cursor:pointer}.options label:has(input:checked){border-color:var(--green);background:var(--tint)}button{background:var(--green);border:1px solid var(--green);border-radius:6px;color:white;padding:10px 18px;cursor:pointer;font-size:.84rem}button:hover{filter:brightness(.92)}button.secondary{background:transparent;color:var(--green)}button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.feedback{margin-top:16px;font-size:.94rem}.feedback[data-state=correct]{color:var(--green)}.feedback[data-state=incorrect]{color:var(--red)}.feedback:empty{display:none}textarea{display:block;width:100%;padding:16px;border:1px solid #8c9d91;border-radius:6px;min-height:145px;background:white;color:var(--ink);font-size:.82rem;line-height:1.8;margin:12px 0}details{margin-top:20px}summary{cursor:pointer;color:var(--green)}.actions{display:flex;gap:12px;flex-wrap:wrap}.graph{background:var(--tint);padding:22px;border-radius:8px;overflow:auto}.graph svg{display:block;width:100%;min-width:420px;height:auto}.graph text{font-family:system-ui,sans-serif;fill:var(--ink)}.graph line{stroke:var(--green);stroke-width:2}.graph rect{fill:var(--paper);stroke:var(--green)}footer{border-top:1px solid var(--line);margin-top:40px;padding-top:20px;font-size:.82rem;color:var(--muted)}.progress{font-family:system-ui,sans-serif;font-size:.82rem;color:var(--green);margin:18px 0}noscript{display:block;border:1px solid var(--red);padding:16px}.checklist li{margin:8px 0}@media(max-width:550px){main{padding:28px 18px}.exercise{padding:18px}th,td{padding:10px 5px;font-size:.8rem}}@media print{body{background:white;color:black}main{max-width:none;padding:0;font-size:11pt}.exercise{break-inside:avoid}button,nav,.progress{display:none}pre,.callout,.graph{background:white}a{color:inherit}details>*{display:block}textarea{min-height:110px}header{padding-bottom:10px}section{padding-top:20px;margin:0}h1{font-size:28pt}}
+.sched{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}.act{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.95rem;padding:5px 10px 5px 8px;border-radius:6px;border:1px solid;border-left-width:5px;background:white}.act sub{font-family:system-ui,sans-serif;font-size:.6rem;color:var(--muted);margin-right:5px}.act.t1{border-color:#2c6e9b}.act.t2{border-color:#b5562a}.act.t3{border-color:#6b4fa0}.act.t4{border-color:#8a7a14}.act b{font-weight:700}.edges{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;border:0;padding:0;margin:8px 0 18px}.edges label{border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:.9rem;cursor:pointer;background:white}.edges label:has(input:checked){border-color:var(--green);background:var(--tint)}.options.inline{grid-template-columns:1fr 1fr}.feedback ul{padding-left:20px;margin:6px 0}.pgraph{max-width:340px;min-width:0!important}.pgraph path{fill:none;stroke:var(--green);stroke-width:2}.pgraph .tip{fill:var(--green);stroke:none}.pgraph .cyc{stroke:var(--red)}.pgraph .tip.cyc{fill:var(--red)}.pgraph circle{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}.elcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:18px 0}.elcols>div{border:1px solid var(--line);border-radius:10px;padding:14px 18px;background:white}.elcols h3{margin:0 0 8px;font-family:system-ui,sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.plan td:first-child{white-space:nowrap;font-family:system-ui,sans-serif;font-size:.82rem}.now{background:#fbf3dc}@media(max-width:550px){.options.inline{grid-template-columns:1fr}}
+
+</style></head>
+<body><main>
+<header><div class="eyebrow">DDS / verso il masking quorum / lezione 1 / 5 minuti</div>
+<h1>Non puoi aspettare tutti.<br>Ma due gruppi si incontrano.</h1>
+<p class="intro">Alla fine saprai calcolare quante risposte puoi aspettare e quanti server hanno in comune una write e una read. Sono i due conti che stanno dietro al masking quorum.</p>
+<div class="meta">Per ora i server possono solo fermarsi. I server bugiardi arrivano nella lezione 2.</div>
+<nav><a href="../reference/scheda-quorum.html">Scheda</a><a href="../pdf/DDS-Lecture18-2026-2027.pdf">Slide 18</a></nav></header>
+<noscript>Per gli esercizi abilita JavaScript.</noscript>
+
+<section><h2>1. Quante risposte puoi aspettare?</h2>
+<p>Un registro è una variabile copiata su <strong>N</strong> server. Al massimo <strong>f</strong> possono guastarsi. Il client manda la richiesta a tutti e aspetta le risposte.</p>
+<figure class="diagram"><svg viewBox="0 0 560 210" role="img" aria-label="Il client scrive a cinque server: tre rispondono, gli altri due non rispondono e non si sa se sono lenti o morti.">
+<rect x="10" y="80" width="90" height="46" rx="6"/><text x="55" y="108" text-anchor="middle">client</text>
+<line x1="100" y1="103" x2="290" y2="22"/><line x1="100" y1="103" x2="290" y2="62"/><line x1="100" y1="103" x2="290" y2="102"/>
+<line class="gone" x1="100" y1="103" x2="290" y2="142"/><line class="gone" x1="100" y1="103" x2="290" y2="182"/>
+<rect x="290" y="6" width="60" height="32" rx="6"/><text x="320" y="27" text-anchor="middle">S1</text><text x="362" y="27">risponde</text>
+<rect x="290" y="46" width="60" height="32" rx="6"/><text x="320" y="67" text-anchor="middle">S2</text><text x="362" y="67">risponde</text>
+<rect x="290" y="86" width="60" height="32" rx="6"/><text x="320" y="107" text-anchor="middle">S3</text><text x="362" y="107">risponde</text>
+<rect x="290" y="126" width="60" height="32" rx="6"/><text x="320" y="147" text-anchor="middle">S4</text><text x="362" y="147">lento o morto? Non si sa</text>
+<rect x="290" y="166" width="60" height="32" rx="6"/><text x="320" y="187" text-anchor="middle">S5</text><text x="362" y="187">lento o morto? Non si sa</text>
+</svg><figcaption>N = 5, f = 2. Se il client aspettasse S4 e S5, potrebbe restare bloccato per sempre.</figcaption></figure>
+<p>Il sistema è asincrono: un server lento e uno morto sembrano uguali. Quindi si possono aspettare al massimo le risposte di chi è sicuramente vivo.</p>
+<p class="formula"><strong>risposte aspettabili = N − f</strong></p>
+<p>Il gruppo di risposte che aspetti si chiama <strong>quorum</strong>, e la sua dimensione si indica con <strong>Q</strong>.</p>
+</section>
+
+<section><h2>2. Prova a far sbagliare la read.</h2>
+<p>Una write è finita dopo 3 risposte: S1, S2 e S3 hanno il valore nuovo. Ora scegli tu quali server rispondono alla read.</p>
+<div class="exercise"><h3>Q = 3. Cerca 3 server senza il valore nuovo.</h3><div class="qsim" data-n="5" data-written="1,2,3" data-q="3"></div></div>
+<div class="exercise"><h3>Q = 2. Stessa prova: la write ha raggiunto solo S1 e S2.</h3><div class="qsim" data-n="5" data-written="1,2" data-q="2"></div></div>
+</section>
+
+<section><h2>3. Perché con 3 non ci riesci.</h2>
+<p>Write e read occupano 3 + 3 = 6 posti, ma i server sono solo 5. Almeno un server deve stare in entrambi i gruppi. In generale:</p>
+<p class="formula"><strong>server in comune ≥ Q + Q − N = 2Q − N</strong></p>
+<table><tr><th>Caso</th><th>Conto</th><th>Risultato</th></tr>
+<tr><td>N = 5, Q = 3</td><td>6 − 5</td><td>almeno 1 in comune: la read trova il valore</td></tr>
+<tr><td>N = 5, Q = 2</td><td>4 − 5</td><td>anche 0 in comune: la read può mancarlo</td></tr></table>
+<p class="meta">Fonte: Cachin, Guerraoui, Rodrigues, <em>Introduction to Reliable and Secure Distributed Programming</em>, § 2.7.3 “Quorums”.</p>
+</section>
+
+<section><h2>4. Ora tocca a te.</h2>
+<form class="exercise" data-num="5" data-right="Sì: 7 − 2 = 5. Aspettarne di più rischia il blocco." data-wrong="Parti da tutti i server e togli quelli che potrebbero non rispondere mai: N − f.">
+<h3>N = 7, f = 2. Quante risposte puoi aspettare al massimo?</h3><div class="num"><input type="number" aria-label="Risposte"><button>Controlla</button></div><div class="feedback" data-feedback></div></form>
+<form class="exercise" data-num="1" data-right="Sì: 4 + 4 − 7 = 1. Basta un server in comune, se i server possono solo fermarsi." data-wrong="Usa i posti: Q + Q, poi togli N.">
+<h3>N = 7, Q = 4. Quanti server in comune come minimo?</h3><div class="num"><input type="number" aria-label="Server in comune"><button>Controlla</button></div><div class="feedback" data-feedback></div></form>
+<form class="exercise" data-num="3" data-right="Sì: 4 + 4 − 5 = 3. Tieni a mente questo 3: nel masking quorum con f = 1 serve proprio a questo." data-wrong="Stessa regola: Q + Q − N.">
+<h3>N = 5, Q = 4. Quanti server in comune come minimo?</h3><div class="num"><input type="number" aria-label="Server in comune"><button>Controlla</button></div><div class="feedback" data-feedback></div></form>
+</section>
+
+<footer><p><strong>Da leggere:</strong> il libro del corso, § 2.7.3 “Quorums”. Per ora basta il primo paragrafo.</p>
+<p><strong>Dubbi?</strong> Chiedimi qualsiasi cosa in chat: sono il tuo insegnante per questo percorso. Poi rispondi alla domanda che ti ho lasciato lì.</p></footer>
+</main><script id="lesson-practice">
+'use strict';
+// Shared widgets for the quorum lessons. No network or persistence, no scores.
+//
+// Quorum simulator: the reader picks which servers answer.
+//   <div class="qsim" data-n="5" data-written="1,2,3" data-q="3"></div>
+// Numeric exercise:
+//   <form data-num="4" data-right="..." data-wrong="...">...<div class="feedback" data-feedback></div></form>
+
+function readOutcome(picked, written) {
+  const fresh = picked.filter(s => written.includes(s));
+  return {fresh, stale: picked.filter(s => !written.includes(s)), seesNew: fresh.length > 0};
+}
+
+if (typeof module !== 'undefined') module.exports = {readOutcome};
+
+if (typeof document !== 'undefined') {
+  const names = list => list.map(s => 'S' + s).join(', ');
+
+  document.querySelectorAll('.qsim').forEach(sim => {
+    const n = Number(sim.dataset.n), q = Number(sim.dataset.q);
+    const written = sim.dataset.written.split(',').map(Number);
+    const row = document.createElement('div');
+    row.className = 'servers';
+    const out = document.createElement('div');
+    out.className = 'feedback';
+    const picked = new Set();
+
+    const update = () => {
+      const list = [...picked].sort((a, b) => a - b);
+      if (list.length < q) {
+        out.dataset.state = '';
+        out.textContent = `Risposte ricevute: ${list.length} su ${q}.`;
+        return;
+      }
+      const r = readOutcome(list, written);
+      out.dataset.state = r.seesNew ? 'correct' : 'incorrect';
+      out.textContent = r.seesNew
+        ? `La read ha sentito ${names(list)}. ${names(r.fresh)} ha il valore nuovo: la read lo trova. Deseleziona un server e prova a evitarlo.`
+        : `La read ha sentito ${names(list)}: nessuno ha il valore nuovo. La read restituisce il valore vecchio anche se la write è già finita. Questo è l'errore da evitare.`;
+    };
+
+    for (let s = 1; s <= n; s++) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      const isNew = written.includes(s);
+      b.className = 'srv ' + (isNew ? 'new' : 'old');
+      b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = `<strong>S${s}</strong><small>${isNew ? 'nuovo' : 'vecchio'}</small>`;
+      b.addEventListener('click', () => {
+        if (picked.has(s)) picked.delete(s);
+        else if (picked.size < q) picked.add(s);
+        else return;
+        b.setAttribute('aria-pressed', String(picked.has(s)));
+        update();
+      });
+      row.append(b);
+    }
+    sim.append(row, out);
+    update();
+  });
+
+  document.querySelectorAll('form[data-num]').forEach(form => {
+    const out = form.querySelector('[data-feedback]');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const value = form.querySelector('input').value.trim();
+      if (value === '') { out.dataset.state = 'incorrect'; out.textContent = 'Scrivi un numero e poi controlla.'; return; }
+      const ok = Number(value) === Number(form.dataset.num);
+      out.dataset.state = ok ? 'correct' : 'incorrect';
+      out.textContent = ok ? form.dataset.right : form.dataset.wrong;
+    });
+    form.addEventListener('input', () => { out.textContent = ''; });
+  });
+}
+
+</script>
+</body></html>
