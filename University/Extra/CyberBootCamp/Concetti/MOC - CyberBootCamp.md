@@ -32,8 +32,8 @@ tags:
 - Nel vault: [[ELF]] · [[Dynamic Linking]]
 
 ### Reverse: strumenti
-- [[strings e binwalk]] · [[Scorciatoie IDA]] · [[Esportare Dati da IDA]] · [[Struct in IDA]]
-- Nel vault: [[IDA Debugger]] · [[3 - MA - Basic Static Analysis]] · [[6 - MA - Advanced Static Analysis]]
+- [[strings e binwalk]] · [[Scorciatoie IDA]] · [[Esportare Dati da IDA]] · [[Struct in IDA]] · [[pwndbg]]
+- Nel vault: [[GDB]] · [[IDA Debugger]] · [[3 - MA - Basic Static Analysis]] · [[6 - MA - Advanced Static Analysis]]
 
 ## Percorsi trasversali
 
@@ -53,6 +53,7 @@ flowchart TD
     IDA --> EX[Esportare Dati da IDA]
     IDA --> ST[Struct in IDA]
     INIT --> IDA
+    IDA --> PWN[pwndbg]
 ```
 
 - **Aggirare i filtri sui percorsi**: [[URL e URI]] → [[Percent Encoding]] → [[Parser Differential]] → [[Null Byte Injection]] → [[Path Traversal]]
