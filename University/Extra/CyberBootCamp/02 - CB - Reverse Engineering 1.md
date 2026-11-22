@@ -374,6 +374,12 @@ Se ce ne sono altre… qualcuno ce le ha messe! In una challenge di reversing è
 
 In IDA: `Ctrl+S` (salta a un segmento) → `.init_array`, e si controllano i puntatori presenti.
 
+> [!example]- Figure delle slide 19
+>
+> ![[CB-L02-p19.png]]
+>
+> **Slide 19.** Gli attributi del compilatore nell’esempio registrano funzioni da eseguire all’avvio e alla terminazione del programma.
+
 ## Estrarre i dati
 
 Vedi [[Esportare Dati da IDA]].

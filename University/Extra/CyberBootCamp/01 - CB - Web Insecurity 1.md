@@ -116,6 +116,12 @@ $$
 > [!example] Userinfo
 > `https://admin:pass@example.com/` contiene credenziali nella parte *userinfo*. È anche un classico trucco di phishing e di bypass dei filtri: in `https://google.com@evil.com/` l'host vero è `evil.com`, mentre `google.com` è solo il nome utente.
 
+> [!example]- Figure delle slide 10
+>
+> ![[CB-L01-p10.png]]
+>
+> **Slide 10.** Lo schema separa lo schema URI, l’autorità e il percorso. La query e il frammento sono componenti opzionali.
+
 ### Fully Qualified Domain Name
 
 ![[CB-L01-p11.png]]
@@ -284,6 +290,12 @@ Il valore di un cookie è spesso **codificato** (base64, JSON, …), e questo va
 > [!warning] Correzione: `Domain` non è una restrizione
 > La slide descrive `Domain` come "Subdomain limitation", ma l'effetto è opposto: **senza** `Domain` il cookie viene inviato solo all'host esatto che l'ha impostato (*host-only*); **con** `Domain=example.com` viene inviato anche a tutti i sottodomini (`a.example.com`, `b.example.com`). Impostarlo **allarga** la portata del cookie.
 
+> [!example]- Figure delle slide 21
+>
+> ![[CB-L01-p21.png]]
+>
+> **Slide 21.** La tabella distingue gli attributi che limitano dove il browser invia il cookie da quelli che ne regolano la durata o l’accesso dagli script.
+
 ### HTTP authentication
 
 Vedi [[HTTP Authentication]].
@@ -339,6 +351,20 @@ Per esempio, la maggior parte delle app mobile usa API basate su HTTP: quello ch
 
 > [!important]
 > Qualsiasi controllo fatto solo lato client (es. un campo disabilitato in HTML, una validazione in JavaScript) si aggira mandando la richiesta a mano. I controlli di sicurezza devono stare sul server.
+
+> [!example]- Figure delle slide 25–27
+>
+> ![[CB-L01-p25.png]]
+>
+> **Slide 25.** HTML descrive la struttura della pagina, CSS la presentazione e JavaScript il comportamento nel browser.
+>
+> ![[CB-L01-p26.png]]
+>
+> **Slide 26.** PHP, Java, ASP.NET, Node.js, Ruby e Python sono esempi di tecnologie con cui il server può produrre la risposta.
+>
+> ![[CB-L01-p27.png]]
+>
+> **Slide 27.** Apache, nginx, IIS e Caddy ricevono richieste HTTP e possono servire file o inoltrare la richiesta a un’applicazione.
 
 ## IDOR
 

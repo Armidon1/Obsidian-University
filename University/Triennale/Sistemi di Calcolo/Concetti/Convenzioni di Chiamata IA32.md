@@ -31,7 +31,7 @@ f:  movl 4(%esp), %eax   # x
 
 ## Collegamenti
 
-- **Concetti correlati**: [[Stack Frame]] · [[Registri Caller-save e Callee-save]] · [[ABI e ISA]] · [[x86-64]]
+- **Concetti correlati**: [[Stack Frame]] · [[Registri Caller-save e Callee-save]] · [[ABI e ISA]] · [[x86-64]] · [[Calling Convention]]
 - **Mappa**: [[MOC - Sistemi di Calcolo]]
 
 > [!info] Approfondimento

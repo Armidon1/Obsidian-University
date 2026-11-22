@@ -28,6 +28,7 @@ void fini() __attribute__((destructor));
 ## Collegamenti
 
 - **Concetti correlati**: [[Avvio di un Binario ELF]] · [[Sezioni e Segmenti ELF]]
+- **Esempio**: [[Challenge 15+18]] (`register_tm_clone` modifica un array in `.data` prima di `main`)
 - **Mappa**: [[MOC - CyberBootCamp]]
 
 > [!info] Approfondimento

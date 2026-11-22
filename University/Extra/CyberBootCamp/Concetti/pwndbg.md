@@ -510,6 +510,53 @@ cyclic -l 0x6161616c       # o cyclic -l laaa: offset del valore finito in rip/r
 
 È la stessa idea di `pattern create` / `pattern offset` di GEF: ogni sottosequenza di 4 (o 8) byte compare una sola volta, quindi il valore che sovrascrive l'indirizzo di ritorno indica di quanto si è sforato il buffer. Vedi [[Buffer Overflow]].
 
+#### `cyclic` e le sequenze di De Bruijn
+
+Per calcolare l'offset del return address rispetto all'inizio del buffer (vedi [[Sovrascrivere il Return Address]]) si può ragionare a mano, ma il padding del compilatore lo rende poco affidabile. `cyclic` lo misura: il pattern che genera (`aaaabaaacaaad…`) è una **sequenza di De Bruijn**, in cui **ogni sottosequenza di 4 byte compare una sola volta**.
+
+```text
+posizione:  0    1    2    3    4    5   ...
+pattern:    a    a    a    a    b    a   ...
+            └──── "aaaa" (unica) ────┘
+                 └──── "aaab" (unica) ────┘
+```
+
+Siccome ogni gruppo di 4 byte è unico, i 4 byte che si leggono nel return address stanno in **un solo punto** della sequenza: da lì si risale alla posizione, che è l'offset. Il comando ha due lati: `cyclic N` **genera** il pattern (si usa prima, per far crashare), `cyclic -l <valore>` lo **interroga** (`-l` = *lookup*, si usa dopo per leggere l'offset).
+
+| | GEF | pwndbg | pwntools |
+|---|---|---|---|
+| Generare | `pattern create N` | `cyclic N` | `cyclic(N)` |
+| Cercare l'offset | `pattern offset $rsp` | `cyclic -l <valore>` | `cyclic_find(<valore>)` |
+
+```text
+pwndbg> cyclic 200                 # stampa il pattern: aaaabaaacaaad...
+pwndbg> run                        # si passa il pattern come input → SIGSEGV
+   ...                             # nel dump dello stack appare es. "saaataaa..."
+pwndbg> cyclic -l saaa
+Found at offset 72                 # es. 64 di buffer + 8 di rbp salvato
+```
+
+> [!warning] `cyclic -l` vuole il *valore*, non il registro
+> `cyclic -l $rsp` è sbagliato: `$rsp` contiene un indirizzo (`0x7fff…`), non i byte del pattern (il comando non lo dereferenzia). Si passano i **4 caratteri ASCII** letti nel dump (`saaa`) o il valore esadecimale equivalente (`cyclic -l 0x61616173`, little-endian: `0x61`=`a`, `0x73`=`s`). Nota inoltre che dopo un `ret` lo stack è già avanzato di 8 byte, quindi si guardano i byte del pattern nel dump, non `$rsp` da solo.
+
+> [!tip] Blocchi da 8 byte
+> Con `cyclic -n 8 N` (e `cyclic -n 8 -l <valore>`) ogni sottosequenza unica è lunga 8 byte, come il return address a 64 bit: il lookup è meno ambiguo. Il valore di `-n` dev'essere lo stesso nella generazione e nel lookup.
+
+> [!warning] `cyclic N` stampa soltanto: il pattern va **dato in input** al programma
+> `cyclic 200` scrive la sequenza a terminale, ma **non la invia** al processo. Un `run` da solo legge EOF e il programma esce senza crashare (nessun offset). Per farlo sforare bisogna passargli il pattern sullo **stdin**, in due modi:
+> ```text
+> pwndbg> cyclic 200 -o patt.txt     # salva il pattern su file
+> pwndbg> run < patt.txt             # ...e lo reindirizza sullo stdin
+> ```
+> oppure si lancia `run` e si **incolla a mano** il pattern quando il programma mostra il suo prompt. (`run patt.txt` è sbagliato: `patt.txt` diventerebbe un *argomento* del programma, non il suo input.)
+
+> [!warning] Binari che chiamano `system`/`fork`: `set follow-fork-mode parent`
+> Se il programma crea un processo figlio — tipico di `system()`, che internamente lancia `/bin/sh -c …` — GDB può mettersi a seguire il **figlio** e mollare il processo principale. Nel log compaiono righe come *"executing new program /usr/bin/bash"*, *"Detaching vfork parent…"*, *"Inferior 1 detached"*: da quel momento l'overflow non si osserva più. Prima di `run`:
+> ```text
+> set follow-fork-mode parent        # alle fork resta sul genitore, ignora i figli
+> ```
+> È lo stesso meccanismo che serve, al contrario (`child`), per debuggare un processo figlio che interessa davvero.
+
 ### Heap glibc
 
 È il punto in cui pwndbg si distingue di più.
@@ -531,6 +578,9 @@ cyclic -l 0x6161616c       # o cyclic -l laaa: offset del valore finito in rip/r
 ## Lista dei comandi (cheat sheet)
 
 Tutti i comandi in un unico blocco, da tenere aperto durante una challenge. I primi gruppi sono di GDB e funzionano anche senza plugin; il resto è di pwndbg. Per l'elenco completo: `pwndbg` (o `pwndbg <parola>` per filtrare) e `help <comando>`.
+
+> [!tip] Cheat-sheet ufficiale del corso
+> Il CyberBootCamp fornisce un cheat-sheet essenziale (`pdf/ccbc26_pwndbg_cheatsheet.pdf`) con i comandi minimi: `pwndbg <bin>` / `pwndbg --args <bin> <argomenti>` per avviare, `r` / `starti` (fermarsi in `_start`), `ni`/`si`, `b func` / `b *0x...`, `c`, `fini`, `info b`, `del`, `p`/`x` con i formati (`x` esadecimale, `d` decimale, `t` binario, `s` stringa) e le grandezze (`b/h/w/g`), `tel <addr>`, `stack <n>`, `set $reg = ...` e `set *(long*)<addr> = ...`. Sono tutti inclusi, più in dettaglio, nelle righe qui sotto.
 
 ```text
 # --- avvio e uscita (GDB) ---
@@ -661,6 +711,10 @@ flowchart LR
 
 ## Collegamenti
 
-- **Concetti correlati**: [[Scorciatoie IDA]] · [[strings e binwalk]] · [[GOT e PLT]] · [[Sezioni e Segmenti ELF]]
+- **Concetti correlati**: [[Scorciatoie IDA]] · [[strings e binwalk]] · [[GOT e PLT]] · [[Sezioni e Segmenti ELF]] · [[Sovrascrivere il Return Address]] · [[Canary dello Stack]] · [[PIE]] · [[ROP]]
+- **Lezioni**: [[04 - CB - Binary Exploitation 1]] · [[05 - CB - Binary Exploitation 2]]
 - **Nel vault**: [[GDB]] (comandi base di GDB, Sistemi di Calcolo) · [[Buffer Overflow]] · [[Stack Canary]] · [[ASLR]] · [[Double Free]] · [[ETHL 0x07 — Binary Exploitation p1]] · [[4 - MA - Basic Dynamic Analysis]] · [[IDA Debugger]]
 - **Mappa**: [[MOC - CyberBootCamp]]
+
+> [!info] Approfondimento
+> [[02 - CB - Reverse Engineering 1#E il reversing dinamico?|Lezione 2 — E il reversing dinamico?]]
