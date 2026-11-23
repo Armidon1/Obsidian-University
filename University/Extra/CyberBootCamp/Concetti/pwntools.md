@@ -309,6 +309,53 @@ Il contenuto della stringa è irrilevante (viene confrontata solo con se stessa)
 > [!tip] `fgets` e il byte nullo
 > `fgets(buf, n, stream)` legge al massimo `n-1` byte, si ferma sul **newline** (che include) o su EOF, e aggiunge sempre un `\0`. Non si ferma sui `\x00` nei dati: puoi inviarne quanti vuoi con `p.send(...)`. Per questo si usa `send` e non `sendline`: un `\n` finale verrebbe convertito in `\0` da `user_password[strcspn(..., "\n")] = 0` e sposterebbe il terminatore.
 
+### pleaselogin · Overflow di 1 byte su un flag adiacente (nessuna mitigazione toccata)
+
+Obiettivo: ottenere la flag facendosi passare per **admin**, su un binario con **tutte** le protezioni attive — Full RELRO, canary, NX, PIE, SHSTK/IBT. Nessuna di queste viene scalfita: la falla è un overflow di **un solo byte** che cade su una variabile-flag adiacente. È l'esempio perfetto che "mitigazioni tutte verdi" ≠ "binario sicuro".
+
+Nello stack di `main` c'è una `struct user_struct { char username[32]; char password[32]; }` tenuta **inline** (IDA la tipizza come `struct user_struct *`, ma `&UserStruct` è l'indirizzo del buffer stesso, a `rbp-0x90`; i vari `var_88…var_58` che il decompiler mostra sono i 64 byte della struct spezzati in qword — applicando il tipo struct spariscono). Subito dopo la struct c'è il flag che decide tutto:
+
+```
+rbp-0x90  username[32]
+rbp-0x70  password[32]
+rbp-0x50  v19   ← flag "sei admin"   (case 3: if (v19 != 0) → apre flag.txt e la stampa)
+rbp-0x40  returned_flag[40]
+rbp-0x18  canary
+```
+
+La struct è `0x90 - 0x50 = 0x40 = 64` byte (`32 + 32`): `v19` è **esattamente il byte dopo `password`**, non "lontano".
+
+La falla è in `ins_password`: `read(0, password, 33)` scrive **33** byte in un `password` da **32**. In indici: `password[0]` a `rbp-0x70`, `password[31]` a `rbp-0x51` (ultimo byte legittimo), e `password[32]` a `rbp-0x50` = **`v19`**. Il 33° byte è un overflow mirato sul flag admin — per questo la `read` è da 33 e non da 32.
+
+Resta lo scoglio della ripulitura del newline. `ins_password` fa:
+
+```c
+len = read(0, password, 33);
+if (password[len] == '\n') { password[len-1] = 0; }   // ripulisce il \n
+else { do c = getchar(); while (c != '\n'); }          // svuota stdin, NON scrive \0
+```
+
+Se mandi 33 byte che **finiscono con `\n`**, il primo ramo farebbe `password[len-1] = 0` e ti cancellerebbe il byte appena messo in `v19`. La mossa è mandare **33 byte senza `\n`**: così si prende il ramo `else`, che si limita a svuotare lo stdin con `getchar` (vedi [[#EngineeringDegree · Leak del canary e bypass in due letture|il deadlock di recvline]] per come `read`/`getchar` consumano i byte) e **non riazzera** il 33° byte. Ricorda: `read` **non** aggiunge mai il `\0` da sé.
+
+Payload (lo schema `pleaselogin-stack-main` sulla lavagna lo riassume):
+
+```python
+p = remote(host, porta)
+# ins_username: contenuto irrilevante
+p.sendafter(b"Insert your Username: ", b"A\n")
+# ins_password: 32 byte di riempimento + 1 byte NON nullo (finisce in v19), nessun \n nei primi 33
+p.sendafter(b"Insert your Password: ", b"A"*32 + b"\x01")
+p.send(b"\n")                 # consumato dal getchar del ramo else, non scritto nel buffer
+# menu: scegli 3 per farti stampare la flag
+p.sendlineafter(b">", b"3")
+p.interactive()
+```
+
+Il 33° byte (`\x01`) finisce nel byte basso di `v19`, che da `0` diventa `1` ≠ 0 → `case 3` ti considera admin e stampa `flag.txt`. Canary, PIE, NX e RELRO restano intatti: non servivano.
+
+> [!note] "Tutte le protezioni attive" non vuol dire sicuro
+> Canary, PIE, NX, RELRO, SHSTK/IBT difendono il **control flow** (return address, GOT, esecuzione dello stack). Qui l'attacco non tocca nessuno di quelli: cambia un **dato** (un flag di autorizzazione) con un overflow di 1 byte dentro la stessa struct/frame. Una *logic/data corruption* così passa sotto il radar di tutte le mitigazioni control-flow.
+
 ## Ripasso
 
 - **Il programma scrive un prompt senza andare a capo. Come lo riconosci?** Con `recvuntil`, usando i byte che segnano la fine del prompt.
@@ -319,6 +366,8 @@ Il contenuto della stringa è irrilevante (viene confrontata solo con se stessa)
 - **Hai solo un gadget `pop rax; pop r14; pop rcx; ret` e ti serve impostare `rax`. Quante celle metti nel payload?** Tre: una per `rax` col valore utile e due di junk (`p64(0)`) per i `pop` di `r14` e `rcx`, nell'ordine delle istruzioni. Ogni `pop` consuma una cella dallo stack, anche quelli che non ti interessano.
 - **ROP a `execve` via `syscall` su un binario No PIE: ti serve il gadget `ret` per allineare lo stack a 16 byte?** No. L'allineamento a 16 byte lo richiede `movaps` dentro le funzioni di libc, non l'istruzione `syscall`.
 - **Un `strcmp` confronta il tuo input con un segreto casuale che non conosci, ma puoi overfloware dentro il buffer del segreto. Come lo batti?** Scrivi la stessa stringa null-terminata sia nel tuo buffer sia (via overflow) all'inizio del buffer del segreto: `strcmp` si ferma al primo `\0`, quindi confronta solo la parte che controlli e ignora la coda casuale. Conta la posizione del `\0`, non il contenuto.
+- **Il binario ha canary, PIE, NX e RELRO tutti attivi: è al sicuro da un overflow?** No. Quelle protezioni difendono il *control flow* (return address, GOT, stack non eseguibile). Un overflow che corrompe un **dato** adiacente — es. un flag `is_admin` subito dopo un buffer nella stessa struct — le bypassa tutte senza toccarle. Controlla sempre cosa c'è *subito dopo* il buffer che puoi sforare.
+- **Una `read(fd, buf, n)` ti lascia `buf` utilizzabile come stringa?** Non per forza: `read` copia byte grezzi e **non** aggiunge `\0`. Se il codice conta su un terminatore scritto altrove (es. solo quando l'input finisce con `\n`), mandare dati senza `\n` può saltare quella scrittura e lasciare il buffer non terminato (o conservare un byte di overflow).
 
 ## Collegamenti
 
