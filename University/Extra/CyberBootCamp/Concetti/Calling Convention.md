@@ -143,12 +143,12 @@ Per convenzione, quando si esegue una `call` lo stack pointer deve essere a un i
 
 Anche le [[System Call]] hanno una loro convenzione, distinta da quella delle funzioni. Sistemi Operativi spiega perché i parametri delle syscall passano nei **registri**. L'entrata nel kernel salva tutti i registri del processo (`pushAll()`) e cambia stack (`setSP(kernel_sp)`). Il kernel trova quindi i parametri nei registri salvati, e anche il valore di ritorno torna in un registro.
 
-| | Linux x86 (32 bit) | Linux x86-64 |
-|---|---|---|
-| Istruzione | `int 0x80` | `syscall` |
-| Numero della syscall | `eax` | `rax` |
-| Argomenti | `ebx`, `ecx`, `edx`, `esi`, `edi`, `ebp` | `rdi`, `rsi`, `rdx`, **`r10`**, `r8`, `r9` |
-| Ritorno | `eax` | `rax` (negativo in caso di errore) |
+|                      | Linux x86 (32 bit)                       | Linux x86-64                               |
+| -------------------- | ---------------------------------------- | ------------------------------------------ |
+| Istruzione           | `int 0x80`                               | `syscall`                                  |
+| Numero della syscall | `eax`                                    | `rax`                                      |
+| Argomenti            | `ebx`, `ecx`, `edx`, `esi`, `edi`, `ebp` | `rdi`, `rsi`, `rdx`, **`r10`**, `r8`, `r9` |
+| Ritorno              | `eax`                                    | `rax` (negativo in caso di errore)         |
 
 > [!warning] `r10` al posto di `rcx`
 > Il quarto argomento di una syscall a 64 bit va in `r10`, non in `rcx` come per le funzioni. L'istruzione `syscall` sovrascrive `rcx` (ci salva l'indirizzo di ritorno) e `r11` (ci salva i flag).
