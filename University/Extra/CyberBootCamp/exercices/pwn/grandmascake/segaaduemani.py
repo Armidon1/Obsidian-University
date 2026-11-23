@@ -33,6 +33,7 @@ rop = ROP(exe)
 '''
 for addr, gadget in rop.gadgets.items():
     print(hex(addr), gadget.insns)
+    
     0x1017 ['add esp, 8', 'ret']
     0x1016 ['add rsp, 8', 'ret']
     0x1322 ['leave', 'ret']

