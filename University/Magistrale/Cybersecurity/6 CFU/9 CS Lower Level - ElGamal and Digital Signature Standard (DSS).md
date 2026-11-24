@@ -172,6 +172,36 @@ If $k$ is reused for two messages ($M, M'$):
 We have two equations with two unknowns ($s$ and $k$), which can be solved linearly to find $s$.
 
 ---
+
+## 7. Real-world digital signature standards (AdES)
+
+The DSA / RSA / ElGamal schemes above are the **mathematics** of signing. In practice a signature is *packaged* according to the **ETSI AdES** (*Advanced Electronic Signature*) family, whose four members differ by the **container format** of the signed data:
+
+| Standard | Container | Signed file | First-impact visualization | Extension | Result |
+|---|---|---|---|---|---|
+| **PAdES** | PDF | a PDF | any PDF viewer | `.pdf` | the PDF itself (+ optional graphic symbol) |
+| **CAdES** | CMS (binary) | any file | extracting SW + original app | `.p7m` | digital envelope containing everything |
+| **XAdES** | XML | any file | extracting SW + original app | `.xml`, `.xades` | XML file containing everything |
+| **JAdES** | JSON | any file | extracting SW + original app | `.json`, `.jades` | JSON file containing everything |
+
+PAdES is the most user-friendly: the signature lives **inside** the PDF and any viewer shows it; the others wrap the original file in a separate signed envelope.
+
+### Conformance levels (the "baseline ladder")
+
+Within each format the signature can reach increasing levels, mainly to support **Long-Term Validation (LTV)** — being able to verify it years later, after the signer's certificate has expired:
+
+- **B / BES** (*Basic Electronic Signature*): integrity + signer certificate (identity); no long-term validation.
+- **EPES** (*Explicit Policy*): adds an explicit **signature policy** the signature adheres to.
+- **T** (*Time-stamp*): adds a trusted **time-stamp** proving *when* it was signed (strengthens non-repudiation).
+- **C** (*Complete*): adds **references** to validation data (certificates, [[CRL (Certificate Revocation List)|CRLs]], [[OCSP (Online Certificate Status Protocol)|OCSP]] responses).
+- **X / X-L / XL** (*Extended / Long-Term*): adds time-stamps over the validation data and finally **embeds** all of it in the signature (self-contained, portable).
+- **A** (*Archival*): archival form, for **indefinite** preservation.
+
+So the progression **B → T → C/X → XL → A** trades simplicity for long-term, self-contained verifiability. (PAdES labels these *BES/EPES/LTV*; XAdES/CAdES/JAdES use *B/T/C/X/X-L/A*.)
+
+All of them rely on a working [[PKI]] (to issue and revoke the signer certificates) and on [[Hashing|hash functions]] plus the signature mathematics of this lesson.
+
+---
 # Professor's note in class
 
 nella parte in cui fa accept if (..)  And (..) and (QUI) dice che è la parte più importante perché dipende dal messaggio (il digest)

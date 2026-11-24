@@ -125,14 +125,33 @@ at every iteration compute the XOR between k and next byte of plaintext (or ciph
 
 ![[Pasted image 20251102124818.png]]
 
+- plaintext space $= \{0,1\}^n$, decryption $D$ known;
+- given a ciphertext $C$, the probability that there exists a key $k_2$ such that $D_{k_2}(C) = P$, for any plaintext $P$, equals the **a priori** probability that $P$ is the plaintext;
+- in other words, **the ciphertext does not reveal any information on the plaintext**:
+$$\Pr[\text{plaintext}=P \mid \text{ciphertext}=C] = \Pr[\text{plaintext}=P], \qquad \text{in short } \Pr[P \mid C] = \Pr[P].$$
+- the probabilities are taken over the **key space** and the **plaintext space**.
+
 ## Conditional probabilities
 
 ![[Pasted image 20251102124840.png]]
+
+A useful consequence: in a perfect cipher the ciphertext is independent of the plaintext, i.e. $\Pr[C] = \Pr[C \mid P]$. Derivation:
+
+- $\Pr[P \mid C] = \dfrac{\Pr[P \wedge C]}{\Pr[C]}$  (definition of conditional probability);
+- $\Pr[P \mid C]\cdot\Pr[C] = \Pr[C \mid P]\cdot\Pr[P]$  (Bayes);
+- in a perfect cipher $\Pr[P \mid C] = \Pr[P]$;
+- replacing into Bayes: $\Pr[P]\cdot\Pr[C] = \Pr[C \mid P]\cdot\Pr[P]$, hence $\boxed{\Pr[C] = \Pr[C \mid P]}$.
+
 ---
 
 ## One-time pad (OTP)
 
 **![[Pasted image 20251102124850.png]]**
+
+- also known as the **Vernam cipher**, invented in 1917 and patented in 1919 while **Gilbert Vernam** was working at AT&T;
+- plaintext space $\{0,1\}^n$ and keystream space $\{0,1\}^n$ (same size);
+- the scheme is **symmetric**; the keystream $K$ is chosen **at random**;
+$$E_K(P) = C = P \oplus K, \qquad D_K(C) = C \oplus K = P \oplus K \oplus K = P.$$
 
 ---
 
@@ -140,21 +159,29 @@ at every iteration compute the XOR between k and next byte of plaintext (or ciph
 
 **![[Pasted image 20251102124901.png]]**
 
----
+- **Claim**: the one-time pad is a *perfect cipher* — given a $k$-bit ciphertext, every $k$-bit plaintext has the same probability, provided the key is random.
+- **Problem**: the size of the keystream space (the key is as long as the message), as shown by the following.
+- **Theorem (Shannon)**: a cipher **cannot be perfect** if the size of its key space is **less** than the size of its message space.
 
-# Slide 18
+---
 
 ## Proof of Shannon's theorem
 
 **![[Pasted image 20251102124915.png]]**
 
+**By contradiction.** Let $l$ be the number of keys and $n$ the number of messages, and assume $l < n$.
+
+1. Consider a ciphertext $C_0$ with $\Pr[C_0] > 0$ (such a $C_0$ must exist).
+2. For a key $K$, the message $P = D_K(C_0)$; there are **at most $l$** such messages (one per key).
+3. Since $l < n$, choose a message $P_0$ that is **not** of the form $D_K(C_0)$ for any key (there exist $n - l$ such messages).
+4. Then $\Pr[C_0 \mid P_0] = 0$ (no key maps $P_0$ to $C_0$).
+5. But in a **perfect** cipher $\Pr[C_0 \mid P_0] = \Pr[C_0] > 0$ — **contradiction**.
+
+Hence a perfect cipher requires $l \ge n$, i.e. $|\text{key space}| \ge |\text{message space}|$. $\blacksquare$
+
 ---
 
-# Slide 19
-
 ## Consequences
-
-19
 
 OTP is perfect if
   - keystream truly random

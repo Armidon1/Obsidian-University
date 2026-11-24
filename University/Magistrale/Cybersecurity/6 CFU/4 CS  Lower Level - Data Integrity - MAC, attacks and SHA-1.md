@@ -196,6 +196,8 @@ Success is defined by acceptance, not by semantic value
 ![[Pasted image 20251009164235.png]]
 ![[Pasted image 20251009164316.png]]
 
+A hash maps a large **message space** (size $N$) onto a smaller set of **hash values** (size $m$), so collisions are **unavoidable**: the average number of messages per hash value is $N/m$, and $\lim_{N\to\infty} N/m = \infty$.
+
 ### Properties of hash functions
 - Avalanche effect
   - if $H(M_{1})$ is the hash value of M1, then, even if M2 is different from M1 in only one bit, $H(M_{2})$ is strongly different from $H(M_{1})$ – small changes cause big differences

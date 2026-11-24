@@ -19,6 +19,7 @@ tags:
 | 3 | [[03 - CB - Assembly 101]] | assembly x86-64: registri, istruzioni, accesso memoria, controllo di flusso, stack frame, calling convention, caller/callee-saved, sintassi Intel/AT&T |
 | 4 | [[04 - CB - Binary Exploitation 1]] | pwntools, `call`/`ret` e lo stack, buffer overflow, sovrascrittura del return address (ret2win) |
 | 5 | [[05 - CB - Binary Exploitation 2]] | mitigazioni: stack canary, PIE, NX; workaround: leak, shellcode e Ret2Stack, ROP e gadget (`ropper`) |
+| 6 | [[06 - CB - Crypto 1]] | confidenzialità/autenticazione, simmetrica vs asimmetrica; One Time Pad e cifrario perfetto, riuso della chiave; stream cipher e RC4; block cipher (AES/DES), PRF/PRP, modi ECB/CBC/CTR |
 
 ## Concetti
 
@@ -49,6 +50,12 @@ tags:
 ### Binary exploitation: mitigazioni e workaround
 - [[Canary dello Stack]] · [[PIE]] · [[NX]] · [[Shellcode]] · [[Ret2Stack]] · [[ROP]]
 - Nel vault: [[Stack Canary]]
+
+### Crittografia (Crypto 1)
+> I concetti di crittografia sono trattati a fondo nel corso **Cybersecurity**: le note qui sotto rimandano direttamente a quelle, per non duplicarle. L'unica nota propria del CyberBootCamp è l'attacco OTP in ottica CTF.
+- Taglio CTF: [[Attacco al One Time Pad]]
+- Fondamenti (Cybersecurity): [[Symmetric Encryption]] · [[Asymmetric Encryption]] · [[One-Time Pad (OTP)]] · [[Perfect Cipher]]
+- Cifrari (Cybersecurity): [[Stream Cipher]] · [[PRF (Pseudorandom Function)]] · [[Block Cipher]] · [[AES]] · [[DES]] · [[ECB]] · [[CBC]] · [[CTR]]
 
 ## Challenge
 
@@ -89,6 +96,13 @@ flowchart TD
     SC --> R2S[Ret2Stack]
     R2S --> NX[NX]
     NX --> ROPn[ROP]
+    OTP[One-Time Pad OTP] --> PERF[Perfect Cipher]
+    OTP --> ATK[Attacco al One Time Pad]
+    ATK --> STR[Stream Cipher]
+    BLK[Block Cipher] --> PRP[PRF]
+    BLK --> ECBn[ECB]
+    ECBn --> CBCn[CBC]
+    ECBn --> CTRn[CTR]
 ```
 
 - **Aggirare i filtri sui percorsi**: [[URL e URI]] → [[Percent Encoding]] → [[Parser Differential]] → [[Null Byte Injection]] → [[Path Traversal]]
@@ -99,3 +113,5 @@ flowchart TD
 - **Leggere l'assembly**: [[Codice Macchina e Assembly]] → [[Registri x86-64]] → [[Istruzioni x86-64]] → [[Controllo di Flusso in Assembly]] → [[Stack Frame x86-64]] → [[Calling Convention]]
 - **Dallo stack all'exploit**: [[Stack Frame x86-64]] → [[call e ret]] → [[Buffer Overflow dello Stack]] → [[Sovrascrivere il Return Address]]
 - **Aggirare le mitigazioni**: [[Sovrascrivere il Return Address]] → [[Canary dello Stack]] → [[PIE]] → [[Shellcode]] → [[Ret2Stack]] → [[NX]] → [[ROP]]
+- **Dal One Time Pad ai cifrari reali** (Cybersecurity): [[One-Time Pad (OTP)]] → [[Perfect Cipher]] → [[Attacco al One Time Pad]] → [[Stream Cipher]]
+- **Cifrari a blocchi e modi** (Cybersecurity): [[Block Cipher]] → [[PRF (Pseudorandom Function)]] → [[ECB]] → [[CBC]] → [[CTR]]

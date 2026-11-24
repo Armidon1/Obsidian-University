@@ -1,6 +1,9 @@
 ## Information security
 
 ![[Pasted image 20251022145115.png]]
+
+_Module outline:_ everything starts here → **CIA requirements** → other (non-secondary) requirements → *what is a requirement?* → *safety vs. security*.
+
 ---
 
 ## Requirements	
@@ -12,6 +15,11 @@ Standard in ISO 27000
 ## Cryptography vs. security 
 ![[Pasted image 20251022145145.png]]
 
+- Cryptography and security **differ**.
+- Cryptography traditionally deals with **secrecy** of information.
+- Most real security deals with problems of **fraud**: message modifications, user authentication.
+- Much of security has little to do with encryption, however it might *use* cryptography.
+- Almost invariably, encryption does not live alone without some form of **authentication**.
 
 ---
 ## Pre-computer cryptography
@@ -150,6 +158,8 @@ used and accepted in all environments
 
 ![[Pasted image 20251030201541.png]]
 
+Alice → **encryptor** (key $K_1$) → *ciphertext* → **decryptor** (key $K_2$) → Bob. If $K_1 = K_2$ the encryption is **symmetric**, otherwise **asymmetric**. For confidentiality, symmetric encryption is preferred (faster).
+
 ---
 ## What is a key?
 
@@ -160,16 +170,22 @@ symmetric keys must remain confidential
 ## Communication model
 ![[Pasted image 20251030201616.png]]
 
+Alice ↔ Bob. (1) two parties, Alice and Bob; (2) a **reliable** communication line; (3) a **shared** encryption scheme $E, D, K_1, K_2$; (4) goal: send a message $M$ **confidentially**.
+
 ---
 ## Threat (attack) model
 
 ![[Pasted image 20251030201630.png]]
 
+Alice ↔ Bob, with **Trudy (or Eve)** — the *adversary* — able to interpose on the line. Attack to confidentiality: get **partial or total information on $M$**.
 
 ---
 
 ## Adversary
 ![[Pasted image 20251030201649.png]]
+
+- **Passive** adversary: *reads* the exchanged messages (no change).
+- **Active** adversary: can *modify* messages sent by Alice or Bob, and can send **fake** messages claiming to have been sent by someone else.
 
 ---
 
@@ -193,10 +209,17 @@ symmetric keys must remain confidential
 ## Security goals
 ![[Pasted image 20251030201758.png]]
 
+- **Kerckhoff's principle**: a cryptosystem should be designed to be secure even if all its details, **except the key**, are publicly known.
+- **Shannon's maxim**: *the enemy knows the system*.
+- If the keys are unknown, then it is **hard** to obtain even partial information on the message, and **hard** to find the key even if we know the cleartext.
+- **hard** = *computationally hard*: it takes a long time even with the most powerful computers available.
+
 ---
 ## Adversarial model
 
 ![[Pasted image 20251030201814.png]]
+
+Assumptions on the adversary Trudy: she attempts to discover information about $M$; she knows the algorithms $E, D$; she knows the **message space**; she has at least **partial** information about the ciphertext; she does **not** know the keys $K_1, K_2$.
 
 ---
 # Attack categories
