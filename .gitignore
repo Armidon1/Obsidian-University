@@ -23,3 +23,6 @@ appuntiClaude/
 
 # Storico dei comandi di gdb
 .gdb_history
+
+# Cache di Python
+__pycache__/

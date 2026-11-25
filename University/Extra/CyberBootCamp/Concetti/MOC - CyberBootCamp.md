@@ -53,7 +53,7 @@ tags:
 
 ### Crittografia (Crypto 1)
 > I concetti di crittografia sono trattati a fondo nel corso **Cybersecurity**: le note qui sotto rimandano direttamente a quelle, per non duplicarle. L'unica nota propria del CyberBootCamp è l'attacco OTP in ottica CTF.
-- Taglio CTF: [[Attacco al One Time Pad]]
+- Taglio CTF: [[Attacco al One Time Pad]] · [[pycryptodome]] (AES in Python: ECB, CBC, CTR)
 - Fondamenti (Cybersecurity): [[Symmetric Encryption]] · [[Asymmetric Encryption]] · [[One-Time Pad (OTP)]] · [[Perfect Cipher]]
 - Cifrari (Cybersecurity): [[Stream Cipher]] · [[PRF (Pseudorandom Function)]] · [[Block Cipher]] · [[AES]] · [[DES]] · [[ECB]] · [[CBC]] · [[CTR]]
 
@@ -63,6 +63,8 @@ tags:
 |---|---|---|
 | [[Challenge 15+18]] | Reverse, Medium | flag come somma di due array globali, esca statica, costruttore nascosto in `.init_array`, lettura a runtime con pwndbg |
 | Sn4k3 (in [[Reimplementare codice decompilato in Python#Esempio completo: Sn4k3\|Reimplementare codice decompilato]]) | Reverse | costruttore nascosto, tipi corretti con `Y`, reimplementazione in Python |
+| GuessThePlaintext (in [[pycryptodome#GuessThePlaintext · AES in ECB, CBC e CTR con chiave scelta da te\|pycryptodome]]) | Crypto | AES in ECB, CBC e CTR con pycryptodome, conversione hex → byte, prompt con pwntools |
+| BitCrypt (in [[Attacco al One Time Pad#BitCrypt · OTP con chiave riusata tra i tuoi messaggi e la flag\|Attacco al One Time Pad]]) | Crypto | OTP con chiave riusata, known-plaintext (`K = P ⊕ C`), conversioni str / bytes / hex, lettura del menu con pwntools |
 
 ## Percorsi trasversali
 

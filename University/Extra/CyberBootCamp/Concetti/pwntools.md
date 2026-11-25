@@ -42,12 +42,15 @@ Il prompt termina con uno spazio. Una `recvline()` in quel punto aspetterebbe un
 | Un blocco di lunghezza variabile | `io.recv(32)` | Legge fino a 32 byte. Può restituirne meno appena ci sono dati. |
 | Un campo lungo esattamente 4 byte | `io.recvn(4)` | Accumula i byte fino a completare il campo. |
 | Una riga di testo | `io.recvline()` | Legge fino al fine riga e lo include nel risultato. |
-| Un prompt riconoscibile | `io.recvuntil(b"> ")` | Consuma i dati fino al delimitatore incluso. Con `drop=True` lo omette dal risultato. |
+| Un prompt riconoscibile | `io.recvuntil(b"> ")` | Consuma i dati fino alla **prima** occorrenza del delimitatore, inclusa. Con `drop=True` lo omette dal risultato. |
 | Un campo binario da inviare | `io.send(dati)` | Scrive i byte forniti. |
 | Una risposta da confermare con Invio | `io.sendline(dati)` | Scrive i byte e aggiunge il fine riga configurato. |
 
 > [!tip] Quando una lettura sembra bloccata
 > Con `io.recvuntil(b"> ", timeout=2)`, un risultato `b""` indica che il delimitatore non è arrivato entro due secondi. I byte già raccolti restano nel buffer. Se il canale si chiude prima del delimitatore, la chiamata solleva `EOFError`. Controlla spazi e fine riga con `repr(dati)` quando ispezioni una risposta. [Riferimento di recvuntil](https://docs.pwntools.com/en/stable/tubes.html#pwnlib.tubes.tube.tube.recvuntil)
+
+> [!warning] Il delimitatore deve essere unico
+> `recvuntil` si ferma alla **prima** occorrenza e lascia il resto nel buffer. Con il messaggio `Challenge 1: ...\nEnter a key (hex): `, la chiamata `recvuntil(b":")` si ferma dopo `Challenge 1:`, e la `recvline()` successiva restituisce l'avanzo della stessa riga invece del dato atteso. Usa un pezzo di prompt che compare una volta sola, come `b"(hex): "`, oppure `sendlineafter(b"(hex): ", dati)`, che aspetta il prompt e poi invia. Caso reale in [[pycryptodome#GuessThePlaintext · AES in ECB, CBC e CTR con chiave scelta da te|GuessThePlaintext]].
 
 ## Testo, byte e interi
 
@@ -64,6 +67,16 @@ assert p32(12, endian="big").hex(" ") == "00 00 00 0c"
 
 > [!warning] Correzione
 > Il numero nel nome della funzione indica la larghezza in **bit**. `p32` produce quattro byte e `p64` ne produce otto. L'ordine dipende da `context.endian` oppure dall'argomento esplicito. In *little-endian* il byte meno significativo viene per primo. [Documentazione del packing](https://docs.pwntools.com/en/stable/util/packing.html)
+
+Nelle challenge crypto i valori arrivano spesso come **testo hex** in fondo a una riga (`Here's the nonce (hex): 8a2c878413511543`). Invece di contare i caratteri del prefisso per lo slice, prendi l'ultima parola e convertila in byte veri:
+
+```python
+riga  = io.recvline()                       # b"Here's the nonce (hex): 8a2c878413511543\n"
+nonce = bytes.fromhex(riga.split()[-1].decode())
+assert nonce == b"\x8a\x2c\x87\x84\x13\x51\x15\x43"
+```
+
+Nella direzione opposta `chiave.hex().encode()` prepara una chiave da mandare in hex. Le tre forme (testo hex, `str`, byte veri) e l'uso con AES sono in [[pycryptodome#Testo hex, `str` e byte veri|pycryptodome]].
 
 ## Leggere un binario ELF
 
@@ -425,11 +438,13 @@ p.interactive()
 - **Il binario ha canary, PIE, NX e RELRO tutti attivi: è al sicuro da un overflow?** No. Quelle protezioni difendono il *control flow* (return address, GOT, stack non eseguibile). Un overflow che corrompe un **dato** adiacente — es. un flag `is_admin` subito dopo un buffer nella stessa struct — le bypassa tutte senza toccarle. Controlla sempre cosa c'è *subito dopo* il buffer che puoi sforare.
 - **Una `read(fd, buf, n)` ti lascia `buf` utilizzabile come stringa?** Non per forza: `read` copia byte grezzi e **non** aggiunge `\0`. Se il codice conta su un terminatore scritto altrove (es. solo quando l'input finisce con `\n`), mandare dati senza `\n` può saltare quella scrittura e lasciare il buffer non terminato (o conservare un byte di overflow).
 - **Leaki il canary corrompendo il suo `\x00`, ma la funzione lo ricontrolla al `return`. Come eviti il crash?** Se c'è una seconda lettura nello stesso buffer prima del `return`, usala per **rimettere `\x00`** al posto del byte di canary che avevi calpestato: il confronto torna a quadrare e la funzione esce pulita, lasciandoti proseguire.
+- **Il server scrive `Challenge 1: ... Enter a key (hex): ` e `recvuntil(b":")` ti restituisce l'avanzo sbagliato. Perché?** Si è fermato al primo `:`, quello di `Challenge 1:`. Usa un delimitatore che compare una volta sola, come `b"(hex): "`.
 - **Hai trovato `/bin/sh` dentro una stringa più lunga. Come ne prendi l'indirizzo senza sbagliare l'offset?** `next(exe.search(b"/bin/sh\x00"))`: trova la sottostringa esatta da sé. Il conteggio a mano (`base + offset`) è la fonte classica di off-by-N, come puntare all'ultima lettera `h` invece che a `/`.
 
 ## Collegamenti
 
 - **Concetti correlati**: [[Buffer Overflow dello Stack]] · [[Shellcode]] · [[ROP]] · [[PIE]] · [[Calling Convention]]
+- **Challenge crypto**: [[pycryptodome]] (pwntools per parlare con il server, pycryptodome per AES)
 - **Mappa**: [[MOC - CyberBootCamp]]
 
 > [!info] Approfondimento

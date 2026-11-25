@@ -19,6 +19,8 @@ source: pdf/CB - Crypto 1 - CB - Crypto 1.pdf
 
 > [!note] Collegamenti con altri corsi
 > Gli stessi temi sono trattati, più in profondità, nel corso di **Cybersecurity**: [[Stream Cipher]], [[Block Cipher]], [[AES]], [[DES]], [[ECB]], [[CBC]], [[CTR]]. Qui l'ottica è quella delle CTF: capire *quando un cifrario si rompe* e come sfruttarlo.
+>
+> Per usare questi cifrari in uno script (AES in ECB, CBC e CTR) vedi [[pycryptodome]].
 
 ## Cos'è la crittografia
 
