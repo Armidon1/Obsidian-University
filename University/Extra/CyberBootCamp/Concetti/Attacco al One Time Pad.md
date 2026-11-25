@@ -131,6 +131,53 @@ print(xor(xor(c_f, c_m), m))   # ccit{s4m3_n0nc3_s4m3_pr0bl3m}
 > - **Riga vuota prima del risultato.** Il server stampa `f"\nEncrypted User Text: ..."`: il primo `recvline()` restituisce solo `b"\n"`. Si può saltarla con un `recvline()` in più, oppure andare direttamente all'etichetta con `recvuntil(b"Encrypted User Text: ")`.
 > - **`fromhex` solo su uno dei due ciphertext.** La flag era stata convertita in byte veri, il ciphertext del messaggio no: lo XOR veniva fatto con i codici ASCII di `'d'`, `'a'`, `'5'`… e il risultato era spazzatura. Si riconosce dalla stampa: `b'da526ca9...'` è testo hex, `b'\xfdTv\xb4...'` sono byte veri. Stessa trappola di BitCrypt.
 
+### MysticTonguePoetry · many-time pad con crib dragging
+
+File: `exercices/crypto/MysticTonguePoetry/challenge.py`, `flag.enc` e `reverse.py`. È offline: non c'è un server, solo il file cifrato.
+
+`challenge.py` genera **una** chiave casuale di 500 byte e la usa in XOR con **ogni riga** di `flag.txt`, scrivendo in `flag.enc` una riga hex per ognuna. Le righe sono 9: otto versi di una poesia in italiano e la flag come ultima riga.
+
+A differenza di BitCrypt e countme qui **non puoi scegliere il messaggio**: nessun plaintext è noto per intero. `C1 ⊕ C2 = P1 ⊕ P2` toglie la chiave, ma lascia due testi sconosciuti mescolati. Il trucco è che non serve una riga intera: bastano **pochi byte noti in una riga qualsiasi**, che poi si allargano a tutte le altre.
+
+```
+1. crib noto: la flag inizia con "ccit{"      → key[0:5] = C_flag[0:5] ⊕ b"ccit{"
+2. key[0:5] su tutte le righe                   → b"Se ne", b"e ogn", b"Insie", ...
+3. indovini come continua una parola            → "Insie" → "Insieme"
+4. key = C_riga ⊕ testo_indovinato              → chiave più lunga, più lettere in tutte le righe
+5. ripeti dal punto 2
+```
+
+Il passo 4 funziona su **qualsiasi** riga: ogni parola indovinata in un verso allunga la chiave e quindi sblocca un carattere in tutti gli altri. Si alternano le righe in cui la parola successiva è più facile da indovinare.
+
+Soluzione (ripulita da quella in `reverse.py`, dove i crib sono scritti uno dopo l'altro):
+
+```python
+def xor(a, b):
+    return bytes(x ^ y for x, y in zip(a, b))
+
+ct = [bytes.fromhex(l) for l in open("flag.enc").read().split()]
+
+# crib via via più lunghi: ogni riga sovrascrive key con una chiave più lunga
+key = xor(ct[8], b"ccit{")
+key = xor(ct[4], b"Insieme")
+# ... "sognando", "e il nostro", "Se nel mondo", "e ognuno guardasse", ...
+key = xor(ct[1], b"e ognuno guardasse al suo prossimo come fratello")
+
+for c in ct:
+    print(xor(c, key))
+# ultima riga: ccit{G4br13l3_gull4_pr0f_di_4n4l1s1_3_3_di_v1t4}
+```
+
+> [!tip] Versione automatica: un byte di chiave per colonna
+> Il byte `key[i]` è uno solo ed è usato alla posizione `i` di **tutte** le righe: si possono provare tutti i 256 valori e tenere quello per cui le righe decifrate in quella colonna sembrano più "testo" (lettere, spazi, punteggiatura). Con solo 9 righe qualche byte esce sbagliato, soprattutto verso la fine dove le righe lunghe sono poche. Di solito si lancia l'automatico e poi si correggono a mano le lettere sbagliate con i crib.
+
+> [!warning] Correzione · cose che hanno confuso lungo la strada
+> - **"Ma io non conosco né line1 né line2".** Vero, ma non serve: il punto d'appoggio è un pezzo noto (`ccit{`), non una riga intera.
+> - **La stampa dei bytes "non corrisponde" all'hex del file.** `b'\x19~\x9e...'` e `197e9e...` sono gli stessi byte: Python mostra come carattere i byte stampabili (`0x7e` → `~`) e come `\xNN` gli altri. Per confrontarli con il file, `.hex()`.
+> - **`xor(ct, b"ccit{")` "non funziona".** Il risultato sono i byte della chiave, che viene da `os.urandom`: è normale che sembrino spazzatura. Il crib si verifica guardando cosa esce **sulle altre righe**.
+> - **`zip` taglia la riga.** Con una chiave di 5 byte `xor` restituisce 5 byte: il resto non viene cancellato, viene ignorato. Per vederlo: `xor(riga, key) + riga[len(key):]`, oppure dei `?` come segnaposto.
+> - **`à` occupa due byte.** Il testo è codificato in UTF-8: `à` diventa `b"\xc3\xa0"` e `ù` diventa `b"\xc3\xb9"`. Nel crib vanno scritti così (o con `"…à".encode()`), e una riga troncata in mezzo a un carattere mostra un `\xc3` isolato.
+
 ## Collegamenti
 
 - **Concetti correlati** (corso Cybersecurity): [[One-Time Pad (OTP)]] · [[Perfect Cipher]] · [[Stream Cipher]] · [[CTR]] · [[AES]] · [[Known-Plaintext Attack (KPA)]]

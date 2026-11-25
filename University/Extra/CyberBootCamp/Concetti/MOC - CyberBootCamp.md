@@ -20,6 +20,7 @@ tags:
 | 4 | [[04 - CB - Binary Exploitation 1]] | pwntools, `call`/`ret` e lo stack, buffer overflow, sovrascrittura del return address (ret2win) |
 | 5 | [[05 - CB - Binary Exploitation 2]] | mitigazioni: stack canary, PIE, NX; workaround: leak, shellcode e Ret2Stack, ROP e gadget (`ropper`) |
 | 6 | [[06 - CB - Crypto 1]] | confidenzialità/autenticazione, simmetrica vs asimmetrica; One Time Pad e cifrario perfetto, riuso della chiave; stream cipher e RC4; block cipher (AES/DES), PRF/PRP, modi ECB/CBC/CTR |
+| 7 | [[07 - CB - Crypto 2]] | crittografia asimmetrica; gruppi e campi, aritmetica modulare, Eulero/Fermat, square and multiply; RSA e i suoi attacchi (fattorizzazione, common modulus, esponente piccolo, Håstad/CRT, malleabilità), padding; Diffie-Hellman, logaritmo discreto, Pohlig–Hellman, MITM, DDH e residui quadratici |
 
 ## Concetti
 
@@ -52,10 +53,16 @@ tags:
 - Nel vault: [[Stack Canary]]
 
 ### Crittografia (Crypto 1)
-> I concetti di crittografia sono trattati a fondo nel corso **Cybersecurity**: le note qui sotto rimandano direttamente a quelle, per non duplicarle. L'unica nota propria del CyberBootCamp è l'attacco OTP in ottica CTF.
+> I concetti di crittografia sono trattati a fondo nel corso **Cybersecurity**: le note qui sotto rimandano direttamente a quelle, per non duplicarle. Le note proprie del CyberBootCamp hanno il taglio CTF: attacchi e strumenti.
 - Taglio CTF: [[Attacco al One Time Pad]] · [[pycryptodome]] (AES in Python: ECB, CBC, CTR)
 - Fondamenti (Cybersecurity): [[Symmetric Encryption]] · [[Asymmetric Encryption]] · [[One-Time Pad (OTP)]] · [[Perfect Cipher]]
 - Cifrari (Cybersecurity): [[Stream Cipher]] · [[PRF (Pseudorandom Function)]] · [[Block Cipher]] · [[AES]] · [[DES]] · [[ECB]] · [[CBC]] · [[CTR]]
+
+### Crittografia asimmetrica (Crypto 2)
+- Matematica e strumenti: [[Gruppi, Anelli e Campi]] · [[Teorema Cinese del Resto]] · [[Residui Quadratici]] · [[SageMath]]
+- Attacchi a RSA: [[Fattorizzare il Modulo RSA]] · [[RSA Common Modulus Attack]] · [[RSA con Esponente Piccolo]] · [[Håstad Broadcast Attack]] · [[Malleabilità di RSA]]
+- Attacchi a Diffie-Hellman: [[Pohlig-Hellman]] · [[Man-in-the-Middle (MITM)]]
+- Teoria (Cybersecurity e Mathematical definitions): [[Modular Arithmetic]] · [[Euler's totient function]] · [[Euler's Theorem]] · [[Fermat's Little Theorem]] · [[Modular Exponentiation]] · [[RSA]] · [[PKCS1]] · [[RSA-OAEP]] · [[Diffie-Hellman Key Exchange]] · [[Discrete Logarithm (DL) Problem]]
 
 ## Challenge
 
@@ -66,6 +73,7 @@ tags:
 | GuessThePlaintext (in [[pycryptodome#GuessThePlaintext · AES in ECB, CBC e CTR con chiave scelta da te\|pycryptodome]]) | Crypto | AES in ECB, CBC e CTR con pycryptodome, conversione hex → byte, prompt con pwntools |
 | BitCrypt (in [[Attacco al One Time Pad#BitCrypt · OTP con chiave riusata tra i tuoi messaggi e la flag\|Attacco al One Time Pad]]) | Crypto | OTP con chiave riusata, known-plaintext (`K = P ⊕ C`), conversioni str / bytes / hex, lettura del menu con pwntools |
 | countme (in [[Attacco al One Time Pad#countme · AES-CTR con nonce fisso, cioè OTP con keystream riusato\|Attacco al One Time Pad]]) | Crypto | AES-CTR con chiave e nonce fissi → keystream riusato, `C_F ⊕ C_M ⊕ M = F`, prompt di `input()` senza `\n` |
+| MysticTonguePoetry (in [[Attacco al One Time Pad#MysticTonguePoetry · many-time pad con crib dragging\|Attacco al One Time Pad]]) | Crypto | many-time pad: stessa chiave su 9 righe, crib `ccit{` allargato parola per parola, UTF-8 delle lettere accentate |
 
 ## Percorsi trasversali
 
@@ -106,6 +114,17 @@ flowchart TD
     BLK --> ECBn[ECB]
     ECBn --> CBCn[CBC]
     ECBn --> CTRn[CTR]
+    EUL[Euler's Theorem] --> RSAn[RSA]
+    RSAn --> FACT[Fattorizzare il Modulo RSA]
+    RSAn --> SMALL[RSA con Esponente Piccolo]
+    SMALL --> HAS[Håstad Broadcast Attack]
+    CRTn[Teorema Cinese del Resto] --> HAS
+    RSAn --> CMA[RSA Common Modulus Attack]
+    RSAn --> MAL[Malleabilità di RSA]
+    DLP[Discrete Logarithm] --> PH[Pohlig-Hellman]
+    CRTn --> PH
+    DHn[Diffie-Hellman] --> DLP
+    DHn --> QR[Residui Quadratici]
 ```
 
 - **Aggirare i filtri sui percorsi**: [[URL e URI]] → [[Percent Encoding]] → [[Parser Differential]] → [[Null Byte Injection]] → [[Path Traversal]]
@@ -118,3 +137,5 @@ flowchart TD
 - **Aggirare le mitigazioni**: [[Sovrascrivere il Return Address]] → [[Canary dello Stack]] → [[PIE]] → [[Shellcode]] → [[Ret2Stack]] → [[NX]] → [[ROP]]
 - **Dal One Time Pad ai cifrari reali** (Cybersecurity): [[One-Time Pad (OTP)]] → [[Perfect Cipher]] → [[Attacco al One Time Pad]] → [[Stream Cipher]]
 - **Cifrari a blocchi e modi** (Cybersecurity): [[Block Cipher]] → [[PRF (Pseudorandom Function)]] → [[ECB]] → [[CBC]] → [[CTR]]
+- **Rompere RSA** (CTF): [[Euler's Theorem]] → [[RSA]] → [[Fattorizzare il Modulo RSA]] → [[RSA Common Modulus Attack]] → [[RSA con Esponente Piccolo]] → [[Håstad Broadcast Attack]] → [[Malleabilità di RSA]]
+- **Rompere Diffie-Hellman** (CTF): [[Diffie-Hellman Key Exchange]] → [[Discrete Logarithm (DL) Problem]] → [[Pohlig-Hellman]] → [[Teorema Cinese del Resto]] · [[Man-in-the-Middle (MITM)]] · [[Residui Quadratici]]

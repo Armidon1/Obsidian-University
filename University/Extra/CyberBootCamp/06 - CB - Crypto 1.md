@@ -15,7 +15,7 @@ source: pdf/CB - Crypto 1 - CB - Crypto 1.pdf
 
 > [!abstract]
 > Prima lezione del modulo di **crittografia** del CyberBootCamp (CyberChallenge.IT): *how math protects data*. Si parte dagli obiettivi della crittografia — **confidenzialità** (Eve non capisce il messaggio) e **autenticazione** (Eve non può spacciarsi per Alice) — e dalla distinzione tra crittografia **simmetrica** (chiave privata condivisa) e **asimmetrica** (chiave pubblica). Il resto è tutto sui **cifrari simmetrici**: il **One Time Pad** (XOR con una chiave lunga quanto il messaggio), perché è un *cifrario perfetto* ma anche perché **non va riusata la chiave**; i **cifrari a flusso** (RC4), che generano un flusso pseudo-casuale da un seme corto; e i **cifrari a blocchi** (AES, DES) con i loro **modi di operazione** (ECB, CBC, CTR), dove si vede perché ECB è insicuro — il famoso «pinguino».
-> Lezione precedente: [[05 - CB - Binary Exploitation 2]]. Mappa del corso: [[MOC - CyberBootCamp]].
+> Lezione precedente: [[05 - CB - Binary Exploitation 2]]. Lezione successiva: [[07 - CB - Crypto 2]]. Mappa del corso: [[MOC - CyberBootCamp]].
 
 > [!note] Collegamenti con altri corsi
 > Gli stessi temi sono trattati, più in profondità, nel corso di **Cybersecurity**: [[Stream Cipher]], [[Block Cipher]], [[AES]], [[DES]], [[ECB]], [[CBC]], [[CTR]]. Qui l'ottica è quella delle CTF: capire *quando un cifrario si rompe* e come sfruttarlo.
