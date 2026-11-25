@@ -28,6 +28,10 @@ Esistono tre pacchetti con nomi quasi uguali, e sul PC di Simone ce ne sono due 
 > ```python
 > import Crypto; print(Crypto.__version__, Crypto.__file__)   # 2.6.1 → è PyCrypto
 > ```
+> Lo stesso vale per i `server.py` delle challenge, scritti per pycryptodome: lanciati in locale danno `ModuleNotFoundError: No module named 'Crypto.Util.Padding'` (PyCrypto non ha `Padding`). Basta una copia che importa `Cryptodome`, senza toccare l'originale:
+> ```bash
+> sed 's/from Crypto\./from Cryptodome./' server.py > server_local.py
+> ```
 > Tutti gli esempi di questa nota usano `from Cryptodome.Cipher import AES`. La [documentazione](https://pycryptodome.readthedocs.io/en/latest/src/cipher/classic.html) è la stessa per pycryptodome e pycryptodomex.
 
 ## Testo hex, `str` e byte veri

@@ -65,6 +65,7 @@ tags:
 | Sn4k3 (in [[Reimplementare codice decompilato in Python#Esempio completo: Sn4k3\|Reimplementare codice decompilato]]) | Reverse | costruttore nascosto, tipi corretti con `Y`, reimplementazione in Python |
 | GuessThePlaintext (in [[pycryptodome#GuessThePlaintext · AES in ECB, CBC e CTR con chiave scelta da te\|pycryptodome]]) | Crypto | AES in ECB, CBC e CTR con pycryptodome, conversione hex → byte, prompt con pwntools |
 | BitCrypt (in [[Attacco al One Time Pad#BitCrypt · OTP con chiave riusata tra i tuoi messaggi e la flag\|Attacco al One Time Pad]]) | Crypto | OTP con chiave riusata, known-plaintext (`K = P ⊕ C`), conversioni str / bytes / hex, lettura del menu con pwntools |
+| countme (in [[Attacco al One Time Pad#countme · AES-CTR con nonce fisso, cioè OTP con keystream riusato\|Attacco al One Time Pad]]) | Crypto | AES-CTR con chiave e nonce fissi → keystream riusato, `C_F ⊕ C_M ⊕ M = F`, prompt di `input()` senza `\n` |
 
 ## Percorsi trasversali
 
