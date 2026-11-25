@@ -17,3 +17,9 @@ University/Triennale/Fisica Generale/Fisica 2/pdf/
 
 # Sorgenti LaTeX degli appunti generati: restano in locale per le integrazioni
 appuntiClaude/
+
+# Tour, conversazioni e lacune di Code Dungeon: dati locali del tutor
+.tour/
+
+# Storico dei comandi di gdb
+.gdb_history
