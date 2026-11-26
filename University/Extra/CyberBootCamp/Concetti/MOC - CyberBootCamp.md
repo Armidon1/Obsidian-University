@@ -75,6 +75,7 @@ tags:
 | countme (in [[Attacco al One Time Pad#countme · AES-CTR con nonce fisso, cioè OTP con keystream riusato\|Attacco al One Time Pad]]) | Crypto | AES-CTR con chiave e nonce fissi → keystream riusato, `C_F ⊕ C_M ⊕ M = F`, prompt di `input()` senza `\n` |
 | MysticTonguePoetry (in [[Attacco al One Time Pad#MysticTonguePoetry · many-time pad con crib dragging\|Attacco al One Time Pad]]) | Crypto | many-time pad: stessa chiave su 9 righe, crib `ccit{` allargato parola per parola, UTF-8 delle lettere accentate |
 | progressivebar (in [[Signed e Unsigned (Integer Overflow)#progressivebar · signed/unsigned per saltare il limite di iterazioni\|Signed e Unsigned]]) | Pwn | integer overflow (signedness): `atoi("-1")` in `unsigned int` → `0xFFFFFFFF`, bypassa il limite di 9 cifre; canary come depistaggio |
+| waterfall (in [[Sovrascrivere il Return Address#waterfall · ret2win con un gate sul contenuto del buffer\|Sovrascrivere il Return Address]]) | Pwn | ret2win classico (No PIE, No canary): overflow del buffer fino al return address → `win()`, con gate `"I am worthy"` sul contenuto |
 
 ## Percorsi trasversali
 
