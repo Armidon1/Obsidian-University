@@ -26,3 +26,13 @@ appuntiClaude/
 
 # Cache di Python
 __pycache__/
+
+# Database di IDA (rigenerabili dal binario)
+*.idb
+*.i64
+*.id0
+*.id1
+*.id2
+*.id3
+*.nam
+*.til

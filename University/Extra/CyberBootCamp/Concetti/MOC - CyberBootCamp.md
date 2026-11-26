@@ -49,7 +49,7 @@ tags:
 - Nel vault: [[Buffer Overflow]]
 
 ### Binary exploitation: mitigazioni e workaround
-- [[Canary dello Stack]] · [[PIE]] · [[NX]] · [[Shellcode]] · [[Ret2Stack]] · [[ROP]]
+- [[Canary dello Stack]] · [[PIE]] · [[NX]] · [[Shellcode]] · [[Ret2Stack]] · [[ROP]] · [[Allineamento dello Stack (movaps)]]
 - Nel vault: [[Stack Canary]]
 
 ### Crittografia (Crypto 1)
@@ -77,6 +77,7 @@ tags:
 | progressivebar (in [[Signed e Unsigned (Integer Overflow)#progressivebar · signed/unsigned per saltare il limite di iterazioni\|Signed e Unsigned]]) | Pwn | integer overflow (signedness): `atoi("-1")` in `unsigned int` → `0xFFFFFFFF`, bypassa il limite di 9 cifre; canary come depistaggio |
 | waterfall (in [[Sovrascrivere il Return Address#waterfall · ret2win con un gate sul contenuto del buffer\|Sovrascrivere il Return Address]]) | Pwn | ret2win classico (No PIE, No canary): overflow del buffer fino al return address → `win()`, con gate `"I am worthy"` sul contenuto |
 | AliceInNowHereLand (in [[pwntools#AliceInNowHereLand · Overflow di una globale su un flag adiacente in BSS\|pwntools]]) | Pwn | overflow di una globale in `.bss`: `read` di 36 byte in un buffer da 32 → scrive sul flag `found` adiacente, che fa da gate a `win()`; data-only, nessun indirizzo |
+| pngret2win (in [[pwntools#pngret2win · ret2win con validazioni PNG, NUL e allineamento movaps\|pwntools]]) | Pwn | ret2win dietro validazioni PNG (magic bytes, checksum pari, IHDR@32); `IEND` posizionato con un NUL (`strlen`), `ret` gadget per l'allineamento di `system` |
 
 ## Percorsi trasversali
 

