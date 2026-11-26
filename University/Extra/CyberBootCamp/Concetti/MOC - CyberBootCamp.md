@@ -76,6 +76,7 @@ tags:
 | MysticTonguePoetry (in [[Attacco al One Time Pad#MysticTonguePoetry · many-time pad con crib dragging\|Attacco al One Time Pad]]) | Crypto | many-time pad: stessa chiave su 9 righe, crib `ccit{` allargato parola per parola, UTF-8 delle lettere accentate |
 | progressivebar (in [[Signed e Unsigned (Integer Overflow)#progressivebar · signed/unsigned per saltare il limite di iterazioni\|Signed e Unsigned]]) | Pwn | integer overflow (signedness): `atoi("-1")` in `unsigned int` → `0xFFFFFFFF`, bypassa il limite di 9 cifre; canary come depistaggio |
 | waterfall (in [[Sovrascrivere il Return Address#waterfall · ret2win con un gate sul contenuto del buffer\|Sovrascrivere il Return Address]]) | Pwn | ret2win classico (No PIE, No canary): overflow del buffer fino al return address → `win()`, con gate `"I am worthy"` sul contenuto |
+| AliceInNowHereLand (in [[pwntools#AliceInNowHereLand · Overflow di una globale su un flag adiacente in BSS\|pwntools]]) | Pwn | overflow di una globale in `.bss`: `read` di 36 byte in un buffer da 32 → scrive sul flag `found` adiacente, che fa da gate a `win()`; data-only, nessun indirizzo |
 
 ## Percorsi trasversali
 

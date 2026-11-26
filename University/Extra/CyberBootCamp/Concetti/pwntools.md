@@ -369,6 +369,34 @@ Il 33° byte (`\x01`) finisce nel byte basso di `v19`, che da `0` diventa `1` �
 > [!note] "Tutte le protezioni attive" non vuol dire sicuro
 > Canary, PIE, NX, RELRO, SHSTK/IBT difendono il **control flow** (return address, GOT, esecuzione dello stack). Qui l'attacco non tocca nessuno di quelli: cambia un **dato** (un flag di autorizzazione) con un overflow di 1 byte dentro la stessa struct/frame. Una *logic/data corruption* così passa sotto il radar di tutte le mitigazioni control-flow.
 
+### AliceInNowHereLand · Overflow di una globale su un flag adiacente in BSS
+
+Lo stesso trucco di [[#pleaselogin · Overflow di 1 byte su un flag adiacente (nessuna mitigazione toccata)|pleaselogin]] — cambiare un **dato** che fa da gate, senza toccare il control flow — ma in memoria **globale** invece che sullo stack, e senza canary di mezzo (`checksec`: Full RELRO, NX, PIE, **No canary**).
+
+`main` legge l'input in una variabile globale e poi controlla una seconda globale subito accanto:
+
+```
+read(0, location, 0x24);        // 0x24 = 36 byte in `location` (.bss 0x4040)
+...
+if (found != 0) { puts(...); win(); }   // `found` è a .bss 0x4060
+else { /* ristampa il prompt e torna a leggere */ }
+```
+
+La chiave sta negli indirizzi delle due globali: `found` (`0x4060`) − `location` (`0x4040`) = `0x20` = **32 byte**. Quindi `location` è grande 32 byte e `found` è l'`int` che comincia **esattamente al 33° byte**. La `read` però ne accetta **36**: i 4 byte in eccesso cadono dritti in `found`.
+
+`found` parte a `0`, e finché è `0` il programma resta nel ramo `else` e ti fa reinserire l'input. Basta scrivere un qualunque byte non nullo oltre i 32 di `location` per renderlo ≠ 0 → `win()` apre e stampa la flag.
+
+```python
+exe = context.binary = ELF("./chall")
+p = remote(host, porta)
+
+p.recvuntil(b">")
+p.send(b"A"*32 + b"FOUND")   # 32 byte riempiono `location`, "FOUND" straripa in `found`
+print(p.recvall())           # ccit{wH4t_4b0u7_7H3_wH173_r48817??}
+```
+
+`b"FOUND"` è tematico ma non necessario: basterebbe `b"A"*32 + b"\x01"`, un solo byte diverso da zero. Qui PIE e RELRO non contano nulla — non serve nessun indirizzo, l'overflow è **relativo** tra due globali adiacenti ed è il programma stesso a chiamare `win()`. Differenza con pleaselogin: lì era un off-by-one sullo stack (`read` di 33 in un buffer da 32), qui è una `read` sovradimensionata (36 vs 32) in `.bss`, senza il problema del `\n` perché non c'è nessuna ripulitura dopo la `read`.
+
 ### roppery · Leak del canary + ROP a `execve` su un menu a due primitive
 
 Obiettivo: shell con `execve("/bin/sh", NULL, NULL)` su un binario con **canary** attivo, **NX**, Partial RELRO, **No PIE**, SHSTK/IBT marcati. È la sintesi di tutto il resto della nota: un *leak* per battere il canary + una catena **ROP** con gadget "sporchi" + `/bin/sh` già nel binario.
