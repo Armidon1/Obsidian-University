@@ -193,13 +193,40 @@ Avviene in memoria allocata con `malloc`. Sovrascrive **metadati dei chunk** (si
 
 Un solo byte oltre il buffer. Sembra innocuo ma può sovrascrivere il LSB del saved RBP → controllo parziale dello stack frame del chiamante.
 
-### 5.4 Integer overflow → BOF
+### 5.4 Integer overflow / signedness → BOF
+
+> [!warning] Non è un "tipo" di buffer overflow
+> L'integer overflow **non è una variante** di BOF: è un bug a monte, di **aritmetica o di tipi**, il cui effetto a valle è un buffer overflow. Lo elenco qui perché è una delle sorgenti più comuni di BOF, ma la radice sta altrove. Il pattern è sempre lo stesso:
+> ```
+> input non fidato (lunghezza/contatore)
+>    → operazione aritmetica O conversione di tipo
+>    → valore intermedio che supera i check
+>    → stesso valore usato come SIZE in malloc/memcpy/loop
+>    → memory corruption
+> ```
+
+Tre meccanismi distinti, spesso confusi tra loro:
+
+| Meccanismo | Dove nasce | Esempio | Cosa diventa errato |
+|---|---|---|---|
+| **Overflow / wrap** | `a + b`, `n * size` | `len1 + len2` wrappa a un valore piccolo | il risultato del calcolo |
+| **Truncation** | cast a tipo più stretto | `short len = 65536;` → `len = 0` | i bit alti persi |
+| **Signedness** | `int` (con segno) usato come `unsigned`/`size_t` | `atoi("-1")` → `0xFFFFFFFF` | l'interpretazione del valore |
 
 ```c
-short len = user_input;          // se user_input = 65536, len = 0
+// Truncation: il valore originale sopravvive solo nella copia
+short len = user_input;          // user_input = 65536 → len = 0 (troncato)
 char *buf = malloc(len + 1);     // alloca 1 byte
-memcpy(buf, data, user_input);   // copia 65536 byte → BOF
+memcpy(buf, data, user_input);   // ma copia 65536 byte → BOF
+
+// Signedness: il check guarda un signed, memcpy vuole un size_t
+int len = read_user_input();     // attaccante manda -1
+if (len > sizeof(buf)) return;   // -1 > 256? in signed NO → check bypassato
+memcpy(buf, data, len);          // memcpy promuove -1 a size_t = 4 GB → BOF
 ```
+
+> [!important] Le mitigazioni dello stack non bastano
+> ASLR, DEP/NX e canary **non fermano** l'integer overflow: agiscono a valle, quando la corruzione è già avvenuta. La difesa vera sta a monte — check espliciti (`if (a > SIZE_MAX - b)`), `calloc` invece di `malloc(n*size)`, `size_t` al posto di `int`, `-fsanitize=integer`. Trattazione completa, con i casi reali di _Hacking Exposed 7_ (OpenSSH CVE-2002-0639, JPEG of Death, `xdrmem_getbytes`): **[[Integer Overflow & Signedness Attacks]]**.
 
 ### 5.5 Format string (correlato)
 
@@ -373,6 +400,7 @@ Jump-Oriented / Call-Oriented Programming: varianti di ROP che usano `jmp`/`call
 
 - [[ROP Chain]]
 - [[Heap Exploitation]]
+- [[Integer Overflow & Signedness Attacks]]
 - [[Format String Vulnerability]]
 - [[Use After Free]]
 - [[Shellcode]]

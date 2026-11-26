@@ -45,7 +45,7 @@ tags:
 - Nel vault: [[2 - MA - X86 Assembly]] · [[Stack Frame]]
 
 ### Binary exploitation: le basi
-- [[pwntools]] · [[call e ret]] · [[Buffer Overflow dello Stack]] · [[Sovrascrivere il Return Address]]
+- [[pwntools]] · [[call e ret]] · [[Buffer Overflow dello Stack]] · [[Sovrascrivere il Return Address]] · [[Signed e Unsigned (Integer Overflow)]]
 - Nel vault: [[Buffer Overflow]]
 
 ### Binary exploitation: mitigazioni e workaround
@@ -74,6 +74,7 @@ tags:
 | BitCrypt (in [[Attacco al One Time Pad#BitCrypt · OTP con chiave riusata tra i tuoi messaggi e la flag\|Attacco al One Time Pad]]) | Crypto | OTP con chiave riusata, known-plaintext (`K = P ⊕ C`), conversioni str / bytes / hex, lettura del menu con pwntools |
 | countme (in [[Attacco al One Time Pad#countme · AES-CTR con nonce fisso, cioè OTP con keystream riusato\|Attacco al One Time Pad]]) | Crypto | AES-CTR con chiave e nonce fissi → keystream riusato, `C_F ⊕ C_M ⊕ M = F`, prompt di `input()` senza `\n` |
 | MysticTonguePoetry (in [[Attacco al One Time Pad#MysticTonguePoetry · many-time pad con crib dragging\|Attacco al One Time Pad]]) | Crypto | many-time pad: stessa chiave su 9 righe, crib `ccit{` allargato parola per parola, UTF-8 delle lettere accentate |
+| progressivebar (in [[Signed e Unsigned (Integer Overflow)#progressivebar · signed/unsigned per saltare il limite di iterazioni\|Signed e Unsigned]]) | Pwn | integer overflow (signedness): `atoi("-1")` in `unsigned int` → `0xFFFFFFFF`, bypassa il limite di 9 cifre; canary come depistaggio |
 
 ## Percorsi trasversali
 

@@ -269,5 +269,5 @@ systems implement memcpy() differently
 
 - [[data_driven_attacks]] — famiglia generale
 - [[format_string_attacks]] — altro classico Ch.5/Ch.10
-- [[buffer_overflow]] — la corruzione a valle (se la nota esiste)
+- [[Buffer Overflow]] — la corruzione a valle (sezione 5.4)
 - [[heap_exploitation]] — per assignment opzionale post-esame
